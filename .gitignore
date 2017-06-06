@@ -1,0 +1,8 @@
+#Xcode
+*.xcodeproj
+DerivedData/
+
+#data
+jongro/
+
+
