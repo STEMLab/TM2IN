@@ -8,20 +8,23 @@
 
 #include <iostream>
 #include <fstream>
+#include "model.h"
+#include "load3ds.h"
+
 
 using namespace std;
 
-typedef struct{
-    float x;
-    float y;
-    float z;
-} Vertex;
+char Load3DS (obj_type* p_object, char *p_filename);
+
 
 int main(int argc, const char * argv[]) {
     // insert code here...
-    ifstream trin;
-    trin.open("/Users/dong/Documents/dev/TriMeshToGeom/jongro/jongro.3DS");
-    
+
+    obj_type* object = (obj_type*)malloc(sizeof(obj_type));
+    Load3DS(object, "../jongro/jongro.3DS");
+
     std::cout << "Hello, World!\n";
     return 0;
 }
+
+

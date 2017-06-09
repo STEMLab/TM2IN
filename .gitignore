@@ -5,4 +5,10 @@ DerivedData/
 #data
 jongro/
 
+#Code Blocks
+*.cbp
+*.depend
+*.layout
+bin/
+obj/
 
