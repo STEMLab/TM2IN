@@ -1,3 +1,6 @@
+#include "model.h"
+#include <vector>
+#include <string>
 
-extern obj_collection* Load3DS (char *filename);
+extern std::vector<std::pair<std::string,obj_type*>> Load3DS (char *filename);
 

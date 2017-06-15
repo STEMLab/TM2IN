@@ -9,9 +9,9 @@
  *
  *
  * Tutorial 4: 3d engine - 3ds models loader
- * 
+ *
  * Include File: 3dsloader.cpp
- *  
+ *
  */
 
 /*
@@ -22,13 +22,10 @@ just run: make and you are done.
 of course you may need to change the makefile
 */
 
-#define OBJ_NUMBER 20
-
-
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
 #include <iostream>
-#include "model.h"
 #include "3dsloader.h"
 
 #include <sys/stat.h>
@@ -45,16 +42,16 @@ long filelength(int f)
     return(buf.st_size);
 }
 
-obj_collection* Load3DS (char *p_filename)
+vector<pair<string, obj_type*>> Load3DS (char *p_filename)
 {
-    obj_collection* cl = (obj_collection*)malloc(sizeof(obj_collection));
-    cl->list = (obj_type**)malloc(sizeof(obj_type*) * OBJ_NUMBER);
-    cl->num = 0;
+    vector<pair<string, obj_type*>> obj_list;
+    obj_type *p_object;
 
 	int i; //Index variable
     int index;
 	FILE *l_file; //File pointer
-	
+    char name[20];
+
 	unsigned short l_chunk_id; //Chunk identifier
 	unsigned int l_chunk_lenght; //Chunk lenght
 
@@ -63,7 +60,7 @@ obj_collection* Load3DS (char *p_filename)
 
 	unsigned short l_face_flags; //Flag that stores some face information
 
-	if ((l_file=fopen (p_filename, "rb"))== NULL) return 0; //Open the file
+    if ( (l_file=fopen (p_filename, "rb") ) == NULL) return obj_list;
 
 	while (ftell (l_file) < filelength (fileno (l_file))) //Loop to scan the whole file
 	//while(!EOF)
@@ -79,37 +76,35 @@ obj_collection* Load3DS (char *p_filename)
         {
 			//----------------- MAIN3DS -----------------
 			// Description: Main chunk, contains all the other chunks
-			// Chunk ID: 4d4d 
+			// Chunk ID: 4d4d
 			// Chunk Lenght: 0 + sub chunks
 			//-------------------------------------------
-			case 0x4d4d: 
-			break;    
+			case 0x4d4d:
+			break;
 
 			//----------------- EDIT3DS -----------------
-			// Description: 3D Editor chunk, objects layout info 
+			// Description: 3D Editor chunk, objects layout info
 			// Chunk ID: 3d3d (hex)
 			// Chunk Lenght: 0 + sub chunks
 			//-------------------------------------------
 			case 0x3d3d:
 			break;
-			
+
 			//--------------- EDIT_OBJECT ---------------
 			// Description: Object block, info for each object
 			// Chunk ID: 4000 (hex)
 			// Chunk Lenght: len(object name) + sub chunks
 			//-------------------------------------------
 			case 0x4000:
-                cl->list[cl->num] = (obj_type*)malloc(sizeof(obj_type));
-                //p_object = cl->list[cl->num];
 				i=0;
+				p_object = (obj_type*)malloc(sizeof(obj_type));
 				do
 				{
 					fread (&l_char, 1, 1, l_file);
-                    cl->list[cl->num]->name[i]=l_char;
+                    name[i] = l_char;
                     i++;
                 }while(l_char != '\0' && i<20);
-                cout<< cl->list[cl->num]->name << endl;
-                cl->num++;
+                cout<< name << endl;
 			break;
 
 			//--------------- OBJ_TRIMESH ---------------
@@ -120,27 +115,26 @@ obj_collection* Load3DS (char *p_filename)
 			case 0x4100:
                 printf("TRIMESH\n");
                 break;
-			
+
 			//--------------- TRI_VERTEXL ---------------
 			// Description: Vertices list
 			// Chunk ID: 4110 (hex)
-			// Chunk Lenght: 1 x unsigned short (number of vertices) 
+			// Chunk Lenght: 1 x unsigned short (number of vertices)
 			//             + 3 x float (vertex coordinates) x (number of vertices)
 			//             + sub chunks
 			//-------------------------------------------
 			case 0x4110:
-                index = cl->num - 1;
 				fread (&l_qty, sizeof (unsigned short), 1, l_file);
-                cl->list[index]->vertices_qty = l_qty;
+                p_object->vertices_qty = l_qty;
                 printf("Number of vertices: %d\n",l_qty);
-                cl->list[index]->vertex = (vertex_type*)malloc(sizeof(vertex_type) * l_qty);
+                p_object->vertex = (vertex_type*)malloc(sizeof(vertex_type) * l_qty);
                 for (i=0; i<l_qty; i++)
                 {
-					fread (&cl->list[index]->vertex[i].x, sizeof(float), 1, l_file);
+					fread (&p_object->vertex[i].x, sizeof(float), 1, l_file);
  					//printf("Vertices list x: %f\n",p_object->vertex[i].x);
-                    fread (&cl->list[index]->vertex[i].y, sizeof(float), 1, l_file);
+                    fread (&p_object->vertex[i].y, sizeof(float), 1, l_file);
  					//printf("Vertices list y: %f\n",p_object->vertex[i].y);
-					fread (&cl->list[index]->vertex[i].z, sizeof(float), 1, l_file);
+					fread (&p_object->vertex[i].z, sizeof(float), 1, l_file);
  					//printf("Vertices list z: %f\n",p_object->vertex[i].z);
 				}
 				break;
@@ -148,34 +142,34 @@ obj_collection* Load3DS (char *p_filename)
 			//--------------- TRI_FACEL1 ----------------
 			// Description: Polygons (faces) list
 			// Chunk ID: 4120 (hex)
-			// Chunk Lenght: 1 x unsigned short (number of polygons) 
+			// Chunk Lenght: 1 x unsigned short (number of polygons)
 			//             + 3 x unsigned short (polygon points) x (number of polygons)
 			//             + sub chunks
 			//-------------------------------------------
-                
+
 			case 0x4120:
-                index = cl->num - 1;
 				fread (&l_qty, sizeof (unsigned short), 1, l_file);
-                cl->list[index]->polygons_qty = l_qty;
+                p_object->polygons_qty = l_qty;
                 printf("Number of polygons: %d\n",l_qty);
-                cl->list[index]->polygon = (polygon_type*)malloc(sizeof(polygon_type) * l_qty);
+                p_object->polygon = (polygon_type*)malloc(sizeof(polygon_type) * l_qty);
                 for (i=0; i<l_qty; i++)
                 {
-					fread (&cl->list[index]->polygon[i].a, sizeof (unsigned short), 1, l_file);
+					fread (&p_object->polygon[i].a, sizeof (unsigned short), 1, l_file);
 					//printf("Polygon point a: %d\n",p_object->polygon[i].a);
-					fread (&cl->list[index]->polygon[i].b, sizeof (unsigned short), 1, l_file);
+					fread (&p_object->polygon[i].b, sizeof (unsigned short), 1, l_file);
 					//printf("Polygon point b: %d\n",p_object->polygon[i].b);
-					fread (&cl->list[index]->polygon[i].c, sizeof (unsigned short), 1, l_file);
+					fread (&p_object->polygon[i].c, sizeof (unsigned short), 1, l_file);
 					//printf("Polygon point c: %d\n",p_object->polygon[i].c);
 					fread (&l_face_flags, sizeof (unsigned short), 1, l_file);
 					//printf("Face flags: %x\n",l_face_flags);
 				}
+				obj_list.push_back(make_pair(string(name), p_object));
                 break;
 
 			//------------- TRI_MAPPINGCOORS ------------
 			// Description: Vertices list
 			// Chunk ID: 4140 (hex)
-			// Chunk Lenght: 1 x unsigned short (number of mapping points) 
+			// Chunk Lenght: 1 x unsigned short (number of mapping points)
 			//             + 2 x float (mapping coordinates) x (number of mapping points)
 			//             + sub chunks
 			//-------------------------------------------
@@ -197,8 +191,8 @@ obj_collection* Load3DS (char *p_filename)
 			//-------------------------------------------
 			default:
 				 fseek(l_file, l_chunk_lenght-6, SEEK_CUR);
-        } 
+        }
 	}
 	fclose (l_file); // Closes the file stream
-	return cl; 
+    return obj_list;
 }

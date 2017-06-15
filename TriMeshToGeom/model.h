@@ -29,13 +29,7 @@ typedef struct {
 
     vertex_type* vertex;
     polygon_type* polygon;
-    
-    int id_texture;
 } obj_type, *obj_type_ptr;
 
-typedef struct{
-    int num;
-    obj_type** list;
-} obj_collection;
 
 #endif // MODEL_H_INCLUDED
