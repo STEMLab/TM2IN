@@ -10,21 +10,31 @@
 #define check_hpp
 
 #include <stdio.h>
-#include "model.h"
+#include "Model.h"
 
-int findAxis(obj_type* obj, polygon_type* polygon, double thres = 0);
-int findType(obj_type* obj, polygon_type* polygon, double thres = 0);
+class Checker{
+private:
+    double threshold_vertex = 0.0;
+    double threshold_coplanar = 0.0;
+    
+public:
+    Checker(double a, double b){
+        threshold_vertex = a;
+        threshold_coplanar = b;
+    }
+    bool isSameX(vertex_type a, vertex_type b, vertex_type c);
+    bool isSameY(vertex_type a, vertex_type b, vertex_type c);
+    bool isSameZ(vertex_type a, vertex_type b, vertex_type c);
+    
+    bool isStraightXY(vertex_type a, vertex_type b, vertex_type c);
+    bool isStraightXZ(vertex_type a, vertex_type b, vertex_type c);
+    bool isStraightYZ(vertex_type a, vertex_type b, vertex_type c);
+    
+    bool isSameXY(vertex_type a, vertex_type b);
+    bool isSameYZ(vertex_type a, vertex_type b);
+    bool isSameXZ(vertex_type a, vertex_type b);
+    
+    bool isSameVertex(vertex_type v1, vertex_type v2);
 
-bool isSameX(vertex_type a, vertex_type b, vertex_type c, double thres = 0);
-bool isSameY(vertex_type a, vertex_type b, vertex_type c, double thres = 0);
-bool isSameZ(vertex_type a, vertex_type b, vertex_type c, double thres = 0);
-
-bool isStraightXY(vertex_type a, vertex_type b, vertex_type c, double thres = 0);
-bool isStraightXZ(vertex_type a, vertex_type b, vertex_type c, double thres = 0);
-bool isStraightYZ(vertex_type a, vertex_type b, vertex_type c, double thres = 0);
-
-bool isSameXY(vertex_type a, vertex_type b, double thres);
-bool isSameYZ(vertex_type a, vertex_type b, double thres);
-bool isSameXZ(vertex_type a, vertex_type b, double thres);
-
+};
 #endif /* check_hpp */

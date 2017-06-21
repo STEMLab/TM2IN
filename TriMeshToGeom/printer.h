@@ -9,7 +9,7 @@
 #ifndef printer_h
 #define printer_h
 
-#include "model.h"
+#include "Model.h"
 #include <iostream>
 
 using namespace std;
@@ -19,7 +19,6 @@ void printVertex(vertex_type* vt){
 }
 
 void printPolygonCoord(vertex_type* vt_arr, polygon_type* pl_arr){
-    
     cout << pl_arr -> a << " : " ;
     printVertex(&vt_arr[pl_arr->a]);
     cout << pl_arr -> b << " : " ;

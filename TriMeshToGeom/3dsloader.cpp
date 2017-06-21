@@ -26,6 +26,9 @@ of course you may need to change the makefile
 #include <stdlib.h>
 #include <string>
 #include <iostream>
+#include <algorithm>
+
+#include "Object_Type.hpp"
 #include "3dsloader.h"
 
 #include <sys/stat.h>
@@ -45,10 +48,12 @@ long filelength(int f)
 vector<pair<string, obj_type*>> Load3DS (char *p_filename)
 {
     vector<pair<string, obj_type*>> obj_list;
-    obj_type *p_object;
+    obj_type *p_object = NULL;
 
 	int i; //Index variable
-    int index;
+
+    int temp_vertex[3] = {0,0,0};
+    
 	FILE *l_file; //File pointer
     char name[20];
 
@@ -97,7 +102,7 @@ vector<pair<string, obj_type*>> Load3DS (char *p_filename)
 			//-------------------------------------------
 			case 0x4000:
 				i=0;
-				p_object = (obj_type*)malloc(sizeof(obj_type));
+				p_object = new obj_type();
 				do
 				{
 					fread (&l_char, 1, 1, l_file);
@@ -105,6 +110,12 @@ vector<pair<string, obj_type*>> Load3DS (char *p_filename)
                     i++;
                 }while(l_char != '\0' && i<20);
                 cout<< name << endl;
+                
+                if (strstr(name, "FC")){
+                    cout << "skip furniture" << endl;
+                    fseek(l_file, l_chunk_lenght -i -6, SEEK_CUR);
+                    break;
+                }
 			break;
 
 			//--------------- OBJ_TRIMESH ---------------
@@ -124,18 +135,22 @@ vector<pair<string, obj_type*>> Load3DS (char *p_filename)
 			//             + sub chunks
 			//-------------------------------------------
 			case 0x4110:
+                if (p_object == NULL) {
+                    cout << "4110 error" << endl;
+                    exit(1);
+                }
+                
 				fread (&l_qty, sizeof (unsigned short), 1, l_file);
                 p_object->vertices_qty = l_qty;
+                
                 printf("Number of vertices: %d\n",l_qty);
                 p_object->vertex = (vertex_type*)malloc(sizeof(vertex_type) * l_qty);
+                
                 for (i=0; i<l_qty; i++)
                 {
 					fread (&p_object->vertex[i].x, sizeof(float), 1, l_file);
- 					//printf("Vertices list x: %f\n",p_object->vertex[i].x);
                     fread (&p_object->vertex[i].y, sizeof(float), 1, l_file);
- 					//printf("Vertices list y: %f\n",p_object->vertex[i].y);
 					fread (&p_object->vertex[i].z, sizeof(float), 1, l_file);
- 					//printf("Vertices list z: %f\n",p_object->vertex[i].z);
 				}
 				break;
 
@@ -148,17 +163,27 @@ vector<pair<string, obj_type*>> Load3DS (char *p_filename)
 			//-------------------------------------------
 
 			case 0x4120:
+                if (p_object == NULL) {
+                    cout << "4120 error" << endl;
+                    exit(1);
+                }
+                
 				fread (&l_qty, sizeof (unsigned short), 1, l_file);
                 p_object->polygons_qty = l_qty;
                 printf("Number of polygons: %d\n",l_qty);
                 p_object->polygon = (polygon_type*)malloc(sizeof(polygon_type) * l_qty);
                 for (i=0; i<l_qty; i++)
                 {
-					fread (&p_object->polygon[i].a, sizeof (unsigned short), 1, l_file);
-					//printf("Polygon point a: %d\n",p_object->polygon[i].a);
-					fread (&p_object->polygon[i].b, sizeof (unsigned short), 1, l_file);
-					//printf("Polygon point b: %d\n",p_object->polygon[i].b);
-					fread (&p_object->polygon[i].c, sizeof (unsigned short), 1, l_file);
+                    
+					fread (&temp_vertex[0], sizeof (unsigned short), 1, l_file);
+					fread (&temp_vertex[1], sizeof (unsigned short), 1, l_file);
+					fread (&temp_vertex[2], sizeof (unsigned short), 1, l_file);
+                    sort(temp_vertex, temp_vertex+3);
+                    
+                    p_object->polygon[i].a = temp_vertex[0];
+                    p_object->polygon[i].b = temp_vertex[1];
+                    p_object->polygon[i].c = temp_vertex[2];
+                    
 					//printf("Polygon point c: %d\n",p_object->polygon[i].c);
 					fread (&l_face_flags, sizeof (unsigned short), 1, l_file);
 					//printf("Face flags: %x\n",l_face_flags);

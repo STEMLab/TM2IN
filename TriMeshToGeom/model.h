@@ -1,9 +1,7 @@
 #ifndef MODEL_H_INCLUDED
 #define MODEL_H_INCLUDED
 
-
-#define MAX_VERTICES 16000 // Max number of vertices (for each object)
-#define MAX_POLYGONS 16000 // Max number of polygons (for each object)
+#include <vector>
 
 // Our vertex type
 typedef struct{
@@ -20,16 +18,11 @@ typedef struct{
     float u,v;
 }mapcoord_type;
 
-// The object type
-typedef struct {
-	char name[20];
-
-	int vertices_qty;
-    int polygons_qty;
-
-    vertex_type* vertex;
-    polygon_type* polygon;
-} obj_type, *obj_type_ptr;
+class CombinedPolygon;
+class obj_type;
+class Checker;
+class OBJCollection;
+class TVRCollection;
 
 
 #endif // MODEL_H_INCLUDED

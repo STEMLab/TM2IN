@@ -3,7 +3,9 @@
 DerivedData/
 
 #data
-jongro/
+*.3DS
+*.tvr
+**/pano8K_images
 
 #Code Blocks
 *.cbp
