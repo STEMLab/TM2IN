@@ -13,36 +13,40 @@
 #include <cstdlib>
 
 #include "check.hpp"
+#include "CombinedPolygon.hpp"
 #include "Model.h"
 
 // The object type
 class obj_type{
 public:
     OBJCollection* objcl;
-    
-    char name[20];
-    
-    int vertices_qty;
-    int polygons_qty;
-    
-    vertex_type* vertex;
-    polygon_type* polygon;
-    
-    std::vector<CombinedPolygon*> polygon_list;
-    Checker* checker;
-    
-    obj_type(){
-        
-    }
-    
-    obj_type(OBJCollection* pob){
+
+    vector<polygon_type> tri_list;
+
+    obj_type(){}
+
+    void setCollection(OBJCollection* pob){
         objcl = pob;
     }
-    
+
+    //TODO - REMOVE
+    char name[20];
+
+    int vertices_qty;
+    int polygons_qty;
+
+    vertex_type* vertex;
+    polygon_type* polygon;
+
+    std::vector<CombinedPolygon*> polygon_list;
+    Checker* checker;
+
+
+
     void setChecker(Checker* ck){
         checker = ck;
     }
-    
+
     void print();
     void makePolygons();
     CombinedPolygon* makeOneBigPolygon(CombinedPolygon* thispl, bool* checked);

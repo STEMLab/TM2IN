@@ -10,20 +10,22 @@
 #define ObjectCollection_h
 
 #include "Model.h"
+#include "CombinedPolygon.hpp"
 
 #include <vector>
-
+#include <cstring>
+#include <string>
 
 using namespace std;
 
 class OBJCollection{
 public:
     vector<pair<string, obj_type*> > obj_list;
-    vector<vector<vertex_type>> vertex;
-    
+
+
     virtual vertex_type* getVertex(long index) = 0;
-    virtual vector<pair< string, CombinedPolygon*> > makeSurfaces(Checker check) = 0;
-    virtual void loadFile(char* filename) = 0;
+    virtual vector<pair<string, vector<CombinedPolygon*>> > makeSurfaces(Checker check) = 0;
+    virtual int loadFile(char* filename) = 0;
 };
 
 #endif /* ObjectCollection_h */

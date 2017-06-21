@@ -24,7 +24,7 @@ of course you may need to change the makefile
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string>
+#include <cstring>
 #include <iostream>
 #include <algorithm>
 
@@ -53,7 +53,7 @@ vector<pair<string, obj_type*>> Load3DS (char *p_filename)
 	int i; //Index variable
 
     int temp_vertex[3] = {0,0,0};
-    
+
 	FILE *l_file; //File pointer
     char name[20];
 
@@ -110,7 +110,7 @@ vector<pair<string, obj_type*>> Load3DS (char *p_filename)
                     i++;
                 }while(l_char != '\0' && i<20);
                 cout<< name << endl;
-                
+
                 if (strstr(name, "FC")){
                     cout << "skip furniture" << endl;
                     fseek(l_file, l_chunk_lenght -i -6, SEEK_CUR);
@@ -139,13 +139,13 @@ vector<pair<string, obj_type*>> Load3DS (char *p_filename)
                     cout << "4110 error" << endl;
                     exit(1);
                 }
-                
+
 				fread (&l_qty, sizeof (unsigned short), 1, l_file);
                 p_object->vertices_qty = l_qty;
-                
+
                 printf("Number of vertices: %d\n",l_qty);
                 p_object->vertex = (vertex_type*)malloc(sizeof(vertex_type) * l_qty);
-                
+
                 for (i=0; i<l_qty; i++)
                 {
 					fread (&p_object->vertex[i].x, sizeof(float), 1, l_file);
@@ -167,23 +167,23 @@ vector<pair<string, obj_type*>> Load3DS (char *p_filename)
                     cout << "4120 error" << endl;
                     exit(1);
                 }
-                
+
 				fread (&l_qty, sizeof (unsigned short), 1, l_file);
                 p_object->polygons_qty = l_qty;
                 printf("Number of polygons: %d\n",l_qty);
                 p_object->polygon = (polygon_type*)malloc(sizeof(polygon_type) * l_qty);
                 for (i=0; i<l_qty; i++)
                 {
-                    
+
 					fread (&temp_vertex[0], sizeof (unsigned short), 1, l_file);
 					fread (&temp_vertex[1], sizeof (unsigned short), 1, l_file);
 					fread (&temp_vertex[2], sizeof (unsigned short), 1, l_file);
                     sort(temp_vertex, temp_vertex+3);
-                    
+
                     p_object->polygon[i].a = temp_vertex[0];
                     p_object->polygon[i].b = temp_vertex[1];
                     p_object->polygon[i].c = temp_vertex[2];
-                    
+
 					//printf("Polygon point c: %d\n",p_object->polygon[i].c);
 					fread (&l_face_flags, sizeof (unsigned short), 1, l_file);
 					//printf("Face flags: %x\n",l_face_flags);

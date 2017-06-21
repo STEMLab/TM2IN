@@ -18,7 +18,7 @@ typedef struct{
     float u,v;
 }mapcoord_type;
 
-class CombinedPolygon;
+//class CombinedPolygon;
 class obj_type;
 class Checker;
 class OBJCollection;

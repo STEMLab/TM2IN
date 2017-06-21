@@ -21,19 +21,22 @@
 using namespace std;
 
 int main(int argc, const char * argv[]) {
-    //char path[] = "Resource/teevr/tvr/main_tvr.tvr";
-    char path[] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/main_tvr.tvr";
-    
+    char path[] = "../Resource/teevr/tvr/main_tvr.tvr";
+    //char path[] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/main_tvr.tvr";
+
     OBJCollection* objc = new TVRCollection();
-    objc->loadFile(path);
-    
+    if (objc->loadFile(path) == -1){
+        cout << "Load File Error";
+        return -1;
+    }
+
 //    for (auto it = ret.begin(); it != ret.end() ; ++it){
 //        cout<< " name : " << it->first <<endl;
 //        it->second->setChecker(new Checker(0.1, 0.0));
 //        it->second->makePolygons();
 //        break;
 //    }
-    
+
     std::cout << "Hello, World!\n";
     return 0;
 }

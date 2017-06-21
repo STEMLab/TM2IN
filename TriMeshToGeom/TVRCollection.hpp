@@ -14,9 +14,15 @@
 
 class TVRCollection : public OBJCollection{
 public:
+    vector<vertex_type> vertex;
     vertex_type* getVertex(long index);
-    vector<pair< string, CombinedPolygon*> > makeSurfaces(Checker check);
-    void loadFile(char*);
+    vector<pair<string, vector<CombinedPolygon*>> > makeSurfaces(Checker check);
+    int loadFile(char*);
+
+private:
+    void makeVertex(string&, vertex_type& );
+    void makePolygon(string&, polygon_type& );
+    string getGroupName(string&);
 };
 
 #endif /* TVRCollection_hpp */
