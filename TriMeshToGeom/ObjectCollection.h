@@ -26,6 +26,7 @@ public:
     virtual vertex_type* getVertex(long index) = 0;
     virtual vector<pair<string, vector<CombinedPolygon*>> > makeSurfaces(Checker check) = 0;
     virtual int loadFile(char* filename) = 0;
+    virtual void print() = 0;
 };
 
 #endif /* ObjectCollection_h */

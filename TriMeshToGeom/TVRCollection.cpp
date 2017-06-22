@@ -25,6 +25,13 @@ vector<pair<string, vector<CombinedPolygon*>> > TVRCollection::makeSurfaces(Chec
     return {};
 }
 
+void TVRCollection::print(){
+    for (auto it=this->obj_list.begin() ; it != this->obj_list.end() ; it++){
+        cout << "\n\n\n-------" << it->first << "-------\n" << endl;
+        it->second->print();
+    }
+}
+
 int TVRCollection::loadFile(char *filename){
     ifstream fin;
     fin.open(filename);
@@ -34,7 +41,7 @@ int TVRCollection::loadFile(char *filename){
     string inputstr;
     getline(fin, inputstr);
     if (inputstr.find("TVR0") == string::npos){
-        cout << inputstr << endl;
+        cout << "different version : " <<  inputstr << endl;
         return -1;
     }
 
@@ -55,6 +62,7 @@ int TVRCollection::loadFile(char *filename){
             }
             case 'g':{
                 if (obj != NULL){
+                    obj->setVertexList(&this->vertex);
                     this->obj_list.push_back(make_pair(group_name, obj));
                 }
                 obj = new obj_type();
@@ -71,6 +79,7 @@ int TVRCollection::loadFile(char *filename){
             }
         }
     }
+    obj->setVertexList(&this->vertex);
     this->obj_list.push_back(make_pair(group_name, obj));
 
 
@@ -93,7 +102,7 @@ std::vector<std::string> split(const std::string &s, char delim) {
     return elems;
 }
 
-void TVRCollection::makeVertex(string& input, polygon_type& pt){
+void TVRCollection::makeTriangle(string& input, polygon_type& pt){
     std::vector<std::string> x = split(input, ' ');
 
     pt.a = stoi(x[1]);

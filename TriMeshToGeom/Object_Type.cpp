@@ -7,16 +7,30 @@
 //
 
 #include "Object_Type.hpp"
+#include "Printer.h"
+#include "TVRCollection.hpp"
 #include "CombinedPolygon.hpp"
 
 void obj_type::print(){
-    
+    for (auto it = tri_list.begin() ; it != tri_list.end() ; it++){
+        cout << endl;
+        printPolygonCoord(this->vertex_list_ptr, *it);
+    }
 }
+
+
+
+
+
+
+
+
+// TODO - REMOVED
 
 void obj_type::makePolygons(){
     std::vector<CombinedPolygon*> cpl_list;
     bool* checked = (bool*)malloc(sizeof(bool) * this->polygons_qty);
-    
+
     for (int index = 0 ; index < this->polygons_qty; index++){
         if (checked[index]) continue;
         checked[index] = true ;
@@ -29,14 +43,14 @@ void obj_type::makePolygons(){
 CombinedPolygon* obj_type::makeOneBigPolygon(CombinedPolygon* cp, bool* checked){
     int count = 0;
     unsigned long pre_size = cp->getLength();
-    
+
     for (int i = 0 ; i < this->polygons_qty ; i++){
         if (!checked[i]){
             if (cp->combine(this->polygon[i], this->checker)){
-                
+
             }
         }
     }
-    
+
     return cp;
 }

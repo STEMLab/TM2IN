@@ -15,7 +15,6 @@
 #include "TVRCollection.hpp"
 #include "Object_Type.hpp"
 #include "3dsloader.h"
-#include "Printer.h"
 #include "check.hpp"
 
 using namespace std;
@@ -29,6 +28,8 @@ int main(int argc, const char * argv[]) {
         cout << "Load File Error";
         return -1;
     }
+
+    objc->print();
 
 //    for (auto it = ret.begin(); it != ret.end() ; ++it){
 //        cout<< " name : " << it->first <<endl;

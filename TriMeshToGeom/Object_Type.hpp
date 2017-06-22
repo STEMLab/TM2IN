@@ -21,13 +21,21 @@ class obj_type{
 public:
     OBJCollection* objcl;
 
-    vector<polygon_type> tri_list;
+    std::vector<polygon_type> tri_list;
+    std::vector<vertex_type> *vertex_list_ptr;
 
     obj_type(){}
 
     void setCollection(OBJCollection* pob){
         objcl = pob;
     }
+
+    void setVertexList(std::vector<vertex_type> *vt_list){
+        vertex_list_ptr = vt_list;
+    }
+
+    void print();
+
 
     //TODO - REMOVE
     char name[20];
@@ -47,7 +55,7 @@ public:
         checker = ck;
     }
 
-    void print();
+
     void makePolygons();
     CombinedPolygon* makeOneBigPolygon(CombinedPolygon* thispl, bool* checked);
 };

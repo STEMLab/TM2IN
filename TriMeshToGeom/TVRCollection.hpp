@@ -18,10 +18,11 @@ public:
     vertex_type* getVertex(long index);
     vector<pair<string, vector<CombinedPolygon*>> > makeSurfaces(Checker check);
     int loadFile(char*);
+    void print();
 
 private:
     void makeVertex(string&, vertex_type& );
-    void makePolygon(string&, polygon_type& );
+    void makeTriangle(string&, polygon_type& );
     string getGroupName(string&);
 };
 
