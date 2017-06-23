@@ -26,6 +26,12 @@ public:
 
     obj_type(){}
 
+    Checker* checker;
+
+    void setChecker(Checker* ck){
+        checker = ck;
+    }
+
     void setCollection(OBJCollection* pob){
         objcl = pob;
     }
@@ -34,30 +40,14 @@ public:
         vertex_list_ptr = vt_list;
     }
 
+    vertex_type* getVertex(unsigned long index);
+
     void print();
-
-
-    //TODO - REMOVE
-    char name[20];
-
-    int vertices_qty;
-    int polygons_qty;
-
-    vertex_type* vertex;
-    polygon_type* polygon;
-
-    std::vector<CombinedPolygon*> polygon_list;
-    Checker* checker;
-
-
-
-    void setChecker(Checker* ck){
-        checker = ck;
-    }
-
-
-    void makePolygons();
+    std::vector<CombinedPolygon*> makePolygons();
     CombinedPolygon* makeOneBigPolygon(CombinedPolygon* thispl, bool* checked);
+    bool checkDuplicateVertex();
+
+
 };
 
 

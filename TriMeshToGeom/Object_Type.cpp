@@ -14,43 +14,46 @@
 void obj_type::print(){
     for (auto it = tri_list.begin() ; it != tri_list.end() ; it++){
         cout << endl;
-        printPolygonCoord(this->vertex_list_ptr, *it);
+        Printer::printPolygonCoord(this->vertex_list_ptr, *it);
     }
 }
 
+bool obj_type::checkDuplicateVertex(){
+    return checker->isExistDuplication(*this->vertex_list_ptr);
+}
 
-
-
-
-
-
-
-// TODO - REMOVED
-
-void obj_type::makePolygons(){
+std::vector<CombinedPolygon*> obj_type::makePolygons(){
     std::vector<CombinedPolygon*> cpl_list;
-    bool* checked = (bool*)malloc(sizeof(bool) * this->polygons_qty);
-
-    for (int index = 0 ; index < this->polygons_qty; index++){
+    bool* checked = (bool*)malloc(sizeof(bool) * this->tri_list.size());
+    cout << "number : " << tri_list.size() << endl;
+    for (unsigned long index = 0 ; index < this->tri_list.size(); index++){
+        if (index % 1000 == 0) cout << "process : "<< index << endl;
         if (checked[index]) continue;
         checked[index] = true ;
         cpl_list.push_back(
-            makeOneBigPolygon(new CombinedPolygon(this->polygon[index], this), checked));
+            makeOneBigPolygon(new CombinedPolygon(this->tri_list[index], this), checked));
     }
-    this->polygon_list = cpl_list;
+
+    return cpl_list;
 }
 
+
 CombinedPolygon* obj_type::makeOneBigPolygon(CombinedPolygon* cp, bool* checked){
-    int count = 0;
-    unsigned long pre_size = cp->getLength();
-
-    for (int i = 0 ; i < this->polygons_qty ; i++){
+    for (unsigned long i = 0 ; i < this->tri_list.size() ; i++){
         if (!checked[i]){
-            if (cp->combine(this->polygon[i], this->checker)){
-
+            if (cp->combine(this->tri_list[i], this->checker)){
+                checked[i] = true;
+                return makeOneBigPolygon(cp, checked);
             }
         }
     }
 
     return cp;
 }
+
+vertex_type* obj_type::getVertex(unsigned long index){
+    return &((*this->vertex_list_ptr)[index]);
+}
+
+
+

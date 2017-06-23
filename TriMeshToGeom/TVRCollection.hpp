@@ -15,8 +15,7 @@
 class TVRCollection : public OBJCollection{
 public:
     vector<vertex_type> vertex;
-    vertex_type* getVertex(long index);
-    vector<pair<string, vector<CombinedPolygon*>> > makeSurfaces(Checker check);
+    vector<pair<string, vector<CombinedPolygon*>> > makeSurfaces(Checker* check);
     int loadFile(char*);
     void print();
 

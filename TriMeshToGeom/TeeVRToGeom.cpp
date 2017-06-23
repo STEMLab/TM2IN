@@ -29,14 +29,10 @@ int main(int argc, const char * argv[]) {
         return -1;
     }
 
-    objc->print();
+    vector<pair<string, vector<CombinedPolygon*>> > cp = objc->makeSurfaces(new Checker(0.0, 5.0));
 
-//    for (auto it = ret.begin(); it != ret.end() ; ++it){
-//        cout<< " name : " << it->first <<endl;
-//        it->second->setChecker(new Checker(0.1, 0.0));
-//        it->second->makePolygons();
-//        break;
-//    }
+
+    //objc->print();
 
     std::cout << "Hello, World!\n";
     return 0;

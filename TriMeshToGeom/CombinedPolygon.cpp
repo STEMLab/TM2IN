@@ -9,52 +9,105 @@
 #include "check.hpp"
 #include "Object_Type.hpp"
 #include "CombinedPolygon.hpp"
-#include <CGAL/Cartesian.h>
+
+#include <cstdlib>
 
 using namespace std;
 
-typedef CGAL::Cartesian<double> Kernel;
-typedef Kernel::Point_3 Point_3;
-
-bool CombinedPolygon::combine(polygon_type pl, Checker* ch){
-    unsigned long index = findShareLine(pl, ch);
+bool CombinedPolygon::combine(polygon_type pl, Checker* ch)
+{
+    //TODO
+    unsigned long add_id;
+    long index = findShareLine(pl, ch, add_id);
     if (index == -1) return false;
-    
-    
-    
+
+    if (isCoplanar(pl, ch))
+    {
+        vertex_type* vn = obj->getVertex(add_id);
+        Vector_3 pl_nv = this->getNormalVector(pl);
+        av_normal = av_normal + pl_nv;
+        this->v_list.insert(v_list.begin() +index, vn);
+        return true;
+    }
+
     return false;
 }
 
-CombinedPolygon::CombinedPolygon(polygon_type pl, obj_type* p_obj){
-    obj = p_obj;
-    v_list.push_back(&p_obj->vertex[pl.a]);
-    v_list.push_back(&p_obj->vertex[pl.b]);
-    v_list.push_back(&p_obj->vertex[pl.c]);
+bool CombinedPolygon::isCoplanar(polygon_type pl, Checker* ch){
+    Vector_3 pl_nv = this->getNormalVector(pl);
+    return ch->isCoplanar(pl_nv, av_normal);
 }
 
-unsigned long CombinedPolygon::findShareLine(polygon_type pl, Checker* ch){
-    for (int id = 0 ; id < v_list.size(); id++){
-        int n_id = id + 1;
+Vector_3 CombinedPolygon::getNormalVector(polygon_type& pl){
+    vertex_type* va = obj->getVertex(pl.a);
+    vertex_type* vb = obj->getVertex(pl.b);
+    vertex_type* vc = obj->getVertex(pl.c);
+
+    Point_3 p3a(va->x,va->y,va->z);
+    Point_3 p3b(vb->x,vb->y,vb->z);
+    Point_3 p3c(vc->x,vc->y,vc->z);
+
+    return CGAL::unit_normal(p3a,p3b,p3c);
+}
+
+CombinedPolygon::CombinedPolygon(polygon_type& pl, obj_type* p_obj){
+    obj = p_obj;
+    vertex_type* va = p_obj->getVertex(pl.a);
+    vertex_type* vb = p_obj->getVertex(pl.b);
+    vertex_type* vc = p_obj->getVertex(pl.c);
+
+    v_list.push_back(va);
+    v_list.push_back(vb);
+    v_list.push_back(vc);
+
+    Point_3 p3a(va->x,va->y,va->z );
+    Point_3 p3b(vb->x,vb->y,vb->z );
+    Point_3 p3c(vc->x,vc->y,vc->z );
+
+    av_normal = CGAL::unit_normal(p3a,p3b,p3c);
+}
+
+long CombinedPolygon::findShareLine(polygon_type pl, Checker* ch, unsigned long& add_id)
+{
+    for (unsigned long id = 0 ; id < v_list.size(); id++)
+    {
+        unsigned long n_id = id + 1;
         if (n_id == v_list.size()) n_id = 0;
-        
-        if (ch->isSameVertex(*v_list[id],obj->vertex[pl.a]) &&
-            ch->isSameVertex(*v_list[n_id],obj->vertex[pl.b] ) ){
+
+        if (ch->isSameVertex(v_list[id],obj->getVertex(pl.a)) &&
+                ch->isSameVertex(v_list[n_id],obj->getVertex(pl.b) ) )
+        {
+            add_id = pl.c;
             return id;
         }
-        else if (ch->isSameVertex(*v_list[id],obj->vertex[pl.b]) &&
-                 ch->isSameVertex(*v_list[n_id],obj->vertex[pl.a] ) ){
+        else if (ch->isSameVertex(v_list[id],obj->getVertex(pl.b)) &&
+                 ch->isSameVertex(v_list[n_id],obj->getVertex(pl.a) ) )
+        {
+            add_id = pl.c;
             return id;
-        }else if (ch->isSameVertex(*v_list[id],obj->vertex[pl.a]) &&
-                  ch->isSameVertex(*v_list[n_id],obj->vertex[pl.c] ) ){
+        }
+        else if (ch->isSameVertex(v_list[id],obj->getVertex(pl.a)) &&
+                 ch->isSameVertex(v_list[n_id],obj->getVertex(pl.c) ) )
+        {
+            add_id = pl.b;
             return id;
-        }else if (ch->isSameVertex(*v_list[id],obj->vertex[pl.c]) &&
-                  ch->isSameVertex(*v_list[n_id],obj->vertex[pl.a] ) ){
+        }
+        else if (ch->isSameVertex(v_list[id],obj->getVertex(pl.c)) &&
+                 ch->isSameVertex(v_list[n_id],obj->getVertex(pl.a) ) )
+        {
+            add_id = pl.b;
             return id;
-        }else if (ch->isSameVertex(*v_list[id],obj->vertex[pl.b]) &&
-                  ch->isSameVertex(*v_list[n_id],obj->vertex[pl.c] ) ){
+        }
+        else if (ch->isSameVertex(v_list[id],obj->getVertex(pl.b)) &&
+                 ch->isSameVertex(v_list[n_id],obj->getVertex(pl.c) ) )
+        {
+            add_id = pl.a;
             return id;
-        }else if (ch->isSameVertex(*v_list[id],obj->vertex[pl.c]) &&
-                  ch->isSameVertex(*v_list[n_id],obj->vertex[pl.b] ) ){
+        }
+        else if (ch->isSameVertex(v_list[id],obj->getVertex(pl.c)) &&
+                 ch->isSameVertex(v_list[n_id],obj->getVertex(pl.b) ) )
+        {
+            add_id = pl.a;
             return id;
         }
     }

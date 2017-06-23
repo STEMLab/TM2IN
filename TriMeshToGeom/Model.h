@@ -5,12 +5,12 @@
 
 // Our vertex type
 typedef struct{
-    float x,y,z;
+    double x,y,z;
 }vertex_type;
 
 // The polygon (triangle), 3 numbers that aim 3 vertices
 typedef struct{
-    int a,b,c;
+    unsigned long a,b,c;
 }polygon_type;
 
 // The mapcoord type, 2 texture coordinates for each vertex

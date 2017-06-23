@@ -21,10 +21,7 @@ using namespace std;
 class OBJCollection{
 public:
     vector<pair<string, obj_type*> > obj_list;
-
-
-    virtual vertex_type* getVertex(long index) = 0;
-    virtual vector<pair<string, vector<CombinedPolygon*>> > makeSurfaces(Checker check) = 0;
+    virtual vector<pair<string, vector<CombinedPolygon*>> > makeSurfaces(Checker* check) = 0;
     virtual int loadFile(char* filename) = 0;
     virtual void print() = 0;
 };

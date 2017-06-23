@@ -15,14 +15,20 @@
 
 using namespace std;
 
-vertex_type* TVRCollection::getVertex(long index){
-    //TODO
-    return NULL;
-}
+vector<pair<string, vector<CombinedPolygon*>> > TVRCollection::makeSurfaces(Checker* check){
+    vector<pair<string, vector<CombinedPolygon*>> > result;
+    for (auto it=this->obj_list.begin() ; it != this->obj_list.end() ; it++){
+        cout << (it->first) << " is converting..." << endl;
+        it->second->setChecker(check);
+        if (it->second->checkDuplicateVertex()) {
+            cout << "Duplicate Vertex" << endl;
+            return {};
+        }
+        vector<CombinedPolygon*> polygons = it->second->makePolygons();
+        result.push_back(make_pair(it->first, polygons));
+    }
 
-vector<pair<string, vector<CombinedPolygon*>> > TVRCollection::makeSurfaces(Checker check){
-    //TODO
-    return {};
+    return result;
 }
 
 void TVRCollection::print(){
@@ -68,7 +74,6 @@ int TVRCollection::loadFile(char *filename){
                 obj = new obj_type();
                 obj->setCollection(this);
                 group_name = this->getGroupName(inputstr);
-
                 break;
             }
             case 'f':{
@@ -80,9 +85,10 @@ int TVRCollection::loadFile(char *filename){
         }
     }
     obj->setVertexList(&this->vertex);
+    if (group_name.find('\r') != string::npos) group_name.erase(group_name.find('\r'));
     this->obj_list.push_back(make_pair(group_name, obj));
 
-
+    return 0;
 }
 
 
@@ -105,9 +111,9 @@ std::vector<std::string> split(const std::string &s, char delim) {
 void TVRCollection::makeTriangle(string& input, polygon_type& pt){
     std::vector<std::string> x = split(input, ' ');
 
-    pt.a = stoi(x[1]);
-    pt.b = stoi(x[2]);
-    pt.c = stoi(x[3]);
+    pt.a = stol(x[1]);
+    pt.b = stol(x[2]);
+    pt.c = stol(x[3]);
 }
 
 void TVRCollection::makeVertex(string& input, vertex_type& vt){

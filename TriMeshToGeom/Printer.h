@@ -14,36 +14,49 @@
 
 using namespace std;
 
-void printVertex(vertex_type* vt){
-    cout << vt->x <<", "<< vt->y << ", " << vt->z << endl;
-}
+class Printer{
+public:
+    static void printVertex(vertex_type* vt)
+    {
+        cout << vt->x <<", "<< vt->y << ", " << vt->z << endl;
+    }
 
-void printPolygonCoord(vertex_type* vt_arr, polygon_type& pl_arr){
-    cout << "a : " ;
-    printVertex(&vt_arr[pl_arr.a]);
-    cout << "b : " ;
-    printVertex(&vt_arr[pl_arr.b]);
-    cout << "c : " ;
-    printVertex(&vt_arr[pl_arr.c]);
-}
+    static void printVertex(vertex_type& vt)
+    {
+        cout << vt.x <<", "<< vt.y << ", " << vt.z << endl;
+    }
 
-void printPolygonCoord(vector<vertex_type>& vt_arr, polygon_type& pl_arr){
-    cout << "a : " ;
-    printVertex(&vt_arr[pl_arr.a]);
-    cout << "b : " ;
-    printVertex(&vt_arr[pl_arr.b]);
-    cout << "c : " ;
-    printVertex(&vt_arr[pl_arr.c]);
-}
+    static void printPolygonCoord(vertex_type* vt_arr, polygon_type& pl_arr)
+    {
+        cout << "a : " ;
+        printVertex(&vt_arr[pl_arr.a]);
+        cout << "b : " ;
+        printVertex(&vt_arr[pl_arr.b]);
+        cout << "c : " ;
+        printVertex(&vt_arr[pl_arr.c]);
+    }
 
-void printPolygonCoord(vector<vertex_type>* vt_arr, polygon_type& pl_arr){
-    cout << "a : " ;
-    printVertex(&vt_arr->at(pl_arr.a) );
-    cout << "b : " ;
-    printVertex(&vt_arr->at(pl_arr.b));
-    cout << "c : " ;
-    printVertex(&vt_arr->at(pl_arr.c));
-}
+    static void printPolygonCoord(vector<vertex_type>& vt_arr, polygon_type& pl_arr)
+    {
+        cout << "a : " ;
+        printVertex(&vt_arr[pl_arr.a]);
+        cout << "b : " ;
+        printVertex(&vt_arr[pl_arr.b]);
+        cout << "c : " ;
+        printVertex(&vt_arr[pl_arr.c]);
+    }
+
+    static void printPolygonCoord(vector<vertex_type>* vt_arr, polygon_type& pl_arr)
+    {
+        cout << "a : " ;
+        printVertex(&vt_arr->at(pl_arr.a) );
+        cout << "b : " ;
+        printVertex(&vt_arr->at(pl_arr.b));
+        cout << "c : " ;
+        printVertex(&vt_arr->at(pl_arr.c));
+    }
+};
+
 
 
 #endif /* printer_h */
