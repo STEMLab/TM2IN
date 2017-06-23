@@ -13,6 +13,8 @@
 #include <iostream>
 #include <sstream>
 
+#define FLOATSIZE 1000000
+
 using namespace std;
 
 vector<pair<string, vector<CombinedPolygon*>> > TVRCollection::makeSurfaces(Checker* check){
@@ -20,10 +22,10 @@ vector<pair<string, vector<CombinedPolygon*>> > TVRCollection::makeSurfaces(Chec
     for (auto it=this->obj_list.begin() ; it != this->obj_list.end() ; it++){
         cout << (it->first) << " is converting..." << endl;
         it->second->setChecker(check);
-        if (it->second->checkDuplicateVertex()) {
-            cout << "Duplicate Vertex" << endl;
-            return {};
-        }
+//        if (it->second->checkDuplicateVertex()) {
+//            cout << "Duplicate Vertex" << endl;
+//            return {};
+//        }
         vector<CombinedPolygon*> polygons = it->second->makePolygons();
         result.push_back(make_pair(it->first, polygons));
     }
@@ -38,7 +40,7 @@ void TVRCollection::print(){
     }
 }
 
-int TVRCollection::loadFile(char *filename){
+int TVRCollection::loadFile(char *filename, Checker* check){
     ifstream fin;
     fin.open(filename);
 
@@ -53,6 +55,9 @@ int TVRCollection::loadFile(char *filename){
 
     obj_type* obj = NULL;
     string group_name;
+    int v_count = 0;
+    int f_count = 0;
+
     while(!fin.eof()){
         getline(fin, inputstr);
         if (inputstr.size() < 3) continue;
@@ -61,9 +66,13 @@ int TVRCollection::loadFile(char *filename){
                 break;
             }
             case 'v':{
+                v_count++;
+                if (v_count % 5000 == 0) cout << "Loaded vertex : " << v_count << endl;
                 vertex_type vt;
                 this->makeVertex(inputstr, vt);
-                this->vertex.push_back(vt);
+
+                vertex_type* pt_v = this->findSameVertex(check, vt);
+                this->vertex.push_back(pt_v);
                 break;
             }
             case 'g':{
@@ -77,6 +86,8 @@ int TVRCollection::loadFile(char *filename){
                 break;
             }
             case 'f':{
+                f_count++;
+                if (f_count % 5000 == 0) cout << "Loaded faces : " << f_count << endl;
                 polygon_type pt;
                 this->makeTriangle(inputstr, pt);
                 obj->tri_list.push_back(pt);
@@ -91,6 +102,19 @@ int TVRCollection::loadFile(char *filename){
     return 0;
 }
 
+vertex_type* TVRCollection::findSameVertex(Checker* check, vertex_type& vt){
+    for (int i = 0 ; i < this->vertex.size() ; i++){
+        if (check->isSameVertex(*this->vertex[i], vt) ){
+            return this->vertex[i];
+        }
+    }
+
+    vertex_type* new_vt = new vertex_type();
+    new_vt->x = vt.x;
+    new_vt->y = vt.y;
+    new_vt->z = vt.z;
+    return new_vt;
+}
 
 template<typename Out>
 void split(const std::string &s, char delim, Out result) {
@@ -124,7 +148,8 @@ void TVRCollection::makeVertex(string& input, vertex_type& vt){
     getline(ss, line, '\t');
     std::vector<std::string> x = split(line, ' ');
 
-    vt.x = stod(x[1]);
+    //vt.x = stod(x[1]);
+    vt.x = atof(x[1].c_str());
     vt.y = stod(x[2]);
     vt.z = stod(x[3]);
 }

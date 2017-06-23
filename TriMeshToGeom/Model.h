@@ -4,9 +4,13 @@
 #include <vector>
 
 // Our vertex type
-typedef struct{
-    double x,y,z;
-}vertex_type;
+class vertex_type{
+public:
+    double x = 0.0,y =0.0 ,z = 0.0;
+};
+//typedef struct {
+//    double x,y,z;
+//} vertex_type;
 
 // The polygon (triangle), 3 numbers that aim 3 vertices
 typedef struct{

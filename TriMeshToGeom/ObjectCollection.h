@@ -11,6 +11,7 @@
 
 #include "Model.h"
 #include "CombinedPolygon.hpp"
+#include "check.hpp"
 
 #include <vector>
 #include <cstring>
@@ -22,7 +23,7 @@ class OBJCollection{
 public:
     vector<pair<string, obj_type*> > obj_list;
     virtual vector<pair<string, vector<CombinedPolygon*>> > makeSurfaces(Checker* check) = 0;
-    virtual int loadFile(char* filename) = 0;
+    virtual int loadFile(char* filename, Checker* check) = 0;
     virtual void print() = 0;
 };
 

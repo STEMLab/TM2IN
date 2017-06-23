@@ -14,12 +14,13 @@
 
 class TVRCollection : public OBJCollection{
 public:
-    vector<vertex_type> vertex;
+    vector<vertex_type*> vertex;
     vector<pair<string, vector<CombinedPolygon*>> > makeSurfaces(Checker* check);
-    int loadFile(char*);
+    int loadFile(char*, Checker* check);
     void print();
 
 private:
+    vertex_type* findSameVertex(Checker* check, vertex_type& vt);
     void makeVertex(string&, vertex_type& );
     void makeTriangle(string&, polygon_type& );
     string getGroupName(string&);

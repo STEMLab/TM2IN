@@ -30,15 +30,18 @@ std::vector<CombinedPolygon*> obj_type::makePolygons(){
         if (index % 1000 == 0) cout << "process : "<< index << endl;
         if (checked[index]) continue;
         checked[index] = true ;
-        cpl_list.push_back(
-            makeOneBigPolygon(new CombinedPolygon(this->tri_list[index], this), checked));
+        CombinedPolygon* newcp =
+            makeOneBigPolygon(new CombinedPolygon(this->tri_list[index], this),
+                              checked);
+        if (newcp != NULL) cpl_list.push_back(newcp);
     }
-
+    cout << "done make Polygons" << endl;
     return cpl_list;
 }
 
 
 CombinedPolygon* obj_type::makeOneBigPolygon(CombinedPolygon* cp, bool* checked){
+    if (cp->av_normal == CGAL::NULL_VECTOR) return NULL;
     for (unsigned long i = 0 ; i < this->tri_list.size() ; i++){
         if (!checked[i]){
             if (cp->combine(this->tri_list[i], this->checker)){
@@ -47,12 +50,12 @@ CombinedPolygon* obj_type::makeOneBigPolygon(CombinedPolygon* cp, bool* checked)
             }
         }
     }
-
     return cp;
 }
 
 vertex_type* obj_type::getVertex(unsigned long index){
-    return &((*this->vertex_list_ptr)[index]);
+    return (*this->vertex_list_ptr)[index];
+    //&((*this->vertex_list_ptr)[index]);
 }
 
 

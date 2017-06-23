@@ -14,7 +14,7 @@
 
 using namespace std;
 
-bool CombinedPolygon::combine(polygon_type pl, Checker* ch)
+bool CombinedPolygon::combine(polygon_type& pl, Checker* ch)
 {
     //TODO
     unsigned long add_id;
@@ -25,6 +25,7 @@ bool CombinedPolygon::combine(polygon_type pl, Checker* ch)
     {
         vertex_type* vn = obj->getVertex(add_id);
         Vector_3 pl_nv = this->getNormalVector(pl);
+        if (pl_nv == CGAL::NULL_VECTOR) return true;
         av_normal = av_normal + pl_nv;
         this->v_list.insert(v_list.begin() +index, vn);
         return true;
@@ -33,7 +34,7 @@ bool CombinedPolygon::combine(polygon_type pl, Checker* ch)
     return false;
 }
 
-bool CombinedPolygon::isCoplanar(polygon_type pl, Checker* ch){
+bool CombinedPolygon::isCoplanar(polygon_type& pl, Checker* ch){
     Vector_3 pl_nv = this->getNormalVector(pl);
     return ch->isCoplanar(pl_nv, av_normal);
 }
@@ -47,6 +48,9 @@ Vector_3 CombinedPolygon::getNormalVector(polygon_type& pl){
     Point_3 p3b(vb->x,vb->y,vb->z);
     Point_3 p3c(vc->x,vc->y,vc->z);
 
+    if (CGAL::collinear(p3a, p3b, p3c)){
+        return CGAL::NULL_VECTOR;
+    }
     return CGAL::unit_normal(p3a,p3b,p3c);
 }
 
@@ -63,53 +67,54 @@ CombinedPolygon::CombinedPolygon(polygon_type& pl, obj_type* p_obj){
     Point_3 p3a(va->x,va->y,va->z );
     Point_3 p3b(vb->x,vb->y,vb->z );
     Point_3 p3c(vc->x,vc->y,vc->z );
-
-    av_normal = CGAL::unit_normal(p3a,p3b,p3c);
+    if (CGAL::collinear(p3a, p3b, p3c)){
+        av_normal = CGAL::NULL_VECTOR;
+    }
+    else av_normal = CGAL::unit_normal(p3a,p3b,p3c);
 }
 
-long CombinedPolygon::findShareLine(polygon_type pl, Checker* ch, unsigned long& add_id)
+long CombinedPolygon::findShareLine(polygon_type& pl, Checker* ch, unsigned long& add_id)
 {
     for (unsigned long id = 0 ; id < v_list.size(); id++)
     {
         unsigned long n_id = id + 1;
         if (n_id == v_list.size()) n_id = 0;
 
-        if (ch->isSameVertex(v_list[id],obj->getVertex(pl.a)) &&
-                ch->isSameVertex(v_list[n_id],obj->getVertex(pl.b) ) )
-        {
-            add_id = pl.c;
-            return id;
+        if (v_list[id] == obj->getVertex(pl.a)){
+            if (v_list[n_id] == obj->getVertex(pl.b)){
+                add_id = pl.c;
+                return id;
+            }
+            else if(v_list[n_id] == obj->getVertex(pl.c)){
+                add_id = pl.b;
+                return id;
+            }
         }
-        else if (ch->isSameVertex(v_list[id],obj->getVertex(pl.b)) &&
-                 ch->isSameVertex(v_list[n_id],obj->getVertex(pl.a) ) )
-        {
-            add_id = pl.c;
-            return id;
+        if (v_list[id] == obj->getVertex(pl.b)){
+            if (v_list[n_id] == obj->getVertex(pl.a)){
+                add_id = pl.c;
+                return id;
+            }
+            else if(v_list[n_id] == obj->getVertex(pl.c)){
+                add_id = pl.a;
+                return id;
+            }
         }
-        else if (ch->isSameVertex(v_list[id],obj->getVertex(pl.a)) &&
-                 ch->isSameVertex(v_list[n_id],obj->getVertex(pl.c) ) )
-        {
-            add_id = pl.b;
-            return id;
-        }
-        else if (ch->isSameVertex(v_list[id],obj->getVertex(pl.c)) &&
-                 ch->isSameVertex(v_list[n_id],obj->getVertex(pl.a) ) )
-        {
-            add_id = pl.b;
-            return id;
-        }
-        else if (ch->isSameVertex(v_list[id],obj->getVertex(pl.b)) &&
-                 ch->isSameVertex(v_list[n_id],obj->getVertex(pl.c) ) )
-        {
-            add_id = pl.a;
-            return id;
-        }
-        else if (ch->isSameVertex(v_list[id],obj->getVertex(pl.c)) &&
-                 ch->isSameVertex(v_list[n_id],obj->getVertex(pl.b) ) )
-        {
-            add_id = pl.a;
-            return id;
+        if (v_list[id] == obj->getVertex(pl.c)){
+                if (v_list[n_id] == obj->getVertex(pl.b)){
+                add_id = pl.a;
+                return id;
+            }
+            else if(v_list[n_id] == obj->getVertex(pl.a)){
+                add_id = pl.b;
+                return id;
+            }
         }
     }
     return -1;
+}
+
+string CombinedPolygon::toString(){
+    string ret;
+
 }

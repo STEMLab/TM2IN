@@ -28,7 +28,7 @@ private:
     double threshold_vertex = 0.0;
     double threshold_coplanar_degree = 0.0;
 
-    static bool compare_vertex(vertex_type a, vertex_type b);
+    static bool compare_vertex(vertex_type* a, vertex_type* b);
 
 public:
     Checker(double a, double b){
@@ -36,7 +36,7 @@ public:
         threshold_coplanar_degree = b;
     }
 
-    bool isExistDuplication(std::vector<vertex_type> vertex);
+    bool isExistDuplication(std::vector<vertex_type*> vertex);
 
     bool isSameX(vertex_type a, vertex_type b, vertex_type c);
     bool isSameY(vertex_type a, vertex_type b, vertex_type c);

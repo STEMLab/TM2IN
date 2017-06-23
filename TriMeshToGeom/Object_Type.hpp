@@ -22,7 +22,7 @@ public:
     OBJCollection* objcl;
 
     std::vector<polygon_type> tri_list;
-    std::vector<vertex_type> *vertex_list_ptr;
+    std::vector<vertex_type*> *vertex_list_ptr;
 
     obj_type(){}
 
@@ -36,7 +36,7 @@ public:
         objcl = pob;
     }
 
-    void setVertexList(std::vector<vertex_type> *vt_list){
+    void setVertexList(std::vector<vertex_type*> *vt_list){
         vertex_list_ptr = vt_list;
     }
 

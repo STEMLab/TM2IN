@@ -14,24 +14,24 @@
 
 using namespace std;
 
-bool Checker::compare_vertex(vertex_type a, vertex_type b){
-    if (a.x < b.x){
+bool Checker::compare_vertex(vertex_type* a, vertex_type* b){
+    if (a->x < b->x){
         return true;
     }
-    else if (a.x > b.x){
+    else if (a->x > b->x){
         return false;
     }
     else{
-        if (a.y < b.y)
+        if (a->y < b->y)
         {
             return true;
         }
-        else if (a.y > b.y)
+        else if (a->y > b->y)
         {
             return false;
         }
         else{
-            if (a.z < b.z)
+            if (a->z < b->z)
             {
                 return true;
             }
@@ -42,20 +42,17 @@ bool Checker::compare_vertex(vertex_type a, vertex_type b){
     }
 }
 
-bool Checker::isExistDuplication(vector<vertex_type> vertex){
+bool Checker::isExistDuplication(vector<vertex_type*> vertex){
     sort(vertex.begin(), vertex.end(), this->compare_vertex);
     for (int i = 0 ; i < vertex.size() - 1 ; i++)
     {
         int j = i + 1;
-        if (vertex[i].x == vertex[j].x){
-            if (vertex[i].y == vertex[j].y){
-                if (vertex[i].z == vertex[j].z){
-                    cout << i << ", " << j << endl;
-                    Printer::printVertex(vertex[i]);
-                    Printer::printVertex(vertex[j]);
-                    return true;
-                }
-            }
+        if (isSameVertex(vertex[i],vertex[j]))
+        {
+            cout << i << ", " << j << endl;
+            Printer::printVertex(vertex[i]);
+            Printer::printVertex(vertex[j]);
+            return true;
         }
     }
     return false;
@@ -63,7 +60,7 @@ bool Checker::isExistDuplication(vector<vertex_type> vertex){
 
 bool Checker::isSameVertex(vertex_type* v1, vertex_type* v2){
     double thres = this->threshold_vertex;
-    if (fabs(v1->z - v2->z) <= thres && fabs(v1->x - v2->x) <= thres && fabs(v1->y - v1->y) <=thres){
+    if (fabs(v1->z - v2->z) <= thres && fabs(v1->x - v2->x) <= thres && fabs(v1->y - v2->y) <=thres){
         return true;
     }
     else
@@ -72,7 +69,7 @@ bool Checker::isSameVertex(vertex_type* v1, vertex_type* v2){
 
 bool Checker::isSameVertex(vertex_type& v1, vertex_type& v2){
     double thres = this->threshold_vertex;
-    if (fabs(v1.z - v2.z) <= thres && fabs(v1.x - v2.x) <= thres && fabs(v1.y - v1.y) <=thres){
+    if (fabs(v1.z - v2.z) <= thres && fabs(v1.x - v2.x) <= thres && fabs(v1.y - v2.y) <=thres){
         return true;
     }
     else
@@ -96,6 +93,10 @@ bool Checker::isCoplanar(Vector_3& nv1, Vector_3& nv2){
 
 
 
+
+
+
+//TODO
 
 bool Checker::isSameXY(vertex_type a, vertex_type b){
     double thres = this->threshold_vertex;

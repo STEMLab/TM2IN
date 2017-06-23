@@ -12,6 +12,7 @@
 
 #include "ObjectCollection.h"
 #include "Model.h"
+#include "JSONMaker.h"
 #include "TVRCollection.hpp"
 #include "Object_Type.hpp"
 #include "3dsloader.h"
@@ -23,17 +24,23 @@ int main(int argc, const char * argv[]) {
     char path[] = "../Resource/teevr/tvr/main_tvr.tvr";
     //char path[] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/main_tvr.tvr";
 
+    Checker* ch = new Checker(0.000001, 5.0);
     OBJCollection* objc = new TVRCollection();
-    if (objc->loadFile(path) == -1){
+
+    cout << "Load TVR File.." << endl;
+    if (objc->loadFile(path, ch) == -1){
         cout << "Load File Error";
         return -1;
     }
 
-    vector<pair<string, vector<CombinedPolygon*>> > cp = objc->makeSurfaces(new Checker(0.0, 5.0));
-
+    vector<pair<string, vector<CombinedPolygon*>> > cp = objc->makeSurfaces(ch);
+    string json_file = "polygon.temp";
+    if (JSONMaker::printJSON(cp, json_file)) {
+        return -1;
+    }
 
     //objc->print();
 
-    std::cout << "Hello, World!\n";
+    std::cout << "End!\n";
     return 0;
 }

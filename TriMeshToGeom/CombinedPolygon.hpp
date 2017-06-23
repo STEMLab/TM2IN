@@ -12,6 +12,7 @@
 #include "Model.h"
 
 #include <vector>
+#include <string>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Vector_3.h>
 
@@ -35,10 +36,11 @@ public:
         return v_list.size();
     }
 
-    long findShareLine(polygon_type pl, Checker* ch, unsigned long& add_id);
-    bool combine(polygon_type pl, Checker* ch);
-    bool isCoplanar(polygon_type pl, Checker* ch);
+    long findShareLine(polygon_type& pl, Checker* ch, unsigned long& add_id);
+    bool combine(polygon_type& pl, Checker* ch);
+    bool isCoplanar(polygon_type& pl, Checker* ch);
     Vector_3 getNormalVector(polygon_type& pl);
+    std::string toString();
 };
 
 
