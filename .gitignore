@@ -6,6 +6,8 @@ DerivedData/
 *.3DS
 *.tvr
 **/pano8K_images
+*.json
+
 
 #Code Blocks
 *.cbp

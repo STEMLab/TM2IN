@@ -23,11 +23,22 @@ bool CombinedPolygon::combine(polygon_type& pl, Checker* ch)
 
     if (isCoplanar(pl, ch))
     {
+        if (isShareTwoLine(index, add_id)){
+            if (index + 1 >= this->v_list.size())
+            {
+                index -= this->v_list.size();
+            }
+            Vector_3 pl_nv = this->getNormalVector(pl);
+            if (pl_nv == CGAL::NULL_VECTOR) return true;
+            this->v_list.erase(v_list.begin() + index);
+            av_normal = av_normal + pl_nv;
+            return true;
+        }
         vertex_type* vn = obj->getVertex(add_id);
         Vector_3 pl_nv = this->getNormalVector(pl);
-        if (pl_nv == CGAL::NULL_VECTOR) return true;
+        if (pl_nv == CGAL::NULL_VECTOR) return true; //Not combine but true
         av_normal = av_normal + pl_nv;
-        this->v_list.insert(v_list.begin() +index, vn);
+        this->v_list.insert(v_list.begin() + index, vn);
         return true;
     }
 
@@ -37,6 +48,13 @@ bool CombinedPolygon::combine(polygon_type& pl, Checker* ch)
 bool CombinedPolygon::isCoplanar(polygon_type& pl, Checker* ch){
     Vector_3 pl_nv = this->getNormalVector(pl);
     return ch->isCoplanar(pl_nv, av_normal);
+}
+
+bool CombinedPolygon::isShareTwoLine(long index, unsigned long add_id){
+    if (index + 2 >= this->v_list.size()){
+        index -= this->v_list.size();
+    }
+    return ( v_list[index] == obj->getVertex(add_id) );
 }
 
 Vector_3 CombinedPolygon::getNormalVector(polygon_type& pl){
@@ -116,5 +134,17 @@ long CombinedPolygon::findShareLine(polygon_type& pl, Checker* ch, unsigned long
 
 string CombinedPolygon::toString(){
     string ret;
-
+    for (unsigned int i = 0 ; i < this->v_list.size() ; i++){
+        ret.append("[");
+        double x = this->v_list[i]->x;
+        double y = this->v_list[i]->y;
+        double z = this->v_list[i]->z;
+        ret.append(to_string(x));
+        ret.append(",");
+        ret.append(to_string(y));
+        ret.append(",");
+        ret.append(to_string(z));
+        ret.append("] , ");
+    }
+    return ret;
 }

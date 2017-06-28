@@ -41,6 +41,7 @@ public:
     bool isCoplanar(polygon_type& pl, Checker* ch);
     Vector_3 getNormalVector(polygon_type& pl);
     std::string toString();
+    bool isShareTwoLine(long index, unsigned long add_id);
 };
 
 
