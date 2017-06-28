@@ -21,7 +21,7 @@
 using namespace std;
 
 int main(int argc, const char * argv[]) {
-    char path[] = "../Resource/teevr/tvr/main_tvr.tvr";
+    char path[] = "../Resource/teevr/tvr/test_tvr.tvr";
     //char path[] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/main_tvr.tvr";
 
     Checker* ch = new Checker(0.000001, 5.0);
@@ -34,7 +34,7 @@ int main(int argc, const char * argv[]) {
     }
 
     vector<pair<string, vector<CombinedPolygon*>> > cp = objc->makeSurfaces(ch);
-    string json_file = "polygon.temp";
+    string json_file = "../polygon_temp.json";
     if (JSONMaker::printJSON(cp, json_file)) {
         return -1;
     }
