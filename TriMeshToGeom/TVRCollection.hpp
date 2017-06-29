@@ -18,6 +18,7 @@ public:
     vector<pair<string, vector<CombinedPolygon*>> > makeSurfaces(Checker* check);
     int loadFile(char*, Checker* check);
     void print();
+    void removeVertexList();
 
 private:
     vertex_type* findSameVertex(Checker* check, vertex_type& vt);

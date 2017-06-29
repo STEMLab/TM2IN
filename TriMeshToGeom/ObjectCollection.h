@@ -25,6 +25,7 @@ public:
     virtual vector<pair<string, vector<CombinedPolygon*>> > makeSurfaces(Checker* check) = 0;
     virtual int loadFile(char* filename, Checker* check) = 0;
     virtual void print() = 0;
+    virtual void removeVertexList() = 0;
 };
 
 #endif /* ObjectCollection_h */

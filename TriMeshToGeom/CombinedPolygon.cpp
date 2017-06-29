@@ -24,8 +24,7 @@ bool CombinedPolygon::combine(polygon_type& pl, Checker* ch)
     if (isCoplanar(pl, ch))
     {
         if (isShareTwoLine(index, add_id)){
-            if (index + 1 >= this->v_list.size())
-            {
+            if (index + 1 >= this->v_list.size()){
                 index -= this->v_list.size();
             }
             Vector_3 pl_nv = this->getNormalVector(pl);
@@ -55,6 +54,32 @@ bool CombinedPolygon::isShareTwoLine(long index, unsigned long add_id){
         index -= this->v_list.size();
     }
     return ( v_list[index] == obj->getVertex(add_id) );
+}
+
+void CombinedPolygon::cleaning(){
+    Point_3 center = getCenterPoint();
+    Plane_3 plane(center, this->av_normal);
+
+    for (unsigned long index = 0 ; index < this->v_list.size() ; index++ ){
+        Point_3 point(this->v_list[index]->x,this->v_list[index]->y,this->v_list[index]->z);
+        Point_3 projected = plane.projection(point);
+        vertex_type* vertex = new vertex_type(projected.x(), projected.y(), projected.z());
+        this->v_list[index] = vertex;
+    }
+}
+
+Point_3 CombinedPolygon::getCenterPoint(){
+    double x=0.0,y=0.0,z=0.0;
+    for (unsigned long index = 0 ; index < this->v_list.size() ; index++ ){
+        x += this->v_list[index]->x;
+        y += this->v_list[index]->y;
+        z += this->v_list[index]->z;
+    }
+    x = x/this->v_list.size();
+    y = y/this->v_list.size();
+    z = z/this->v_list.size();
+    Point_3 p(x,y,z);
+    return p;
 }
 
 Vector_3 CombinedPolygon::getNormalVector(polygon_type& pl){

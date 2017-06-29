@@ -34,6 +34,17 @@ int main(int argc, const char * argv[]) {
     }
 
     vector<pair<string, vector<CombinedPolygon*>> > cp = objc->makeSurfaces(ch);
+
+    cout << "Cleaning..." << endl;
+    for (unsigned int i = 0 ; i < cp.size() ; i++){
+        for (unsigned int j = 0 ; j < cp[i].second.size() ; j++){
+            cp[i].second[j]->cleaning();
+        }
+    }
+
+    cout << "Removing..." << endl;
+    objc->removeVertexList();
+
     string json_file = "../polygon_temp.json";
     if (JSONMaker::printJSON(cp, json_file)) {
         return -1;

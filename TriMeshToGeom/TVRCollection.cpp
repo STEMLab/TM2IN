@@ -102,6 +102,20 @@ int TVRCollection::loadFile(char *filename, Checker* check){
     return 0;
 }
 
+void TVRCollection::removeVertexList(){
+    sort( vertex.begin(), vertex.end() );
+    vertex.erase( unique( vertex.begin(), vertex.end() ), vertex.end() );
+
+    for (int i = 0 ; i < this->vertex.size() ; i++){
+        if (this->vertex[i] != NULL){
+            delete this->vertex[i];
+            this->vertex[i] = NULL;
+        }
+
+    }
+    vertex.clear();
+}
+
 vertex_type* TVRCollection::findSameVertex(Checker* check, vertex_type& vt){
     for (int i = 0 ; i < this->vertex.size() ; i++){
         if (check->isSameVertex(*this->vertex[i], vt) ){

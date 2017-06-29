@@ -15,11 +15,13 @@
 #include <string>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Vector_3.h>
+#include <CGAL/Plane_3.h>
+#include <CGAL/Kernel/global_functions.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point_3;
 typedef Kernel::Vector_3 Vector_3;
-
+typedef Kernel::Plane_3 Plane_3;
 class CombinedPolygon{
 public:
     std::vector<vertex_type*> v_list;
@@ -42,6 +44,8 @@ public:
     Vector_3 getNormalVector(polygon_type& pl);
     std::string toString();
     bool isShareTwoLine(long index, unsigned long add_id);
+    void cleaning();
+    Point_3 getCenterPoint();
 };
 
 

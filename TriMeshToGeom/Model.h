@@ -7,6 +7,13 @@
 class vertex_type{
 public:
     double x = 0.0,y =0.0 ,z = 0.0;
+    vertex_type(double px, double py, double pz){
+        x = px;
+        y = py;
+        z = pz;
+    }
+    vertex_type(){
+    }
 };
 //typedef struct {
 //    double x,y,z;
