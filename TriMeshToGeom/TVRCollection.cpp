@@ -152,6 +152,8 @@ void TVRCollection::makeTriangle(string& input, polygon_type& pt){
     pt.a = stol(x[1]);
     pt.b = stol(x[2]);
     pt.c = stol(x[3]);
+
+    x.clear();
 }
 
 void TVRCollection::makeVertex(string& input, vertex_type& vt){
@@ -166,10 +168,13 @@ void TVRCollection::makeVertex(string& input, vertex_type& vt){
     vt.x = atof(x[1].c_str());
     vt.y = stod(x[2]);
     vt.z = stod(x[3]);
+    x.clear();
 }
 
 string TVRCollection::getGroupName(string& input){
     std::vector<std::string> x = split(input, ' ');
+    string x_1 = x[1];
+    x.clear();
     return x[1];
 }
 
