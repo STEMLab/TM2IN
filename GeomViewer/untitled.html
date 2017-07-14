@@ -1,95 +1,214 @@
 <html>
-	<head>
-		<title>My first three.js app</title>
-		<style>
-			body { margin: 0; }
-			canvas { width: 100%; height: 100% }
-		</style>
-	</head>
-	<body>
-		<div id="container"></div>
-		<script src="js/three.js"></script>
-		<script src="js/jquery.js"></script>
-		<script src="js/jquery.mousewheel.js"></script>
-		<script src="js/TrackballControls.js"></script>
-		<script>
 
+<head>
+	<title>My first three.js app</title>
+	<style>
+		body {
+			margin: 0;
+		}
+
+		canvas {
+			width: 100%;
+			height: 100%
+		}
+	</style>
+</head>
+
+<body>
+	<div id="container"></div>
+	<script src="js/lib/three.js"></script>
+	<script src="js/lib/earcut.js"></script>
+	<script src="js/lib/jquery.js"></script>
+	<script src="js/lib/jquery.mousewheel.js"></script>
+	<script src="js/lib/TrackballControls.js"></script>
+	<script>
 		var container, stats;
 
 		var camera, controls, scene, renderer;
 
 		var cross;
-
-		init();
-		animate();
+		var jsonfile;
+		$.getJSON("data/test_10.0_v2.1.json", function(data) {
+			//console.log(data);
+			jsonfile = data;
+			init();
+			animate();
+		})
 
 		function init() {
+			camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
+			camera.position.set(200,200,400);
+		//	camera.lookAt(0, 0, 0);
 
-			camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
-			camera.position.z = 500;
+			controls = new THREE.TrackballControls(camera);
 
-			controls = new THREE.TrackballControls( camera );
-
-			controls.rotateSpeed = 1.0;
-			controls.zoomSpeed = 1.2;
-			controls.panSpeed = 0.8;
+			controls.rotateSpeed = 6.0;
+			controls.zoomSpeed = 2.0;
+			controls.panSpeed = 1.8;
 
 			controls.noZoom = false;
 			controls.noPan = false;
 
-			controls.staticMoving = true;
+			controls.staticMoving = false;
 			controls.dynamicDampingFactor = 0.3;
 
-			controls.keys = [ 65, 83, 68 ];
+			controls.keys = [65, 83, 68];
 
-			controls.addEventListener( 'change', render );
+			controls.addEventListener('change', render);
 
 			// world
-
 			scene = new THREE.Scene();
-			scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
 
-			var circle = new THREE.Shape();
-			var radius = 6;
 
-			for (var i = 0; i < 16; i++) {
-				var pct = (i + 1) / 16;
-				var theta = pct * Math.PI * 2.0;
-				var x = radius * Math.cos(theta);
-				var y = radius * Math.sin(theta);
-				if (i == 0) {
-					circle.moveTo(x, y);
-				} else {
-					circle.lineTo(x, y);
+			scene.fog = new THREE.FogExp2(0xcccccc, 0.0002);
+			//
+			var space = jsonfile.spaces;
+			for (var i = 0; i < space.length; i++) {
+				var polygon_list = space[i].polygons;
+				for (var j = 0; j < polygon_list.length; j++) {
+					var coordinates = polygon_list[j].coord;
+					coordinates = scaleUp(coordinates, 100);
+
+					var normal = polygon_list[j].normal;
+					var triangled_vertices = triangulate(coordinates, normal);
+					//if (triangled_vertices == null) continue;
+
+					var geometry = new THREE.BufferGeometry();
+					var vertices = new Float32Array(triangled_vertices);
+
+					geometry.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
+					var material = new THREE.MeshBasicMaterial({
+						color: Math.random() * 0xffffff
+						,side: THREE.DoubleSide
+					});
+					var mesh = new THREE.Mesh(geometry, material);
+					scene.add(mesh);
+					// if (j == 10000) break;
 				}
 			}
 
 
-			var geometry = new THREE.ShapeGeometry(circle);
-			var material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-			var mesh = new THREE.Mesh(geometry, material);
-			scene.add( mesh );
 
+			//
+			// var poly_shape = new THREE.Shape();
+			// if (c_id == 0) poly_shape.moveTo(coord[0], coord[1], coord[2]);
+			// else {
+			// 	poly_shape.lineTo(coord[0], coord[1], coord[2]);
+			// }
+			// var geometry = new THREE.ShapeGeometry(poly_shape);
+			// var ran_color = Math.random() * 0xffffff;
+			// var material = new THREE.MeshBasicMaterial({
+			// 	color: ran_color,
+			// 	side: THREE.DoubleSide,
+			// 	shading: THREE.FlatShading
+			// });
+			// //var material = new THREE.MeshNormalMaterial();
+			// var mesh = new THREE.Mesh(geometry, material);
+			// scene.add(mesh);
 
-		
+			// lights
+			//
+			// var light = new THREE.DirectionalLight( 0xffffff );
+			// light.position.set( 1, 1, 10 );
+			// scene.add( light );
+			//
+			// var light = new THREE.DirectionalLight( 0x002288 );
+			// light.position.set( -1, -1, 10 );
+			// scene.add( light );
+			//
+			// var light = new THREE.AmbientLight( 0x222222 );
+			// scene.add( light );
+
 			// renderer
 
-			renderer = new THREE.WebGLRenderer( { antialias: false } );
-			renderer.setClearColor( scene.fog.color );
-			renderer.setPixelRatio( window.devicePixelRatio );
-			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer = new THREE.WebGLRenderer({
+				antialias: true
+			});
+			renderer.setClearColor(0xcccccc);
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(window.innerWidth, window.innerHeight);
 
-			container = document.getElementById( 'container' );
-			container.appendChild( renderer.domElement );
+			container = document.getElementById('container');
+			container.appendChild(renderer.domElement);
 
-
-			//
-
-			window.addEventListener( 'resize', onWindowResize, false );
-			//
+			window.addEventListener('resize', onWindowResize, false);
 
 			render();
 
+		}
+
+		function triangulate(coordinates, normal){
+			var triangled_vertices =[];
+			var vertices2d = [];
+
+			var nx = Math.abs(normal[0]);
+			var ny = Math.abs(normal[1]);
+			var nz = Math.abs(normal[2]);
+
+			var max = Math.max(nx, ny, nz);
+			var minus = false;
+			if (max == nx){
+				for (var i = 0 ; i < coordinates.length ; i++){
+					vertices2d.push(coordinates[i][1]);
+					vertices2d.push(coordinates[i][2]);
+				}
+				if (normal[0] < 0) minus =true;
+			}
+			else if (max == ny){
+				for (var i = 0 ; i < coordinates.length ; i++){
+					vertices2d.push(coordinates[i][0]);
+					vertices2d.push(coordinates[i][2]);
+				}
+				if (normal[1] >= 0) minus =true;
+			}
+			else{
+				for (var i = 0 ; i < coordinates.length ; i++){
+					vertices2d.push(coordinates[i][0]);
+					vertices2d.push(coordinates[i][1]);
+				}
+				if (normal[2] < 0) minus =true;
+			}
+
+			var triangle_index = earcut(vertices2d);
+
+
+
+
+			if (minus){
+				for (var i = triangle_index.length - 1 ; i >= 0 ; i--){
+					triangled_vertices.push(coordinates[triangle_index[i]][0]);
+					triangled_vertices.push(coordinates[triangle_index[i]][1]);
+					triangled_vertices.push(coordinates[triangle_index[i]][2]);
+				}
+			}
+			else{
+				for (var i = 0 ; i<triangle_index.length ; i++){
+					triangled_vertices.push(coordinates[triangle_index[i]][0]);
+					triangled_vertices.push(coordinates[triangle_index[i]][1]);
+					triangled_vertices.push(coordinates[triangle_index[i]][2]);
+				}
+			}
+
+
+			if (triangled_vertices.length == 0){
+				console.log(vertices2d, triangle_index, "Triangulate Error");
+				//return null;
+			}
+			return triangled_vertices;
+		}
+
+		function scaleUp(coordinates, scale){
+			scale = scale || 100;
+			if (!Array.isArray(coordinates)){
+				console.log("not array");
+				return null;
+			}
+			for (var i = 0 ; i < coordinates.length ; i++){
+				coordinates[i][0] *= scale;
+				coordinates[i][1] *= scale;
+				coordinates[i][2] *= scale;
+			}
+			return coordinates;
 		}
 
 		function onWindowResize() {
@@ -97,7 +216,7 @@
 			camera.aspect = window.innerWidth / window.innerHeight;
 			camera.updateProjectionMatrix();
 
-			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setSize(window.innerWidth, window.innerHeight);
 
 			controls.handleResize();
 
@@ -107,18 +226,17 @@
 
 		function animate() {
 
-			requestAnimationFrame( animate );
+			requestAnimationFrame(animate);
 			controls.update();
 
 		}
 
 		function render() {
 
-			renderer.render( scene, camera );
+			renderer.render(scene, camera);
 
 		}
+	</script>
+</body>
 
-
-		</script>
-	</body>
 </html>
