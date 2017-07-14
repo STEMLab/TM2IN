@@ -3,27 +3,45 @@
 
 #include <fstream>
 
-int JSONMaker::printJSON(vector<pair<string, vector<CombinedPolygon*>>>& cp, string& filename){
-    ofstream fout;
-    fout.open(filename, ios::out|ios::trunc);
+int JSONMaker:: printJSON(ofstream& fout, vector<TriangleSpace*>& ts){
+    fout << "{ \n";
+    fout << " \"spaces\" : [ \n";
+    for (unsigned int index = 0 ; index < ts.size(); index++){
+        fout << "{\n";
+        fout<< " \"name\" : \"" << ts[index]->name << "\", \n" ;
 
-    if (!fout) return -1;
+        printJSON(fout, ts[index]->polygon_list);
 
-    fout << "{" <<endl;
-    fout << "\"objects\" : [" << endl;
-    for (unsigned int index = 0 ; index < cp.size(); index++){
-        fout << "{\n \"name\" : \"" << cp[index].first << "\"," << endl;
-        fout << " \"polygons\" : [";
-        for (unsigned int cp_id = 0 ; cp_id < cp[index].second.size() ; cp_id++){
-            string cp_coords = cp[index].second[cp_id]->toString();
-            fout << cp_coords;
-        }
-        fout << "] }";
-        if (index != cp.size() - 1 ) fout << "," << endl;
-        else fout << endl;
-
+        if (index != ts.size() - 1 ) fout << "}, \n";
+        else fout <<"}\n";
     }
     fout << "]" << endl;
     fout << "}" << endl;
+    return 0;
+}
+
+
+int JSONMaker::printJSON(ofstream& fout, vector<CombinedPolygon*>& cp){
+    cout << "The number of polygons : " << cp.size() <<endl;
+    //fout << "{";
+    fout << " \"polygons\" : [ \n";
+    for (unsigned int id = 0 ; id < cp.size() ; id++)
+    {
+        if (cp[id]->v_list.size() == 1) cout << "1 tri" << endl;
+
+        string cp_coords = cp[id]->toJSONString();
+        fout << cp_coords;
+
+        if (id != cp.size() - 1)
+        {
+            fout << ", \n";
+        }
+        else
+        {
+            fout <<" \n";
+        }
+    }
+    fout << "] \n";
+    //fout << "}";
     return 0;
 }

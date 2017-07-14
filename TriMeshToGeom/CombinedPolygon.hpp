@@ -9,10 +9,13 @@
 #ifndef CombinedPolygon_h
 #define CombinedPolygon_h
 
-#include "Model.h"
-
 #include <vector>
 #include <string>
+
+#include "Trinagle.h"
+#include "check.hpp"
+#include "util.h"
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Vector_3.h>
 #include <CGAL/Plane_3.h>
@@ -22,30 +25,34 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point_3;
 typedef Kernel::Vector_3 Vector_3;
 typedef Kernel::Plane_3 Plane_3;
+
+
 class CombinedPolygon{
 public:
-    std::vector<vertex_type*> v_list;
-    obj_type* obj;
-    Vector_3 av_normal;
+    std::vector<Vertex*> v_list;
+    Vector_3 av_normal = CGAL::NULL_VECTOR;
 
-    CombinedPolygon(){
+    CombinedPolygon(){ }
 
-    }
-
-    CombinedPolygon(polygon_type& pl, obj_type* p_obj);
+    CombinedPolygon(Triangle* pl);
 
     unsigned long getLength(){
         return v_list.size();
     }
 
-    long findShareLine(polygon_type& pl, Checker* ch, unsigned long& add_id);
-    bool combine(polygon_type& pl, Checker* ch);
-    bool isCoplanar(polygon_type& pl, Checker* ch);
-    Vector_3 getNormalVector(polygon_type& pl);
-    std::string toString();
-    bool isShareTwoLine(long index, unsigned long add_id);
-    void cleaning();
+    long findShareLine(Triangle* pl, Checker* ch, Vertex** add);
+    bool attachTriangle(Triangle* pl, Checker* ch);
+
+    std::string toJSONString();
+    void cleaning(Checker* ch);
     Point_3 getCenterPoint();
+
+
+private:
+    void simplify_colinear(Checker* ch);
+    bool isSameOrientation(Vertex* origin, Vertex* v1, Vertex* v2, Checker* ch);
+    bool isShareThreeLine(long index);
+    bool isShareTwoLine(long index, Vertex* add);
 };
 
 

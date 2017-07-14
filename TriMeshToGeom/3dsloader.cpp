@@ -45,10 +45,10 @@ long filelength(int f)
     return(buf.st_size);
 }
 
-vector<pair<string, obj_type*>> Load3DS (char *p_filename)
+vector<pair<string, TriangleSpace*>> Load3DS (char *p_filename)
 {
-    vector<pair<string, obj_type*>> obj_list;
-    obj_type *p_object = NULL;
+    vector<pair<string, TriangleSpace*>> obj_list;
+    TriangleSpace *p_object = NULL;
 
 	int i; //Index variable
 
@@ -102,7 +102,7 @@ vector<pair<string, obj_type*>> Load3DS (char *p_filename)
 			//-------------------------------------------
 			case 0x4000:
 				i=0;
-				p_object = new obj_type();
+				p_object = new TriangleSpace();
 				do
 				{
 					fread (&l_char, 1, 1, l_file);
@@ -144,7 +144,7 @@ vector<pair<string, obj_type*>> Load3DS (char *p_filename)
                 p_object->vertices_qty = l_qty;
 
                 printf("Number of vertices: %d\n",l_qty);
-                p_object->vertex = (vertex_type*)malloc(sizeof(vertex_type) * l_qty);
+                p_object->vertex = (Vertex*)malloc(sizeof(Vertex) * l_qty);
 
                 for (i=0; i<l_qty; i++)
                 {
@@ -171,7 +171,7 @@ vector<pair<string, obj_type*>> Load3DS (char *p_filename)
 				fread (&l_qty, sizeof (unsigned short), 1, l_file);
                 p_object->polygons_qty = l_qty;
                 printf("Number of polygons: %d\n",l_qty);
-                p_object->polygon = (polygon_type*)malloc(sizeof(polygon_type) * l_qty);
+                p_object->polygon = (Triangle*)malloc(sizeof(Triangle) * l_qty);
                 for (i=0; i<l_qty; i++)
                 {
 

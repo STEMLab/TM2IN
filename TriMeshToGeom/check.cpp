@@ -10,11 +10,10 @@
 #include <algorithm>
 #include <cmath>
 
-#define PI 3.14159265
 
 using namespace std;
 
-bool Checker::compare_vertex(vertex_type* a, vertex_type* b){
+bool Checker::compare_vertex(Vertex* a, Vertex* b){
     if (a->x < b->x){
         return true;
     }
@@ -42,23 +41,23 @@ bool Checker::compare_vertex(vertex_type* a, vertex_type* b){
     }
 }
 
-bool Checker::isExistDuplication(vector<vertex_type*> vertex){
-    sort(vertex.begin(), vertex.end(), this->compare_vertex);
-    for (int i = 0 ; i < vertex.size() - 1 ; i++)
-    {
-        int j = i + 1;
-        if (isSameVertex(vertex[i],vertex[j]))
-        {
-            cout << i << ", " << j << endl;
-            Printer::printVertex(vertex[i]);
-            Printer::printVertex(vertex[j]);
-            return true;
-        }
-    }
+bool Checker::isExistDuplication(vector<Vertex*> vertex){
+//    sort(vertex.begin(), vertex.end(), this->compare_vertex);
+//    for (int i = 0 ; i < vertex.size() - 1 ; i++)
+//    {
+//        int j = i + 1;
+//        if (isSameVertex(vertex[i],vertex[j]))
+//        {
+//            cout << i << ", " << j << endl;
+//            Printer::printVertex(vertex[i]);
+//            Printer::printVertex(vertex[j]);
+//            return true;
+//        }
+//    }
     return false;
 }
 
-bool Checker::isSameVertex(vertex_type* v1, vertex_type* v2){
+bool Checker::isSameVertex(Vertex* v1, Vertex* v2){
     double thres = this->threshold_vertex;
     if (fabs(v1->z - v2->z) <= thres && fabs(v1->x - v2->x) <= thres && fabs(v1->y - v2->y) <=thres){
         return true;
@@ -67,7 +66,7 @@ bool Checker::isSameVertex(vertex_type* v1, vertex_type* v2){
         return false;
 }
 
-bool Checker::isSameVertex(vertex_type& v1, vertex_type& v2){
+bool Checker::isSameVertex(Vertex& v1, Vertex& v2){
     double thres = this->threshold_vertex;
     if (fabs(v1.z - v2.z) <= thres && fabs(v1.x - v2.x) <= thres && fabs(v1.y - v2.y) <=thres){
         return true;
@@ -76,10 +75,9 @@ bool Checker::isSameVertex(vertex_type& v1, vertex_type& v2){
         return false;
 }
 
-bool Checker::isCoplanar(Vector_3& nv1, Vector_3& nv2){
-    double thres = this->threshold_coplanar_degree;
-    double cos = nv1 * nv2;
-    double angle = acos(cos) * 180.0/PI;
+bool Checker::isSameOrientation(Vector_3& nv1, Vector_3& nv2){
+    double thres = this->ori_degree;
+    double angle = VectorCalculation::getAngle(nv1, nv2);
     return (angle <= thres) ;
 }
 
@@ -93,12 +91,9 @@ bool Checker::isCoplanar(Vector_3& nv1, Vector_3& nv2){
 
 
 
-
-
-
 //TODO
 
-bool Checker::isSameXY(vertex_type a, vertex_type b){
+bool Checker::isSameXY(Vertex a, Vertex b){
     double thres = this->threshold_vertex;
     if (fabs(b.y - a.y) <= thres && fabs(b.x - a.x) <= thres){
         return true;
@@ -106,7 +101,7 @@ bool Checker::isSameXY(vertex_type a, vertex_type b){
     return false;
 }
 
-bool Checker::isSameYZ(vertex_type a, vertex_type b){
+bool Checker::isSameYZ(Vertex a, Vertex b){
     double thres = this->threshold_vertex;
     if (fabs(b.y - a.y) <= thres && fabs(b.z - a.z) <= thres){
         return true;
@@ -114,7 +109,7 @@ bool Checker::isSameYZ(vertex_type a, vertex_type b){
     return false;
 }
 
-bool Checker::isSameXZ(vertex_type a, vertex_type b){
+bool Checker::isSameXZ(Vertex a, Vertex b){
     double thres = this->threshold_vertex;
     if (fabs(b.x - a.x) <= thres && fabs(b.z - a.z) <= thres){
         return true;
@@ -122,7 +117,7 @@ bool Checker::isSameXZ(vertex_type a, vertex_type b){
     return false;
 }
 
-bool Checker::isStraightXY(vertex_type a, vertex_type b, vertex_type c){
+bool Checker::isStraightXY(Vertex a, Vertex b, Vertex c){
 //    double thres = this->threshold_coplanar;
 //
 //    if (isSameXY(a,b, thres)) return true;
@@ -141,7 +136,7 @@ bool Checker::isStraightXY(vertex_type a, vertex_type b, vertex_type c){
     return false;
 }
 
-bool Checker::isStraightXZ(vertex_type a, vertex_type b, vertex_type c){
+bool Checker::isStraightXZ(Vertex a, Vertex b, Vertex c){
 //    double thres = this->threshold_coplanar;
 //
 //    if (isSameXZ(a,b, thres)) return true;
@@ -160,7 +155,7 @@ bool Checker::isStraightXZ(vertex_type a, vertex_type b, vertex_type c){
     return false;
 }
 
-bool Checker::isStraightYZ(vertex_type a, vertex_type b, vertex_type c){
+bool Checker::isStraightYZ(Vertex a, Vertex b, Vertex c){
 //    double thres = this->threshold_coplanar;
 //
 //    if (isSameYZ(a,b, thres)) return true;
@@ -179,7 +174,7 @@ bool Checker::isStraightYZ(vertex_type a, vertex_type b, vertex_type c){
     return false;
 }
 
-bool Checker::isSameX(vertex_type a, vertex_type b, vertex_type c){
+bool Checker::isSameX(Vertex a, Vertex b, Vertex c){
     double thres = this->threshold_vertex;
     if (fabs(a.x - b.x) <= thres && fabs(b.x-c.x) <= thres && fabs(c.x - a.x) <=thres){
         return true;
@@ -188,7 +183,7 @@ bool Checker::isSameX(vertex_type a, vertex_type b, vertex_type c){
         return false;
 }
 
-bool Checker::isSameY(vertex_type a, vertex_type b, vertex_type c){
+bool Checker::isSameY(Vertex a, Vertex b, Vertex c){
     double thres = this->threshold_vertex;
     if (fabs(a.y - b.y) <= thres && fabs(b.y-c.y) <= thres && fabs(c.y - a.y) <=thres){
         return true;
@@ -197,7 +192,7 @@ bool Checker::isSameY(vertex_type a, vertex_type b, vertex_type c){
         return false;
 }
 
-bool Checker::isSameZ(vertex_type a, vertex_type b, vertex_type c){
+bool Checker::isSameZ(Vertex a, Vertex b, Vertex c){
     double thres = this->threshold_vertex;
     if (fabs(a.z - b.z) <= thres && fabs(b.z - c.z) <= thres && fabs(c.z - a.z) <=thres){
         return true;

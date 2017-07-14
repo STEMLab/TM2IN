@@ -11,18 +11,17 @@
 #include <string>
 
 #include "ObjectCollection.h"
-#include "Model.h"
 #include "JSONMaker.h"
 #include "TVRCollection.hpp"
-#include "Object_Type.hpp"
 #include "3dsloader.h"
 #include "check.hpp"
 
 using namespace std;
 
 int main(int argc, const char * argv[]) {
+    //Printer::extractMINtvr("../Resource/teevr/tvr/main_tvr"); return 0;
+    //char path[] = "../Resource/teevr/tvr/main_tvr_2.min.tvr";
     char path[] = "../Resource/teevr/tvr/test_tvr.tvr";
-    //char path[] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/main_tvr.tvr";
 
     Checker* ch = new Checker(0.000001, 5.0);
     OBJCollection* objc = new TVRCollection();
@@ -38,7 +37,7 @@ int main(int argc, const char * argv[]) {
     cout << "Cleaning..." << endl;
     for (unsigned int i = 0 ; i < cp.size() ; i++){
         for (unsigned int j = 0 ; j < cp[i].second.size() ; j++){
-            cp[i].second[j]->cleaning();
+            cp[i].second[j]->cleaning(ch);
         }
     }
 
@@ -46,9 +45,14 @@ int main(int argc, const char * argv[]) {
     objc->removeVertexList();
 
     string json_file = "../polygon_temp.json";
-    if (JSONMaker::printJSON(cp, json_file)) {
+    ofstream fout;
+    fout.open(json_file, ios::out|ios::trunc);
+
+    if (!fout) return -1;
+    if (JSONMaker::printJSON(fout, cp[0].second)) {
         return -1;
     }
+    fout.close();
 
     //objc->print();
 

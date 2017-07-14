@@ -9,9 +9,9 @@
 #ifndef ObjectCollection_h
 #define ObjectCollection_h
 
-#include "Model.h"
 #include "CombinedPolygon.hpp"
 #include "check.hpp"
+#include "TriangleSpace.h"
 
 #include <vector>
 #include <cstring>
@@ -21,11 +21,11 @@ using namespace std;
 
 class OBJCollection{
 public:
-    vector<pair<string, obj_type*> > obj_list;
-    virtual vector<pair<string, vector<CombinedPolygon*>> > makeSurfaces(Checker* check) = 0;
-    virtual int loadFile(char* filename, Checker* check) = 0;
-    virtual void print() = 0;
-    virtual void removeVertexList() = 0;
+    vector<Vertex*> vertex;
+    vector<TriangleSpace*> space_list;
+    int makeSurfaces(Checker* check);
+    void removeVertexList();
+    void cleaning(Checker* ch);
 };
 
 #endif /* ObjectCollection_h */
