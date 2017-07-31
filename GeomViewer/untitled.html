@@ -28,7 +28,7 @@
 
 		var cross;
 		var jsonfile;
-		$.getJSON("data/test_10.0_v2.1.json", function(data) {
+		$.getJSON("data/main_10.0_v0.2.2.json", function(data) {
 			//console.log(data);
 			jsonfile = data;
 			init();
@@ -37,11 +37,12 @@
 
 		function init() {
 			camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
-			camera.position.set(200,200,400);
-		//	camera.lookAt(0, 0, 0);
+			camera.position.z = 1200;
+			//camera.position.y = -400;
+			//camera.position.x = -700;
 
 			controls = new THREE.TrackballControls(camera);
-
+			//controls.target.set(0,0,0);
 			controls.rotateSpeed = 6.0;
 			controls.zoomSpeed = 2.0;
 			controls.panSpeed = 1.8;
@@ -71,6 +72,7 @@
 
 					var normal = polygon_list[j].normal;
 					var triangled_vertices = triangulate(coordinates, normal);
+					if (triangled_vertices == -1) continue;
 					//if (triangled_vertices == null) continue;
 
 					var geometry = new THREE.BufferGeometry();
@@ -195,6 +197,11 @@
 				//return null;
 			}
 			return triangled_vertices;
+			// if (max == ny)
+			//
+			// else {
+			// 	return -1;
+			// }
 		}
 
 		function scaleUp(coordinates, scale){

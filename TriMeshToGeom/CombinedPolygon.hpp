@@ -39,17 +39,14 @@ public:
     unsigned long getLength(){
         return v_list.size();
     }
-
-    long findShareLine(Triangle* pl, Checker* ch, Vertex** add);
     bool attachTriangle(Triangle* pl, Checker* ch);
-
     std::string toJSONString();
-    void cleaning(Checker* ch);
-    Point_3 getCenterPoint();
-
+    void makeCoplanar();
+    void simplify_colinear(Checker* ch);
 
 private:
-    void simplify_colinear(Checker* ch);
+    Point_3 getCenterPoint();
+    long findShareLine(Triangle* pl, Checker* ch, Vertex** add);
     bool isSameOrientation(Vertex* origin, Vertex* v1, Vertex* v2, Checker* ch);
     bool isShareThreeLine(long index);
     bool isShareTwoLine(long index, Vertex* add);

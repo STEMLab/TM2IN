@@ -112,10 +112,17 @@ vector<vector<Triangle*>> TriangleSpace::separateByNormal_6()
 
 void TriangleSpace::cleaning(Checker* check)
 {
+
     for (int i = 0 ; i < (int)this->polygon_list.size() ; i++)
     {
-        this->polygon_list[i]->cleaning(check);
+        //make Each Polygon Coplanar
+        this->polygon_list[i]->makeCoplanar(check);
+
+        //this->polygon_list[i]->simplify_colinear();
     }
+
+    //Classification
+
 }
 
 

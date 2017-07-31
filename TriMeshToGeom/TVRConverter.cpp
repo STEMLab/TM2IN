@@ -14,7 +14,7 @@ using namespace std;
 int main(int argc, const char * argv[]) {
     //TODO make argv
     double degree_param = 10.0;
-    string version = "_v2.2";
+    string version = "_v0.2.2";
     char path[50] = "../Resource/teevr/tvr/";
     char file_name[] = "main";
 

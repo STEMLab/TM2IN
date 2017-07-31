@@ -127,7 +127,7 @@ bool CombinedPolygon::isShareTwoLine(long index, Vertex* add_id){
 }
 
 
-void CombinedPolygon::cleaning(Checker* ch){
+void CombinedPolygon::makeCoplanar(){
     Point_3 center = getCenterPoint();
     Plane_3 plane(center, this->av_normal);
 
@@ -140,9 +140,6 @@ void CombinedPolygon::cleaning(Checker* ch){
         Vertex* vertex = new Vertex(projected.x(), projected.y(), projected.z());
         this->v_list[index] = vertex;
     }
-
-
-    //this->simplify_colinear(ch);
 }
 
 void CombinedPolygon::simplify_colinear(Checker* ch)
