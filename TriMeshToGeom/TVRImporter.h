@@ -1,18 +1,18 @@
 #ifndef TVRIMPORTER_H
 #define TVRIMPORTER_H
 
-#include "DataImporter.h"
+#include "Importer.h"
 #include "util.h"
 
 using namespace std;
 
-class TVRImporter : public DataImporter
+class TVRImporter : public Importer
 {
     public:
         TVRImporter();
         virtual ~TVRImporter();
 
-        OBJCollection* import(char*, Checker*);
+        OBJCollection* import(const char*, Checker*);
         static int extractMINtvr(string filename);
     protected:
         void makeTriangle(string& input, vector<Vertex*>& vertex, Triangle& tri);

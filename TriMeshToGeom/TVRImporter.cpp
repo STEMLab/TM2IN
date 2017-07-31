@@ -16,7 +16,7 @@ TVRImporter::~TVRImporter()
     //dtor
 }
 
-OBJCollection* TVRImporter::import(char* f_path, Checker* check){
+OBJCollection* TVRImporter::import(const char* f_path, Checker* check){
     ifstream fin;
     fin.open(f_path);
 

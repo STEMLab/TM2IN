@@ -15,7 +15,7 @@ ManagerImpl::~ManagerImpl()
     //dtor
 }
 
-int ManagerImpl::import(char* file_path){
+int ManagerImpl::import(const char* file_path){
     this->objcl = di->import(file_path, this->check);
     if (this->objcl == NULL) return -1;
     else return 0;

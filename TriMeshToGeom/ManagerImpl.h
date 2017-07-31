@@ -9,7 +9,7 @@ public:
     ManagerImpl();
     virtual ~ManagerImpl();
 
-    int import(char*);
+    int import(const char*);
     void makeSurfaces();
     void cleaning();
     int exportJSON(string f_path);
