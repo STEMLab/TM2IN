@@ -21,17 +21,19 @@ int ManagerImpl::import(const char* file_path){
     else return 0;
 }
 
-void ManagerImpl::makeSurfaces(){
-    objcl->makeSurfaces(this->check);
+int ManagerImpl::makeSurfaces(){
+    return objcl->makeSurfaces(this->check);
 }
 
 
-void ManagerImpl::cleaning(){
-    objcl->cleaning(check);
-    cout << "Removing..." << endl;
-    objcl->removeVertexList();
+int ManagerImpl::cleaning(){
+    if (objcl->cleaning(check) == -1) return -1;
 
-    //TODO : combine CombinedPolygons
+    //objcl->free();
+
+    //TODO : Pinning and Make Graph
+    //objcl->makeGraph(check);
+    return 0;
 }
 
 int ManagerImpl::exportJSON(string f_path)

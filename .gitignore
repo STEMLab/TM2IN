@@ -9,6 +9,8 @@ DerivedData/
 *.json
 Resource/
 
+#Result
+Result/
 
 #Code Blocks
 *.cbp

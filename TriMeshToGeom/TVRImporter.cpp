@@ -2,7 +2,6 @@
 
 #include <fstream>
 #include <iostream>
-#include "TVRCollection.hpp"
 #include "TriangleSpace.h"
 #include "vertex.h"
 

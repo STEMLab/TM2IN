@@ -44,12 +44,16 @@ public:
     void makeCoplanar();
     void simplify_colinear(Checker* ch);
 
+    bool validate(Checker* ch);
 private:
     Point_3 getCenterPoint();
     long findShareLine(Triangle* pl, Checker* ch, Vertex** add);
     bool isSameOrientation(Vertex* origin, Vertex* v1, Vertex* v2, Checker* ch);
     bool isShareThreeLine(long index);
     bool isShareTwoLine(long index, Vertex* add);
+    bool checkMakeHole(long index, Vertex* add);
+
+
 };
 
 

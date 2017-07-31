@@ -24,8 +24,9 @@ public:
     vector<Vertex*> vertex;
     vector<TriangleSpace*> space_list;
     int makeSurfaces(Checker* check);
-    void removeVertexList();
-    void cleaning(Checker* ch);
+    void free();
+    int cleaning(Checker* ch);
+    void makeGraph(Checker* ch);
 };
 
 #endif /* ObjectCollection_h */

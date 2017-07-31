@@ -30,7 +30,7 @@ int OBJCollection::makeSurfaces(Checker* check){
 }
 
 
-void OBJCollection::removeVertexList(){
+void OBJCollection::free(){
     sort( vertex.begin(), vertex.end() );
     vertex.erase( unique( vertex.begin(), vertex.end() ), vertex.end() );
 
@@ -42,13 +42,19 @@ void OBJCollection::removeVertexList(){
 
     }
     vertex.clear();
-}
 
-void OBJCollection::cleaning(Checker* ch){
     for (auto it = space_list.begin() ; it != space_list.end() ; it++)
     {
-        (*it)->cleaning(ch);
+
     }
+}
+
+int OBJCollection::cleaning(Checker* ch){
+    for (auto it = space_list.begin() ; it != space_list.end() ; it++)
+    {
+        if ((*it)->makePolygonsCoplanar(ch) == -1) return -1;
+    }
+    return 0;
 }
 
 

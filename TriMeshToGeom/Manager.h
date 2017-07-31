@@ -13,10 +13,10 @@ class Manager
         OBJCollection* objcl;
 
         virtual int import(const char*) = 0;
-        virtual void makeSurfaces() = 0;
+        virtual int makeSurfaces() = 0;
         virtual void makeSolids() = 0;
         virtual int exportJSON(string f_path) = 0;
-        virtual void cleaning(){ }
+        virtual int cleaning(){ }
         void setImporter(Importer* p_di){ di = p_di; }
         void setChecker(Checker* ch){ check = ch; }
     protected:

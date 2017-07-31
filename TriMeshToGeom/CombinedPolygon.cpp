@@ -44,7 +44,7 @@ bool CombinedPolygon::attachTriangle(Triangle* pl, Checker* ch)
         Vertex* add;
         long index = findShareLine(pl, ch, &add);
 
-        if (index == -1) return false;
+        if (index == -1 || checkMakeHole(index, add)) return false;
 
         Vector_3 pl_nv = pl->getNormal();
         if (pl_nv == CGAL::NULL_VECTOR) {
@@ -126,6 +126,37 @@ bool CombinedPolygon::isShareTwoLine(long index, Vertex* add_id){
     return ( v_list[index] == add_id );
 }
 
+bool CombinedPolygon::checkMakeHole(long index, Vertex* add_id){
+    for (int i = 0 ; i < this->v_list.size() ; i++)
+    {
+        if (v_list[i] == add_id)
+        {
+            index += 2;
+            if (index >= (long)this->v_list.size())
+            {
+                index -= this->v_list.size();
+            }
+            if (index != i){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool CombinedPolygon::validate(Checker* ch){
+    for (int i = 0 ; i < this->v_list.size() ; i++){
+        for (int j = 0 ; j < this->v_list.size() ; j++){
+            if (i == j) continue;
+            if (v_list[i] == v_list[j]) return false;
+            if (ch->isSameVertex(v_list[i], v_list[j])){
+                cout << "checker think this is same" << endl;
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
 void CombinedPolygon::makeCoplanar(){
     Point_3 center = getCenterPoint();

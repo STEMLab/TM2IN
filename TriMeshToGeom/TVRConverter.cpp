@@ -14,10 +14,11 @@ using namespace std;
 int main(int argc, const char * argv[]) {
     //TODO make argv
     double degree_param = 10.0;
-    string version = "_v0.2.2";
-    //const char path[50] = "../Resource/teevr/tvr/";
-    const char path[100] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/";
-    const char result_path[50] = "/Users/dong/Documents/dev/TriMeshToGeom/Result/";
+    string version = "_v0.2.3";
+    const char path[50] = "../Resource/teevr/tvr/";
+    //const char path[100] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/";
+    const char result_path[50] = "../Result/";
+    //const char result_path[50] = "/Users/dong/Documents/dev/TriMeshToGeom/Result/";
     char file_name[] = "test";
 
     Manager* manager = new ManagerImpl();
@@ -30,10 +31,10 @@ int main(int argc, const char * argv[]) {
         return -1;
     }
 
-    manager->makeSurfaces();
+    if (manager->makeSurfaces() == -1) return -1;
 
     //Make each surfaces planar and Remove the tilted surface (and remove co-linear).
-    manager->cleaning();
+    if (manager->cleaning() == -1) return -1;
 
 
     //TODO Pinning

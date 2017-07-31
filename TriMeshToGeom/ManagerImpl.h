@@ -10,8 +10,8 @@ public:
     virtual ~ManagerImpl();
 
     int import(const char*);
-    void makeSurfaces();
-    void cleaning();
+    int makeSurfaces();
+    int cleaning();
     int exportJSON(string f_path);
     //TODO
     void makeSolids() {};

@@ -21,8 +21,7 @@ public:
     TriangleSpace(string pname) {name = pname;}
     int makePolygons(Checker* ch);
     CombinedPolygon* makeOneBigPolygon(vector<Triangle*> tri_list, CombinedPolygon* cp, bool* checked, int& id, Checker* check);
-    void cleaning(Checker* check);
-
+    int makePolygonsCoplanar(Checker* check);
 protected:
     void printProcess(unsigned long, unsigned long);
     std::vector<std::vector<Triangle*>> separateByNormal_6();
