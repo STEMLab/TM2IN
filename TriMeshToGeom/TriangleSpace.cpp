@@ -53,7 +53,7 @@ int TriangleSpace::makePolygons(Checker* check)
             }
             if (newcp != NULL) this->polygon_list.push_back(newcp);
         }
-
+        free(checked);
     }
 
     cout << "\ndone make Polygons" << endl;
@@ -116,7 +116,7 @@ void TriangleSpace::cleaning(Checker* check)
     for (int i = 0 ; i < (int)this->polygon_list.size() ; i++)
     {
         //make Each Polygon Coplanar
-        this->polygon_list[i]->makeCoplanar(check);
+        this->polygon_list[i]->makeCoplanar();
 
         //this->polygon_list[i]->simplify_colinear();
     }

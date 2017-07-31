@@ -23,7 +23,7 @@ Vector_3 Triangle::getNormal()
     Point_3 p3c(vc->x,vc->y,vc->z);
 
     if (CGAL::collinear(p3a, p3b, p3c)){
-        this->normal == CGAL::NULL_VECTOR;
+        this->normal = CGAL::NULL_VECTOR;
     }
     else{
         this->normal = CGAL::unit_normal(p3a,p3b,p3c);
