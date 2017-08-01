@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <string>
+#include <climits>
 
 #include "Trinagle.h"
 #include "check.hpp"
@@ -31,6 +32,8 @@ class CombinedPolygon{
 public:
     std::vector<Vertex*> v_list;
     Vector_3 av_normal = CGAL::NULL_VECTOR;
+    double minx=0, miny=0, minz=0;
+    double maxx=0, maxy=0, maxz=0;
 
     CombinedPolygon(){ }
 
@@ -44,7 +47,7 @@ public:
     void makeCoplanar();
     void simplify_colinear(Checker* ch);
 
-    bool validate(Checker* ch);
+    bool checkDuplicate(Checker* ch);
 private:
     Point_3 getCenterPoint();
     long findShareLine(Triangle* pl, Checker* ch, Vertex** add);

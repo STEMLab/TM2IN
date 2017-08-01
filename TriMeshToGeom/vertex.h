@@ -5,6 +5,7 @@
 
 class Vertex{
 public:
+    long index = 0;
     double x = 0.0,y =0.0 ,z = 0.0;
     Vertex(double px, double py, double pz){
         x = px;
@@ -16,6 +17,13 @@ public:
         x = 0.0;
         y = 0.0;
         z = 0.0;
+    }
+
+    Vertex(Vertex& vt){
+        this->x = vt.x;
+        this->y = vt.y;
+        this->z = vt.z;
+        this->index = vt.index;
     }
 
     std::string toJSON();

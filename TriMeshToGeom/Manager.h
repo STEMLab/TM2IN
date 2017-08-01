@@ -16,7 +16,10 @@ class Manager
         virtual int makeSurfaces() = 0;
         virtual void makeSolids() = 0;
         virtual int exportJSON(string f_path) = 0;
-        virtual int cleaning(){ }
+        virtual int cleaning(){ return -1;}
+        virtual int exportCombined(string f_path) = 0;
+        virtual int importCombined(string f_path) = 0;
+
         void setImporter(Importer* p_di){ di = p_di; }
         void setChecker(Checker* ch){ check = ch; }
     protected:

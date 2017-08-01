@@ -116,9 +116,11 @@ int TriangleSpace::makePolygonsCoplanar(Checker* check)
 
     for (int i = 0 ; i < (int)this->polygon_list.size() ; i++)
     {
-        if (!this->polygon_list[i]->validate(check)){
-            return -1;
-        }
+//        if (!this->polygon_list[i]->checkDuplicate(check)){
+//            cout << "not Right Polygon" << endl;
+//            return -1;
+//        }
+
         //make Each Polygon Coplanar
         this->polygon_list[i]->makeCoplanar();
 

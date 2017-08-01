@@ -52,7 +52,10 @@ void OBJCollection::free(){
 int OBJCollection::cleaning(Checker* ch){
     for (auto it = space_list.begin() ; it != space_list.end() ; it++)
     {
-        if ((*it)->makePolygonsCoplanar(ch) == -1) return -1;
+        if ((*it)->makePolygonsCoplanar(ch) == -1) {
+            cout << "cleaning error" << endl;
+            return -1;
+        }
     }
     return 0;
 }

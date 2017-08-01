@@ -1,9 +1,10 @@
 #include "ManagerImpl.h"
 
-
 #include "JSONMaker.h"
-
+#include "CombinedIO.h"
 #include <fstream>
+
+using namespace std;
 
 ManagerImpl::ManagerImpl()
 {
@@ -47,5 +48,28 @@ int ManagerImpl::exportJSON(string f_path)
         return -1;
     }
     fout.close();
+    return 0;
+}
+
+int ManagerImpl::exportCombined(string f_path)
+{
+    ofstream fout;
+    fout.open(f_path, ios::out|ios::trunc|ios::binary);
+    if (!fout) return -1;
+    if (CombinedIO::exportBinary(fout, this->objcl->space_list))
+    {
+        return -1;
+    }
+    fout.close();
+    return 0;
+}
+
+int ManagerImpl::importCombined(string f_path)
+{
+    ifstream fin;
+    fin.open(f_path, ios::in|ios::binary);
+    if (!fin) return -1;
+    if (CombinedIO::importBinary(fin, this->objcl)) return 1;
+    fin.close();
     return 0;
 }

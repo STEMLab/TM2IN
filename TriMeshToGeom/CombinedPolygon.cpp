@@ -24,6 +24,10 @@ CombinedPolygon::CombinedPolygon(Triangle* pl){
     v_list.push_back(vb);
     v_list.push_back(vc);
 
+    double mx = max(max(va->x, vb->x), vc->x);
+    double my = max(max(va->y, vb->y), vc->y);
+    double mz = max(max(va->z, vb->z), vc->z);
+
     Point_3 p3a(va->x,va->y,va->z );
     Point_3 p3b(vb->x,vb->y,vb->z );
     Point_3 p3c(vc->x,vc->y,vc->z );
@@ -39,40 +43,38 @@ bool CombinedPolygon::attachTriangle(Triangle* pl, Checker* ch)
 {
     // TODO overlap check (projection)
     Vector_3 pl_nv = pl->getNormal();
-    if (ch->isSameOrientation(pl_nv, this->av_normal))
+    Vertex* add;
+    long index = findShareLine(pl, ch, &add);
+    if (index == -1) return false;
+
+    if (isShareTwoLine(index, add))
     {
-        Vertex* add;
-        long index = findShareLine(pl, ch, &add);
-
-        if (index == -1 || checkMakeHole(index, add)) return false;
-
-        Vector_3 pl_nv = pl->getNormal();
-        if (pl_nv == CGAL::NULL_VECTOR) {
-            cout << "NULL_VECTOR" << endl;
-            return true;//Not combine but true
-        }
-
-        if (isShareTwoLine(index, add))
+        if (isShareThreeLine(index))
         {
-            if (isShareThreeLine(index)){
-                //cout << "\nCover Hole       ";
-                this->v_list.erase(v_list.begin() + index);
-                this->v_list.erase(v_list.begin() + index);
-                this->v_list.erase(v_list.begin() + index);
-                av_normal = av_normal + pl_nv;
-                return true;
-            }
-            index++;
-            if (index >= (long)this->v_list.size())
-            {
-                index -= (long)this->v_list.size();
-            }
-
+            //cout << "\nCover Hole       ";
+            this->v_list.erase(v_list.begin() + index);
+            this->v_list.erase(v_list.begin() + index);
             this->v_list.erase(v_list.begin() + index);
             av_normal = av_normal + pl_nv;
             return true;
         }
+        index++;
+        if (index >= (long)this->v_list.size())
+        {
+            index -= (long)this->v_list.size();
+        }
 
+        this->v_list.erase(v_list.begin() + index);
+        av_normal = av_normal + pl_nv;
+        return true;
+    }
+
+    if (ch->isSameOrientation(pl_nv, this->av_normal))
+    {
+        if (pl_nv == CGAL::NULL_VECTOR) {
+            cout << "NULL_VECTOR" << endl;
+            return true;//Not combine but true
+        }
         av_normal = av_normal + pl_nv;
         this->v_list.insert(v_list.begin() + index + 1, add);
         return true;
@@ -144,7 +146,7 @@ bool CombinedPolygon::checkMakeHole(long index, Vertex* add_id){
     return false;
 }
 
-bool CombinedPolygon::validate(Checker* ch){
+bool CombinedPolygon::checkDuplicate(Checker* ch){
     for (int i = 0 ; i < this->v_list.size() ; i++){
         for (int j = 0 ; j < this->v_list.size() ; j++){
             if (i == j) continue;

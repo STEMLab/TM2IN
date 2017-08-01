@@ -43,14 +43,15 @@ OBJCollection* TVRImporter::import(const char* f_path, Checker* check){
                 break;
             }
             case 'v':{
-                v_count++;
-                if (v_count % 5000 == 0) cout << "Loaded vertex : " << v_count << endl;
-
                 Vertex vt;
-                this->makeVertex(inputstr, vt);
+                this->makeVertex(v_count, inputstr, vt);
 
                 Vertex* pt_v = this->findSameVertex(tvrcl->vertex, check, vt);
                 tvrcl->vertex.push_back(pt_v);
+
+                v_count++;
+                if (v_count % 5000 == 0) cout << "Loaded vertex : " << v_count << endl;
+
                 break;
             }
             case 'g':{
@@ -82,17 +83,14 @@ OBJCollection* TVRImporter::import(const char* f_path, Checker* check){
 }
 
 Vertex* TVRImporter::findSameVertex(vector<Vertex*>& vertex, Checker* check, Vertex& vt){
-    for (unsigned int i = 0 ; i < vertex.size() ; i++){
-        if (check->isSameVertex(*vertex[i], vt) ){
-            cout << "Same Vertex" << endl;
-            return vertex[i];
-        }
-    }
-
-    Vertex* new_vt = new Vertex();
-    new_vt->x = vt.x;
-    new_vt->y = vt.y;
-    new_vt->z = vt.z;
+//    for (unsigned int i = 0 ; i < vertex.size() ; i++){
+//        if (check->isSameVertex(*vertex[i], vt) ){
+//            isSame = true;
+//            cout << "Same Vertex" << endl;
+//            return vertex[i];
+//        }
+//    }
+    Vertex* new_vt = new Vertex(vt);
     return new_vt;
 }
 
@@ -119,7 +117,7 @@ void TVRImporter::makeTriangle(string& input, vector<Vertex*>& vertex, Triangle&
 }
 
 
-void TVRImporter::makeVertex(string& input, Vertex& vt){
+void TVRImporter::makeVertex(int id, string& input, Vertex& vt){
     std::stringstream ss;
     ss.str(input);
 
@@ -128,6 +126,7 @@ void TVRImporter::makeVertex(string& input, Vertex& vt){
     std::vector<std::string> x = split(line, ' ');
 
     //vt.x = stod(x[1]);
+    vt.index = id;
     vt.x = atof(x[1].c_str());
     vt.y = stod(x[2]);
     vt.z = stod(x[3]);
