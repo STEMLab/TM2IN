@@ -12,6 +12,10 @@ TriangleSpace::~TriangleSpace()
     //dtor
 }
 
+void TriangleSpace::pushTriangle(Triangle tri){
+    this->triangles.push_back(tri);
+}
+
 int TriangleSpace::makePolygonsGreedy(Checker* check){
     int combined_count = 0;
     vector<Triangle*> p_triangles;
@@ -70,7 +74,7 @@ int TriangleSpace::makePolygonsByCandidator(Checker* check)
             Vector_3 normal = this->triangles[index2].getNormal();
             if (check->isSimilarOrientation(pl_nv, normal)){
                 candidates.push_back(&this->triangles[index2]);
-                pl_nv = pl_nv + normal;
+                //pl_nv = pl_nv + normal;
                 checked[index2] = true ;
             }
             //TODO

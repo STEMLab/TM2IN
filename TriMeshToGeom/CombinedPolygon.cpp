@@ -112,16 +112,17 @@ bool CombinedPolygon::attachTriangle(Triangle* pl, Checker* ch)
 
 
     if (checkMakeHole(index, add)) return false;
-//    if (ch->isSameOrientation(pl_nv, this->av_normal))
-//    {
-    setMBB(pl);
-    av_normal = av_normal + pl_nv;
-    this->v_list.insert(v_list.begin() + index + 1, add);
-    return true;
-//    }
+
+    if (ch->isSameOrientation(pl_nv, this->av_normal))
+    {
+        setMBB(pl);
+        av_normal = av_normal + pl_nv;
+        this->v_list.insert(v_list.begin() + index + 1, add);
+        return true;
+    }
 
 
-//    return false;
+    return false;
 }
 
 bool CombinedPolygon::isShareThreeLine(ll index){
@@ -180,7 +181,7 @@ int CombinedPolygon::isShareTwoLine(ll index, Vertex* add_id){
  */
 
 bool CombinedPolygon::checkMakeHole(ll index, Vertex* add_id){
-    for (int i = 0 ; i < this->v_list.size() ; i++)
+    for (ll i = 0 ; i < this->v_list.size() ; i++)
     {
         if (v_list[i] == add_id)
         {
@@ -198,8 +199,8 @@ bool CombinedPolygon::checkMakeHole(ll index, Vertex* add_id){
 }
 
 bool CombinedPolygon::checkDuplicate(Checker* ch){
-    for (int i = 0 ; i < this->v_list.size() ; i++){
-        for (int j = 0 ; j < this->v_list.size() ; j++){
+    for (ll i = 0 ; i < this->v_list.size() ; i++){
+        for (ll j = 0 ; j < this->v_list.size() ; j++){
             if (i == j) continue;
             if (v_list[i] == v_list[j]) return false;
             if (ch->isSameVertex(v_list[i], v_list[j])){

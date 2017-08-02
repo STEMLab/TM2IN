@@ -25,6 +25,7 @@ public:
 
     int makePolygonsCoplanar(Checker* checker);
     int combineCombinedPolygon(Checker* checker);
+    void pushTriangle(Triangle tri);
 protected:
     void printProcess(ull, ull);
     CombinedPolygon* makeOneBigPolygon(vector<Triangle*> tri_list, CombinedPolygon* cp, bool* checked, int& id, Checker* check);

@@ -71,7 +71,8 @@ OBJCollection* TVRImporter::import(const char* f_path, Checker* check){
 
                 Triangle tri;
                 this->makeTriangle(inputstr, tvrcl->vertex, tri);
-                obj->triangles.push_back(tri);
+                obj->pushTriangle(tri);
+                //obj->triangles.push_back(tri);
                 break;
             }
         }
