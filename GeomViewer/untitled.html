@@ -28,8 +28,7 @@
 
 		var cross;
 		var jsonfile;
-		$.getJSON("../Result/test_2.min_10.0_v0.2.4.json", function(data) {
-			//console.log(data);
+		$.getJSON("../Result/test/test_2.min_10.0_v0.2.4.5.json", function(data) {
 			jsonfile = data;
 			init();
 			animate();
@@ -81,7 +80,7 @@
 					geometry.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
 					var material = new THREE.MeshBasicMaterial({
 						color: Math.random() * 0xffffff
-						,side: THREE.DoubleSide
+						//,side: THREE.DoubleSide
 					});
 					var mesh = new THREE.Mesh(geometry, material);
 					scene.add(mesh);

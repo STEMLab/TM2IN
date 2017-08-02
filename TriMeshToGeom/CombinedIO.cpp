@@ -11,7 +11,7 @@ typedef Kernel::Vector_3 Vector_3;
 typedef Kernel::Plane_3 Plane_3;
 
 int CombinedIO:: exportBinary(ofstream& fout, vector<TriangleSpace*>& ts){
-    long size = ts.size();
+    ll size = ts.size();
     fout.write((char*)&size, sizeof(size));
     for (int i = 0 ; i < size ; i++){
         exportBinary(fout, ts[i]->polygon_list);
@@ -20,7 +20,7 @@ int CombinedIO:: exportBinary(ofstream& fout, vector<TriangleSpace*>& ts){
 }
 
 int CombinedIO::exportBinary(ofstream& fout, std::vector<CombinedPolygon*>& polygon_list){
-    long size = polygon_list.size();
+    ll size = polygon_list.size();
     fout.write((char*)&size, sizeof(size));
     for (unsigned int i = 0; i < size ; i++){
         exportBinary(fout, polygon_list[i]->v_list);
@@ -33,16 +33,16 @@ int CombinedIO::exportBinary(ofstream& fout, std::vector<CombinedPolygon*>& poly
 }
 
 int CombinedIO::exportBinary(ofstream& fout, std::vector<Vertex*>& v_list){
-    long size = v_list.size();
+    ll size = v_list.size();
     fout.write((char*)&size, sizeof(size));
     for (unsigned int i = 0; i < size ; i++){
-        fout.write((char*)&v_list[i]->index, sizeof(long));
+        fout.write((char*)&v_list[i]->index, sizeof(ll));
     }
     return 0;
 }
 
 int CombinedIO::importBinary(ifstream& fin, OBJCollection* objcl){
-    long size;
+    ll size;
     fin.read((char*)&size, sizeof(size));
     for (int i = 0 ; i < size ; i++){
         CombinedIO::importBinary(fin, objcl->vertex, objcl->space_list[i]);
@@ -51,7 +51,7 @@ int CombinedIO::importBinary(ifstream& fin, OBJCollection* objcl){
 }
 
 int CombinedIO::importBinary(ifstream& fin, vector<Vertex*>& vertex, TriangleSpace* ts){
-    long size;
+    ll size;
     fin.read((char*)&size, sizeof(size));
     for (int i = 0 ; i < size ; i++){
         CombinedPolygon* cp = new CombinedPolygon();
@@ -62,11 +62,11 @@ int CombinedIO::importBinary(ifstream& fin, vector<Vertex*>& vertex, TriangleSpa
 }
 
 int CombinedIO::importBinary(ifstream& fin, vector<Vertex*>& vertex, CombinedPolygon* cp){
-    long size;
+    ll size;
     fin.read((char*)&size, sizeof(size));
     for (int i = 0 ; i < size; i++){
-        long index;
-        fin.read((char*)&index, sizeof(long));
+        ll index;
+        fin.read((char*)&index, sizeof(ll));
         cp->v_list.push_back(vertex[index]);
     }
 

@@ -59,6 +59,7 @@ public:
     bool isSameVertex(Vertex* v1, Vertex* v2);
 
     bool isSameOrientation(Vector_3& nv1, Vector_3& nv2);
+    bool isSimilarOrientation(Vector_3& nv1, Vector_3& nv2);
 
     bool isColinear(Vertex* origin, Vertex* v1, Vertex* v2);
 };

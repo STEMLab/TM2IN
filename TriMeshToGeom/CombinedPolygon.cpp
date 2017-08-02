@@ -71,9 +71,9 @@ void CombinedPolygon::setMBB(Triangle* pl){
 bool CombinedPolygon::attachTriangle(Triangle* pl, Checker* ch)
 {
     // check Trinagle is in near polygon or not
-    //if (!isNeighbor(pl)) return false;
+    if (!isNeighbor(pl)) return false;
 
-    // TODO overlap check (projection)
+    // TODO : overlap check (projection)
     Vector_3 pl_nv = pl->getNormal();
     if (pl_nv == CGAL::NULL_VECTOR)
     {
@@ -82,26 +82,27 @@ bool CombinedPolygon::attachTriangle(Triangle* pl, Checker* ch)
     }
 
     Vertex* add;
-    long index = findShareLine(pl, ch, &add);
+    ll index = findShareLine(pl, ch, &add);
     if (index == -1) return false;
 
-
-    if (isShareTwoLine(index, add))
+    int share_two_line = isShareTwoLine(index, add); //before : 0, next : 1, no : -1
+    if (share_two_line != -1)
     {
         setMBB(pl);
-        if (isShareThreeLine(index))
+//        if (isShareThreeLine(index))
+//        {
+//            this->v_list.erase(v_list.begin() + index);
+//            this->v_list.erase(v_list.begin() + index);
+//            this->v_list.erase(v_list.begin() + index);
+//            av_normal = av_normal + pl_nv;
+//            return true;
+//        }
+        index += share_two_line;
+        if (index >= (ll)this->v_list.size())
         {
-            this->v_list.erase(v_list.begin() + index);
-            this->v_list.erase(v_list.begin() + index);
-            this->v_list.erase(v_list.begin() + index);
-            av_normal = av_normal + pl_nv;
-            return true;
+            index -= (ll)this->v_list.size();
         }
-        index++;
-        if (index >= (long)this->v_list.size())
-        {
-            index -= (long)this->v_list.size();
-        }
+
 
         this->v_list.erase(v_list.begin() + index);
         av_normal = av_normal + pl_nv;
@@ -110,31 +111,32 @@ bool CombinedPolygon::attachTriangle(Triangle* pl, Checker* ch)
     }
 
 
-    if (ch->isSameOrientation(pl_nv, this->av_normal))
-    {
-        setMBB(pl);
-        av_normal = av_normal + pl_nv;
-        this->v_list.insert(v_list.begin() + index + 1, add);
-        return true;
-    }
+    if (checkMakeHole(index, add)) return false;
+//    if (ch->isSameOrientation(pl_nv, this->av_normal))
+//    {
+    setMBB(pl);
+    av_normal = av_normal + pl_nv;
+    this->v_list.insert(v_list.begin() + index + 1, add);
+    return true;
+//    }
 
 
-    return false;
+//    return false;
 }
 
-bool CombinedPolygon::isShareThreeLine(long index){
-    long n_index = index + 3;
+bool CombinedPolygon::isShareThreeLine(ll index){
+    ll n_index = index + 3;
     if (n_index >= (int)this->v_list.size()) n_index -= this->v_list.size();
 
     return (this->v_list[index] == this->v_list[n_index]);
 
 }
 
-long CombinedPolygon::findShareLine(Triangle* pl, Checker* ch, Vertex** add)
+ll CombinedPolygon::findShareLine(Triangle* pl, Checker* ch, Vertex** add)
 {
-    for (unsigned long id = 0 ; id < this->v_list.size() ; id++)
+    for (ull id = 0 ; id < this->v_list.size() ; id++)
     {
-        unsigned long n_id = id + 1;
+        ull n_id = id + 1;
         if (n_id == this->v_list.size()) n_id = 0;
 
         if (v_list[id] == pl->b){
@@ -159,21 +161,31 @@ long CombinedPolygon::findShareLine(Triangle* pl, Checker* ch, Vertex** add)
     return -1;
 }
 
-bool CombinedPolygon::isShareTwoLine(long index, Vertex* add_id){
+int CombinedPolygon::isShareTwoLine(ll index, Vertex* add_id){
+    ll b_index = index - 1;
+    if (b_index < 0) b_index = this->v_list.size() - 1;
+
     index += 2;
-    if (index >= (long)this->v_list.size()){
+    if (index >= (ll)this->v_list.size()){
         index -= this->v_list.size();
     }
-    return ( v_list[index] == add_id );
+
+    if ( v_list[b_index] == add_id ) return 0;
+    else if ( v_list[index] == add_id ) return 1;
+    else return -1;
 }
 
-bool CombinedPolygon::checkMakeHole(long index, Vertex* add_id){
+/**
+ * if this Vertex(add_id) try to make hole, return false.
+ */
+
+bool CombinedPolygon::checkMakeHole(ll index, Vertex* add_id){
     for (int i = 0 ; i < this->v_list.size() ; i++)
     {
         if (v_list[i] == add_id)
         {
             index += 2;
-            if (index >= (long)this->v_list.size())
+            if (index >= (ll)this->v_list.size())
             {
                 index -= this->v_list.size();
             }
@@ -206,7 +218,7 @@ void CombinedPolygon::makeCoplanar(){
 //    int type = VectorCalculation::findNormalType(this->av_normal);
 //    Plane_3 plane(center, VectorCalculation::normal_list[type]);
 //this->av_normal = VectorCalculation::normal_list[type];
-    for (unsigned long index = 0 ; index < this->v_list.size() ; index++ ){
+    for (ull index = 0 ; index < this->v_list.size() ; index++ ){
         Point_3 point(this->v_list[index]->x,this->v_list[index]->y,this->v_list[index]->z);
         Point_3 projected = plane.projection(point);
         Vertex* vertex = new Vertex(projected.x(), projected.y(), projected.z());
@@ -257,7 +269,7 @@ bool CombinedPolygon::isSameOrientation(Vertex* origin, Vertex* v1, Vertex* v2, 
 
 Point_3 CombinedPolygon::getCenterPoint(){
     double x=0.0,y=0.0,z=0.0;
-    for (unsigned long index = 0 ; index < this->v_list.size() ; index++ ){
+    for (ull index = 0 ; index < this->v_list.size() ; index++ ){
         x += this->v_list[index]->x;
         y += this->v_list[index]->y;
         z += this->v_list[index]->z;

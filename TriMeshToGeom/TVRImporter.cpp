@@ -104,9 +104,9 @@ string TVRImporter::getGroupName(string& input){
 void TVRImporter::makeTriangle(string& input, vector<Vertex*>& vertex, Triangle& tri){
     std::vector<std::string> x = split(input, ' ');
 
-    long a = stol(x[1]);
-    long b = stol(x[2]);
-    long c = stol(x[3]);
+    ll a = stol(x[1]);
+    ll b = stol(x[2]);
+    ll c = stol(x[3]);
 
     tri.a = vertex[a];
     tri.b = vertex[b];

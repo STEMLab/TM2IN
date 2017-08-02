@@ -81,7 +81,11 @@ bool Checker::isSameOrientation(Vector_3& nv1, Vector_3& nv2){
     return (angle <= thres) ;
 }
 
-
+bool Checker::isSimilarOrientation(Vector_3& nv1, Vector_3& nv2){
+    double thres = this->ori_degree;
+    double angle = VectorCalculation::getAngle(nv1, nv2);
+    return (angle <= thres * 2) ;
+}
 
 
 

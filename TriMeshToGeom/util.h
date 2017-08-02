@@ -5,6 +5,8 @@
 #include <sstream>
 #include <vector>
 
+typedef long long ll;
+typedef unsigned long long ull;
 
 std::vector<std::string> split(const std::string &s, char delim);
 

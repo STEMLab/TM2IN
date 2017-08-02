@@ -36,7 +36,7 @@ of course you may need to change the makefile
 using namespace std;
 
 
-long filelength(int f)
+ll filelength(int f)
 {
     struct stat buf;
 

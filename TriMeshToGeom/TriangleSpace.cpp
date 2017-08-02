@@ -12,6 +12,19 @@ TriangleSpace::~TriangleSpace()
     //dtor
 }
 
+int TriangleSpace::makePolygonsGreedy(Checker* check){
+    int combined_count = 0;
+    vector<Triangle*> p_triangles;
+    for (int i = 0 ; i < this->triangles.size(); i++){
+        p_triangles.push_back(&this->triangles[i]);
+    }
+    pushCombinedPolygons(p_triangles, check, combined_count);
+    this->triangles.clear();
+
+    cout << "\ndone make Polygons" << endl;
+    return 0;
+}
+
 int TriangleSpace::makePolygonsBySeparation(Checker* check)
 {
     // Separation by Normal
@@ -31,15 +44,62 @@ int TriangleSpace::makePolygonsBySeparation(Checker* check)
     return 0;
 }
 
+int TriangleSpace::makePolygonsByCandidator(Checker* check)
+{
+    ull size = this->triangles.size();
+    bool* checked = (bool*)malloc(sizeof(bool) * size);
+    std::fill(checked, checked + size, false);
+
+    int combined_count = 0;
+    for (ull index = 0 ; index < size; index++)
+    {
+        if (checked[index])
+        {
+            continue;
+        }
+        checked[index] = true ;
+
+        Vector_3 pl_nv = this->triangles[index].getNormal();
+        vector<Triangle*> candidates;
+        for (ull index2 = 0 ; index2 < size ; index2++){
+            if (checked[index2])
+            {
+                continue;
+            }
+
+            Vector_3 normal = this->triangles[index2].getNormal();
+            if (check->isSimilarOrientation(pl_nv, normal)){
+                candidates.push_back(&this->triangles[index2]);
+                pl_nv = pl_nv + normal;
+                checked[index2] = true ;
+            }
+            //TODO
+        }
+        pushCombinedPolygons(candidates, check, combined_count);
+        candidates.clear();
+    }
+
+    this->triangles.clear();
+
+    cout << "\ndone make Polygons" << endl;
+    return 0;
+}
+
+
+void TriangleSpace::printProcess(ull index, ull size){
+    cout << "\r==========" << (int)((double)index/(double)size * 100) <<"% ========";
+}
+
+
 void TriangleSpace::pushCombinedPolygons(vector<Triangle*>& tri_list, Checker* check, int& combined_count)
 {
-    unsigned long size = tri_list.size();
+    ull size = tri_list.size();
     bool* checked = (bool*)malloc(sizeof(bool) * size);
     std::fill(checked, checked + size, false);
 
     cout << "\n number : " << size << endl;
 
-    for (unsigned long index = 0 ; index < size; index++)
+    for (ull index = 0 ; index < size; index++)
     {
         this->printProcess(combined_count, this->triangles.size());
         if (checked[index])
@@ -68,54 +128,11 @@ void TriangleSpace::pushCombinedPolygons(vector<Triangle*>& tri_list, Checker* c
     free(checked);
 }
 
-int TriangleSpace::makePolygonsByCandidator(Checker* check)
-{
-    unsigned long size = this->triangles.size();
-    bool* checked = (bool*)malloc(sizeof(bool) * size);
-    std::fill(checked, checked + size, false);
-
-    for (unsigned long index = 0 ; index < size; index++)
-    {
-        this->printProcess(index, this->triangles.size());
-        if (checked[index])
-        {
-            continue;
-        }
-        checked[index] = true ;
-
-        Vector_3 pl_nv = this->triangles[index].getNormal();
-        vector<Triangle*> candidates;
-        for (unsigned long index2 = 0 ; index2 < size ; index2++){
-            if (checked[index])
-            {
-                continue;
-            }
-            checked[index] = true ;
-            Vector_3 normal = this->triangles[index].getNormal();
-            if (check->isSameOrientation(pl_nv, normal)){
-                candidates.push_back(&this->triangles[index2]);
-            }
-
-            //TODO
-        }
-    }
-
-    this->triangles.clear();
-
-    cout << "\ndone make Polygons" << endl;
-    return 0;
-}
-
-
-void TriangleSpace::printProcess(unsigned long index, unsigned long size){
-    cout << "\r==========" << (int)((double)index/(double)size * 100) <<"% ========";
-}
-
 
 CombinedPolygon* TriangleSpace::makeOneBigPolygon(vector<Triangle*> tri_list, CombinedPolygon* cp, bool* checked, int& id, Checker* check)
 {
     if (cp->av_normal == CGAL::NULL_VECTOR) return NULL;
-    for (unsigned long i = 0 ; i < tri_list.size() ; i++, id++)
+    for (ull i = 0 ; i < tri_list.size() ; i++, id++)
     {
         if (!checked[i])
         {
@@ -140,8 +157,8 @@ vector<vector<Triangle*>> TriangleSpace::separateByNormal_6(vector<Triangle>& tr
 //    Vector_3 back(0,-1,0);
     vector<vector<Triangle*>> ret(6, vector<Triangle*>());
 
-    unsigned long size = triangles.size();
-    for (unsigned long index = 0 ; index < size; index++){
+    ull size = triangles.size();
+    for (ull index = 0 ; index < size; index++){
         Vector_3 normal = triangles[index].getNormal();
         int type = VectorCalculation::findNormalType(normal);
         ret[type].push_back(&triangles[index]);
@@ -155,20 +172,15 @@ int TriangleSpace::makePolygonsCoplanar(Checker* check)
 
     for (int i = 0 ; i < (int)this->polygon_list.size() ; i++)
     {
-//        if (!this->polygon_list[i]->checkDuplicate(check)){
-//            cout << "not Right Polygon" << endl;
-//            return -1;
-//        }
         //make Each Polygon Coplanar
         this->polygon_list[i]->makeCoplanar();
-
-        //this->polygon_list[i]->simplify_colinear();
     }
     return 0;
-    //Classification
-
 }
 
 
-
+int TriangleSpace::combineCombinedPolygon(Checker* checker){
+    //TODO
+    return 0;
+}
 

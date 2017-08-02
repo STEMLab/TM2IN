@@ -22,7 +22,7 @@ int OBJCollection::makeSurfaces(Checker* check){
 
     for (auto it = this->space_list.begin() ; it != this->space_list.end() ; it++){
         cout << (*it) -> name << " is converting..." << endl;
-        int ret = (*it)->makePolygonsBySeparation(check);
+        int ret = (*it)->makePolygonsByCandidator(check);
         if (ret) { cout << "make Surfaces error" << endl; return -1;}
     }
 
@@ -42,18 +42,17 @@ void OBJCollection::free(){
 
     }
     vertex.clear();
-
-    for (auto it = space_list.begin() ; it != space_list.end() ; it++)
-    {
-
-    }
 }
 
 int OBJCollection::cleaning(Checker* ch){
     for (auto it = space_list.begin() ; it != space_list.end() ; it++)
     {
+        if ((*it)->combineCombinedPolygon(ch) == -1) {
+            cout << "combine error" << endl;
+            return -1;
+        }
         if ((*it)->makePolygonsCoplanar(ch) == -1) {
-            cout << "cleaning error" << endl;
+            cout << "Coplanar error" << endl;
             return -1;
         }
     }

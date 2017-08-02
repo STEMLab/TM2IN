@@ -3,9 +3,11 @@
 
 #include <string>
 
+#include "util.h"
+
 class Vertex{
 public:
-    long index = 0;
+    ll index = 0;
     double x = 0.0,y =0.0 ,z = 0.0;
     Vertex(double px, double py, double pz){
         x = px;

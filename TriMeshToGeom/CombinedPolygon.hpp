@@ -39,7 +39,7 @@ public:
 
     CombinedPolygon(Triangle* pl);
 
-    unsigned long getLength(){
+    ull getLength(){
         return v_list.size();
     }
     bool attachTriangle(Triangle* pl, Checker* ch);
@@ -50,11 +50,11 @@ public:
     bool checkDuplicate(Checker* ch);
 private:
     Point_3 getCenterPoint();
-    long findShareLine(Triangle* pl, Checker* ch, Vertex** add);
+    ll findShareLine(Triangle* pl, Checker* ch, Vertex** add);
     bool isSameOrientation(Vertex* origin, Vertex* v1, Vertex* v2, Checker* ch);
-    bool isShareThreeLine(long index);
-    bool isShareTwoLine(long index, Vertex* add);
-    bool checkMakeHole(long index, Vertex* add);
+    bool isShareThreeLine(ll index);
+    int isShareTwoLine(ll index, Vertex* add);
+    bool checkMakeHole(ll index, Vertex* add);
     void setMBB(Triangle* pl);
     bool isNeighbor(Triangle* pl);
     bool isInMBB(Vertex* vt);
