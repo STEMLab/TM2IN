@@ -12,15 +12,17 @@
 using namespace std;
 
 int main(int argc, const char * argv[]) {
-//TODO make argv
+    //TODO make argv
     double degree_param = 10.0;
     string version = "_v0.2.4";
     const char path[50] = "../Resource/teevr/tvr/";
     //const char path[100] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/";
     const char result_path[50] = "../Result/";
     //const char result_path[50] = "/Users/dong/Documents/dev/TriMeshToGeom/Result/";
-    char file_name[] = "cube_01";
+    char file_name[] = "test_2.min";
 
+//    TVRImporter::extractMINtvr(string(path) + string(file_name));
+//    return 0;
 
     Manager* manager = new ManagerImpl();
     manager->setImporter(new TVRImporter());
@@ -32,7 +34,7 @@ int main(int argc, const char * argv[]) {
         return -1;
     }
 
-    string combined_file = string(result_path) + "c_" + string(file_name) + version + ".bin";
+    string combined_file = string(result_path) + "cb_" + string(file_name) + version + ".bin";
 
     cout << "select mode" << endl;
     cout << "0 : make new Surfaces" << endl;

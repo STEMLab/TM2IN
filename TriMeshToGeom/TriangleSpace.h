@@ -19,12 +19,13 @@ public:
     std::vector<CombinedPolygon*> polygon_list;
 
     TriangleSpace(string pname) {name = pname;}
-    int makePolygons(Checker* ch);
+    int makePolygonsBySeparation(Checker* ch);
+    int makePolygonsByCandidator(Checker* check);
     CombinedPolygon* makeOneBigPolygon(vector<Triangle*> tri_list, CombinedPolygon* cp, bool* checked, int& id, Checker* check);
     int makePolygonsCoplanar(Checker* check);
 protected:
     void printProcess(unsigned long, unsigned long);
-    std::vector<std::vector<Triangle*>> separateByNormal_6();
+    void pushCombinedPolygons(vector<Triangle*>& tri_list, Checker* check, int& combined_count);
     vector<vector<Triangle*>> separateByNormal_6(vector<Triangle>& triangles);
 private:
 

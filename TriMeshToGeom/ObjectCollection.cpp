@@ -22,7 +22,7 @@ int OBJCollection::makeSurfaces(Checker* check){
 
     for (auto it = this->space_list.begin() ; it != this->space_list.end() ; it++){
         cout << (*it) -> name << " is converting..." << endl;
-        int ret = (*it)->makePolygons(check);
+        int ret = (*it)->makePolygonsBySeparation(check);
         if (ret) { cout << "make Surfaces error" << endl; return -1;}
     }
 

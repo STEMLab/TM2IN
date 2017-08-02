@@ -11,7 +11,8 @@ TriangleSpace::~TriangleSpace()
 {
     //dtor
 }
-int TriangleSpace::makePolygons(Checker* check)
+
+int TriangleSpace::makePolygonsBySeparation(Checker* check)
 {
     // Separation by Normal
     vector<vector<Triangle*>> poly_set;
@@ -21,39 +22,82 @@ int TriangleSpace::makePolygons(Checker* check)
     int combined_count = 0;
     for (unsigned int dir = 0 ; dir < 6 ; dir++)
     {
-        vector<Triangle*> tri_list = poly_set[dir];
-        unsigned long size = tri_list.size();
-        bool* checked = (bool*)malloc(sizeof(bool) * size);
-        std::fill(checked, checked + size, false);
+        pushCombinedPolygons(poly_set[dir], check, combined_count);
+    }
 
-        cout << "\n number : " << size << endl;
+    this->triangles.clear();
 
-        for (unsigned long index = 0 ; index < size; index++)
+    cout << "\ndone make Polygons" << endl;
+    return 0;
+}
+
+void TriangleSpace::pushCombinedPolygons(vector<Triangle*>& tri_list, Checker* check, int& combined_count)
+{
+    unsigned long size = tri_list.size();
+    bool* checked = (bool*)malloc(sizeof(bool) * size);
+    std::fill(checked, checked + size, false);
+
+    cout << "\n number : " << size << endl;
+
+    for (unsigned long index = 0 ; index < size; index++)
+    {
+        this->printProcess(combined_count, this->triangles.size());
+        if (checked[index])
         {
-            this->printProcess(combined_count, this->triangles.size());
+            continue;
+        }
+        checked[index] = true ;
+        CombinedPolygon* newcp = new CombinedPolygon(tri_list[index]);
+
+        int id = 0;
+
+        while (id < size)
+        {
+            id = 0;
+            newcp = makeOneBigPolygon(tri_list, newcp, checked, id, check);
+            if (newcp == NULL) break;
+            if (combined_count % 250 == 0 )
+            {
+                cout << "\n------------ " << index << " -----------  :  " << id << "/" << size << endl;
+                this->printProcess(combined_count, this->triangles.size());
+            }
+            combined_count++;
+        }
+        if (newcp != NULL) this->polygon_list.push_back(newcp);
+    }
+    free(checked);
+}
+
+int TriangleSpace::makePolygonsByCandidator(Checker* check)
+{
+    unsigned long size = this->triangles.size();
+    bool* checked = (bool*)malloc(sizeof(bool) * size);
+    std::fill(checked, checked + size, false);
+
+    for (unsigned long index = 0 ; index < size; index++)
+    {
+        this->printProcess(index, this->triangles.size());
+        if (checked[index])
+        {
+            continue;
+        }
+        checked[index] = true ;
+
+        Vector_3 pl_nv = this->triangles[index].getNormal();
+        vector<Triangle*> candidates;
+        for (unsigned long index2 = 0 ; index2 < size ; index2++){
             if (checked[index])
             {
                 continue;
             }
             checked[index] = true ;
-            CombinedPolygon* newcp = new CombinedPolygon(tri_list[index]);
-
-            int id = 0;
-
-            while (id < size)
-            {
-                id = 0;
-                newcp = makeOneBigPolygon(tri_list, newcp, checked, id, check);
-                if (newcp == NULL) break;
-                if (combined_count % 250 == 0 ){
-                    cout << "\n------------" << index << "-----------" << endl;
-                    this->printProcess(combined_count, this->triangles.size());
-                }
-                combined_count++;
+            Vector_3 normal = this->triangles[index].getNormal();
+            if (check->isSameOrientation(pl_nv, normal)){
+                candidates.push_back(&this->triangles[index2]);
             }
-            if (newcp != NULL) this->polygon_list.push_back(newcp);
+
+            //TODO
         }
-        free(checked);
     }
 
     this->triangles.clear();
@@ -106,11 +150,6 @@ vector<vector<Triangle*>> TriangleSpace::separateByNormal_6(vector<Triangle>& tr
     return ret;
 }
 
-vector<vector<Triangle*>> TriangleSpace::separateByNormal_6()
-{
-    return separateByNormal_6(this->triangles);
-}
-
 int TriangleSpace::makePolygonsCoplanar(Checker* check)
 {
 
@@ -120,7 +159,6 @@ int TriangleSpace::makePolygonsCoplanar(Checker* check)
 //            cout << "not Right Polygon" << endl;
 //            return -1;
 //        }
-
         //make Each Polygon Coplanar
         this->polygon_list[i]->makeCoplanar();
 

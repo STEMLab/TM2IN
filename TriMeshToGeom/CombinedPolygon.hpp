@@ -55,8 +55,9 @@ private:
     bool isShareThreeLine(long index);
     bool isShareTwoLine(long index, Vertex* add);
     bool checkMakeHole(long index, Vertex* add);
-
-
+    void setMBB(Triangle* pl);
+    bool isNeighbor(Triangle* pl);
+    bool isInMBB(Vertex* vt);
 };
 
 

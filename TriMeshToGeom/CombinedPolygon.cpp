@@ -24,9 +24,19 @@ CombinedPolygon::CombinedPolygon(Triangle* pl){
     v_list.push_back(vb);
     v_list.push_back(vc);
 
-    double mx = max(max(va->x, vb->x), vc->x);
-    double my = max(max(va->y, vb->y), vc->y);
-    double mz = max(max(va->z, vb->z), vc->z);
+    double max_x = max(max(va->x, vb->x), vc->x);
+    double max_y = max(max(va->y, vb->y), vc->y);
+    double max_z = max(max(va->z, vb->z), vc->z);
+    double min_x = min(min(va->x, vb->x), vc->x);
+    double min_y = min(min(va->y, vb->y), vc->y);
+    double min_z = min(min(va->z, vb->z), vc->z);
+
+    this->maxx = max_x;
+    this->maxy = max_y;
+    this->maxz = max_z;
+    this->minx = min_x;
+    this->miny = min_y;
+    this->minz = min_z;
 
     Point_3 p3a(va->x,va->y,va->z );
     Point_3 p3b(vb->x,vb->y,vb->z );
@@ -38,20 +48,49 @@ CombinedPolygon::CombinedPolygon(Triangle* pl){
 
 }
 
+void CombinedPolygon::setMBB(Triangle* pl){
+    Vertex* va = pl->a;
+    Vertex* vb = pl->b;
+    Vertex* vc = pl->c;
+
+    double max_x = max(max(va->x, vb->x), vc->x);
+    double max_y = max(max(va->y, vb->y), vc->y);
+    double max_z = max(max(va->z, vb->z), vc->z);
+    double min_x = min(min(va->x, vb->x), vc->x);
+    double min_y = min(min(va->y, vb->y), vc->y);
+    double min_z = min(min(va->z, vb->z), vc->z);
+
+    this->maxx = max(max_x, this->maxx);
+    this->maxy = max(max_y, this->maxy);
+    this->maxz = max(max_z, this->maxz);
+    this->minx = min(min_x, this->minx);
+    this->miny = min(min_y, this->miny);
+    this->minz = min(min_z, this->minz);
+}
 
 bool CombinedPolygon::attachTriangle(Triangle* pl, Checker* ch)
 {
+    // check Trinagle is in near polygon or not
+    //if (!isNeighbor(pl)) return false;
+
     // TODO overlap check (projection)
     Vector_3 pl_nv = pl->getNormal();
+    if (pl_nv == CGAL::NULL_VECTOR)
+    {
+        cout << "NULL_VECTOR" << endl;
+        return true;//Not combine but true
+    }
+
     Vertex* add;
     long index = findShareLine(pl, ch, &add);
     if (index == -1) return false;
 
+
     if (isShareTwoLine(index, add))
     {
+        setMBB(pl);
         if (isShareThreeLine(index))
         {
-            //cout << "\nCover Hole       ";
             this->v_list.erase(v_list.begin() + index);
             this->v_list.erase(v_list.begin() + index);
             this->v_list.erase(v_list.begin() + index);
@@ -66,19 +105,19 @@ bool CombinedPolygon::attachTriangle(Triangle* pl, Checker* ch)
 
         this->v_list.erase(v_list.begin() + index);
         av_normal = av_normal + pl_nv;
+
         return true;
     }
 
+
     if (ch->isSameOrientation(pl_nv, this->av_normal))
     {
-        if (pl_nv == CGAL::NULL_VECTOR) {
-            cout << "NULL_VECTOR" << endl;
-            return true;//Not combine but true
-        }
+        setMBB(pl);
         av_normal = av_normal + pl_nv;
         this->v_list.insert(v_list.begin() + index + 1, add);
         return true;
     }
+
 
     return false;
 }
@@ -250,11 +289,25 @@ string CombinedPolygon::toJSONString(){
 }
 
 
+bool CombinedPolygon::isNeighbor(Triangle* pl){
+    Vertex* v_list[3] = {pl->a, pl->b, pl->c};
 
+    for (int i = 0 ; i < 3 ; i++){
+        if (isInMBB(v_list[i])){
+            return true;
+        }
+    }
 
+    return false;
+}
 
-
-
-
-
-
+bool CombinedPolygon::isInMBB(Vertex* vt){
+    if (vt->x >= this->minx && vt->x <= this->maxx){
+        if (vt->y >= this->miny && vt->y <= this->maxy){
+            if (vt->z >= this->minz && vt->z <= this->maxz){
+                return true;
+            }
+        }
+    }
+    return false;
+}
