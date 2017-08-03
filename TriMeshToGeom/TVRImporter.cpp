@@ -62,7 +62,7 @@ OBJCollection* TVRImporter::import(const char* f_path, Checker* check){
                 group_name = this->getGroupName(inputstr);
                 if (group_name.find('\r') != string::npos) group_name.erase(group_name.find('\r'));
 
-                obj = new TriangleSpace(group_name);
+                obj = new TriangleSpace(group_name, check);
                 break;
             }
             case 'f':{

@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "vertex.h"
-#include "VectorCalculation.h"
+#include "CGALCalculation.h"
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Vector_3.h>
@@ -60,6 +60,7 @@ public:
 
     bool isSameOrientation(Vector_3& nv1, Vector_3& nv2);
     bool isSimilarOrientation(Vector_3& nv1, Vector_3& nv2);
+    bool isSamePlanar(Vector_3& big, Vector_3& small);
 
     bool isColinear(Vertex* origin, Vertex* v1, Vertex* v2);
 };

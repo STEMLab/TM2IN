@@ -15,25 +15,28 @@ class TriangleSpace
 public:
     string name;
     TriangleSpace();
+    TriangleSpace(string pname, Checker* check);
     virtual ~TriangleSpace();
     std::vector<Triangle> triangles;
     std::vector<CombinedPolygon*> polygon_list;
 
-    TriangleSpace(string pname) {name = pname;}
-    int makePolygonsBySeparation(Checker* checker);
-    int makePolygonsByCandidator(Checker* checker);
-    int makePolygonsGreedy(Checker* checker);
 
-    int makePolygonsCoplanar(Checker* checker);
-    int combineCombinedPolygon(Checker* checker);
+    int makePolygonsBySeparation();
+    int makePolygonsByCandidator();
+    int makePolygonsGreedy();
+
+    int makePolygonsCoplanar();
+    int combineCombinedPolygon();
     void pushTriangle(Triangle tri);
 protected:
+    void freeCombinedPolygons();
     void printProcess(ull, ull);
-    CombinedPolygon* attachTriangle(vector<Triangle*> tri_list, CombinedPolygon* cp, bool* checked, int& id, Checker* check);
-    vector<CombinedPolygon*> makePolygonsInList(vector<Triangle*>& tri_list, bool* checked, Checker* check, int& combined_count);
+    CombinedPolygon* attachTriangle(vector<Triangle*> tri_list, CombinedPolygon* cp, bool* checked, ull& count);
+    CombinedPolygon* attachPolygons(CombinedPolygon* cp, bool* checked, ull& count);
+    vector<CombinedPolygon*> makePolygonsInList(vector<Triangle*>& tri_list, bool* checked, int& combined_count);
     vector<vector<Triangle*>> separateByNormal_6(vector<Triangle>& triangles);
 private:
-
+    Checker* checker;
 };
 
 #endif // TRIANGLESPACE_H

@@ -28,7 +28,7 @@
 
 		var cross;
 		var jsonfile;
-		$.getJSON("../Result/test/test_2.min_10.0_v0.2.4.7.json", function(data) {
+		$.getJSON("../Result/test/test_2.min_10.0_v0.2.4.9.json", function(data) {
 			jsonfile = data;
 			init();
 			animate();
@@ -56,12 +56,9 @@
 
 			controls.addEventListener('change', render);
 
-			// world
 			scene = new THREE.Scene();
 
-
 			scene.fog = new THREE.FogExp2(0xcccccc, 0.0002);
-			//
 			var space = jsonfile.spaces;
 			for (var i = 0; i < space.length; i++) {
 				var polygon_list = space[i].polygons;

@@ -13,7 +13,17 @@
 
 using namespace std;
 
-
+CombinedPolygon::CombinedPolygon(CombinedPolygon* cp){
+    this->v_list = cp->v_list;
+    this->av_normal = cp->av_normal;
+    this->minx = cp->minx;
+    this->maxx = cp->maxx;
+    this->miny = cp->miny;
+    this->maxy = cp->maxy;
+    this->minz = cp->minz;
+    this->maxz = cp->maxz;
+    this->sq_area = cp->sq_area;
+}
 
 CombinedPolygon::CombinedPolygon(Triangle* pl){
     Vertex* va = pl->a;
@@ -38,14 +48,8 @@ CombinedPolygon::CombinedPolygon(Triangle* pl){
     this->miny = min_y;
     this->minz = min_z;
 
-    Point_3 p3a(va->x,va->y,va->z );
-    Point_3 p3b(vb->x,vb->y,vb->z );
-    Point_3 p3c(vc->x,vc->y,vc->z );
-    if (CGAL::collinear(p3a, p3b, p3c)){
-        av_normal = CGAL::NULL_VECTOR;
-    }
-    else av_normal = CGAL::unit_normal(p3a,p3b,p3c);
-
+    av_normal = pl->getNormal();
+    sq_area = pl->getArea();
 }
 
 void CombinedPolygon::setMBB(Triangle* pl){
@@ -68,6 +72,15 @@ void CombinedPolygon::setMBB(Triangle* pl){
     this->minz = min(min_z, this->minz);
 }
 
+bool CombinedPolygon::attachPolygon(CombinedPolygon* cp, Checker* ch)
+{
+    // check Polygon is in near polygon or not
+    if (!isNeighbor(cp)) return false;
+    if (!ch->isSamePlanar(this->av_normal, cp->av_normal)) return false;
+
+}
+
+
 bool CombinedPolygon::attachTriangle(Triangle* pl, Checker* ch)
 {
     // check Trinagle is in near polygon or not
@@ -78,7 +91,7 @@ bool CombinedPolygon::attachTriangle(Triangle* pl, Checker* ch)
     if (pl_nv == CGAL::NULL_VECTOR)
     {
         cout << "NULL_VECTOR" << endl;
-        return true;//Not combine but true
+        return true;/**< Not combine but true  */
     }
 
     Vertex* add;
@@ -89,33 +102,25 @@ bool CombinedPolygon::attachTriangle(Triangle* pl, Checker* ch)
     if (share_two_line != -1)
     {
         setMBB(pl);
-//        if (isShareThreeLine(index))
-//        {
-//            this->v_list.erase(v_list.begin() + index);
-//            this->v_list.erase(v_list.begin() + index);
-//            this->v_list.erase(v_list.begin() + index);
-//            av_normal = av_normal + pl_nv;
-//            return true;
-//        }
         index += share_two_line;
         if (index >= (ll)this->v_list.size())
         {
             index -= (ll)this->v_list.size();
         }
 
-
         this->v_list.erase(v_list.begin() + index);
         av_normal = av_normal + pl_nv;
-
+        sq_area += pl->getArea();
         return true;
     }
 
     if (checkMakeHole(index, add)) return false;
 
-    if (ch->isSameOrientation(pl_nv, this->av_normal))
+    if (ch->isSamePlanar(pl_nv, this->av_normal))
     {
         setMBB(pl);
         av_normal = av_normal + pl_nv;
+        sq_area += pl->getArea();
         this->v_list.insert(v_list.begin() + index + 1, add);
         return true;
     }
@@ -312,6 +317,12 @@ bool CombinedPolygon::isNeighbor(Triangle* pl){
 
     return false;
 }
+
+bool CombinedPolygon::isNeighbor(CombinedPolygon* cp){
+    //TODO
+    return true;
+}
+
 
 bool CombinedPolygon::isInMBB(Vertex* vt){
     if (vt->x >= this->minx && vt->x <= this->maxx){

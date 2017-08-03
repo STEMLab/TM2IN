@@ -77,13 +77,23 @@ bool Checker::isSameVertex(Vertex& v1, Vertex& v2){
 
 bool Checker::isSameOrientation(Vector_3& nv1, Vector_3& nv2){
     double thres = this->ori_degree;
-    double angle = VectorCalculation::getAngle(nv1, nv2);
+    double angle = CGALCalculation::getAngle(nv1, nv2);
     return (angle <= thres) ;
+}
+
+bool Checker::isSamePlanar(Vector_3& big, Vector_3& small){
+    double thres = this->ori_degree;
+    double angle = CGALCalculation::getAngle(big, small);
+    Vector_3 added = big + small;
+    if (angle <= 45.0){
+        return (CGALCalculation::getAngle(added, big) <= thres);
+    }
+    return false;
 }
 
 bool Checker::isSimilarOrientation(Vector_3& nv1, Vector_3& nv2){
     double thres = this->ori_degree;
-    double angle = VectorCalculation::getAngle(nv1, nv2);
+    double angle = CGALCalculation::getAngle(nv1, nv2);
     return (angle <= thres * 2) ;
 }
 

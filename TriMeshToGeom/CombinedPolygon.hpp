@@ -34,15 +34,18 @@ public:
     Vector_3 av_normal = CGAL::NULL_VECTOR;
     double minx=0, miny=0, minz=0;
     double maxx=0, maxy=0, maxz=0;
+    double sq_area = 0.0;
 
     CombinedPolygon(){ }
 
     CombinedPolygon(Triangle* pl);
+    CombinedPolygon(CombinedPolygon* cp);
 
     ull getLength(){
         return v_list.size();
     }
     bool attachTriangle(Triangle* pl, Checker* ch);
+    bool attachPolygon(CombinedPolygon* cp, Checker* ch);
     std::string toJSONString();
     void makeCoplanar();
     void simplify_colinear(Checker* ch);
@@ -57,6 +60,7 @@ private:
     bool checkMakeHole(ll index, Vertex* add);
     void setMBB(Triangle* pl);
     bool isNeighbor(Triangle* pl);
+    bool isNeighbor(CombinedPolygon* cp);
     bool isInMBB(Vertex* vt);
 };
 
