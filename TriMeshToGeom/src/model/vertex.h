@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "util.h"
+#include "logic/util.h"
 
 class Vertex{
 public:

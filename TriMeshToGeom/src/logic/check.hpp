@@ -12,8 +12,8 @@
 #include <stdio.h>
 #include <vector>
 
-#include "vertex.h"
-#include "CGALCalculation.h"
+#include "model/vertex.h"
+#include "logic/CGALCalculation.h"
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Vector_3.h>

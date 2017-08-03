@@ -1,4 +1,4 @@
-#include "Trinagle.h"
+#include "model/Trinagle.h"
 
 Triangle::Triangle()
 {

@@ -2,8 +2,8 @@
 
 #include <fstream>
 #include <iostream>
-#include "TriangleSpace.h"
-#include "vertex.h"
+#include "data/TriangleSpace.h"
+#include "model/vertex.h"
 
 TVRImporter::TVRImporter()
 {

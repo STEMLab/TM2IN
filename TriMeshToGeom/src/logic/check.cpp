@@ -6,7 +6,7 @@
 //  Copyright © 2017년 Dong's MacBook Pro. All rights reserved.
 //
 
-#include "check.hpp"
+#include "logic/check.hpp"
 #include <algorithm>
 #include <cmath>
 

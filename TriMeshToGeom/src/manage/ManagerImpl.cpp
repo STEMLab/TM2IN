@@ -1,7 +1,7 @@
-#include "ManagerImpl.h"
+#include "manage/ManagerImpl.h"
 
-#include "JSONMaker.h"
-#include "CombinedIO.h"
+#include "fileio/JSONMaker.h"
+#include "fileio/CombinedIO.h"
 #include <fstream>
 
 using namespace std;

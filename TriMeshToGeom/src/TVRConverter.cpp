@@ -3,11 +3,9 @@
 #include <fstream>
 #include <string>
 
-#include "ObjectCollection.h"
-#include "TVRImporter.h"
-#include "ManagerImpl.h"
-#include "Manager.h"
-#include "check.hpp"
+#include "fileio/TVRImporter.h"
+#include "manage/ManagerImpl.h"
+#include "logic/check.hpp"
 
 using namespace std;
 

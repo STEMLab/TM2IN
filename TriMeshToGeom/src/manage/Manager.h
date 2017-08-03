@@ -1,9 +1,9 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include "Importer.h"
-#include "ObjectCollection.h"
-#include "util.h"
+#include "fileio/Importer.h"
+#include "data/ObjectCollection.h"
+#include "logic/util.h"
 
 class Manager
 {

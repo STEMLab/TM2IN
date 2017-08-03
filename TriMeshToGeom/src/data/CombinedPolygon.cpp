@@ -6,8 +6,8 @@
 //  Copyright © 2017년 Dong's MacBook Pro. All rights reserved.
 //
 
-#include "check.hpp"
-#include "CombinedPolygon.hpp"
+#include "logic/check.hpp"
+#include "data/CombinedPolygon.hpp"
 
 #include <cstdlib>
 

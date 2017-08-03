@@ -1,8 +1,8 @@
 #ifndef TVRIMPORTER_H
 #define TVRIMPORTER_H
 
-#include "Importer.h"
-#include "util.h"
+#include "fileio/Importer.h"
+#include "logic/util.h"
 
 using namespace std;
 

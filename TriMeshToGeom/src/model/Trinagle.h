@@ -1,8 +1,8 @@
 #ifndef TRINAGLE_H
 #define TRINAGLE_H
 
-#include "vertex.h"
-#include "CGALCalculation.h"
+#include "model/vertex.h"
+#include "logic/CGALCalculation.h"
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Vector_3.h>

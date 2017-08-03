@@ -13,9 +13,9 @@
 #include <string>
 #include <climits>
 
-#include "Trinagle.h"
-#include "check.hpp"
-#include "util.h"
+#include "model/Trinagle.h"
+#include "logic/check.hpp"
+#include "logic/util.h"
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Vector_3.h>

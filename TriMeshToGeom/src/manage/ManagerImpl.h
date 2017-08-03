@@ -1,7 +1,7 @@
 #ifndef MANAGERIMPL_H
 #define MANAGERIMPL_H
 
-#include "Manager.h"
+#include "manage/Manager.h"
 
 
 class ManagerImpl : public Manager{

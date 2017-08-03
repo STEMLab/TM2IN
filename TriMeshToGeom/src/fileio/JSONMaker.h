@@ -4,8 +4,8 @@
 #include <vector>
 #include <string>
 
-#include "CombinedPolygon.hpp"
-#include "TriangleSpace.h"
+#include "data/CombinedPolygon.hpp"
+#include "data/TriangleSpace.h"
 
 using namespace std;
 

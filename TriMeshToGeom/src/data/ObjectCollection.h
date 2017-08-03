@@ -9,9 +9,9 @@
 #ifndef ObjectCollection_h
 #define ObjectCollection_h
 
-#include "CombinedPolygon.hpp"
-#include "check.hpp"
-#include "TriangleSpace.h"
+#include "data/CombinedPolygon.hpp"
+#include "logic/check.hpp"
+#include "data/TriangleSpace.h"
 
 #include <vector>
 #include <cstring>

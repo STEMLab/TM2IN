@@ -1,4 +1,4 @@
-#include "TriangleSpace.h"
+#include "data/TriangleSpace.h"
 
 #include <cstdio>
 

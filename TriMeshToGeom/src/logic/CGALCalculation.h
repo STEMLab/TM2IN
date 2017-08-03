@@ -1,7 +1,7 @@
 #ifndef VECTORCALCULATION_H
 #define VECTORCALCULATION_H
 
-#include "vertex.h"
+#include "model/vertex.h"
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Vector_3.h>

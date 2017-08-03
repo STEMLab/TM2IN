@@ -1,4 +1,4 @@
-#include "CGALCalculation.h"
+#include "logic/CGALCalculation.h"
 
 #define PI 3.14159265
 

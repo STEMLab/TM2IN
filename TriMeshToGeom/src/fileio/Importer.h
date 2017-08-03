@@ -1,8 +1,8 @@
 #ifndef Importer_H
 #define Importer_H
 
-#include "util.h"
-#include "ObjectCollection.h"
+#include "logic/util.h"
+#include "data/ObjectCollection.h"
 
 class Importer
 {

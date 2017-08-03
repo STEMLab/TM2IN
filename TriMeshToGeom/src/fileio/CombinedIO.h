@@ -5,9 +5,9 @@
 #include <string>
 #include <fstream>
 
-#include "CombinedPolygon.hpp"
-#include "TriangleSpace.h"
-#include "ObjectCollection.h"
+#include "data/CombinedPolygon.hpp"
+#include "data/TriangleSpace.h"
+#include "data/ObjectCollection.h"
 
 using namespace std;
 

@@ -5,8 +5,8 @@
 #include <vector>
 #include <bitset>
 
-#include "Trinagle.h"
-#include "CombinedPolygon.hpp"
+#include "model/Trinagle.h"
+#include "data/CombinedPolygon.hpp"
 
 using namespace std;
 
