@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <bitset>
 
 #include "Trinagle.h"
 #include "CombinedPolygon.hpp"
@@ -28,8 +29,8 @@ public:
     void pushTriangle(Triangle tri);
 protected:
     void printProcess(ull, ull);
-    CombinedPolygon* makeOneBigPolygon(vector<Triangle*> tri_list, CombinedPolygon* cp, bool* checked, int& id, Checker* check);
-    void pushCombinedPolygons(vector<Triangle*>& tri_list, Checker* check, int& combined_count);
+    CombinedPolygon* attachTriangle(vector<Triangle*> tri_list, CombinedPolygon* cp, bool* checked, int& id, Checker* check);
+    vector<CombinedPolygon*> makePolygonsInList(vector<Triangle*>& tri_list, bool* checked, Checker* check, int& combined_count);
     vector<vector<Triangle*>> separateByNormal_6(vector<Triangle>& triangles);
 private:
 

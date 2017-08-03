@@ -110,7 +110,6 @@ bool CombinedPolygon::attachTriangle(Triangle* pl, Checker* ch)
         return true;
     }
 
-
     if (checkMakeHole(index, add)) return false;
 
     if (ch->isSameOrientation(pl_nv, this->av_normal))
