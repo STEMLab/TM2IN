@@ -16,70 +16,56 @@ using namespace std;
 CombinedPolygon::CombinedPolygon(CombinedPolygon* cp){
     this->v_list = cp->v_list;
     this->av_normal = cp->av_normal;
-    this->minx = cp->minx;
-    this->maxx = cp->maxx;
-    this->miny = cp->miny;
-    this->maxy = cp->maxy;
-    this->minz = cp->minz;
-    this->maxz = cp->maxz;
+    for (int i = 0 ; i < 3 ; i++){
+        this->max_coords[i] = cp->max_coords[i];
+        this->min_coords[i] = cp->min_coords[i];
+    }
     this->sq_area = cp->sq_area;
 }
 
 CombinedPolygon::CombinedPolygon(Triangle* pl){
-    Vertex* va = pl->a;
-    Vertex* vb = pl->b;
-    Vertex* vc = pl->c;
+    Vertex* v[3] = {pl->a, pl->b, pl->c};
 
-    v_list.push_back(va);
-    v_list.push_back(vb);
-    v_list.push_back(vc);
+    for (int i = 0 ; i < 3 ;i++){
+        v_list.push_back(v[i]);
+    }
 
-    double max_x = max(max(va->x, vb->x), vc->x);
-    double max_y = max(max(va->y, vb->y), vc->y);
-    double max_z = max(max(va->z, vb->z), vc->z);
-    double min_x = min(min(va->x, vb->x), vc->x);
-    double min_y = min(min(va->y, vb->y), vc->y);
-    double min_z = min(min(va->z, vb->z), vc->z);
+    double max_list[3] = {v[0]->x(), v[0]->y(), v[0]->z()};
+    double min_list[3] = {v[0]->x(), v[0]->y(), v[0]->z()};
+    for (int i = 1 ; i < 3 ; i++){
+        for (int j = 0 ; j < 3 ; j++){
+            max_list[j] = max(max_list[j], v[i]->coords[j]);
+            min_list[j] = min(min_list[j], v[i]->coords[j]);
+        }
+    }
 
-    this->maxx = max_x;
-    this->maxy = max_y;
-    this->maxz = max_z;
-    this->minx = min_x;
-    this->miny = min_y;
-    this->minz = min_z;
+    for (int i = 0 ; i < 3 ; i++){
+        this->max_coords[i] = max_list[i];
+        this->min_coords[i] = min_list[i];
+    }
 
     av_normal = pl->getNormal();
     sq_area = pl->getArea();
 }
 
 void CombinedPolygon::setMBB(Triangle* pl){
-    Vertex* va = pl->a;
-    Vertex* vb = pl->b;
-    Vertex* vc = pl->c;
+    Vertex* v[3] = {pl->a, pl->b, pl->c};
 
-    double max_x = max(max(va->x, vb->x), vc->x);
-    double max_y = max(max(va->y, vb->y), vc->y);
-    double max_z = max(max(va->z, vb->z), vc->z);
-    double min_x = min(min(va->x, vb->x), vc->x);
-    double min_y = min(min(va->y, vb->y), vc->y);
-    double min_z = min(min(va->z, vb->z), vc->z);
-
-    this->maxx = max(max_x, this->maxx);
-    this->maxy = max(max_y, this->maxy);
-    this->maxz = max(max_z, this->maxz);
-    this->minx = min(min_x, this->minx);
-    this->miny = min(min_y, this->miny);
-    this->minz = min(min_z, this->minz);
+    for (int i = 0 ; i < 3 ; i++){
+        for (int j = 0 ; j < 3 ; j++){
+            this->max_coords[j] = max(this->max_coords[j], v[i]->coords[j]);
+            this->min_coords[j] = min(this->min_coords[j], v[i]->coords[j]);
+        }
+    }
 }
 
-bool CombinedPolygon::attachPolygon(CombinedPolygon* cp, Checker* ch)
-{
-    // check Polygon is in near polygon or not
-    if (!isNeighbor(cp)) return false;
-    if (!ch->isSamePlanar(this->av_normal, cp->av_normal)) return false;
+void CombinedPolygon::setMBB(CombinedPolygon* cp){
+    for (int j = 0 ; j < 3 ; j++){
+        this->max_coords[j] = max(this->max_coords[j], cp->max_coords[j]);
+        this->min_coords[j] = min(this->min_coords[j], cp->min_coords[j]);
+    }
 
 }
-
 
 bool CombinedPolygon::attachTriangle(Triangle* pl, Checker* ch)
 {
@@ -219,12 +205,8 @@ bool CombinedPolygon::checkDuplicate(Checker* ch){
 void CombinedPolygon::makeCoplanar(){
     Point_3 center = getCenterPoint();
     Plane_3 plane(center, this->av_normal);
-
-//    int type = VectorCalculation::findNormalType(this->av_normal);
-//    Plane_3 plane(center, VectorCalculation::normal_list[type]);
-//this->av_normal = VectorCalculation::normal_list[type];
     for (ull index = 0 ; index < this->v_list.size() ; index++ ){
-        Point_3 point(this->v_list[index]->x,this->v_list[index]->y,this->v_list[index]->z);
+        Point_3 point(this->v_list[index]->x(),this->v_list[index]->y(),this->v_list[index]->z());
         Point_3 projected = plane.projection(point);
         Vertex* vertex = new Vertex(projected.x(), projected.y(), projected.z());
         this->v_list[index] = vertex;
@@ -262,9 +244,9 @@ void CombinedPolygon::simplify_colinear(Checker* ch)
 }
 
 bool CombinedPolygon::isSameOrientation(Vertex* origin, Vertex* v1, Vertex* v2, Checker* ch){
-    Point_3 p3a(origin->x,origin->y,origin->z);
-    Point_3 p3b(v1->x,v1->y,v1->z);
-    Point_3 p3c(v2->x,v2->y,v2->z);
+    Point_3 p3a(origin->x(),origin->y(),origin->z());
+    Point_3 p3b(v1->x(),v1->y(),v1->z());
+    Point_3 p3c(v2->x(),v2->y(),v2->z());
 
     Vector_3 vec1(p3a,p3b);
     Vector_3 vec2(p3a,p3c);
@@ -275,9 +257,9 @@ bool CombinedPolygon::isSameOrientation(Vertex* origin, Vertex* v1, Vertex* v2, 
 Point_3 CombinedPolygon::getCenterPoint(){
     double x=0.0,y=0.0,z=0.0;
     for (ull index = 0 ; index < this->v_list.size() ; index++ ){
-        x += this->v_list[index]->x;
-        y += this->v_list[index]->y;
-        z += this->v_list[index]->z;
+        x += this->v_list[index]->x();
+        y += this->v_list[index]->y();
+        z += this->v_list[index]->z();
     }
     x = x/this->v_list.size();
     y = y/this->v_list.size();
@@ -318,16 +300,11 @@ bool CombinedPolygon::isNeighbor(Triangle* pl){
     return false;
 }
 
-bool CombinedPolygon::isNeighbor(CombinedPolygon* cp){
-    //TODO
-    return true;
-}
-
 
 bool CombinedPolygon::isInMBB(Vertex* vt){
-    if (vt->x >= this->minx && vt->x <= this->maxx){
-        if (vt->y >= this->miny && vt->y <= this->maxy){
-            if (vt->z >= this->minz && vt->z <= this->maxz){
+    if (vt->x() >= this->min_coords[0] && vt->x() <= this->max_coords[0]){
+        if (vt->y() >= this->min_coords[1] && vt->y() <= this->max_coords[1]){
+            if (vt->z() >= this->min_coords[2] && vt->z() <= this->max_coords[2]){
                 return true;
             }
         }

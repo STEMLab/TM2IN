@@ -38,9 +38,9 @@ double CGALCalculation::getSquaredArea(Point_3& p1, Point_3& p2, Point_3& p3){
 }
 
 Vector_3 CGALCalculation::getNormal(Vertex* va, Vertex* vb, Vertex* vc){
-    Point_3 p3a(va->x,va->y,va->z);
-    Point_3 p3b(vb->x,vb->y,vb->z);
-    Point_3 p3c(vc->x,vc->y,vc->z);
+    Point_3 p3a(va->x(),va->y(),va->z());
+    Point_3 p3b(vb->x(),vb->y(),vb->z());
+    Point_3 p3c(vc->x(),vc->y(),vc->z());
 
     if (CGAL::collinear(p3a, p3b, p3c)){
         return CGAL::NULL_VECTOR;
@@ -51,8 +51,8 @@ Vector_3 CGALCalculation::getNormal(Vertex* va, Vertex* vb, Vertex* vc){
 }
 
 double CGALCalculation::getSquaredArea(Vertex* va, Vertex* vb, Vertex* vc){
-    Point_3 p3a(va->x,va->y,va->z);
-    Point_3 p3b(vb->x,vb->y,vb->z);
-    Point_3 p3c(vc->x,vc->y,vc->z);
+    Point_3 p3a(va->x(),va->y(),va->z());
+    Point_3 p3b(vb->x(),vb->y(),vb->z());
+    Point_3 p3c(vc->x(),vc->y(),vc->z());
     return getSquaredArea(p3a, p3b, p3c);
 }

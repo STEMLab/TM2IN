@@ -32,8 +32,8 @@ class CombinedPolygon{
 public:
     std::vector<Vertex*> v_list;
     Vector_3 av_normal = CGAL::NULL_VECTOR;
-    double minx=0, miny=0, minz=0;
-    double maxx=0, maxy=0, maxz=0;
+    double min_coords[3];
+    double max_coords[3];
     double sq_area = 0.0;
 
     CombinedPolygon(){ }
@@ -45,12 +45,14 @@ public:
         return v_list.size();
     }
     bool attachTriangle(Triangle* pl, Checker* ch);
-    bool attachPolygon(CombinedPolygon* cp, Checker* ch);
     std::string toJSONString();
     void makeCoplanar();
     void simplify_colinear(Checker* ch);
 
     bool checkDuplicate(Checker* ch);
+
+    void setMBB(Triangle* pl);
+    void setMBB(CombinedPolygon* pl);
 private:
     Point_3 getCenterPoint();
     ll findShareLine(Triangle* pl, Checker* ch, Vertex** add);
@@ -58,9 +60,8 @@ private:
     bool isShareThreeLine(ll index);
     int isShareTwoLine(ll index, Vertex* add);
     bool checkMakeHole(ll index, Vertex* add);
-    void setMBB(Triangle* pl);
+
     bool isNeighbor(Triangle* pl);
-    bool isNeighbor(CombinedPolygon* cp);
     bool isInMBB(Vertex* vt);
 };
 

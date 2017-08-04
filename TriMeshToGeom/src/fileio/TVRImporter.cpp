@@ -124,14 +124,14 @@ void TVRImporter::makeVertex(int id, string& input, Vertex& vt){
 
     string line;
     getline(ss, line, '\t');
-    std::vector<std::string> x = split(line, ' ');
+    std::vector<std::string> strings = split(line, ' ');
 
     //vt.x = stod(x[1]);
     vt.index = id;
-    vt.x = atof(x[1].c_str());
-    vt.y = stod(x[2]);
-    vt.z = stod(x[3]);
-    x.clear();
+    vt.setX(atof(strings[1].c_str()));
+    vt.setY(stod(strings[2]));
+    vt.setZ(stod(strings[3]));
+    strings.clear();
 }
 
 int TVRImporter::extractMINtvr(string filename){

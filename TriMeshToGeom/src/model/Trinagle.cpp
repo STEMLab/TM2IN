@@ -6,6 +6,7 @@ Triangle::Triangle()
 }
 Triangle::Triangle(Vertex* pa, Vertex *pb, Vertex* pc)
 {
+
     a = pa;
     b = pb;
     c = pc;
@@ -24,7 +25,7 @@ Vector_3 Triangle::getNormal()
 }
 
 double Triangle::getArea(){
-    if (this->area != 0) return this->area;
+    if (this->area > 0.0) return this->area;
     Vertex* va = this->a;
     Vertex* vb = this->b;
     Vertex* vc = this->c;

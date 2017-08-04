@@ -136,7 +136,7 @@ vector<CombinedPolygon*> TriangleSpace::makePolygonsInList(vector<Triangle*>& tr
         checked[index] = true ;
         CombinedPolygon* newcp = new CombinedPolygon(tri_list[index]);
 
-        ull count = 1 ;
+        ll count = -1 ;
         while (count != 0)
         {
             newcp = attachTriangle(tri_list, newcp, checked, count);
@@ -154,7 +154,7 @@ vector<CombinedPolygon*> TriangleSpace::makePolygonsInList(vector<Triangle*>& tr
 }
 
 
-CombinedPolygon* TriangleSpace::attachTriangle(vector<Triangle*> tri_list, CombinedPolygon* cp, bool* checked, ull& count)
+CombinedPolygon* TriangleSpace::attachTriangle(vector<Triangle*> tri_list, CombinedPolygon* cp, bool* checked, ll& count)
 {
     count = 0;
     if (cp->av_normal == CGAL::NULL_VECTOR) return NULL;
@@ -196,10 +196,14 @@ int TriangleSpace::makePolygonsCoplanar()
     return 0;
 }
 
+bool TriangleSpace::compare(CombinedPolygon* i, CombinedPolygon* j) {
+     return (i->sq_area > j->sq_area);
+}
 
 int TriangleSpace::combineCombinedPolygon(){
     cout << "Combine Polygons" << endl;
-    //TODO
+
+    sort(this->polygon_list.begin(), this->polygon_list.end(), compare);
     ull p_size = this->polygon_list.size();
     bool* checked = (bool*)malloc(sizeof(bool) * p_size);
     std::fill(checked, checked + p_size, false);
@@ -211,15 +215,12 @@ int TriangleSpace::combineCombinedPolygon(){
         if (checked[i]) continue;
         checked[i] = true;
 
-        ull count = -1;
+        ll count = -1;
         CombinedPolygon* newcp = new CombinedPolygon(this->polygon_list[i]);
         while(count != 0){
-            newcp = attachPolygons(newcp, checked, count);
+            newcp = attachPolygons(newcp, i+1, checked, count);
             if (newcp == NULL) break;
-            if (combined_count % 50 == 0 )
-            {
-                this->printProcess(combined_count, this->polygon_list.size());
-            }
+            this->printProcess(combined_count, this->polygon_list.size());
             combined_count += count;
         }
         if (newcp != NULL) new_poly_list.push_back(newcp);
@@ -230,15 +231,15 @@ int TriangleSpace::combineCombinedPolygon(){
     return 0;
 }
 
-CombinedPolygon* TriangleSpace::attachPolygons(CombinedPolygon* cp, bool* checked, ull& count)
+CombinedPolygon* TriangleSpace::attachPolygons(CombinedPolygon* cp, ull start, bool* checked, ll& count)
 {
     count = 0;
     if (cp->av_normal == CGAL::NULL_VECTOR) return NULL;
-    for (ull id = 0 ; id < this->polygon_list.size() ; id++)
+    for (ull id = start ; id < this->polygon_list.size() ; id++)
     {
         if (!checked[id])
         {
-            if (cp->attachPolygon(this->polygon_list[id], checker))
+            if (PolygonCombiner::combine(cp, this->polygon_list[id], checker))
             {
                 checked[id] = true;
                 count++;

@@ -28,7 +28,7 @@ int CombinedIO::exportBinary(ofstream& fout, std::vector<CombinedPolygon*>& poly
         fout.write((char*)(&normal.x()), sizeof(normal.x()));
         fout.write((char*)(&normal.y()), sizeof(normal.y()));
         fout.write((char*)(&normal.z()), sizeof(normal.z()));
-        fout.write((char*)(&polygon_list[i]->sq_area));
+        fout.write((char*)(&polygon_list[i]->sq_area), sizeof(polygon_list[i]->sq_area));
     }
     return 0;
 }

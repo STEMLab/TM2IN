@@ -68,7 +68,10 @@ int ManagerImpl::importCombined(string f_path)
 {
     ifstream fin;
     fin.open(f_path, ios::in|ios::binary);
-    if (!fin) return -1;
+    if (!fin){
+        cout << "No file" << endl;
+        return -1;
+    }
     if (CombinedIO::importBinary(fin, this->objcl)) return 1;
     fin.close();
     return 0;

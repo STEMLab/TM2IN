@@ -7,6 +7,7 @@
 
 #include "model/Trinagle.h"
 #include "data/CombinedPolygon.hpp"
+#include "logic/PolygonCombiner.h"
 
 using namespace std;
 
@@ -31,12 +32,13 @@ public:
 protected:
     void freeCombinedPolygons();
     void printProcess(ull, ull);
-    CombinedPolygon* attachTriangle(vector<Triangle*> tri_list, CombinedPolygon* cp, bool* checked, ull& count);
-    CombinedPolygon* attachPolygons(CombinedPolygon* cp, bool* checked, ull& count);
+    CombinedPolygon* attachTriangle(vector<Triangle*> tri_list, CombinedPolygon* cp, bool* checked, ll& count);
+    CombinedPolygon* attachPolygons(CombinedPolygon* cp, ull start, bool* checked, ll& count);
     vector<CombinedPolygon*> makePolygonsInList(vector<Triangle*>& tri_list, bool* checked, int& combined_count);
     vector<vector<Triangle*>> separateByNormal_6(vector<Triangle>& triangles);
 private:
     Checker* checker;
+    static bool compare(CombinedPolygon* i, CombinedPolygon* j);
 };
 
 #endif // TRIANGLESPACE_H

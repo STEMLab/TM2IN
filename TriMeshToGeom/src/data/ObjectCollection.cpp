@@ -47,10 +47,10 @@ void OBJCollection::free(){
 int OBJCollection::cleaning(Checker* ch){
     for (auto it = space_list.begin() ; it != space_list.end() ; it++)
     {
-//        if ((*it)->combineCombinedPolygon() == -1) {
-//            cout << "combine error" << endl;
-//            return -1;
-//        }
+        if ((*it)->combineCombinedPolygon() == -1) {
+            cout << "combine error" << endl;
+            return -1;
+        }
         if ((*it)->makePolygonsCoplanar() == -1) {
             cout << "Coplanar error" << endl;
             return -1;
