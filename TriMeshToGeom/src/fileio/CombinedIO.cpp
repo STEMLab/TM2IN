@@ -28,6 +28,7 @@ int CombinedIO::exportBinary(ofstream& fout, std::vector<CombinedPolygon*>& poly
         fout.write((char*)(&normal.x()), sizeof(normal.x()));
         fout.write((char*)(&normal.y()), sizeof(normal.y()));
         fout.write((char*)(&normal.z()), sizeof(normal.z()));
+        fout.write((char*)(&polygon_list[i]->sq_area));
     }
     return 0;
 }
@@ -76,5 +77,9 @@ int CombinedIO::importBinary(ifstream& fin, vector<Vertex*>& vertex, CombinedPol
     fin.read((char*)&z, sizeof(double));
 
     cp->av_normal = Vector_3(x,y,z);
+
+    double area;
+    fin.read((char*)&area, sizeof(double));
+    cp->sq_area = area;
     return 0;
 }
