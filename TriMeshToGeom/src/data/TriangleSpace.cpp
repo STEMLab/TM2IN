@@ -196,14 +196,12 @@ int TriangleSpace::makePolygonsCoplanar()
     return 0;
 }
 
-bool TriangleSpace::compare(CombinedPolygon* i, CombinedPolygon* j) {
-     return (i->sq_area > j->sq_area);
-}
+
 
 int TriangleSpace::combineCombinedPolygon(){
     cout << "Combine Polygons" << endl;
 
-    sort(this->polygon_list.begin(), this->polygon_list.end(), compare);
+    sort(this->polygon_list.begin(), this->polygon_list.end(), CombinedPolygon::compareLength);
     ull p_size = this->polygon_list.size();
     bool* checked = (bool*)malloc(sizeof(bool) * p_size);
     std::fill(checked, checked + p_size, false);
@@ -212,6 +210,9 @@ int TriangleSpace::combineCombinedPolygon(){
     int combined_count = 0;
     for (ull i = 0 ; i < this->polygon_list.size() ; i++)
     {
+        if (this->polygon_list[i]->checkDuplicate(this->checker)){
+            cout << "soment"<<endl;
+        }
         if (checked[i]) continue;
         checked[i] = true;
 

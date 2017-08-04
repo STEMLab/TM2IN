@@ -84,13 +84,12 @@ OBJCollection* TVRImporter::import(const char* f_path, Checker* check){
 }
 
 Vertex* TVRImporter::findSameVertex(vector<Vertex*>& vertex, Checker* check, Vertex& vt){
-//    for (unsigned int i = 0 ; i < vertex.size() ; i++){
-//        if (check->isSameVertex(*vertex[i], vt) ){
-//            isSame = true;
-//            cout << "Same Vertex" << endl;
-//            return vertex[i];
-//        }
-//    }
+    for (unsigned int i = 0 ; i < vertex.size() ; i++){
+        if (check->isSameVertex(*vertex[i], vt) ){
+            cout << "Same Vertex" << endl;
+            return vertex[i];
+        }
+    }
     Vertex* new_vt = new Vertex(vt);
     return new_vt;
 }

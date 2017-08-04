@@ -108,6 +108,7 @@ bool CombinedPolygon::attachTriangle(Triangle* pl, Checker* ch)
         av_normal = av_normal + pl_nv;
         sq_area += pl->getArea();
         this->v_list.insert(v_list.begin() + index + 1, add);
+
         return true;
     }
 
@@ -167,7 +168,7 @@ int CombinedPolygon::isShareTwoLine(ll index, Vertex* add_id){
 }
 
 /**
- * if this Vertex(add_id) try to make hole, return false.
+ * if this Vertex(add_id) try to make hole, return true.
  */
 
 bool CombinedPolygon::checkMakeHole(ll index, Vertex* add_id){
@@ -189,17 +190,16 @@ bool CombinedPolygon::checkMakeHole(ll index, Vertex* add_id){
 }
 
 bool CombinedPolygon::checkDuplicate(Checker* ch){
-    for (ll i = 0 ; i < this->v_list.size() ; i++){
-        for (ll j = 0 ; j < this->v_list.size() ; j++){
-            if (i == j) continue;
-            if (v_list[i] == v_list[j]) return false;
-            if (ch->isSameVertex(v_list[i], v_list[j])){
-                cout << "checker think this is same" << endl;
-                return false;
-            }
-        }
+    vector<Vertex*> sorted_v_list(this->v_list);
+
+    sort(sorted_v_list.begin(), sorted_v_list.end(), Vertex::compare);
+    for (ll i = 0 ; i < sorted_v_list.size() - 1; i++){
+        if (sorted_v_list[i] == sorted_v_list[i+1])
+            return true;
+        if (ch->isSameVertex(sorted_v_list[i], sorted_v_list[i+1]))
+            return true;
     }
-    return true;
+    return false;
 }
 
 void CombinedPolygon::makeCoplanar(){
@@ -310,4 +310,8 @@ bool CombinedPolygon::isInMBB(Vertex* vt){
         }
     }
     return false;
+}
+
+bool CombinedPolygon::compareLength(CombinedPolygon* i, CombinedPolygon* j) {
+     return (i->getLength() > j->getLength());
 }

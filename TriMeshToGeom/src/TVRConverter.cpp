@@ -17,7 +17,7 @@ int main(int argc, const char * argv[]) {
     //const char path[100] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/";
     const char result_path[50] = "../Result/";
     //const char result_path[50] = "/Users/dong/Documents/dev/TriMeshToGeom/Result/";
-    char file_name[] = "test.min";
+    char file_name[] = "main";
 
 //    TVRImporter::extractMINtvr(string(path) + string(file_name));
 //    return 0;
@@ -52,7 +52,6 @@ int main(int argc, const char * argv[]) {
 
     //Make each surfaces planar and Remove the tilted surface (and remove co-linear).
     if (manager->cleaning() == -1) return -1;
-
 
     //TODO Pinning
     //TODO Make Solid

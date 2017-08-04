@@ -41,6 +41,7 @@ public:
     }
 
     std::string toJSON();
+    static bool compare(Vertex*,Vertex*);
 };
 
 

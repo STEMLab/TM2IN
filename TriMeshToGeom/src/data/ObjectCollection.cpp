@@ -45,13 +45,19 @@ void OBJCollection::free(){
 }
 
 int OBJCollection::cleaning(Checker* ch){
-    for (auto it = space_list.begin() ; it != space_list.end() ; it++)
+    for (ll it = 0 ; it < this->space_list.size(); it++)
     {
-        if ((*it)->combineCombinedPolygon() == -1) {
+        for (int i = 0 ; i < this->space_list[it]->polygon_list.size() ;i++){
+            if (this->space_list[it]->polygon_list[i]->checkDuplicate(ch)){
+                cout << "it has duplicate Vertex" << endl;
+                return -1;
+            }
+        }
+        if (this->space_list[it]->combineCombinedPolygon() == -1) {
             cout << "combine error" << endl;
             return -1;
         }
-        if ((*it)->makePolygonsCoplanar() == -1) {
+        if (this->space_list[it]->makePolygonsCoplanar() == -1) {
             cout << "Coplanar error" << endl;
             return -1;
         }

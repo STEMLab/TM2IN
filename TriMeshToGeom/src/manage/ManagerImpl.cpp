@@ -76,3 +76,4 @@ int ManagerImpl::importCombined(string f_path)
     fin.close();
     return 0;
 }
+

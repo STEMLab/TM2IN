@@ -26,6 +26,7 @@ public:
     int makeSurfaces(Checker* check);
     void free();
     int cleaning(Checker* ch);
+    int validate(Checker* ch);
     void makeGraph(Checker* ch);
 };
 

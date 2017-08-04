@@ -29,7 +29,7 @@ private:
     double threshold_vertex = 0.0;
     double ori_degree = 0.0;
 
-    static bool compare_vertex(Vertex* a, Vertex* b);
+
 
 public:
     Checker(double vertex, double degree){
@@ -40,7 +40,6 @@ public:
     void setSameOrientationDegree(double s){
         ori_degree = s;
     }
-
     bool isExistDuplication(std::vector<Vertex*> vertex);
 
     bool isSameX(Vertex a, Vertex b, Vertex c);

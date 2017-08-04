@@ -33,7 +33,10 @@ bool PolygonCombiner::combine(CombinedPolygon* origin, CombinedPolygon* piece, C
     }
 
     if (start_i == -1) return false;
-    if (start_j - end_j == 1 || end_j - start_j == origin->getLength()-1) return false;
+    if (start_j - end_j == 1 || end_j - start_j == origin->getLength()-1) {
+        //cout << "One Vertex Overlap" << endl;
+        return false;
+    }
     for (ll i = end_i ; i != start_i ; i++){
         if (i == piece_size){
             i = -1;
@@ -70,6 +73,7 @@ bool PolygonCombiner::combine(CombinedPolygon* origin, CombinedPolygon* piece, C
     origin->av_normal = origin->av_normal + piece->av_normal;
     origin->sq_area += piece->sq_area;
     origin->setMBB(piece);
+
     return true;
 
 }
