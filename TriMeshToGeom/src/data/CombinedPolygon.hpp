@@ -54,7 +54,9 @@ public:
     void setMBB(Triangle* pl);
     void setMBB(CombinedPolygon* pl);
 
+    int getSegmentsNumber(ll si, ll ei);
     static bool compareLength(CombinedPolygon* i, CombinedPolygon* j);
+
 private:
     Point_3 getCenterPoint();
     ll findShareLine(Triangle* pl, Checker* ch, Vertex** add);

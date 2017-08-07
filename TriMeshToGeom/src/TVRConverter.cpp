@@ -17,7 +17,7 @@ int main(int argc, const char * argv[]) {
     //const char path[100] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/";
     const char result_path[50] = "../Result/";
     //const char result_path[50] = "/Users/dong/Documents/dev/TriMeshToGeom/Result/";
-    char file_name[] = "main";
+    char file_name[] = "test.min";
 
 //    TVRImporter::extractMINtvr(string(path) + string(file_name));
 //    return 0;

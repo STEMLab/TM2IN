@@ -38,7 +38,6 @@ protected:
     vector<vector<Triangle*>> separateByNormal_6(vector<Triangle>& triangles);
 private:
     Checker* checker;
-    static bool compare(CombinedPolygon* i, CombinedPolygon* j);
 };
 
 #endif // TRIANGLESPACE_H

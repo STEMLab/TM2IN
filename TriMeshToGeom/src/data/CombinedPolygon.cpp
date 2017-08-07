@@ -189,6 +189,17 @@ bool CombinedPolygon::checkMakeHole(ll index, Vertex* add_id){
     return false;
 }
 
+int CombinedPolygon::getSegmentsNumber(ll si, ll ei){
+    int num = 0;
+    for (ll i = si ; ;){
+        if (i == ei) break;
+        num++;
+        i++;
+        if (i == this->v_list.size()) i = 0;
+    }
+    return num;
+}
+
 bool CombinedPolygon::checkDuplicate(Checker* ch){
     vector<Vertex*> sorted_v_list(this->v_list);
 

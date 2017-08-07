@@ -12,6 +12,8 @@ bool PolygonCombiner::combine(CombinedPolygon* origin, CombinedPolygon* piece, C
 
     ll origin_size = origin->getLength();
     ll piece_size = piece->getLength();
+
+    /**< [start_i, end_i) */
     for (ll i = 0 ; i < piece_size ;i++){
         bool escape = false;
         for (ll j = origin_size - 1 ; j >= 0 ; j--){
@@ -37,6 +39,9 @@ bool PolygonCombiner::combine(CombinedPolygon* origin, CombinedPolygon* piece, C
         //cout << "One Vertex Overlap" << endl;
         return false;
     }
+    //if (piece->getSegmentsNumber(start_i, end_i) < 2){
+       // if (!checker->isSamePlanar(origin->av_normal, piece->av_normal)) return false;
+   // }
     for (ll i = end_i ; i != start_i ; i++){
         if (i == piece_size){
             i = -1;
