@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 #include "data/TriangleSpace.h"
 #include "model/vertex.h"
 
@@ -82,33 +83,36 @@ OBJCollection* TVRImporter::import(const char* f_path, Checker* check){
     tvrcl->space_list.push_back(obj);
 
 
+//    for (ull i = 0 ; i < sorted_vertex.size() - 1 ; i ++){
+//        if (check->compare_vertex( sorted_vertex[i], sorted_vertex[i+1]) > 0){
+//            exit(1);
+//        }
+//    }
+
     return tvrcl;
 }
 
-//TODO : binary search
+
 Vertex* TVRImporter::findSameVertex(vector<Vertex*>& vertex, Checker* check, Vertex& vt){
-    ll index = 0;
-    for (; index < vertex.size(); index++){
-        if (check->compare_vertex(vertex[index], &vt) > 0){
+    std::vector<Vertex*>::iterator low, up, it;
+    low = std::lower_bound(vertex.begin(), vertex.end(), vt.x(), CompareVertexAndX() );
+    up = std::upper_bound(vertex.begin(), vertex.end(), vt.x(), CompareVertexAndX() );
+
+    for (it = low ; it != up ; it++){
+        if (check->compare_vertex( (*it), &vt) > 0){
             break;
         }
-        else if (check->compare_vertex(vertex[index], &vt) < 0){
+        else if (check->compare_vertex( (*it), &vt) < 0){
             continue;
         }
         else{
             cout << "Same Vertex" << endl;
-            return vertex[index];
+            return *it;
         }
     }
 
     Vertex* new_vt = new Vertex(vt);
-    vertex.insert(vertex.begin() + index, new_vt);
-//
-//    cout << "\n\n------" <<endl;
-//    cout << index << endl;
-//    for (ll i = 0 ; i < vertex.size() ; i ++){
-//        cout << vertex[i]->toJSON() << endl;
-//    }
+    vertex.insert(it, new_vt);
 
     return new_vt;
 }

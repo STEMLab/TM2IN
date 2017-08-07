@@ -45,9 +45,9 @@ void OBJCollection::free(){
 }
 
 int OBJCollection::cleaning(Checker* ch){
-    for (ll it = 0 ; it < this->space_list.size(); it++)
+    for (ull it = 0 ; it < this->space_list.size(); it++)
     {
-        for (int i = 0 ; i < this->space_list[it]->polygon_list.size() ;i++){
+        for (unsigned int i = 0 ; i < this->space_list[it]->polygon_list.size() ;i++){
             if (this->space_list[it]->polygon_list[i]->checkDuplicate(ch)){
                 cout << "it has duplicate Vertex" << endl;
                 return -1;

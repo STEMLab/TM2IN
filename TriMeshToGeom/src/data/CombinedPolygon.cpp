@@ -208,7 +208,7 @@ bool CombinedPolygon::checkDuplicate(Checker* ch){
     vector<Vertex*> sorted_v_list(this->v_list);
 
     sort(sorted_v_list.begin(), sorted_v_list.end(), Vertex::compare);
-    for (ll i = 0 ; i < sorted_v_list.size() - 1; i++){
+    for (ull i = 0 ; i < sorted_v_list.size() - 1; i++){
         if (sorted_v_list[i] == sorted_v_list[i+1])
             return true;
         if (ch->isSameVertex(sorted_v_list[i], sorted_v_list[i+1]))

@@ -4,9 +4,9 @@ Triangle::Triangle()
 {
     //ctor
 }
+
 Triangle::Triangle(Vertex* pa, Vertex *pb, Vertex* pc)
 {
-
     a = pa;
     b = pb;
     c = pc;
@@ -20,7 +20,7 @@ Vector_3 Triangle::getNormal()
     Vertex* vb = this->b;
     Vertex* vc = this->c;
 
-    this->normal = CGALCalculation::getNormal(va, vb, vc);
+    this->normal = CGALCalculation::getNormal(va, vb, vc) * 100 * this->getArea();
     return this->normal;
 }
 

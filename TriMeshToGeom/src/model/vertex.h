@@ -44,6 +44,28 @@ public:
     static bool compare(Vertex*,Vertex*);
 };
 
+/** < for Searching upper_bound and lower_bound */
+struct CompareVertexAndX
+{
+   bool operator()( const Vertex* v, double x ) const
+   {
+       return v->coords[0] < x;
+   }
 
+   bool operator()( const Vertex* v1, const Vertex* v2 ) const
+   {
+       return v1->coords[0] < v2->coords[0];
+   }
+
+   bool operator()( double time1, double time2 ) const
+   {
+       return time1 < time2;
+   }
+
+   bool operator()( double time, const Vertex* v ) const
+   {
+      return time < v->coords[0];
+   }
+};
 
 #endif // VERTEX_H_INCLUDED
