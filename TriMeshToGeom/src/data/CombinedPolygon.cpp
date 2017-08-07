@@ -74,11 +74,11 @@ bool CombinedPolygon::attachTriangle(Triangle* pl, Checker* ch)
 
     // TODO : overlap check (projection)
     Vector_3 pl_nv = pl->getNormal();
-    if (pl_nv == CGAL::NULL_VECTOR)
-    {
-        cout << "NULL_VECTOR" << endl;
-        return true;/**< Not combine but true  */
-    }
+//    if (pl_nv == CGAL::NULL_VECTOR)
+//    {
+//        cout << "NULL_VECTOR" << endl;
+//        return true;/**< Not combine but true  */
+//    }
 
     Vertex* add;
     ll index = findShareLine(pl, ch, &add);
@@ -193,6 +193,10 @@ int CombinedPolygon::getSegmentsNumber(ll si, ll ei){
     int num = 0;
     for (ll i = si ; ;){
         if (i == ei) break;
+        if (num > this->v_list.size()) {
+            cout << "getSegmentsNumber Error" << endl;
+            return -1;
+        }
         num++;
         i++;
         if (i == this->v_list.size()) i = 0;

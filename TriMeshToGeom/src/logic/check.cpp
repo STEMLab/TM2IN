@@ -71,4 +71,32 @@ bool Checker::isSimilarOrientation(Vector_3& nv1, Vector_3& nv2){
 }
 
 
+int Checker::compare_vertex(Vertex* a, Vertex* b)
+{
+    double x = a->x() - b->x();
+    if (fabs(x) > threshold_vertex)
+    {
+        return x > 0.0 ? 1 : -1;
+    }
+    else
+    {
+        double y = a->y() - b->y();
+        if (fabs(y) > threshold_vertex)
+        {
+            return y > 0.0 ? 1 : -1;
+        }
+        else
+        {
+            double z = a->z() - b->z();
+            if (fabs(z) > threshold_vertex)
+            {
+                return z > 0.0 ? 1 : -1;
+            }
+            else
+                return 0;
+        }
+    }
+}
+
+
 

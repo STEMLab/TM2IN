@@ -62,5 +62,7 @@ public:
     bool isSamePlanar(Vector_3& big, Vector_3& small);
 
     bool isColinear(Vertex* origin, Vertex* v1, Vertex* v2);
+
+    int compare_vertex(Vertex* v1, Vertex* v2);
 };
 #endif /* check_hpp */

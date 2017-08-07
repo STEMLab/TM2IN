@@ -210,9 +210,9 @@ int TriangleSpace::combineCombinedPolygon(){
     int combined_count = 0;
     for (ull i = 0 ; i < this->polygon_list.size() ; i++)
     {
-        if (this->polygon_list[i]->checkDuplicate(this->checker)){
-            cout << "soment"<<endl;
-        }
+//        if (this->polygon_list[i]->checkDuplicate(this->checker)){
+//            cout << "soment"<<endl;
+//        }
         if (checked[i]) continue;
         checked[i] = true;
 
@@ -240,6 +240,7 @@ CombinedPolygon* TriangleSpace::attachPolygons(CombinedPolygon* cp, ull start, b
     {
         if (!checked[id])
         {
+
             if (PolygonCombiner::combine(cp, this->polygon_list[id], checker))
             {
                 checked[id] = true;

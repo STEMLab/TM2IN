@@ -35,6 +35,7 @@ OBJCollection* TVRImporter::import(const char* f_path, Checker* check){
     TriangleSpace* obj = NULL;
     OBJCollection* tvrcl = new OBJCollection();
 
+    vector<Vertex*> sorted_vertex;
     while(!fin.eof()){
         getline(fin, inputstr);
         if (inputstr.size() < 3) continue;
@@ -46,7 +47,7 @@ OBJCollection* TVRImporter::import(const char* f_path, Checker* check){
                 Vertex vt;
                 this->makeVertex(v_count, inputstr, vt);
 
-                Vertex* pt_v = this->findSameVertex(tvrcl->vertex, check, vt);
+                Vertex* pt_v = this->findSameVertex(sorted_vertex, check, vt);
                 tvrcl->vertex.push_back(pt_v);
 
                 v_count++;
@@ -80,17 +81,35 @@ OBJCollection* TVRImporter::import(const char* f_path, Checker* check){
 
     tvrcl->space_list.push_back(obj);
 
+
     return tvrcl;
 }
 
+//TODO : binary search
 Vertex* TVRImporter::findSameVertex(vector<Vertex*>& vertex, Checker* check, Vertex& vt){
-    for (unsigned int i = 0 ; i < vertex.size() ; i++){
-        if (check->isSameVertex(*vertex[i], vt) ){
+    ll index = 0;
+    for (; index < vertex.size(); index++){
+        if (check->compare_vertex(vertex[index], &vt) > 0){
+            break;
+        }
+        else if (check->compare_vertex(vertex[index], &vt) < 0){
+            continue;
+        }
+        else{
             cout << "Same Vertex" << endl;
-            return vertex[i];
+            return vertex[index];
         }
     }
+
     Vertex* new_vt = new Vertex(vt);
+    vertex.insert(vertex.begin() + index, new_vt);
+//
+//    cout << "\n\n------" <<endl;
+//    cout << index << endl;
+//    for (ll i = 0 ; i < vertex.size() ; i ++){
+//        cout << vertex[i]->toJSON() << endl;
+//    }
+
     return new_vt;
 }
 
