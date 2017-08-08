@@ -43,7 +43,7 @@ Vector_3 CGALCalculation::getNormal(Vertex* va, Vertex* vb, Vertex* vc){
     Point_3 p3c(vc->x(),vc->y(),vc->z());
 
     if (CGAL::collinear(p3a, p3b, p3c)){
-        std::cout << "Collinear?" << std::endl;
+        //std::cout << "Collinear?" << std::endl;
         return CGAL::NULL_VECTOR;
     }
     else{

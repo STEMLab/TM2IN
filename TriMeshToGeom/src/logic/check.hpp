@@ -58,6 +58,7 @@ public:
     bool isSameVertex(Vertex* v1, Vertex* v2);
 
     bool isSameOrientation(Vector_3& nv1, Vector_3& nv2);
+    bool isSameOrientation(Vertex* origin, Vertex* v1, Vertex* v2);
     bool isSimilarOrientation(Vector_3& nv1, Vector_3& nv2);
     bool isSamePlanar(Vector_3& big, Vector_3& small);
 

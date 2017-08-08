@@ -32,8 +32,6 @@ int ManagerImpl::cleaning(){
 
     //objcl->free();
 
-    //TODO : Pinning and Make Graph
-    //objcl->makeGraph(check);
     return 0;
 }
 

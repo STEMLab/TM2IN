@@ -12,7 +12,7 @@ using namespace std;
 int main(int argc, const char * argv[]) {
     //TODO make argv
     double degree_param = 10.0;
-    string version = "_v0.2.5.2";
+    string version = "_v0.2.5.3";
     const char path[50] = "../Resource/teevr/tvr/";
     //const char path[100] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/";
     const char result_path[50] = "../Result/";
@@ -55,7 +55,7 @@ int main(int argc, const char * argv[]) {
     //Make each surfaces planar and Remove the tilted surface (and remove co-linear).
     if (manager->cleaning() == -1) return -1;
 
-    //TODO Pinning
+    //TODO make Simple Line
     //TODO Make Solid
 
     string json_file = string(result_path) + string(file_name) + "_" + to_string(degree_param).substr(0,4) + version + ".json";

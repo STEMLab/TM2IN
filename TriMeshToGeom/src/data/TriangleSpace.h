@@ -6,8 +6,9 @@
 #include <bitset>
 
 #include "model/Trinagle.h"
+#include "logic/TriangleAttacher.h"
 #include "data/CombinedPolygon.hpp"
-#include "logic/PolygonCombiner.h"
+#include "logic/CleanPolygonMaker.h"
 
 using namespace std;
 
@@ -28,6 +29,8 @@ public:
 
     int makePolygonsCoplanar();
     int combineCombinedPolygon();
+    int simplifySegment();
+
     void pushTriangle(Triangle tri);
 protected:
     void freeCombinedPolygons();

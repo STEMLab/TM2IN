@@ -57,6 +57,11 @@ int OBJCollection::cleaning(Checker* ch){
             cout << "combine error" << endl;
             return -1;
         }
+        if (this->space_list[it]->simplifySegment() == -1)
+        {
+            cout << "simplify error" << endl;
+            return -1;
+        }
         if (this->space_list[it]->makePolygonsCoplanar() == -1) {
             cout << "Coplanar error" << endl;
             return -1;
