@@ -163,17 +163,17 @@ CombinedPolygon* TriangleSpace::attachPolygons(CombinedPolygon* cp, ull start, b
 
 int TriangleSpace::simplifySegment(){
     cout << "simplifySegment" << endl;
-//    sort(this->polygon_list.begin(), this->polygon_list.end(), CombinedPolygon::compareLength);
-//
-//    ull p_size = this->polygon_list.size();
-//
-//    int combined_count = 0;
-//    for (ull i = 0 ; i < p_size - 1 ; i++)
-//    {
-//        for (ull j = i + 1 ; j < p_size ; j++){
-//            Simplification::simplifyShareSegment(polygon_list[i], polygon_list[j]);
-//        }
-//    }
+    sort(this->polygon_list.begin(), this->polygon_list.end(), CombinedPolygon::compareLength);
+
+    ull p_size = this->polygon_list.size();
+
+    for (ull i = 0 ; i < p_size - 1 ; i++)
+    {
+        for (ull j = i + 1 ; j < p_size ; j++){
+            CleanPolygonMaker::simplifyShareLine(polygon_list[i], polygon_list[j], this->checker);
+        }
+        this->printProcess(i, this->polygon_list.size());
+    }
 
     return 0;
 }

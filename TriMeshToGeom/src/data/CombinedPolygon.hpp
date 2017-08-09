@@ -64,12 +64,6 @@ public:
 
 private:
     Point_3 getCenterPoint();
-    ll findShareLine(Triangle* pl, Checker* ch, Vertex** add);
-    bool isShareThreeLine(ll index);
-    int isShareTwoLine(ll index, Vertex* add);
-    bool checkMakeHole(ll index, Vertex* add);
-
-    bool isNeighbor(Triangle* pl);
 };
 
 

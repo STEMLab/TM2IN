@@ -140,7 +140,8 @@ bool CleanPolygonMaker::isNeighbor(CombinedPolygon* cp1, CombinedPolygon* cp2){
 }
 
 
-int CleanPolygonMaker::simplifyShareLine(CombinedPolygon* origin, CombinedPolygon* piece){
+/** < simplify only overlap part of line*/
+int CleanPolygonMaker::simplifyShareLine(CombinedPolygon* origin, CombinedPolygon* piece, Checker* checker){
     if (!isNeighbor(origin, piece)) return false;
 
     ll end_i = -1, end_j = -1;
@@ -150,27 +151,95 @@ int CleanPolygonMaker::simplifyShareLine(CombinedPolygon* origin, CombinedPolygo
     ll origin_size = origin->getLength();
     ll piece_size = piece->getLength();
 
-
-    for (ll i = 0 ; i < piece_size ;i++){
-        bool escape = false;
-        for (ll j = origin_size - 1 ; j >= 0 ; j--){
-            if (piece->v_list[i] == origin->v_list[j]){
-                middle_i = i;
-                middle_j = j;
-                escape = true;
-                break;
-            }
-        }
-        if (escape) break;
-    }
-
-    if (middle_i == -1) return false;
-
-
+    if (!findShareVertex(piece->v_list, origin->v_list, middle_i, middle_j)) return false;
+    
     /**< [start_i, end_i] */
     findStartAndEnd(piece->v_list, origin->v_list, middle_i, middle_j, start_i, end_i, start_j, end_j);
 
+    
+    int seg_num = piece->getSegmentsNumber(start_i, end_i);
+    if (seg_num == -1)
+    {
+        exit(-1);
+    }
+    else if (seg_num == 0){
+        /**< Only One Vertex Same*/
+        return 0;
+    }
+    
+    vector<Vertex*> simple = simplifySegment(piece->v_list, start_i, end_i, checker);
+    vector<Vertex*> origin_new_vlist;
+    vector<Vertex*> piece_new_vlist;
+    
+    for (ll j = start_j; ; ){
+        origin_new_vlist.push_back(origin->v_list[j]);
+        j++;
+        if (j == origin_size) j = 0;
+        if (j == end_j) break;
+    }
+    for (ll j = 0 ; j < simple.size() ; j++){
+        origin_new_vlist.push_back(simple[j]);
+    }
+    
+    for (ll i = end_i; ;){
+        piece_new_vlist.push_back(piece->v_list[i]);
+        i++;
+        if (i == piece_size) i = 0;
+        if (i == start_i) break;
+    }
+    for (ll j = 0 ; j < simple.size() ; j++){
+        piece_new_vlist.push_back(simple[j]);
+    }
+    
+    origin->v_list.clear();
+    piece->v_list.clear();
+    
+    origin->v_list = origin_new_vlist;
+    piece->v_list = piece_new_vlist;
+    
+    return seg_num;
+}
 
-    return 0;
+vector<Vertex*> CleanPolygonMaker::simplifySegment(vector<Vertex*>& origin, ll start, ll end, Checker* checker){
+    vector<Vertex*> simple, temp;
+    vector<ll> vertex_list;
+    
+    ll origin_size = origin.size();
+    
+    for (ll index = start; index != end; index++){
+        if (index == origin_size){
+            index = -1;
+            continue;
+        }
+        temp.push_back(origin[index]);
+    }
+    
+    bool ischanged = true;
+    vertex_list.push_back(0);
+    vertex_list.push_back(temp.size() - 1);
+    
+    while(ischanged){
+        ischanged = false;
+        for (ll i = 0; i < vertex_list.size() - 1 ; i++){
+            ll ni = i + 1;
+            ll si = vertex_list[i];
+            ll ei = vertex_list[ni];
+            for (ll j = si + 1 ; j < ei ; j++){
+                if (!checker->isSamePlanar(temp[si], temp[ei], temp[j])){
+                    vertex_list.push_back(j);
+                    ischanged=true;
+                }
+            }
+        }
+        sort(vertex_list.begin(), vertex_list.end());
+    }
+    
+    for (ll index = 0 ; index < vertex_list.size() ; index++){
+        simple.push_back(temp[vertex_list[index]]);
+    }
+    
+    temp.clear();
+
+    return simple;
 }
 
