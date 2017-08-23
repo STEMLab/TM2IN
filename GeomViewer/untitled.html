@@ -28,7 +28,7 @@
 
 		var cross;
 		var jsonfile;
-		$.getJSON("../Result/main_10.0_v0.2.5.1.json", function(data) {
+		$.getJSON("../Result/main_10.0_v0.2.5.3.json", function(data) {
 			jsonfile = data;
 			init();
 			animate();
@@ -61,7 +61,7 @@
 			scene.fog = new THREE.FogExp2(0xcccccc, 0.0002);
 			var space = jsonfile.spaces;
 			for (var i = 0; i < space.length; i++) {
-				var polygon_list = space[i].polygons;
+				var polygon_list = space[i].Surfaces;
 				for (var j = 0; j < polygon_list.length; j++) {
 					var coordinates = polygon_list[j].coord;
 					coordinates = scaleUp(coordinates, 100);

@@ -17,7 +17,7 @@ void TriangleSpace::pushTriangle(Triangle tri){
     this->triangles.push_back(tri);
 }
 
-int TriangleSpace::makePolygonsGreedy(){
+int TriangleSpace::makeSurfacesGreedy(){
     int combined_count = 0;
     vector<Triangle*> p_triangles;
     ull size = this->triangles.size();
@@ -28,14 +28,14 @@ int TriangleSpace::makePolygonsGreedy(){
     bool* checked = (bool*)malloc(sizeof(bool) * size);
     std::fill(checked, checked + size, false);
 
-    vector<CombinedPolygon*> c_list = makePolygonsInList(p_triangles, checked, combined_count);
+    vector<Surface*> c_list = makeSurfacesInList(p_triangles, checked, combined_count);
     this->polygon_list.insert(this->polygon_list.end(), c_list.begin(), c_list.end());
 
     free(checked);
 
     this->triangles.clear();
 
-    cout << "\ndone make Polygons" << endl;
+    cout << "\ndone make Surfaces" << endl;
     return 0;
 }
 
@@ -44,9 +44,9 @@ void TriangleSpace::printProcess(ull index, ull size){
 }
 
 
-vector<CombinedPolygon*> TriangleSpace::makePolygonsInList(vector<Triangle*>& tri_list, bool* checked, int& combined_count)
+vector<Surface*> TriangleSpace::makeSurfacesInList(vector<Triangle*>& tri_list, bool* checked, int& combined_count)
 {
-    vector<CombinedPolygon*> result_list;
+    vector<Surface*> result_list;
     ull size = tri_list.size();
     cout << "\n number : " << size << endl;
 
@@ -58,7 +58,7 @@ vector<CombinedPolygon*> TriangleSpace::makePolygonsInList(vector<Triangle*>& tr
             continue;
         }
         checked[index] = true ;
-        CombinedPolygon* newcp = new CombinedPolygon(tri_list[index]);
+        Surface* newcp = new Surface(tri_list[index]);
 
         ll count = -1 ;
         while (count != 0)
@@ -78,7 +78,7 @@ vector<CombinedPolygon*> TriangleSpace::makePolygonsInList(vector<Triangle*>& tr
 }
 
 
-CombinedPolygon* TriangleSpace::attachTriangle(vector<Triangle*> tri_list, CombinedPolygon* cp, bool* checked, ll& count)
+Surface* TriangleSpace::attachTriangle(vector<Triangle*> tri_list, Surface* cp, bool* checked, ll& count)
 {
     count = 0;
     if (cp->av_normal == CGAL::NULL_VECTOR) return NULL;
@@ -97,7 +97,7 @@ CombinedPolygon* TriangleSpace::attachTriangle(vector<Triangle*> tri_list, Combi
     return cp;
 }
 
-int TriangleSpace::makePolygonsCoplanar()
+int TriangleSpace::makeSurfacesCoplanar()
 {
     for (int i = 0 ; i < (int)this->polygon_list.size() ; i++)
     {
@@ -109,15 +109,15 @@ int TriangleSpace::makePolygonsCoplanar()
 
 
 
-int TriangleSpace::combineCombinedPolygon(){
-    cout << "Combine Polygons" << endl;
+int TriangleSpace::combineSurface(){
+    cout << "Combine Surfaces" << endl;
 
-    sort(this->polygon_list.begin(), this->polygon_list.end(), CombinedPolygon::compareLength);
+    sort(this->polygon_list.begin(), this->polygon_list.end(), Surface::compareLength);
     ull p_size = this->polygon_list.size();
     bool* checked = (bool*)malloc(sizeof(bool) * p_size);
     std::fill(checked, checked + p_size, false);
 
-    vector<CombinedPolygon*> new_poly_list;
+    vector<Surface*> new_poly_list;
     int combined_count = 0;
     for (ull i = 0 ; i < this->polygon_list.size() ; i++)
     {
@@ -128,9 +128,9 @@ int TriangleSpace::combineCombinedPolygon(){
         checked[i] = true;
 
         ll count = -1;
-        CombinedPolygon* newcp = new CombinedPolygon(this->polygon_list[i]);
+        Surface* newcp = new Surface(this->polygon_list[i]);
         while(count != 0){
-            newcp = attachPolygons(newcp, i+1, checked, count);
+            newcp = attachSurfaces(newcp, i+1, checked, count);
             if (newcp == NULL) break;
             this->printProcess(combined_count, this->polygon_list.size());
             combined_count += count;
@@ -138,12 +138,12 @@ int TriangleSpace::combineCombinedPolygon(){
         if (newcp != NULL) new_poly_list.push_back(newcp);
     }
 
-    freeCombinedPolygons();
+    freeSurfaces();
     this->polygon_list = new_poly_list;
     return 0;
 }
 
-CombinedPolygon* TriangleSpace::attachPolygons(CombinedPolygon* cp, ull start, bool* checked, ll& count)
+Surface* TriangleSpace::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count)
 {
     count = 0;
     if (cp->av_normal == CGAL::NULL_VECTOR) return NULL;
@@ -163,7 +163,7 @@ CombinedPolygon* TriangleSpace::attachPolygons(CombinedPolygon* cp, ull start, b
 
 int TriangleSpace::simplifySegment(){
     cout << "simplifySegment" << endl;
-//    sort(this->polygon_list.begin(), this->polygon_list.end(), CombinedPolygon::compareLength);
+//    sort(this->polygon_list.begin(), this->polygon_list.end(), Surface::compareLength);
 //
 //    ull p_size = this->polygon_list.size();
 //
@@ -179,7 +179,7 @@ int TriangleSpace::simplifySegment(){
 }
 
 
-void TriangleSpace::freeCombinedPolygons(){
+void TriangleSpace::freeSurfaces(){
     for (ull id = 0 ; id < this->polygon_list.size() ; id++)
     {
         delete(this->polygon_list[id]);
@@ -199,7 +199,7 @@ void TriangleSpace::freeCombinedPolygons(){
 
 
 
-int TriangleSpace::makePolygonsBySeparation()
+int TriangleSpace::makeSurfacesBySeparation()
 {
     // Separation by Normal
     vector<vector<Triangle*>> poly_set;
@@ -213,7 +213,7 @@ int TriangleSpace::makePolygonsBySeparation()
         bool* checked = (bool*)malloc(sizeof(bool) * c_size);
         std::fill(checked, checked + c_size, false);
 
-        vector<CombinedPolygon*> c_list = makePolygonsInList(poly_set[dir], checked, combined_count);
+        vector<Surface*> c_list = makeSurfacesInList(poly_set[dir], checked, combined_count);
         this->polygon_list.insert(this->polygon_list.end(), c_list.begin(), c_list.end());
 
         free(checked);
@@ -221,11 +221,11 @@ int TriangleSpace::makePolygonsBySeparation()
 
     this->triangles.clear();
 
-    cout << "\ndone make Polygons" << endl;
+    cout << "\ndone make Surfaces" << endl;
     return 0;
 }
 
-int TriangleSpace::makePolygonsByCandidator()
+int TriangleSpace::makeSurfacesByCandidator()
 {
     ull size = this->triangles.size();
     bool* checked = (bool*)malloc(sizeof(bool) * size);
@@ -260,7 +260,7 @@ int TriangleSpace::makePolygonsByCandidator()
         bool* checked2 = (bool*)malloc(sizeof(bool) * c_size);
         std::fill(checked2, checked2 + c_size, false);
 
-        vector<CombinedPolygon*> c_list = makePolygonsInList(candidates, checked2, combined_count);
+        vector<Surface*> c_list = makeSurfacesInList(candidates, checked2, combined_count);
         this->polygon_list.insert(this->polygon_list.end(), c_list.begin(), c_list.end());
 
         free(checked2);
@@ -270,7 +270,7 @@ int TriangleSpace::makePolygonsByCandidator()
 
     this->triangles.clear();
 
-    cout << "\ndone make Polygons" << endl;
+    cout << "\ndone make Surfaces" << endl;
     return 0;
 }
 

@@ -21,10 +21,10 @@ int JSONMaker:: printJSON(ofstream& fout, vector<TriangleSpace*>& ts){
 }
 
 
-int JSONMaker::printJSON(ofstream& fout, vector<CombinedPolygon*>& cp){
-    cout << "The number of polygons : " << cp.size() <<endl;
+int JSONMaker::printJSON(ofstream& fout, vector<Surface*>& cp){
+    cout << "The number of Surfaces : " << cp.size() <<endl;
     //fout << "{";
-    fout << " \"polygons\" : [ \n";
+    fout << " \"Surfaces\" : [ \n";
     for (unsigned int id = 0 ; id < cp.size() ; id++)
     {
         if (cp[id]->v_list.size() == 1) cout << "1 tri" << endl;

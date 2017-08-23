@@ -1,6 +1,6 @@
 #include "logic/CleanPolygonMaker.h"
 
-bool CleanPolygonMaker::combine(CombinedPolygon* origin, CombinedPolygon* piece, Checker* checker){
+bool CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checker){
      // check Polygon is in near polygon or not
     if (!isNeighbor(origin, piece)) return false;
 
@@ -134,13 +134,13 @@ void CleanPolygonMaker::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj
     start_j = j;
 }
 
-bool CleanPolygonMaker::isNeighbor(CombinedPolygon* cp1, CombinedPolygon* cp2){
+bool CleanPolygonMaker::isNeighbor(Surface* cp1, Surface* cp2){
     //TODO
     return true;
 }
 
 
-int CleanPolygonMaker::simplifyShareLine(CombinedPolygon* origin, CombinedPolygon* piece){
+int CleanPolygonMaker::simplifyShareLine(Surface* origin, Surface* piece){
     if (!isNeighbor(origin, piece)) return false;
 
     ll end_i = -1, end_j = -1;

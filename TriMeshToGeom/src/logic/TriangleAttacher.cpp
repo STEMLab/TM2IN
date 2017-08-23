@@ -1,7 +1,7 @@
 #include "TriangleAttacher.h"
 
 
-bool TriangleAttacher::attach(CombinedPolygon* cp, Triangle* pl, Checker* ch)
+bool TriangleAttacher::attach(Surface* cp, Triangle* pl, Checker* ch)
 {
     // check Trinagle is in near polygon or not
     if (!isNeighbor(cp, pl)) return false;
@@ -45,7 +45,7 @@ bool TriangleAttacher::attach(CombinedPolygon* cp, Triangle* pl, Checker* ch)
     return false;
 }
 
-bool TriangleAttacher::isShareThreeLine(CombinedPolygon* cp, ll index){
+bool TriangleAttacher::isShareThreeLine(Surface* cp, ll index){
     ll n_index = index + 3;
     if (n_index >= (int)cp->v_list.size()) n_index -= cp->v_list.size();
 
@@ -53,7 +53,7 @@ bool TriangleAttacher::isShareThreeLine(CombinedPolygon* cp, ll index){
 
 }
 
-ll TriangleAttacher::findShareLine(CombinedPolygon* cp, Triangle* pl, Checker* ch, Vertex** add)
+ll TriangleAttacher::findShareLine(Surface* cp, Triangle* pl, Checker* ch, Vertex** add)
 {
     for (ull id = 0 ; id < cp->v_list.size() ; id++)
     {
@@ -82,7 +82,7 @@ ll TriangleAttacher::findShareLine(CombinedPolygon* cp, Triangle* pl, Checker* c
     return -1;
 }
 
-int TriangleAttacher::isShareTwoLine(CombinedPolygon* cp, ll index, Vertex* add_id){
+int TriangleAttacher::isShareTwoLine(Surface* cp, ll index, Vertex* add_id){
     ll b_index = index - 1;
     if (b_index < 0) b_index = cp->v_list.size() - 1;
 
@@ -97,7 +97,7 @@ int TriangleAttacher::isShareTwoLine(CombinedPolygon* cp, ll index, Vertex* add_
 }
 
 
-bool TriangleAttacher::checkMakeHole(CombinedPolygon* cp, ll index, Vertex* add_id){
+bool TriangleAttacher::checkMakeHole(Surface* cp, ll index, Vertex* add_id){
     for (ll i = 0 ; i < cp->v_list.size() ; i++)
     {
         if (cp->v_list[i] == add_id)
@@ -116,7 +116,7 @@ bool TriangleAttacher::checkMakeHole(CombinedPolygon* cp, ll index, Vertex* add_
 }
 
 
-bool TriangleAttacher::isNeighbor(CombinedPolygon* cp, Triangle* pl){
+bool TriangleAttacher::isNeighbor(Surface* cp, Triangle* pl){
     Vertex* v_list[3] = {pl->a, pl->b, pl->c};
 
     for (int i = 0 ; i < 3 ; i++){

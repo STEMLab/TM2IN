@@ -7,7 +7,7 @@
 
 #include "model/Trinagle.h"
 #include "logic/TriangleAttacher.h"
-#include "data/CombinedPolygon.hpp"
+#include "data/Surface.hpp"
 #include "logic/CleanPolygonMaker.h"
 
 using namespace std;
@@ -20,24 +20,24 @@ public:
     TriangleSpace(string pname, Checker* check);
     virtual ~TriangleSpace();
     std::vector<Triangle> triangles;
-    std::vector<CombinedPolygon*> polygon_list;
+    std::vector<Surface*> polygon_list;
 
 
-    int makePolygonsBySeparation();
-    int makePolygonsByCandidator();
-    int makePolygonsGreedy();
+    int makeSurfacesBySeparation();
+    int makeSurfacesByCandidator();
+    int makeSurfacesGreedy();
 
-    int makePolygonsCoplanar();
-    int combineCombinedPolygon();
+    int makeSurfacesCoplanar();
+    int combineSurface();
     int simplifySegment();
 
     void pushTriangle(Triangle tri);
 protected:
-    void freeCombinedPolygons();
+    void freeSurfaces();
     void printProcess(ull, ull);
-    CombinedPolygon* attachTriangle(vector<Triangle*> tri_list, CombinedPolygon* cp, bool* checked, ll& count);
-    CombinedPolygon* attachPolygons(CombinedPolygon* cp, ull start, bool* checked, ll& count);
-    vector<CombinedPolygon*> makePolygonsInList(vector<Triangle*>& tri_list, bool* checked, int& combined_count);
+    Surface* attachTriangle(vector<Triangle*> tri_list, Surface* cp, bool* checked, ll& count);
+    Surface* attachSurfaces(Surface* cp, ull start, bool* checked, ll& count);
+    vector<Surface*> makeSurfacesInList(vector<Triangle*>& tri_list, bool* checked, int& combined_count);
     vector<vector<Triangle*>> separateByNormal_6(vector<Triangle>& triangles);
 private:
     Checker* checker;

@@ -9,7 +9,7 @@
 #ifndef ObjectCollection_h
 #define ObjectCollection_h
 
-#include "data/CombinedPolygon.hpp"
+#include "data/Surface.hpp"
 #include "logic/check.hpp"
 #include "data/TriangleSpace.h"
 

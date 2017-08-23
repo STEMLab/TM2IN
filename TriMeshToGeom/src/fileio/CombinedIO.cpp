@@ -19,7 +19,7 @@ int CombinedIO:: exportBinary(ofstream& fout, vector<TriangleSpace*>& ts){
     return 0;
 }
 
-int CombinedIO::exportBinary(ofstream& fout, std::vector<CombinedPolygon*>& polygon_list){
+int CombinedIO::exportBinary(ofstream& fout, std::vector<Surface*>& polygon_list){
     ll size = polygon_list.size();
     fout.write((char*)&size, sizeof(size));
     for (unsigned int i = 0; i < size ; i++){
@@ -55,14 +55,14 @@ int CombinedIO::importBinary(ifstream& fin, vector<Vertex*>& vertex, TriangleSpa
     ll size;
     fin.read((char*)&size, sizeof(size));
     for (int i = 0 ; i < size ; i++){
-        CombinedPolygon* cp = new CombinedPolygon();
+        Surface* cp = new Surface();
         importBinary(fin, vertex, cp);
         ts->polygon_list.push_back(cp);
     }
     return 0;
 }
 
-int CombinedIO::importBinary(ifstream& fin, vector<Vertex*>& vertex, CombinedPolygon* cp){
+int CombinedIO::importBinary(ifstream& fin, vector<Vertex*>& vertex, Surface* cp){
     ll size;
     fin.read((char*)&size, sizeof(size));
     for (int i = 0 ; i < size; i++){

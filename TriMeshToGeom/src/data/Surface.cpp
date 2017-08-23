@@ -1,5 +1,5 @@
 //
-//  CombinedPolygon.cpp
+//  Surface.cpp
 //  TriMeshToGeom
 //
 //  Created by Dong's MacBook Pro on 2017. 6. 19..
@@ -7,13 +7,13 @@
 //
 
 #include "logic/check.hpp"
-#include "data/CombinedPolygon.hpp"
+#include "data/Surface.hpp"
 #include "logic/CleanPolygonMaker.h"
 #include <cstdlib>
 
 using namespace std;
 
-CombinedPolygon::CombinedPolygon(CombinedPolygon* cp){
+Surface::Surface(Surface* cp){
     this->v_list = cp->v_list;
     this->av_normal = cp->av_normal;
     for (int i = 0 ; i < 3 ; i++){
@@ -23,7 +23,7 @@ CombinedPolygon::CombinedPolygon(CombinedPolygon* cp){
     this->sq_area = cp->sq_area;
 }
 
-CombinedPolygon::CombinedPolygon(Triangle* pl){
+Surface::Surface(Triangle* pl){
     Vertex* v[3] = {pl->a, pl->b, pl->c};
 
     for (int i = 0 ; i < 3 ;i++){
@@ -48,7 +48,7 @@ CombinedPolygon::CombinedPolygon(Triangle* pl){
     sq_area = pl->getArea();
 }
 
-void CombinedPolygon::setMBB(Triangle* pl){
+void Surface::setMBB(Triangle* pl){
     Vertex* v[3] = {pl->a, pl->b, pl->c};
     for (int i = 0 ; i < 3 ; i++){
         for (int j = 0 ; j < 3 ; j++){
@@ -58,7 +58,7 @@ void CombinedPolygon::setMBB(Triangle* pl){
     }
 }
 
-void CombinedPolygon::setMBB(CombinedPolygon* cp){
+void Surface::setMBB(Surface* cp){
     for (int j = 0 ; j < 3 ; j++){
         this->max_coords[j] = max(this->max_coords[j], cp->max_coords[j]);
         this->min_coords[j] = min(this->min_coords[j], cp->min_coords[j]);
@@ -69,7 +69,7 @@ void CombinedPolygon::setMBB(CombinedPolygon* cp){
 /**
  * if this Vertex(add_id) try to make hole, return true.
  */
-bool CombinedPolygon::isExistSameVertexInRange(ll si, ll ei, Vertex* add_id){
+bool Surface::isExistSameVertexInRange(ll si, ll ei, Vertex* add_id){
     for (ll i = si ; i != ei ; i++)
     {
         if (i == this->v_list.size()){
@@ -85,7 +85,7 @@ bool CombinedPolygon::isExistSameVertexInRange(ll si, ll ei, Vertex* add_id){
 }
 
 
-int CombinedPolygon::getSegmentsNumber(ll si, ll ei){
+int Surface::getSegmentsNumber(ll si, ll ei){
     int num = 0;
     for (ll i = si ; ;){
         if (i == ei) break;
@@ -100,7 +100,7 @@ int CombinedPolygon::getSegmentsNumber(ll si, ll ei){
     return num;
 }
 
-bool CombinedPolygon::checkDuplicate(Checker* ch){
+bool Surface::checkDuplicate(Checker* ch){
     vector<Vertex*> sorted_v_list(this->v_list);
 
     sort(sorted_v_list.begin(), sorted_v_list.end(), Vertex::compare);
@@ -113,7 +113,7 @@ bool CombinedPolygon::checkDuplicate(Checker* ch){
     return false;
 }
 
-void CombinedPolygon::makeCoplanar(){
+void Surface::makeCoplanar(){
     Point_3 center = getCenterPoint();
     Plane_3 plane(center, this->av_normal);
     for (ull index = 0 ; index < this->v_list.size() ; index++ ){
@@ -125,7 +125,7 @@ void CombinedPolygon::makeCoplanar(){
 }
 
 
-Point_3 CombinedPolygon::getCenterPoint(){
+Point_3 Surface::getCenterPoint(){
     double x=0.0,y=0.0,z=0.0;
     for (ull index = 0 ; index < this->v_list.size() ; index++ ){
         x += this->v_list[index]->x();
@@ -140,7 +140,7 @@ Point_3 CombinedPolygon::getCenterPoint(){
 }
 
 
-string CombinedPolygon::toJSONString(){
+string Surface::toJSONString(){
     string ret;
 
     ret.append("{ \"normal\" : [");
@@ -160,7 +160,7 @@ string CombinedPolygon::toJSONString(){
 
 
 
-bool CombinedPolygon::isInMBB(Vertex* vt){
+bool Surface::isInMBB(Vertex* vt){
     if (vt->x() >= this->min_coords[0] && vt->x() <= this->max_coords[0]){
         if (vt->y() >= this->min_coords[1] && vt->y() <= this->max_coords[1]){
             if (vt->z() >= this->min_coords[2] && vt->z() <= this->max_coords[2]){
@@ -171,6 +171,6 @@ bool CombinedPolygon::isInMBB(Vertex* vt){
     return false;
 }
 
-bool CombinedPolygon::compareLength(CombinedPolygon* i, CombinedPolygon* j) {
+bool Surface::compareLength(Surface* i, Surface* j) {
      return (i->getLength() > j->getLength());
 }

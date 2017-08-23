@@ -1,13 +1,13 @@
 //
-//  CombinedPolygon.hpp
+//  Surface.hpp
 //  TriMeshToGeom
 //
 //  Created by Dong's MacBook Pro on 2017. 6. 20..
 //  Copyright © 2017년 Dong's MacBook Pro. All rights reserved.
 //
 
-#ifndef CombinedPolygon_h
-#define CombinedPolygon_h
+#ifndef Surface_h
+#define Surface_h
 
 #include <vector>
 #include <string>
@@ -28,7 +28,7 @@ typedef Kernel::Vector_3 Vector_3;
 typedef Kernel::Plane_3 Plane_3;
 
 
-class CombinedPolygon{
+class Surface{
 public:
     std::vector<Vertex*> v_list;
     Vector_3 av_normal = CGAL::NULL_VECTOR;
@@ -37,10 +37,10 @@ public:
     double max_coords[3];
     double sq_area = 0.0;
 
-    CombinedPolygon(){ }
+    Surface(){ }
 
-    CombinedPolygon(Triangle* pl);
-    CombinedPolygon(CombinedPolygon* cp);
+    Surface(Triangle* pl);
+    Surface(Surface* cp);
 
     ull getLength(){
         return v_list.size();
@@ -54,12 +54,12 @@ public:
     bool checkDuplicate(Checker* ch);
     bool isInMBB(Vertex* vt);
     void setMBB(Triangle* pl);
-    void setMBB(CombinedPolygon* pl);
+    void setMBB(Surface* pl);
     bool isExistSameVertexInRange(ll si, ll ei, Vertex* add_id);
     int getSegmentsNumber(ll si, ll ei);
 
-
-    static bool compareLength(CombinedPolygon* i, CombinedPolygon* j);
+    //compare vector size
+    static bool compareLength(Surface* i, Surface* j);
 
 
 private:
@@ -74,4 +74,4 @@ private:
 
 
 
-#endif /* CombinedPolygon_h */
+#endif /* Surface_h */
