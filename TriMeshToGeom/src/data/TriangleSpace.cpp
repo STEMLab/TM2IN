@@ -39,6 +39,26 @@ int TriangleSpace::makeSurfacesGreedy(){
     return 0;
 }
 
+int TriangleSpace::makeSurfacesNotJoin(){
+    int combined_count = 0;
+    vector<Triangle*> p_triangles;
+    ull size = this->triangles.size();
+    for (ull i = 0 ; i < size; i++){
+        p_triangles.push_back(&this->triangles[i]);
+    }
+
+    vector<Surface*> c_list;
+    for (ull index = 0 ; index < size ; index++){
+        Surface* newcp = new Surface(p_triangles[index]);
+        c_list.push_back(newcp);
+    }
+    this->polygon_list.insert(this->polygon_list.end(), c_list.begin(), c_list.end());
+    this->triangles.clear();
+
+    cout << "\ndone make Surfaces" << endl;
+    return 0;
+}
+
 void TriangleSpace::printProcess(ull index, ull size){
     cout << "\r==========" << (int)((double)index/(double)size * 100) <<"% ========";
 }

@@ -26,6 +26,7 @@ public:
     int makeSurfacesBySeparation();
     int makeSurfacesByCandidator();
     int makeSurfacesGreedy();
+    int makeSurfacesNotJoin();
 
     int makeSurfacesCoplanar();
     int combineSurface();
