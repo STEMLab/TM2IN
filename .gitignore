@@ -18,3 +18,5 @@ Result/
 *.layout
 bin/
 obj/
+cscope.out
+*.cscope_file_list

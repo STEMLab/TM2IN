@@ -20,10 +20,16 @@ using namespace std;
 
 int OBJCollection::makeSurfaces(Checker* check){
 
-    for (auto it = this->space_list.begin() ; it != this->space_list.end() ; it++){
+    for (auto it = this->space_list.begin() ; it != this->space_list.end() ; it++)
+    {
         cout << (*it) -> name << " is converting..." << endl;
         int ret = (*it)->makeSurfacesGreedy();
-        if (ret) { cout << "make Surfaces error" << endl; return -1;}
+        if (ret)
+        {
+            cout << "make Surfaces error" << endl;
+            return -1;
+        }
+
     }
 
     return 0;
@@ -53,15 +59,21 @@ int OBJCollection::cleaning(Checker* ch){
                 return -1;
             }
         }
-        if (this->space_list[it]->combineSurface() == -1) {
+        if (this->space_list[it]->combineSurface() == -1)
+        {
             cout << "combine error" << endl;
             return -1;
         }
-        if (this->space_list[it]->simplifySegment() == -1)
+        if (this->space_list[it]->match00() == -1)
         {
-            cout << "simplify error" << endl;
+            cout << "match00 error" << endl;
             return -1;
         }
+//        if (this->space_list[it]->simplifySegment() == -1)
+//        {
+//            cout << "simplify error" << endl;
+//            return -1;
+//        }
 
 //        if (this->space_list[it]->makeSurfacesCoplanar() == -1) {
 //            cout << "Coplanar error" << endl;

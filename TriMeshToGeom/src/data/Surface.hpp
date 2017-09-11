@@ -55,12 +55,13 @@ public:
     bool isInMBB(Vertex* vt);
     void setMBB(Triangle* pl);
     void setMBB(Surface* pl);
+    void setMBB();
     bool isExistSameVertexInRange(ll si, ll ei, Vertex* add_id);
     int getSegmentsNumber(ll si, ll ei);
 
     //compare vector size
     static bool compareLength(Surface* i, Surface* j);
-
+    void translate(double diff[]);
 
 private:
     Point_3 getCenterPoint();

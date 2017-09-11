@@ -40,7 +40,6 @@ int TriangleSpace::makeSurfacesGreedy(){
 }
 
 int TriangleSpace::makeSurfacesNotJoin(){
-    int combined_count = 0;
     vector<Triangle*> p_triangles;
     ull size = this->triangles.size();
     for (ull i = 0 ; i < size; i++){
@@ -127,7 +126,23 @@ int TriangleSpace::makeSurfacesCoplanar()
     return 0;
 }
 
+int TriangleSpace::match00(){
+    updateMBB();
+    double diff[3];
+    for (int i = 0 ; i < 3 ; i++){
+        diff[i] = -this->min_coords[i];
+    }
 
+    for (int i = 0 ; i < (int)this->polygon_list.size() ; i++)
+    {
+        this->polygon_list[i]->translate(diff);
+    }
+
+    for (int i = 0 ; i < this->vertex->size() ; i++){
+        this->vertex->at(i)->translate(diff);
+    }
+    return 0;
+}
 
 int TriangleSpace::combineSurface(){
     cout << "Combine Surfaces" << endl;
@@ -207,7 +222,22 @@ void TriangleSpace::freeSurfaces(){
     this->polygon_list.clear();
 }
 
+void TriangleSpace::updateMBB(){
+    for (int i = 0 ; i < 3 ; i++)
+    {
+        this->max_coords[i] = -1000000000;
+        this->min_coords[i] = 1000000000;
+    }
 
+    for (ull i = 0 ; i < this->polygon_list.size() ; i++){
+        Surface* cp = this->polygon_list[i];
+        cp->setMBB();
+        for (int j = 0 ; j < 3 ; j++){
+            this->max_coords[j] = max(this->max_coords[j], cp->max_coords[j]);
+            this->min_coords[j] = min(this->min_coords[j], cp->min_coords[j]);
+        }
+    }
+}
 
 
 

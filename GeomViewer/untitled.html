@@ -28,7 +28,7 @@
 
 		var cross;
 		var jsonfile;
-		$.getJSON("../Result/main_10.0_v0.2.5.3.json", function(data) {
+		$.getJSON("../Result/main_10.0_v0.2.5.4.json", function(data) {
 			jsonfile = data;
 			init();
 			animate();
@@ -85,8 +85,11 @@
 				}
 			}
 
-
-
+			var geometry = new THREE.Geometry();
+			geometry.vertices.push(new THREE.Vector3(0, 0, 0));
+			geometry.vertices.push(new THREE.Vector3(0, 0, 1000));
+			var line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: 0xff0000, opacity: 0.5 } ) );
+			scene.add( line );
 			//
 			// var poly_shape = new THREE.Shape();
 			// if (c_id == 0) poly_shape.moveTo(coord[0], coord[1], coord[2]);

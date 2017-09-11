@@ -40,6 +40,8 @@ public:
         return coords[idx];
     }
 
+    void translate(double diff[]);
+
     std::string toJSON();
     static bool compare(Vertex*,Vertex*);
 };

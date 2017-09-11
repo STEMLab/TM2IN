@@ -15,6 +15,10 @@ using namespace std;
 class TriangleSpace
 {
 public:
+    vector<Vertex*> *vertex;
+    double min_coords[3];
+    double max_coords[3];
+
     string name;
     TriangleSpace();
     TriangleSpace(string pname, Checker* check);
@@ -32,8 +36,11 @@ public:
     int combineSurface();
     int simplifySegment();
 
+    int match00();
+
     void pushTriangle(Triangle tri);
 protected:
+    void updateMBB();
     void freeSurfaces();
     void printProcess(ull, ull);
     Surface* attachTriangle(vector<Triangle*> tri_list, Surface* cp, bool* checked, ll& count);

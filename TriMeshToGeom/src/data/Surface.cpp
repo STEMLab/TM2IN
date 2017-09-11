@@ -48,6 +48,22 @@ Surface::Surface(Triangle* pl){
     sq_area = pl->getArea();
 }
 
+void Surface::setMBB(){
+    for (int i = 0 ; i < 3 ; i++)
+    {
+        this->max_coords[i] = -1000000000;
+        this->min_coords[i] = 1000000000;
+    }
+
+    for (int i = 0 ; i < this->v_list.size() ; i++){
+        for (int j = 0 ; j < 3 ; j++){
+            this->max_coords[j] = max(this->max_coords[j], this->v_list[i]->coords[j]);
+            this->min_coords[j] = min(this->min_coords[j], this->v_list[i]->coords[j]);
+        }
+    }
+}
+
+
 void Surface::setMBB(Triangle* pl){
     Vertex* v[3] = {pl->a, pl->b, pl->c};
     for (int i = 0 ; i < 3 ; i++){
@@ -66,6 +82,12 @@ void Surface::setMBB(Surface* cp){
 
 }
 
+void Surface::translate(double diff[]){
+    for (int j = 0 ; j < 3 ; j++){
+        this->max_coords[j] += diff[j];
+        this->min_coords[j] += diff[j];
+    }
+}
 /**
  * if this Vertex(add_id) try to make hole, return true.
  */
