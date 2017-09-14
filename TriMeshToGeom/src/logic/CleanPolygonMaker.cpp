@@ -146,12 +146,22 @@ bool CleanPolygonMaker::isNeighbor(Surface* cp1, Surface* cp2){
 }
 
 
+<<<<<<< HEAD
 int CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece){
+=======
+/** < simplify only overlap part of line*/
+int CleanPolygonMaker::simplifyShareLine(CombinedPolygon* origin, CombinedPolygon* piece, Checker* checker){
+    if (!isNeighbor(origin, piece)) return false;
+
+    ll end_i = -1, end_j = -1;
+    ll start_i = -1, start_j = -1;
+>>>>>>> 57641960d303c0103fe9d38e0b09179625eff96d
     ll middle_i = -1, middle_j = -1;
     ll piece_size = piece->getLength();
     ll origin_size = origin->getLength();
 
     if (!findShareVertex(piece->v_list, origin->v_list, middle_i, middle_j)) return false;
+<<<<<<< HEAD
 
     vll range;
     ll end_i = -1, end_j = -1;
@@ -171,6 +181,85 @@ int CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece){
             if (i == piece_size) {
                 i = -1;
                 continue;
+=======
+    
+    /**< [start_i, end_i] */
+    findStartAndEnd(piece->v_list, origin->v_list, middle_i, middle_j, start_i, end_i, start_j, end_j);
+
+    
+    int seg_num = piece->getSegmentsNumber(start_i, end_i);
+    if (seg_num == -1)
+    {
+        exit(-1);
+    }
+    else if (seg_num == 0){
+        /**< Only One Vertex Same*/
+        return 0;
+    }
+    
+    vector<Vertex*> simple = simplifySegment(piece->v_list, start_i, end_i, checker);
+    vector<Vertex*> origin_new_vlist;
+    vector<Vertex*> piece_new_vlist;
+    
+    for (ll j = start_j; ; ){
+        origin_new_vlist.push_back(origin->v_list[j]);
+        j++;
+        if (j == origin_size) j = 0;
+        if (j == end_j) break;
+    }
+    for (ll j = 0 ; j < simple.size() ; j++){
+        origin_new_vlist.push_back(simple[j]);
+    }
+    
+    for (ll i = end_i; ;){
+        piece_new_vlist.push_back(piece->v_list[i]);
+        i++;
+        if (i == piece_size) i = 0;
+        if (i == start_i) break;
+    }
+    for (ll j = 0 ; j < simple.size() ; j++){
+        piece_new_vlist.push_back(simple[j]);
+    }
+    
+    origin->v_list.clear();
+    piece->v_list.clear();
+    
+    origin->v_list = origin_new_vlist;
+    piece->v_list = piece_new_vlist;
+    
+    return seg_num;
+}
+
+vector<Vertex*> CleanPolygonMaker::simplifySegment(vector<Vertex*>& origin, ll start, ll end, Checker* checker){
+    vector<Vertex*> simple, temp;
+    vector<ll> vertex_list;
+    
+    ll origin_size = origin.size();
+    
+    for (ll index = start; index != end; index++){
+        if (index == origin_size){
+            index = -1;
+            continue;
+        }
+        temp.push_back(origin[index]);
+    }
+    
+    bool ischanged = true;
+    vertex_list.push_back(0);
+    vertex_list.push_back(temp.size() - 1);
+    
+    while(ischanged){
+        ischanged = false;
+        for (ll i = 0; i < vertex_list.size() - 1 ; i++){
+            ll ni = i + 1;
+            ll si = vertex_list[i];
+            ll ei = vertex_list[ni];
+            for (ll j = si + 1 ; j < ei ; j++){
+                if (!checker->isSamePlanar(temp[si], temp[ei], temp[j])){
+                    vertex_list.push_back(j);
+                    ischanged=true;
+                }
+>>>>>>> 57641960d303c0103fe9d38e0b09179625eff96d
             }
             for (ll j = origin_size - 1 ; j >= 0 ; j--)
             {
@@ -194,8 +283,19 @@ int CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece){
             findStartAndEnd(piece->v_list, origin->v_list, middle_i, middle_j, start_i, end_i, start_j, end_j);
             range.push_back(make_pair(start_i, end_i));
         }
+<<<<<<< HEAD
+=======
+        sort(vertex_list.begin(), vertex_list.end());
+>>>>>>> 57641960d303c0103fe9d38e0b09179625eff96d
     }
+    
+    for (ll index = 0 ; index < vertex_list.size() ; index++){
+        simple.push_back(temp[vertex_list[index]]);
+    }
+    
+    temp.clear();
 
+<<<<<<< HEAD
     for (int i = 0 ; i < range.size() ; i++)
     {
         ll range_start = range[i].first;
@@ -230,5 +330,8 @@ int CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece){
 
 
     return 0;
+=======
+    return simple;
+>>>>>>> 57641960d303c0103fe9d38e0b09179625eff96d
 }
 

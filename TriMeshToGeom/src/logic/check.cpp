@@ -77,6 +77,17 @@ bool Checker::isSamePlanar(Vector_3& big, Vector_3& small){
     return false;
 }
 
+bool Checker::isSamePlanar(Vertex* origin, Vertex* v1, Vertex* v2){
+    Point_3 p3a(origin->x(),origin->y(),origin->z());
+    Point_3 p3b(v1->x(),v1->y(),v1->z());
+    Point_3 p3c(v2->x(),v2->y(),v2->z());
+    
+    Vector_3 vec1(p3a,p3b);
+    Vector_3 vec2(p3a,p3c);
+    
+    return isSamePlanar(vec1, vec2);
+}
+
 bool Checker::isSimilarOrientation(Vector_3& nv1, Vector_3& nv2){
     double thres = this->ori_degree;
     double angle = CGALCalculation::getAngle(nv1, nv2);
