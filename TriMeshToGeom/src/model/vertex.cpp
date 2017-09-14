@@ -21,6 +21,10 @@ void Vertex::translate(double diff[]){
     for (int i = 0 ; i < 3 ; i++) coords[i] += diff[i];
 }
 
+void Vertex::translateTo(vector<double> diff){
+    for (int i = 0 ; i < 3; i++) coords[i] = diff[i];
+}
+
 bool Vertex::compare(Vertex* a, Vertex* b){
     if (a->x() < b->x()){
         return true;

@@ -22,10 +22,11 @@ bool TriangleAttacher::attach(Surface* cp, Triangle* pl, Checker* ch)
         {
             index -= (ll)cp->v_list.size();
         }
-
+        cp->sq_area += pl->getArea();
         cp->v_list.erase(cp->v_list.begin() + index);
         cp->av_normal = cp->av_normal + pl_nv;
-        cp->sq_area += pl->getArea();
+        //cp->refreshNormal();
+
         return true;
     }
 
@@ -37,7 +38,7 @@ bool TriangleAttacher::attach(Surface* cp, Triangle* pl, Checker* ch)
         cp->av_normal = cp->av_normal + pl_nv;
         cp->sq_area += pl->getArea();
         cp->v_list.insert(cp->v_list.begin() + index + 1, add);
-
+        //cp->refreshNormal();
         return true;
     }
 

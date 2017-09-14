@@ -112,4 +112,31 @@ int Checker::compare_vertex(Vertex* a, Vertex* b)
 }
 
 
+bool Checker::isSameX(Vertex* v1, Vertex* v2){
+    double thres = this->threshold_vertex;
+    if (fabs(v1->x() - v2->x()) <= thres){
+        return true;
+    }
+    else
+        return false;
+}
+
+bool Checker::isSameY(Vertex* v1, Vertex* v2){
+    double thres = this->threshold_vertex;
+    if (fabs(v1->y() - v2->y()) <=thres){
+        return true;
+    }
+    else
+        return false;
+}
+
+bool Checker::isSameZ(Vertex* v1, Vertex* v2){
+    double thres = this->threshold_vertex;
+    if (fabs(v1->z() - v2->z()) <= thres){
+        return true;
+    }
+    else
+        return false;
+}
+
 

@@ -133,12 +133,12 @@ int TriangleSpace::match00(){
         diff[i] = -this->min_coords[i];
     }
 
-    for (int i = 0 ; i < (int)this->polygon_list.size() ; i++)
+    for (ull i = 0 ; i < (int)this->polygon_list.size() ; i++)
     {
         this->polygon_list[i]->translate(diff);
     }
 
-    for (int i = 0 ; i < this->vertex->size() ; i++){
+    for (ull i = 0 ; i < this->vertex->size() ; i++){
         this->vertex->at(i)->translate(diff);
     }
     return 0;
@@ -156,9 +156,6 @@ int TriangleSpace::combineSurface(){
     int combined_count = 0;
     for (ull i = 0 ; i < this->polygon_list.size() ; i++)
     {
-//        if (this->polygon_list[i]->checkDuplicate(this->checker)){
-//            cout << "soment"<<endl;
-//        }
         if (checked[i]) continue;
         checked[i] = true;
 
@@ -197,22 +194,43 @@ Surface* TriangleSpace::attachSurfaces(Surface* cp, ull start, bool* checked, ll
 }
 
 int TriangleSpace::simplifySegment(){
-    cout << "simplifySegment" << endl;
-//    sort(this->polygon_list.begin(), this->polygon_list.end(), Surface::compareLength);
-//
-//    ull p_size = this->polygon_list.size();
-//
-//    int combined_count = 0;
-//    for (ull i = 0 ; i < p_size - 1 ; i++)
-//    {
-//        for (ull j = i + 1 ; j < p_size ; j++){
-//            Simplification::simplifyShareSegment(polygon_list[i], polygon_list[j]);
-//        }
-//    }
+    cout << "\nsimplifySegment\n" << endl;
+    sort(this->polygon_list.begin(), this->polygon_list.end(), Surface::compareLength);
 
+    ull p_size = this->polygon_list.size();
+
+    for (ull i = 0 ; i < p_size - 1; i++)
+    {
+        for (ull j = 1 ; j < p_size ; j++)
+        {
+            if (i == 0 && j == 5){
+                debug();
+            }
+            CleanPolygonMaker::simplifyLineSegment(this->polygon_list[i], this->polygon_list[j] );
+        }
+    }
     return 0;
 }
 
+int TriangleSpace::handleDefect(){
+    cout << "\n------------- handle Defect --------------\n" << endl;
+    ull p_size = this->polygon_list.size();
+
+    for (ull i = 0 ; i < p_size; i++)
+    {
+        this->polygon_list[i]->removeDuplication(this->checker);
+        this->polygon_list[i]->setMBB();
+        if (this->polygon_list[i]->isValid()){
+            this->polygon_list[i]->updateNormal(this->checker);
+        }
+        else{
+            this->polygon_list.erase(this->polygon_list.begin() + i);
+            i--;
+            p_size = this->polygon_list.size();
+        }
+    }
+    return 0;
+}
 
 void TriangleSpace::freeSurfaces(){
     for (ull id = 0 ; id < this->polygon_list.size() ; id++)

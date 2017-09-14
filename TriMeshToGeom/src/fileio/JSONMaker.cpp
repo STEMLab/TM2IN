@@ -23,7 +23,6 @@ int JSONMaker:: printJSON(ofstream& fout, vector<TriangleSpace*>& ts){
 
 int JSONMaker::printJSON(ofstream& fout, vector<Surface*>& cp){
     cout << "The number of Surfaces : " << cp.size() <<endl;
-    //fout << "{";
     fout << " \"Surfaces\" : [ \n";
     for (unsigned int id = 0 ; id < cp.size() ; id++)
     {
@@ -42,6 +41,5 @@ int JSONMaker::printJSON(ofstream& fout, vector<Surface*>& cp){
         }
     }
     fout << "] \n";
-    //fout << "}";
     return 0;
 }

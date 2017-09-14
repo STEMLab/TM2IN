@@ -1,5 +1,6 @@
 #include "logic/util.h"
 
+#include <iostream>
 #include <cmath>
 
 template<typename Out>
@@ -18,4 +19,6 @@ std::vector<std::string> split(const std::string &s, char delim) {
     return elems;
 }
 
-
+void debug(){
+    std::cout << "remove it" << std::endl;
+}

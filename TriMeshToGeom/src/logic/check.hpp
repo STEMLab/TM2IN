@@ -42,17 +42,13 @@ public:
     }
     bool isExistDuplication(std::vector<Vertex*> vertex);
 
-    bool isSameX(Vertex a, Vertex b, Vertex c);
-    bool isSameY(Vertex a, Vertex b, Vertex c);
-    bool isSameZ(Vertex a, Vertex b, Vertex c);
+    bool isSameX(Vertex* a, Vertex* b);
+    bool isSameY(Vertex* a, Vertex* b);
+    bool isSameZ(Vertex* a, Vertex* b);
 
-    bool isStraightXY(Vertex a, Vertex b, Vertex c);
-    bool isStraightXZ(Vertex a, Vertex b, Vertex c);
-    bool isStraightYZ(Vertex a, Vertex b, Vertex c);
-
-    bool isSameXY(Vertex a, Vertex b);
-    bool isSameYZ(Vertex a, Vertex b);
-    bool isSameXZ(Vertex a, Vertex b);
+    bool isSameX(Vertex* a, Vertex* b, Vertex* c);
+    bool isSameY(Vertex* a, Vertex* b, Vertex* c);
+    bool isSameZ(Vertex* a, Vertex* b, Vertex* c);
 
     bool isSameVertex(Vertex& v1, Vertex& v2);
     bool isSameVertex(Vertex* v1, Vertex* v2);

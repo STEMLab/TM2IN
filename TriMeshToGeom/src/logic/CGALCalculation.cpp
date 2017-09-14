@@ -31,19 +31,18 @@ Vector_3 CGALCalculation::normal_list[6] = {
     Vector_3(0,-1,0)
 };
 
-
-double CGALCalculation::getSquaredArea(Point_3& p1, Point_3& p2, Point_3& p3){
-    Triangle_3 tri(p1,p2,p3);
-    return tri.squared_area();
+Point_3 CGALCalculation::makePoint(Vertex* v){
+    Point_3 p3a(v->x(),v->y(),v->z());
+    return p3a;
 }
 
-Vector_3 CGALCalculation::getNormal(Vertex* va, Vertex* vb, Vertex* vc){
+
+Vector_3 CGALCalculation::getUnitNormal(Vertex* va, Vertex* vb, Vertex* vc){
     Point_3 p3a(va->x(),va->y(),va->z());
     Point_3 p3b(vb->x(),vb->y(),vb->z());
     Point_3 p3c(vc->x(),vc->y(),vc->z());
 
     if (CGAL::collinear(p3a, p3b, p3c)){
-        //std::cout << "Collinear?" << std::endl;
         return CGAL::NULL_VECTOR;
     }
     else{
@@ -51,9 +50,27 @@ Vector_3 CGALCalculation::getNormal(Vertex* va, Vertex* vb, Vertex* vc){
     }
 }
 
+Vector_3 CGALCalculation::getCrossProduct(Vertex* va, Vertex* vb, Vertex* vc){
+    Point_3 p3a(va->x(),va->y(),va->z());
+    Point_3 p3b(vb->x(),vb->y(),vb->z());
+    Point_3 p3c(vc->x(),vc->y(),vc->z());
+
+    Vector_3 vab(p3a, p3b);
+    Vector_3 vac(p3a, p3c);
+
+    return CGAL::cross_product(vab, vac);
+}
+
+
+
 double CGALCalculation::getSquaredArea(Vertex* va, Vertex* vb, Vertex* vc){
     Point_3 p3a(va->x(),va->y(),va->z());
     Point_3 p3b(vb->x(),vb->y(),vb->z());
     Point_3 p3c(vc->x(),vc->y(),vc->z());
     return getSquaredArea(p3a, p3b, p3c);
+}
+
+double CGALCalculation::getSquaredArea(Point_3& p1, Point_3& p2, Point_3& p3){
+    Triangle_3 tri(p1,p2,p3);
+    return tri.squared_area();
 }

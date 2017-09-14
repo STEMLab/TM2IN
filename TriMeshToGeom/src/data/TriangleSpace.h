@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <bitset>
+#include <map>
 
 #include "model/Trinagle.h"
 #include "logic/TriangleAttacher.h"
@@ -37,6 +38,7 @@ public:
     int simplifySegment();
 
     int match00();
+    int handleDefect();
 
     void pushTriangle(Triangle tri);
 protected:

@@ -86,18 +86,24 @@ bool CleanPolygonMaker::findShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj
     ll piece_size = vi.size();
     ll origin_size = vj.size();
 
+
     for (ll i = 0 ; i < piece_size ;i++){
         for (ll j = origin_size - 1 ; j >= 0 ; j--){
             if (vi[i] == vj[j]){
-                middle_i = i;
-                middle_j = j;
-                return true;
+                ll next_i = i + 1 == piece_size? 0 : i+1;
+                ll next_j = j-1 == -1? origin_size-1 : j-1;
+                if (vi[next_i] == vj[next_j]){
+                    middle_i = i;
+                    middle_j = j;
+                    return true;
+                }
             }
         }
     }
 
     return false;
 }
+
 void CleanPolygonMaker::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj, ll middle_i, ll middle_j, ll& start_i, ll& end_i, ll& start_j, ll& end_j){
     ll piece_size = vi.size();
     ll origin_size = vj.size();
@@ -140,35 +146,87 @@ bool CleanPolygonMaker::isNeighbor(Surface* cp1, Surface* cp2){
 }
 
 
-int CleanPolygonMaker::simplifyShareLine(Surface* origin, Surface* piece){
-    if (!isNeighbor(origin, piece)) return false;
+int CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece){
+    ll middle_i = -1, middle_j = -1;
+    ll piece_size = piece->getLength();
+    ll origin_size = origin->getLength();
 
+    if (!findShareVertex(piece->v_list, origin->v_list, middle_i, middle_j)) return false;
+
+    vll range;
     ll end_i = -1, end_j = -1;
     ll start_i = -1, start_j = -1;
-    ll middle_i = -1, middle_j = -1;
+    findStartAndEnd(piece->v_list, origin->v_list, middle_i, middle_j, start_i, end_i, start_j, end_j);
+    range.push_back(make_pair(start_i, end_i));
+    ll f_start_i = start_i;
 
-    ll origin_size = origin->getLength();
-    ll piece_size = piece->getLength();
-
-
-    for (ll i = 0 ; i < piece_size ;i++){
-        bool escape = false;
-        for (ll j = origin_size - 1 ; j >= 0 ; j--){
-            if (piece->v_list[i] == origin->v_list[j]){
-                middle_i = i;
-                middle_j = j;
-                escape = true;
-                break;
+    bool found = true;
+    while (found)
+    {
+        found = false;
+        //for (ll i = end_i + 1 ; i < f_start_i; i++)
+        ll i = end_i + 1;
+        while (i != f_start_i)
+        {
+            if (i == piece_size) {
+                i = -1;
+                continue;
             }
+            for (ll j = origin_size - 1 ; j >= 0 ; j--)
+            {
+                if (piece->v_list[i] == origin->v_list[j])
+                {
+                    ll next_i = i + 1 == piece_size? 0 : i+1;
+                    ll next_j = j-1 == -1? origin_size-1 : j-1;
+                    if (piece->v_list[next_i] == origin->v_list[next_j])
+                    {
+                        middle_i = i;
+                        middle_j = j;
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if (found) break;
+            i++;
         }
-        if (escape) break;
+        if (found){
+            findStartAndEnd(piece->v_list, origin->v_list, middle_i, middle_j, start_i, end_i, start_j, end_j);
+            range.push_back(make_pair(start_i, end_i));
+        }
     }
 
-    if (middle_i == -1) return false;
+    for (int i = 0 ; i < range.size() ; i++)
+    {
+        ll range_start = range[i].first;
+        ll range_end = range[i].second;
+        int seg_num = piece->getSegmentsNumber(range_end, range_start);
+        if (seg_num == 0)
+        {
+            /**< Only One Vertex Same*/
+            return false;
+        }
+
+        Point_3 sp = CGALCalculation::makePoint(piece->v_list[range_start]);
+        Point_3 ep = CGALCalculation::makePoint(piece->v_list[range_end]);
+        Line_3 line(sp, ep);
+
+        for (ll i = range_start;;)
+        {
+            Point_3 newp = line.projection(CGALCalculation::makePoint(piece->v_list[i]));
+            piece->v_list[i]->translateTo({newp.x(), newp.y(), newp.z()});
+            i++;
+            if (i == piece_size) i = 0;
+            if (i == range_end) break;
+        }
+    }
 
 
-    /**< [start_i, end_i] */
-    findStartAndEnd(piece->v_list, origin->v_list, middle_i, middle_j, start_i, end_i, start_j, end_j);
+//    origin->setMBB();
+//    origin->refreshNormal();
+//
+//    piece->setMBB();
+//    piece->refreshNormal();
 
 
     return 0;

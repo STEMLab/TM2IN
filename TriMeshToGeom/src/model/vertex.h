@@ -41,6 +41,7 @@ public:
     }
 
     void translate(double diff[]);
+    void translateTo(std::vector<double> diff);
 
     std::string toJSON();
     static bool compare(Vertex*,Vertex*);

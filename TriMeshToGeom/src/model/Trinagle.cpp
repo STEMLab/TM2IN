@@ -20,7 +20,7 @@ Vector_3 Triangle::getNormal()
     Vertex* vb = this->b;
     Vertex* vc = this->c;
 
-    this->normal = CGALCalculation::getNormal(va, vb, vc) * 100 * this->getArea();
+    this->normal = CGALCalculation::getUnitNormal(va, vb, vc) * 100 * this->getArea();
     return this->normal;
 }
 

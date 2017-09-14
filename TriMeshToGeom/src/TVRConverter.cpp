@@ -12,7 +12,8 @@ using namespace std;
 int main(int argc, const char * argv[]) {
     //TODO make argv
     double degree_param = 10.0;
-    string version = "_v0.2.5.4";
+    string import_version = "_v0.2.5.6";
+    string export_version = "_v0.2.5.6";
     const char path[50] = "../Resource/teevr/tvr/";
     //const char path[100] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/";
     const char result_path[50] = "../Result/";
@@ -26,6 +27,7 @@ int main(int argc, const char * argv[]) {
     cout << "select mode" << endl;
     cout << "0 : make new Surfaces" << endl;
     cout << "1 : import Surfaces" <<endl;
+    cout << "2 : import and onlyJoin" <<endl;
     int mode; cin >> mode;
 
     Manager* manager = new ManagerImpl();
@@ -38,27 +40,30 @@ int main(int argc, const char * argv[]) {
         return -1;
     }
 
-    string combined_file = string(result_path) + "cb_" + string(file_name) + version + ".bin";
-
+    string imported_bin = string(result_path) + "cb_" + string(file_name) + import_version + ".bin";
+    string exported_bin = string(result_path) + "cb_" + string(file_name) + export_version + ".bin";
     switch(mode){
         case 0:{
             if (manager->makeSurfaces()) return 1;
-            if (manager->exportCombined(combined_file)) return 2;
+            if (manager->exportCombined(exported_bin)) return 2;
             break;
         }
         case 1:{
-            if (manager->importCombined(combined_file)) return 3;
+            if (manager->importCombined(imported_bin)) return 3;
             break;
+        }
+        case 2:{
+            if (manager->importCombined(imported_bin)) return 4;
+            string json_file = string(result_path) + string(file_name) + "_" + to_string(degree_param).substr(0,4) + export_version + "_onlyJoin" + ".json";
+            manager->exportJSON(json_file);
+            return 0;
         }
     }
 
     //Make each surfaces planar and Remove the tilted surface (and remove co-linear).
     if (manager->cleaning() == -1) return -1;
 
-    //TODO make Simple Line
-    //TODO Make Solid
-
-    string json_file = string(result_path) + string(file_name) + "_" + to_string(degree_param).substr(0,4) + version + ".json";
+    string json_file = string(result_path) + string(file_name) + "_" + to_string(degree_param).substr(0,4) + export_version + ".json";
     manager->exportJSON(json_file);
 
 

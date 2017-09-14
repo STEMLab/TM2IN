@@ -135,6 +135,17 @@ bool Surface::checkDuplicate(Checker* ch){
     return false;
 }
 
+void Surface::removeDuplication(Checker* ch){
+    ull v_size = v_list.size();
+    for (ull i = 0 ; i < v_size - 1; i++){
+        if (ch->isSameVertex(v_list[i] , v_list[i+1])){
+            v_list.erase(v_list.begin() + i + 1);
+            i--;
+            v_size -= 1;
+        }
+    }
+}
+
 void Surface::makeCoplanar(){
     Point_3 center = getCenterPoint();
     Plane_3 plane(center, this->av_normal);
@@ -164,7 +175,6 @@ Point_3 Surface::getCenterPoint(){
 
 string Surface::toJSONString(){
     string ret;
-
     ret.append("{ \"normal\" : [");
     ret.append(to_string(this->av_normal.x()) + ", ");
     ret.append(to_string(this->av_normal.y()) + ", ");
@@ -180,7 +190,57 @@ string Surface::toJSONString(){
     return ret;
 }
 
+bool Surface::updateNormal(Checker* ch){
+//    bool sameX = true,sameY = true, sameZ = true;
+//    int i = 1;
+//    Vertex* v_start = v_list[0];
+//    while (sameX || sameY || sameZ){
+//        if (v_list.size() == i) break;
+//        Vertex* v_next = v_list[i];
+//        if (!ch->isSameX(v_start, v_next)){
+//            sameX = false;
+//        }
+//        if (ch->isSameY(v_start, v_next)){
+//            sameY = false;
+//        }
+//        if (ch->isSameZ(v_start, v_next)){
+//            sameZ = false;
+//        }
+//        i++;
+//    }
+//
+//    if (sameX || sameY || sameZ){
+//        if (sameX){
+//
+//        }
+//        else if(sameY){
+//
+//        }
+//        else{
+//
+//        }
+//    }
+//    else{
+//        this->av_normal = this->av_normal * 1000000;
+//        this->av_normal = this->av_normal / sqrt(this->av_normal.squared_length());
+//        return true;
+//    }
 
+    Vector_3 normal = Vector_3(0,0,0);
+    for (int i = 1 ; i < v_list.size() - 1; i++){
+        Vector_3 new_normal = CGALCalculation::getCrossProduct(this->v_list[0], this->v_list[i], this->v_list[i+1]);
+        normal = normal + new_normal;
+    }
+
+    if (normal == CGAL::NULL_VECTOR){
+        return false;
+    }
+    else{
+        this->av_normal = normal * (1 / normal.squared_length() );
+        return true;
+    }
+
+}
 
 bool Surface::isInMBB(Vertex* vt){
     if (vt->x() >= this->min_coords[0] && vt->x() <= this->max_coords[0]){
@@ -195,4 +255,26 @@ bool Surface::isInMBB(Vertex* vt){
 
 bool Surface::compareLength(Surface* i, Surface* j) {
      return (i->getLength() > j->getLength());
+}
+
+/**
+*  Check that Surface is not valid. Straight Line or Point.
+*/
+bool Surface::isValid(){
+    if (this->v_list.size() < 3) return false;
+
+    bool isNOTcollinear = false;
+    Point_3 start_p = CGALCalculation::makePoint(this->v_list[0]);
+    Point_3 end_p = CGALCalculation::makePoint(this->v_list[1]);
+    for (int i = 1 ; i < this->v_list.size() - 1; i++){
+        Point_3 mid_p(end_p.x(), end_p.y(), end_p.z());
+        end_p = CGALCalculation::makePoint(this->v_list[i+1]);
+        if (CGAL::collinear(start_p, mid_p, end_p)){
+            continue;
+        }
+        else{
+            isNOTcollinear = true;
+        }
+    }
+    return isNOTcollinear;
 }

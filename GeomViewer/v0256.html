@@ -19,29 +19,64 @@
 	<script src="js/lib/three.js"></script>
 	<script src="js/lib/earcut.js"></script>
 	<script src="js/lib/jquery.js"></script>
+	<script src="js/threejs/renderers/Projector.js"></script>
+	<script src="js/threejs/renderers/CanvasRenderer.js"></script>
 	<script src="js/lib/jquery.mousewheel.js"></script>
-	<script src="js/lib/TrackballControls.js"></script>
+	<script src="js/threejs/controls/TrackballControls.js"></script>
 	<script>
 		var container, stats;
-
+		var objects = [];
 		var camera, controls, scene, renderer;
 
+		var raycaster;
+		var mouse;
 		var cross;
 		var jsonfile;
-		$.getJSON("../Result/main_10.0_v0.2.5.4.json", function(data) {
+
+		console.log("lala");
+		$.getJSON("../Result/main_10.0_v0.2.5.6.json", function(data) {
+			console.log(data);
 			jsonfile = data;
+
 			init();
 			animate();
 		})
 
+		var projector = new THREE.Projector();
+
+		function onDocumentMouseDown( event ) {
+
+			event.preventDefault();
+
+			mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
+			mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
+			raycaster.setFromCamera( mouse, camera );
+			var intersects = raycaster.intersectObjects( objects );
+
+			if ( intersects.length > 0 ) {
+				intersects[ 0 ].object.material.color.setHex( Math.random() * 0xffffff );
+				console.log(intersects[0].object.name);
+			}
+
+			/*
+			// Parse all the faces
+			for ( var i in intersects ) {
+			intersects[ i ].face.material[ 0 ].color
+			.setHex( Math.random() * 0xffffff | 0x80000000 );
+		}
+		*/
+	}
+
+
 		function init() {
+			document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 			camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
 			camera.position.z = 1200;
-			//camera.position.y = -400;
-			//camera.position.x = -700;
+			camera.position.y = 400;
+			//camera.position.x = 50;
 
 			controls = new THREE.TrackballControls(camera);
-			//controls.target.set(0,0,0);
+			controls.target.set(50,50,0);
 			controls.rotateSpeed = 6.0;
 			controls.zoomSpeed = 2.0;
 			controls.panSpeed = 1.8;
@@ -57,70 +92,49 @@
 			controls.addEventListener('change', render);
 
 			scene = new THREE.Scene();
+			raycaster = new THREE.Raycaster();
+			mouse = new THREE.Vector2();
 
 			scene.fog = new THREE.FogExp2(0xcccccc, 0.0002);
+			if (jsonfile == undefined){
+				console.log("no json");
+			}
 			var space = jsonfile.spaces;
 			for (var i = 0; i < space.length; i++) {
 				var polygon_list = space[i].Surfaces;
+				console.log("polygon numbers : " + polygon_list.length);
 				for (var j = 0; j < polygon_list.length; j++) {
 					var coordinates = polygon_list[j].coord;
 					coordinates = scaleUp(coordinates, 100);
 
 					var normal = polygon_list[j].normal;
 					var triangled_vertices = triangulate(coordinates, normal);
-					if (triangled_vertices == -1) continue;
-					//if (triangled_vertices == null) continue;
-
+					if (triangled_vertices == -1) {
+						console.log(j);
+						continue;
+					}
 					var geometry = new THREE.BufferGeometry();
 					var vertices = new Float32Array(triangled_vertices);
 
 					geometry.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
 					var material = new THREE.MeshBasicMaterial({
 						color: Math.random() * 0xffffff
-					//	,side: THREE.DoubleSide
+						//,side: THREE.DoubleSide
 					});
 					var mesh = new THREE.Mesh(geometry, material);
+					mesh.name = j;
 					scene.add(mesh);
+					objects.push(mesh);
 					// if (j == 10000) break;
+					//break;
 				}
 			}
 
 			var geometry = new THREE.Geometry();
 			geometry.vertices.push(new THREE.Vector3(0, 0, 0));
 			geometry.vertices.push(new THREE.Vector3(0, 0, 1000));
-			var line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: 0xff0000, opacity: 0.5 } ) );
+			var line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: 0xff0000, opacity: 0.9 } ) );
 			scene.add( line );
-			//
-			// var poly_shape = new THREE.Shape();
-			// if (c_id == 0) poly_shape.moveTo(coord[0], coord[1], coord[2]);
-			// else {
-			// 	poly_shape.lineTo(coord[0], coord[1], coord[2]);
-			// }
-			// var geometry = new THREE.ShapeGeometry(poly_shape);
-			// var ran_color = Math.random() * 0xffffff;
-			// var material = new THREE.MeshBasicMaterial({
-			// 	color: ran_color,
-			// 	side: THREE.DoubleSide,
-			// 	shading: THREE.FlatShading
-			// });
-			// //var material = new THREE.MeshNormalMaterial();
-			// var mesh = new THREE.Mesh(geometry, material);
-			// scene.add(mesh);
-
-			// lights
-			//
-			// var light = new THREE.DirectionalLight( 0xffffff );
-			// light.position.set( 1, 1, 10 );
-			// scene.add( light );
-			//
-			// var light = new THREE.DirectionalLight( 0x002288 );
-			// light.position.set( -1, -1, 10 );
-			// scene.add( light );
-			//
-			// var light = new THREE.AmbientLight( 0x222222 );
-			// scene.add( light );
-
-			// renderer
 
 			renderer = new THREE.WebGLRenderer({
 				antialias: true
@@ -146,21 +160,23 @@
 			var ny = Math.abs(normal[1]);
 			var nz = Math.abs(normal[2]);
 
-			var max = Math.max(nx, ny, nz);
 			var minus = false;
-			if (max == nx){
+
+			if (nx > ny && nx > nz){
 				for (var i = 0 ; i < coordinates.length ; i++){
 					vertices2d.push(coordinates[i][1]);
 					vertices2d.push(coordinates[i][2]);
 				}
 				if (normal[0] < 0) minus =true;
+
 			}
-			else if (max == ny){
+			else if (ny > nx && ny > nz){
 				for (var i = 0 ; i < coordinates.length ; i++){
 					vertices2d.push(coordinates[i][0]);
 					vertices2d.push(coordinates[i][2]);
 				}
 				if (normal[1] >= 0) minus =true;
+
 			}
 			else{
 				for (var i = 0 ; i < coordinates.length ; i++){
@@ -171,8 +187,6 @@
 			}
 
 			var triangle_index = earcut(vertices2d);
-
-
 
 
 			if (minus){
@@ -192,19 +206,16 @@
 
 
 			if (triangled_vertices.length == 0){
+				console.log(normal);
+				console.log(coordinates);
 				console.log(vertices2d, triangle_index, "Triangulate Error");
-				//return null;
+				//return -1;
 			}
 			return triangled_vertices;
-			// if (max == ny)
-			//
-			// else {
-			// 	return -1;
-			// }
 		}
 
 		function scaleUp(coordinates, scale){
-			scale = scale || 100;
+			scale = scale || 100; //if undefined, 100.
 			if (!Array.isArray(coordinates)){
 				console.log("not array");
 				return null;
@@ -242,6 +253,25 @@
 			renderer.render(scene, camera);
 
 		}
+
+		function readTextFile(file, callback) {
+			var rawFile = new XMLHttpRequest();
+			rawFile.overrideMimeType("application/json");
+			rawFile.open("GET", file, true);
+			rawFile.onreadystatechange = function() {
+				if (rawFile.readyState === 4 && rawFile.status == "200") {
+					callback(rawFile.responseText);
+				}
+			}
+			rawFile.send(null);
+		}
+
+		//usage:
+		// readTextFile("../Result/main_10.0_v0.2.5.6.json", function(text){
+		// 	console.log(text);
+		// 	var data = JSON.parse(text);
+		// 	console.log(data);
+		// });
 	</script>
 </body>
 
