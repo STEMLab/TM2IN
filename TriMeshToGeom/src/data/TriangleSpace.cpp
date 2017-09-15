@@ -166,9 +166,16 @@ Surface* TriangleSpace::attachSurfaces(Surface* cp, ull start, bool* checked, ll
     return cp;
 }
 
+void TriangleSpace::tagID(){
+    sort(this->polygon_list.begin(), this->polygon_list.end(), Surface::compareLength);
+    for (ull i = 0 ; i < (ull)this->polygon_list.size() ; i++)
+    {
+        this->polygon_list[i]->sf_id = i;
+    }
+}
+
 int TriangleSpace::simplifySegment(){
     cout << "\nsimplifySegment\n" << endl;
-    sort(this->polygon_list.begin(), this->polygon_list.end(), Surface::compareLength);
 
     ull p_size = this->polygon_list.size();
 
@@ -177,6 +184,9 @@ int TriangleSpace::simplifySegment(){
         for (ull j = 0 ; j < p_size ; j++)
         {
             if (i == j) continue;
+            if (i ==0 && j == 2){
+                debug();
+            }
             CleanPolygonMaker::simplifyLineSegment(this->polygon_list[i], this->polygon_list[j] );
         }
     }

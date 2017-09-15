@@ -64,7 +64,7 @@ int OBJCollection::cleaning(Checker* ch){
             cout << "combine error" << endl;
             return -1;
         }
-
+        this->space_list[it]->tagID();
         if (this->space_list[it]->simplifySegment() == -1)
         {
             cout << "simplify error" << endl;

@@ -122,7 +122,7 @@
 						//,side: THREE.DoubleSide
 					});
 					var mesh = new THREE.Mesh(geometry, material);
-					mesh.name = j;
+					mesh.name = polygon_list[j].id;
 					scene.add(mesh);
 					objects.push(mesh);
 					// if (j == 10000) break;
@@ -267,7 +267,7 @@
 		}
 
 		//usage:
-		// readTextFile("../Result/main_10.0_v0.2.5.6.json", function(text){
+		// readTextFile("../Result/main_10.0_v0.2.6.1.json", function(text){
 		// 	console.log(text);
 		// 	var data = JSON.parse(text);
 		// 	console.log(data);

@@ -186,7 +186,9 @@ Point_3 Surface::getCenterPoint(){
 
 string Surface::toJSONString(){
     string ret;
-    ret.append("{ \"normal\" : [");
+    ret.append("{ \n");
+    ret.append(" \"id\" : " + to_string(sf_id) );
+    ret.append(" \n, \"normal\" : [");
     ret.append(to_string(this->av_normal.x()) + ", ");
     ret.append(to_string(this->av_normal.y()) + ", ");
     ret.append(to_string(this->av_normal.z()));

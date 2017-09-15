@@ -36,9 +36,9 @@ public:
 
     int combineSurface();
     int simplifySegment();
-
     int match00();
     int handleDefect();
+    void tagID();
 
     void pushTriangle(Triangle tri);
 protected:

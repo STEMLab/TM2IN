@@ -30,6 +30,7 @@ typedef Kernel::Plane_3 Plane_3;
 
 class Surface{
 public:
+    ull sf_id;
     std::vector<Vertex*> v_list;
     Vector_3 av_normal = CGAL::NULL_VECTOR;
 
