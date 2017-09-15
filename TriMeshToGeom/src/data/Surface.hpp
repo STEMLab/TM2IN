@@ -49,7 +49,7 @@ public:
     bool attachTriangle(Triangle* pl, Checker* ch);
     bool attachTriangle2(Triangle* pl, Checker* ch);
     std::string toJSONString();
-    void makeCoplanar();
+    void makeCoplanarParallelWithZ();
 
     bool checkDuplicate(Checker* ch);
     bool isInMBB(Vertex* vt);
@@ -61,6 +61,7 @@ public:
 
     //compare vector size
     static bool compareLength(Surface* i, Surface* j);
+    static bool compareArea(Surface* i, Surface* j);
     void translate(double diff[]);
     void removeDuplication(Checker* ch);
     bool updateNormal(Checker* ch);
@@ -68,13 +69,6 @@ public:
     bool isValid();
 private:
     Point_3 getCenterPoint();
-    ll findShareLine(Triangle* pl, Checker* ch, Vertex** add);
-    bool isShareThreeLine(ll index);
-    int isShareTwoLine(ll index, Vertex* add);
-    bool checkMakeHole(ll index, Vertex* add);
-
-    bool isNeighbor(Triangle* pl);
-
 };
 
 

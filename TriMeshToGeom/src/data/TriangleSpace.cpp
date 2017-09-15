@@ -116,33 +116,6 @@ Surface* TriangleSpace::attachTriangle(vector<Triangle*> tri_list, Surface* cp, 
     return cp;
 }
 
-int TriangleSpace::makeSurfacesCoplanar()
-{
-    for (int i = 0 ; i < (int)this->polygon_list.size() ; i++)
-    {
-        //make Each Polygon Coplanar
-        this->polygon_list[i]->makeCoplanar();
-    }
-    return 0;
-}
-
-int TriangleSpace::match00(){
-    updateMBB();
-    double diff[3];
-    for (int i = 0 ; i < 3 ; i++){
-        diff[i] = -this->min_coords[i];
-    }
-
-    for (ull i = 0 ; i < (int)this->polygon_list.size() ; i++)
-    {
-        this->polygon_list[i]->translate(diff);
-    }
-
-    for (ull i = 0 ; i < this->vertex->size() ; i++){
-        this->vertex->at(i)->translate(diff);
-    }
-    return 0;
-}
 
 int TriangleSpace::combineSurface(){
     cout << "Combine Surfaces" << endl;
@@ -201,11 +174,9 @@ int TriangleSpace::simplifySegment(){
 
     for (ull i = 0 ; i < p_size - 1; i++)
     {
-        for (ull j = 1 ; j < p_size ; j++)
+        for (ull j = 0 ; j < p_size ; j++)
         {
-            if (i == 0 && j == 5){
-                debug();
-            }
+            if (i == j) continue;
             CleanPolygonMaker::simplifyLineSegment(this->polygon_list[i], this->polygon_list[j] );
         }
     }
@@ -214,19 +185,19 @@ int TriangleSpace::simplifySegment(){
 
 int TriangleSpace::handleDefect(){
     cout << "\n------------- handle Defect --------------\n" << endl;
-    ull p_size = this->polygon_list.size();
-
-    for (ull i = 0 ; i < p_size; i++)
+    sort(this->polygon_list.begin(), this->polygon_list.end(), Surface::compareArea);
+    for (vector<Surface*>::size_type i = 0 ; i < this->polygon_list.size(); )
     {
+
         this->polygon_list[i]->removeDuplication(this->checker);
         this->polygon_list[i]->setMBB();
+
         if (this->polygon_list[i]->isValid()){
-            this->polygon_list[i]->updateNormal(this->checker);
+            i++;
         }
         else{
             this->polygon_list.erase(this->polygon_list.begin() + i);
-            i--;
-            p_size = this->polygon_list.size();
+            cout << "Erase unvalid surface" << endl;
         }
     }
     return 0;
@@ -238,6 +209,44 @@ void TriangleSpace::freeSurfaces(){
         delete(this->polygon_list[id]);
     }
     this->polygon_list.clear();
+}
+
+int TriangleSpace::match00(){
+    cout << "\n------------- match00 --------------\n" << endl;
+
+
+    updateMBB();
+    //find surfaces whose normal is z direction.
+    for (ull i = 0 ; i < (int)this->polygon_list.size() ; i++)
+    {
+        if (!this->polygon_list[i]->updateNormal(this->checker))
+        {
+            cout << "Cannot make Normal" << endl;
+            exit(-1);
+        }
+        Vector_3 normal = this->polygon_list[i]->av_normal;
+        if (fabs(normal.z()) > fabs(normal.x()) && fabs(normal.z()) > fabs(normal.y()))
+        {
+            this->polygon_list[i]->makeCoplanarParallelWithZ();
+        }
+    }
+
+//
+//    updateMBB();
+//    double diff[3];
+//    for (int i = 0 ; i < 3 ; i++){
+//        diff[i] = -this->min_coords[i];
+//    }
+//
+//    for (ull i = 0 ; i < (int)this->polygon_list.size() ; i++)
+//    {
+//        this->polygon_list[i]->translate(diff);
+//    }
+//
+//    for (ull i = 0 ; i < this->vertex->size() ; i++){
+//        this->vertex->at(i)->translate(diff);
+//    }
+    return 0;
 }
 
 void TriangleSpace::updateMBB(){

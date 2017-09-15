@@ -12,8 +12,8 @@ using namespace std;
 int main(int argc, const char * argv[]) {
     //TODO make argv
     double degree_param = 10.0;
-    string import_version = "_v0.2.5.6";
-    string export_version = "_v0.2.5.6";
+    string import_version = "_v0.2.6.1";
+    string export_version = "_v0.2.6.1";
     const char path[50] = "../Resource/teevr/tvr/";
     //const char path[100] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/";
     const char result_path[50] = "../Result/";
@@ -32,7 +32,7 @@ int main(int argc, const char * argv[]) {
 
     Manager* manager = new ManagerImpl();
     manager->setImporter(new TVRImporter());
-    manager->setChecker(new Checker(0.0000001, degree_param));
+    manager->setChecker(new Checker(0.000001, degree_param));
 
     cout << "Load TVR File.." << endl;
     if (manager->import( (string(path) + string(file_name) + ".tvr").c_str()) ){

@@ -7,6 +7,7 @@ class TriangleAttacher
 {
 public:
     static bool attach(Surface* cp, Triangle* pl, Checker* ch);
+private:
     static bool isNeighbor(Surface* cp, Triangle* pl);
     static bool checkMakeHole(Surface* cp, ll index, Vertex* add_id);
     static int isShareTwoLine(Surface* cp, ll index, Vertex* add_id);

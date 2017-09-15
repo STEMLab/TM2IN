@@ -99,7 +99,7 @@ int TriangleAttacher::isShareTwoLine(Surface* cp, ll index, Vertex* add_id){
 
 
 bool TriangleAttacher::checkMakeHole(Surface* cp, ll index, Vertex* add_id){
-    for (ll i = 0 ; i < cp->v_list.size() ; i++)
+    for (ll i = 0 ; i < (ll)cp->v_list.size() ; i++)
     {
         if (cp->v_list[i] == add_id)
         {

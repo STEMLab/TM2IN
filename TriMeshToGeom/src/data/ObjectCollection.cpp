@@ -64,6 +64,7 @@ int OBJCollection::cleaning(Checker* ch){
             cout << "combine error" << endl;
             return -1;
         }
+
         if (this->space_list[it]->simplifySegment() == -1)
         {
             cout << "simplify error" << endl;
@@ -78,8 +79,14 @@ int OBJCollection::cleaning(Checker* ch){
             cout << "match00 error" << endl;
             return -1;
         }
-
-
+        for (unsigned int i = 0 ; i < this->space_list[it]->polygon_list.size() ; i++)
+        {
+            if (this->space_list[it]->polygon_list[i]->checkDuplicate(ch))
+            {
+                cout << "it has duplicate Vertex" << endl;
+                return -1;
+            }
+        }
     }
     return 0;
 }

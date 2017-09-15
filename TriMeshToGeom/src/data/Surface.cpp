@@ -55,7 +55,7 @@ void Surface::setMBB(){
         this->min_coords[i] = 1000000000;
     }
 
-    for (int i = 0 ; i < this->v_list.size() ; i++){
+    for (unsigned int i = 0 ; i < this->v_list.size() ; i++){
         for (int j = 0 ; j < 3 ; j++){
             this->max_coords[j] = max(this->max_coords[j], this->v_list[i]->coords[j]);
             this->min_coords[j] = min(this->min_coords[j], this->v_list[i]->coords[j]);
@@ -94,7 +94,7 @@ void Surface::translate(double diff[]){
 bool Surface::isExistSameVertexInRange(ll si, ll ei, Vertex* add_id){
     for (ll i = si ; i != ei ; i++)
     {
-        if (i == this->v_list.size()){
+        if (i == (int)this->v_list.size()){
             i = -1;
             continue;
         }
@@ -111,13 +111,13 @@ int Surface::getSegmentsNumber(ll si, ll ei){
     int num = 0;
     for (ll i = si ; ;){
         if (i == ei) break;
-        if (num > this->v_list.size()) {
+        if (num > (int)this->v_list.size()) {
             cout << "getSegmentsNumber Error" << endl;
             return -1;
         }
         num++;
         i++;
-        if (i == this->v_list.size()) i = 0;
+        if (i == (int)this->v_list.size()) i = 0;
     }
     return num;
 }
@@ -146,28 +146,39 @@ void Surface::removeDuplication(Checker* ch){
     }
 }
 
-void Surface::makeCoplanar(){
+void Surface::makeCoplanarParallelWithZ(){
     Point_3 center = getCenterPoint();
-    Plane_3 plane(center, this->av_normal);
+    Plane_3 plane;
+    if (this->av_normal.z() > 0)
+        plane = Plane_3(center, Vector_3(0,0,1));
+    else if (this->av_normal.z() < 0){
+        plane = Plane_3(center, Vector_3(0,0,-1));
+    }
+    else{
+        cout << "Wrong in makeCoplanarParallelWithZ" << endl;
+        exit(-1);
+    }
     for (ull index = 0 ; index < this->v_list.size() ; index++ ){
         Point_3 point(this->v_list[index]->x(),this->v_list[index]->y(),this->v_list[index]->z());
         Point_3 projected = plane.projection(point);
-        Vertex* vertex = new Vertex(projected.x(), projected.y(), projected.z());
-        this->v_list[index] = vertex;
+
+        this->v_list[index]->setX(projected.x());
+        this->v_list[index]->setY(projected.y());
+        this->v_list[index]->setZ(projected.z());
+//        Vertex* vt = new Vertex(projected.x(), projected.y(), projected.z());
+//        this->v_list[index] = vt;
     }
 }
 
 
 Point_3 Surface::getCenterPoint(){
     double x=0.0,y=0.0,z=0.0;
-    for (ull index = 0 ; index < this->v_list.size() ; index++ ){
-        x += this->v_list[index]->x();
-        y += this->v_list[index]->y();
-        z += this->v_list[index]->z();
-    }
-    x = x/this->v_list.size();
-    y = y/this->v_list.size();
-    z = z/this->v_list.size();
+    x = this->min_coords[0] + this->max_coords[0];
+    y = this->min_coords[1] + this->max_coords[1];
+    z = this->min_coords[2] + this->max_coords[2];
+    x = x/2;
+    y = y/2;
+    z = z/2;
     Point_3 p(x,y,z);
     return p;
 }
@@ -191,52 +202,18 @@ string Surface::toJSONString(){
 }
 
 bool Surface::updateNormal(Checker* ch){
-//    bool sameX = true,sameY = true, sameZ = true;
-//    int i = 1;
-//    Vertex* v_start = v_list[0];
-//    while (sameX || sameY || sameZ){
-//        if (v_list.size() == i) break;
-//        Vertex* v_next = v_list[i];
-//        if (!ch->isSameX(v_start, v_next)){
-//            sameX = false;
-//        }
-//        if (ch->isSameY(v_start, v_next)){
-//            sameY = false;
-//        }
-//        if (ch->isSameZ(v_start, v_next)){
-//            sameZ = false;
-//        }
-//        i++;
-//    }
-//
-//    if (sameX || sameY || sameZ){
-//        if (sameX){
-//
-//        }
-//        else if(sameY){
-//
-//        }
-//        else{
-//
-//        }
-//    }
-//    else{
-//        this->av_normal = this->av_normal * 1000000;
-//        this->av_normal = this->av_normal / sqrt(this->av_normal.squared_length());
-//        return true;
-//    }
-
     Vector_3 normal = Vector_3(0,0,0);
-    for (int i = 1 ; i < v_list.size() - 1; i++){
+    for (int i = 1 ; i < (int)v_list.size() - 1; i++){
         Vector_3 new_normal = CGALCalculation::getCrossProduct(this->v_list[0], this->v_list[i], this->v_list[i+1]);
         normal = normal + new_normal;
+
     }
 
     if (normal == CGAL::NULL_VECTOR){
         return false;
     }
     else{
-        this->av_normal = normal * (1 / normal.squared_length() );
+        this->av_normal = normal * (1 / sqrt(normal.squared_length()) );
         return true;
     }
 
@@ -257,6 +234,10 @@ bool Surface::compareLength(Surface* i, Surface* j) {
      return (i->getLength() > j->getLength());
 }
 
+bool Surface::compareArea(Surface* i, Surface* j) {
+     return (i->sq_area > j->sq_area);
+}
+
 /**
 *  Check that Surface is not valid. Straight Line or Point.
 */
@@ -266,7 +247,7 @@ bool Surface::isValid(){
     bool isNOTcollinear = false;
     Point_3 start_p = CGALCalculation::makePoint(this->v_list[0]);
     Point_3 end_p = CGALCalculation::makePoint(this->v_list[1]);
-    for (int i = 1 ; i < this->v_list.size() - 1; i++){
+    for (ll i = 1 ; i < (ll)this->v_list.size() - 1; i++){
         Point_3 mid_p(end_p.x(), end_p.y(), end_p.z());
         end_p = CGALCalculation::makePoint(this->v_list[i+1]);
         if (CGAL::collinear(start_p, mid_p, end_p)){

@@ -5,6 +5,7 @@
 #include <vector>
 #include <bitset>
 #include <map>
+#include <queue>
 
 #include "model/Trinagle.h"
 #include "logic/TriangleAttacher.h"
@@ -33,7 +34,6 @@ public:
     int makeSurfacesGreedy();
     int makeSurfacesNotJoin();
 
-    int makeSurfacesCoplanar();
     int combineSurface();
     int simplifySegment();
 
