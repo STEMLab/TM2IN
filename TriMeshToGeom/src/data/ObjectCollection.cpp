@@ -50,7 +50,7 @@ void OBJCollection::free(){
     vertex.clear();
 }
 
-int OBJCollection::cleaning(Checker* ch){
+int OBJCollection::cleaning(Checker* ch, int max_gener){
     for (ull it = 0 ; it < this->space_list.size(); it++)
     {
         for (unsigned int i = 0 ; i < this->space_list[it]->polygon_list.size() ;i++){
@@ -59,35 +59,43 @@ int OBJCollection::cleaning(Checker* ch){
                 return -1;
             }
         }
-        if (this->space_list[it]->combineSurface() == -1)
+
+        ll p_size = this->space_list[it]->polygon_list.size();
+        double degree = 10.0;
+        while (true || max_gener--)
         {
-            cout << "combine error" << endl;
-            return -1;
+            if (this->space_list[it]->combineSurface(degree) == -1)
+            {
+                cout << "combine error" << endl;
+                return -1;
+            }
+            if (degree < 45) degree += 2.5;
+            this->space_list[it]->tagID();
+            if (this->space_list[it]->simplifySegment(ch) == -1)
+            {
+                cout << "simplify error" << endl;
+                return -1;
+            }
+            if (this->space_list[it]->handleDefect() == -1)
+            {
+                cout << "" << endl;
+                return -1;
+            }
+            if (p_size == this->space_list[it]->polygon_list.size()) break;
+            else p_size = this->space_list[it]->polygon_list.size();
         }
-        this->space_list[it]->tagID();
-        if (this->space_list[it]->simplifySegment() == -1)
-        {
-            cout << "simplify error" << endl;
-            return -1;
-        }
-        if (this->space_list[it]->handleDefect() == -1){
-            cout << "" << endl;
-            return -1;
-        }
-        if (this->space_list[it]->match00() == -1)
-        {
-            cout << "match00 error" << endl;
-            return -1;
-        }
-        for (unsigned int i = 0 ; i < this->space_list[it]->polygon_list.size() ; i++)
-        {
-            this->space_list[it]->polygon_list[i]->removeDuplication(ch);
-//            if (this->space_list[it]->polygon_list[i]->checkDuplicate(ch))
-//            {
-//                cout << "it has duplicate Vertex" << endl;
-//                return -1;
-//            }
-        }
+
+//        if (this->space_list[it]->makeCoplanar() == -1)
+//        {
+//            cout << "makeCoplanar error" << endl;
+//            return -1;
+//        }
+//        if (this->space_list[it]->match00() == -1)
+//        {
+//            cout << "match00 error" << endl;
+//            return -1;
+//        }
+
     }
     return 0;
 }

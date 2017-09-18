@@ -32,7 +32,7 @@ bool TriangleAttacher::attach(Surface* cp, Triangle* pl, Checker* ch)
 
     if (checkMakeHole(cp, index, add)) return false;
 
-    if (ch->isSamePlanar(pl_nv, cp->av_normal))
+    if (ch->isSamePlanar(pl_nv, cp->av_normal, 30.0 ))
     {
         cp->setMBB(pl);
         cp->av_normal = cp->av_normal + pl_nv;

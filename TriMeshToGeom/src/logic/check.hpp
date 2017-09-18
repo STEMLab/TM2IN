@@ -28,7 +28,7 @@ class Checker{
 private:
     double threshold_vertex = 0.0;
     double ori_degree = 0.0;
-
+    double collinear_degree = 0.1;
 
 
 public:
@@ -37,6 +37,9 @@ public:
         ori_degree = degree;
     }
 
+    void setCollinearDegree(double p){
+        collinear_degree = p;
+    }
     void setSameOrientationDegree(double s){
         ori_degree = s;
     }
@@ -56,10 +59,10 @@ public:
     bool isSameOrientation(Vector_3& nv1, Vector_3& nv2);
     bool isSameOrientation(Vertex* origin, Vertex* v1, Vertex* v2);
     bool isSimilarOrientation(Vector_3& nv1, Vector_3& nv2);
-    bool isSamePlanar(Vector_3& big, Vector_3& small);
+    bool isSamePlanar(Vector_3& big, Vector_3& small, double degree);
     bool isSamePlanar(Vertex* origin, Vertex* v1, Vertex* v2);
-    
-    bool isColinear(Vertex* origin, Vertex* v1, Vertex* v2);
+
+    bool isCollinear(Vertex* origin, Vertex* v1, Vertex* v2);
 
     int compare_vertex(Vertex* v1, Vertex* v2);
 };

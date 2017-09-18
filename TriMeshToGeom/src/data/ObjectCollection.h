@@ -25,7 +25,7 @@ public:
     vector<TriangleSpace*> space_list;
     int makeSurfaces(Checker* check);
     void free();
-    int cleaning(Checker* ch);
+    int cleaning(Checker* ch, int max_gener);
     int validate(Checker* ch);
     void makeGraph(Checker* ch);
 };

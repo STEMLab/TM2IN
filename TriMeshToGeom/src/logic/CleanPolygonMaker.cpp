@@ -1,7 +1,7 @@
 #include "logic/CleanPolygonMaker.h"
 #include <stdlib.h>
 
-bool CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checker){
+bool CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checker, double degree){
      // check Polygon is in near polygon or not
     if (!isNeighbor(origin, piece)) return false;
 
@@ -33,7 +33,7 @@ bool CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checke
         //if (!checker->isSamePlanar(origin->av_normal, piece->av_normal)) return false;
     }
     else{
-        if (!checker->isSamePlanar(origin->av_normal, piece->av_normal)) return false;
+        if (!checker->isSamePlanar(origin->av_normal, piece->av_normal, degree)) return false;
     }
 
     //find if another line share.
@@ -152,117 +152,193 @@ bool CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece){
     ll middle_i = -1, middle_j = -1;
     ll piece_size = piece->getLength();
     ll origin_size = origin->getLength();
+    vector<Vertex*>& piece_vertex_list = piece->v_list;
+    vector<Vertex*>& origin_vertex_list = origin->v_list;
 
-    if (!findShareVertex(piece->v_list, origin->v_list, middle_i, middle_j)) return false;
+    bool hasTwoShareLine = false;
+    for (ll i = 0 ; i < piece_size ;i++){
+        for (ll j = origin_size - 1 ; j >= 0 ; j--){
+            if (piece_vertex_list[i] == origin_vertex_list[j]){
+                ll next_i = i + 1 == piece_size? 0 : i+1;
+                ll next_j = j-1 == -1? origin_size-1 : j-1;
 
-    vll range;
-    vll range_origin;
-    ll end_i = -1, end_j = -1;
-    ll start_i = -1, start_j = -1;
-    findStartAndEnd(piece->v_list, origin->v_list, middle_i, middle_j, start_i, end_i, start_j, end_j);
-    range.push_back(make_pair(start_i, end_i));
-    range_origin.push_back(make_pair(start_j, end_j));
-    ll f_start_i = start_i;
+                ll pre_i = i - 1 == -1? piece_size-1 : i-1;
+                ll pre_j = j + 1 == origin_size? 0 : j + 1;
 
-    bool found = true;
-    while (found)
-    {
-        found = false;
-        //for (ll i = end_i + 1 ; i < f_start_i; i++)
-        ll i = end_i + 1;
-        while (i != f_start_i)
-        {
-            if (i == piece_size) {
-                i = -1;
-                continue;
-            }
-            for (ll j = origin_size - 1 ; j >= 0 ; j--)
-            {
-                if (piece->v_list[i] == origin->v_list[j])
-                {
-                    ll next_i = i + 1 == piece_size? 0 : i+1;
-                    ll next_j = j-1 == -1? origin_size-1 : j-1;
-                    if (piece->v_list[next_i] == origin->v_list[next_j])
-                    {
-                        middle_i = i;
-                        middle_j = j;
-                        found = true;
-                        break;
-                    }
+                if (piece_vertex_list[next_i] == origin_vertex_list[next_j]
+                    && piece_vertex_list[pre_i] == origin_vertex_list[pre_j]){
+                    middle_i = i;
+                    middle_j = j;
+                    hasTwoShareLine = true;
+                    break;
                 }
             }
-            if (found) break;
-            i++;
         }
-        if (found){
-            findStartAndEnd(piece->v_list, origin->v_list, middle_i, middle_j, start_i, end_i, start_j, end_j);
-            range.push_back(make_pair(start_i, end_i));
-            range_origin.push_back(make_pair(start_j, end_j));
-        }
+        if (hasTwoShareLine) break;
     }
 
-    vector<Vertex*> origin_new;
-    vector<Vertex*> piece_new;
+    if (!hasTwoShareLine) return false;
+    ll end_i = -1, end_j = -1;
+    ll start_i = -1, start_j = -1;
+    findStartAndEnd(piece_vertex_list, origin->v_list, middle_i, middle_j, start_i, end_i, start_j, end_j);
 
-    vector<bool> pie_kept(piece_size, false);
-    vector<bool> ori_kept(origin_size, false);
+    int seg_num = piece->getSegmentsNumber(start_i, end_i);
+    if (seg_num <= 1) {
+        cout << "simplifyLineSegment Errrrrror" << endl;
+        exit(-1);
+    }
 
-    for (int i = 0 ; i < (ll)range.size() ; i++)
+    Point_3 sp = CGALCalculation::makePoint(piece_vertex_list[start_i]);
+    Point_3 ep = CGALCalculation::makePoint(piece_vertex_list[end_i]);
+    Line_3 line(sp, ep);
+
+    //Translate to make it straight
+    for (ll i = start_i + 1;;)
     {
-        ll range_start = range[i].first;
-        ll range_end = range[i].second;
+        if (i == piece_vertex_list.size()) i = 0;
+        if (i == end_i) break;
+        Point_3 newp = line.projection(CGALCalculation::makePoint(piece_vertex_list[i]));
+        piece_vertex_list[i]->translateTo({newp.x(), newp.y(), newp.z()});
 
-        ll origin_range_start = range_origin[i].first;
-        ll origin_range_end = range_origin[i].second;
-
-        int seg_num = piece->getSegmentsNumber(range_end, range_start);
-        if (seg_num == 0)
-        {
-            /**< Only One Vertex Same*/
-            continue;
-        }
-//
-//        Point_3 sp = CGALCalculation::makePoint(piece->v_list[range_start]);
-//        Point_3 ep = CGALCalculation::makePoint(piece->v_list[range_end]);
-//        Line_3 line(sp, ep);
-//
-        for (ll i = range_end;;)
-        {
-            //Point_3 newp = line.projection(CGALCalculation::makePoint(piece->v_list[i]));
-            //piece->v_list[i]->translateTo({newp.x(), newp.y(), newp.z()});
-            pie_kept[i] = true;
-            if (i == range_start) break;
-            i++;
-            if (i == piece->v_list.size()) i = 0;
-        }
-
-        for (ll j = origin_range_start; ; )
-        {
-            ori_kept[j] = true;
-            if (j == origin_range_end) break;
-            j++;
-            if (j == origin_size) j = 0;
-        }
-
+        i++;
     }
 
-    for (ll i = 0 ; i < piece_size ; i++){
-        if (pie_kept[i]) piece_new.push_back(piece->v_list[i]);
+    if ( end_i > start_i ){
+        piece_vertex_list.erase(piece_vertex_list.begin() + start_i + 1, piece_vertex_list.begin() + end_i);
     }
-    for (ll i = 0 ; i < origin_size ; i++){
-        if (ori_kept[i]) origin_new.push_back(origin->v_list[i]);
+    else{
+        piece_vertex_list.erase(piece_vertex_list.begin() + start_i + 1, piece_vertex_list.end());
+        piece_vertex_list.erase(piece_vertex_list.begin(), piece_vertex_list.begin() + end_i);
     }
 
-//    origin->setMBB();
-//    origin->refreshNormal();
+    if ( start_j > end_j ){
+        origin_vertex_list.erase(origin_vertex_list.begin() + end_j + 1, origin_vertex_list.begin() + start_j);
+    }
+    else{
+        origin_vertex_list.erase(origin_vertex_list.begin() + end_j + 1, origin_vertex_list.end());
+        origin_vertex_list.erase(origin_vertex_list.begin(), origin_vertex_list.begin() + start_j);
+    }
+
+    return true;
+
 //
-//    piece->setMBB();
-//    piece->refreshNormal();
+//    for (ll j = origin_range_start; ; )
+//    {
+//        ori_kept[j] = true;
+//        if (j == origin_range_end) break;
+//        j++;
+//        if (j == origin_size) j = 0;
+//    }
 
-    origin->v_list.clear();
-    piece->v_list.clear();
-    piece->v_list = piece_new;
-    origin->v_list = origin_new;
+
+
+
+
+
+
+
+
+
+//
+//
+//
+//    range.push_back(make_pair(start_i, end_i));
+//    range_origin.push_back(make_pair(start_j, end_j));
+//    ll f_start_i = start_i;
+//
+//    bool found = true;
+//    while (found)
+//    {
+//        found = false;
+//        //for (ll i = end_i + 1 ; i < f_start_i; i++)
+//        ll i = end_i + 1;
+//        while (i != f_start_i)
+//        {
+//            if (i == piece_size) {
+//                i = -1;
+//                continue;
+//            }
+//            for (ll j = origin_size - 1 ; j >= 0 ; j--)
+//            {
+//                if (piece->v_list[i] == origin->v_list[j])
+//                {
+//                    ll next_i = i + 1 == piece_size? 0 : i+1;
+//                    ll next_j = j-1 == -1? origin_size-1 : j-1;
+//                    if (piece->v_list[next_i] == origin->v_list[next_j])
+//                    {
+//                        middle_i = i;
+//                        middle_j = j;
+//                        found = true;
+//                        break;
+//                    }
+//                }
+//            }
+//            if (found) break;
+//            i++;
+//        }
+//        if (found){
+//            findStartAndEnd(piece->v_list, origin->v_list, middle_i, middle_j, start_i, end_i, start_j, end_j);
+//            range.push_back(make_pair(start_i, end_i));
+//            range_origin.push_back(make_pair(start_j, end_j));
+//        }
+//    }
+//
+//    vector<Vertex*> origin_new;
+//    vector<Vertex*> piece_new;
+//
+//    vector<bool> pie_kept(piece_size, false);
+//    vector<bool> ori_kept(origin_size, false);
+//
+//    for (int i = 0 ; i < (ll)range.size() ; i++)
+//    {
+//        ll range_start = range[i].first;
+//        ll range_end = range[i].second;
+//
+//        ll origin_range_start = range_origin[i].first;
+//        ll origin_range_end = range_origin[i].second;
+//
+//        int seg_num = piece->getSegmentsNumber(range_end, range_start);
+//        if (seg_num == 0)
+//        {
+//            /**< Only One Vertex Same*/
+//            continue;
+//        }
+////
+////        Point_3 sp = CGALCalculation::makePoint(piece->v_list[range_start]);
+////        Point_3 ep = CGALCalculation::makePoint(piece->v_list[range_end]);
+////        Line_3 line(sp, ep);
+////
+//        for (ll i = range_end;;)
+//        {
+//            //Point_3 newp = line.projection(CGALCalculation::makePoint(piece->v_list[i]));
+//            //piece->v_list[i]->translateTo({newp.x(), newp.y(), newp.z()});
+//            pie_kept[i] = true;
+//            if (i == range_start) break;
+//            i++;
+//            if (i == piece->v_list.size()) i = 0;
+//        }
+//
+//        for (ll j = origin_range_start; ; )
+//        {
+//            ori_kept[j] = true;
+//            if (j == origin_range_end) break;
+//            j++;
+//            if (j == origin_size) j = 0;
+//        }
+//
+//    }
+//
+//    for (ll i = 0 ; i < piece_size ; i++){
+//        if (pie_kept[i]) piece_new.push_back(piece->v_list[i]);
+//    }
+//    for (ll i = 0 ; i < origin_size ; i++){
+//        if (ori_kept[i]) origin_new.push_back(origin->v_list[i]);
+//    }
+//
+//    origin->v_list.clear();
+//    piece->v_list.clear();
+//    piece->v_list = piece_new;
+//    origin->v_list = origin_new;
 
 
     return 0;

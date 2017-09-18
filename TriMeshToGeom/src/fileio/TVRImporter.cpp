@@ -74,20 +74,13 @@ OBJCollection* TVRImporter::import(const char* f_path, Checker* check){
                 Triangle tri;
                 this->makeTriangle(inputstr, tvrcl->vertex, tri);
                 obj->pushTriangle(tri);
-                //obj->triangles.push_back(tri);
+                obj->whole_area += tri.getArea();
                 break;
             }
         }
     }
     obj->vertex = &tvrcl->vertex;
     tvrcl->space_list.push_back(obj);
-
-
-//    for (ull i = 0 ; i < sorted_vertex.size() - 1 ; i ++){
-//        if (check->compare_vertex( sorted_vertex[i], sorted_vertex[i+1]) > 0){
-//            exit(1);
-//        }
-//    }
 
     return tvrcl;
 }

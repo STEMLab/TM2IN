@@ -27,8 +27,8 @@ int ManagerImpl::makeSurfaces(){
 }
 
 
-int ManagerImpl::cleaning(){
-    if (objcl->cleaning(check) == -1) return -1;
+int ManagerImpl::cleaning(int max_gener){
+    if (objcl->cleaning(check, max_gener) == -1) return -1;
 
     //objcl->free();
 

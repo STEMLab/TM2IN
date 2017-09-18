@@ -3,17 +3,23 @@
 #define PI 3.14159265
 
 double CGALCalculation::getAngle(Vector_3& nv1, Vector_3& nv2){
-    double cos = (nv1 * nv2) / ( sqrt(nv1.squared_length()) * sqrt(nv2.squared_length()) );
+    double inner = (nv1 * nv2);
+    double cos = inner / ( sqrt(nv1.squared_length()) * sqrt(nv2.squared_length()) );
+    if (cos > 0.999999){
+        return 0;
+    }
+
     return acos(cos) * 180.0/PI;
 }
 
-// 0 : up, down, left , right, front, back
-int CGALCalculation::findNormalType(Vector_3& nv)
+
+int CGALCalculation::findNormalType27(Vector_3& nv)
 {
+
     int type = 0;
     double diff = 90.0;
-    for (int i = 0 ; i < 6 ; i++){
-        double temp_diff = CGALCalculation::getAngle(CGALCalculation::normal_list[i], nv);
+    for (int i = 1 ; i < 27 ; i++){
+        double temp_diff = CGALCalculation::getAngle(CGALCalculation::normal_list27[i], nv);
         if (temp_diff < diff){
             diff = temp_diff;
             type = i;
@@ -22,13 +28,63 @@ int CGALCalculation::findNormalType(Vector_3& nv)
     return type;
 }
 
-Vector_3 CGALCalculation::normal_list[6] = {
+Vector_3 CGALCalculation::normal_list27[27] = {
+    Vector_3(0,0,0),
     Vector_3(0,0,1),
     Vector_3(0,0,-1),
-    Vector_3(1,0,0),
-    Vector_3(-1,0,0),
     Vector_3(0,1,0),
-    Vector_3(0,-1,0)
+    Vector_3(0,1,1),
+    Vector_3(0,1,-1),
+    Vector_3(0,-1,0),
+    Vector_3(0,-1,1),
+    Vector_3(0,-1,-1),
+    Vector_3(1,0,0),
+    Vector_3(1,0,1),
+    Vector_3(1,0,-1),
+    Vector_3(1,1,0),
+    Vector_3(1,1,1),
+    Vector_3(1,1,-1),
+    Vector_3(1,-1,0),
+    Vector_3(1,-1,1),
+    Vector_3(1,-1,-1),
+    Vector_3(-1,0,0),
+    Vector_3(-1,0,1),
+    Vector_3(-1,0,-1),
+    Vector_3(-1,1,0),
+    Vector_3(-1,1,1),
+    Vector_3(-1,1,-1),
+    Vector_3(-1,-1,0),
+    Vector_3(-1,-1,1),
+    Vector_3(-1,-1,-1)
+};
+
+int CGALCalculation::findNormalType10(Vector_3& nv)
+{
+
+    int type = 0;
+    double diff = 90.0;
+    for (int i = 1 ; i < 11 ; i++){
+        double temp_diff = CGALCalculation::getAngle(CGALCalculation::normal_list11[i], nv);
+        if (temp_diff < diff){
+            diff = temp_diff;
+            type = i;
+        }
+    }
+    return type;
+}
+
+Vector_3 CGALCalculation::normal_list11[11] = {
+    Vector_3(0,0,0),
+    Vector_3(0,0,1),
+    Vector_3(0,0,-1),
+    Vector_3(0,1,0),
+    Vector_3(0,-1,0),
+    Vector_3(1,0,0),
+    Vector_3(1,1,0),
+    Vector_3(1,-1,0),
+    Vector_3(-1,0,0),
+    Vector_3(-1,1,0),
+    Vector_3(-1,-1,0)
 };
 
 Point_3 CGALCalculation::makePoint(Vertex* v){
@@ -36,6 +92,10 @@ Point_3 CGALCalculation::makePoint(Vertex* v){
     return p3a;
 }
 
+double CGALCalculation::getSquaredDistance(Vertex* v1, Vertex* v2){
+    return CGAL::squared_distance(
+                           CGALCalculation::makePoint(v1), CGALCalculation::makePoint(v2));
+}
 
 Vector_3 CGALCalculation::getUnitNormal(Vertex* va, Vertex* vb, Vertex* vc){
     Point_3 p3a(va->x(),va->y(),va->z());

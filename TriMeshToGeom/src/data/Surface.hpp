@@ -51,8 +51,8 @@ public:
     bool attachTriangle2(Triangle* pl, Checker* ch);
     std::string toJSONString();
     void makeCoplanarParallelWithZ();
+    void makeCoplanarByNormalType();
 
-    bool checkDuplicate(Checker* ch);
     bool isInMBB(Vertex* vt);
     void setMBB(Triangle* pl);
     void setMBB(Surface* pl);
@@ -63,13 +63,19 @@ public:
     //compare vector size
     static bool compareLength(Surface* i, Surface* j);
     static bool compareArea(Surface* i, Surface* j);
+
     void translate(double diff[]);
-    void removeDuplication(Checker* ch);
+    bool checkDuplicate(Checker* ch);
+
+    void removeConsecutiveDuplication(Checker* ch);
+    void removeStraight(Checker* ch);
+
     bool updateNormal(Checker* ch);
 
     bool isValid();
 private:
     Point_3 getCenterPoint();
+    Point_3 getCenterPointInFartest();
 };
 
 

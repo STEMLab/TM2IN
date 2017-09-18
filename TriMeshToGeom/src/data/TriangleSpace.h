@@ -22,6 +22,7 @@ public:
     double max_coords[3];
 
     string name;
+    double whole_area = 0;
     TriangleSpace();
     TriangleSpace(string pname, Checker* check);
     virtual ~TriangleSpace();
@@ -34,11 +35,12 @@ public:
     int makeSurfacesGreedy();
     int makeSurfacesNotJoin();
 
-    int combineSurface();
-    int simplifySegment();
+    int combineSurface(double degree);
+    int simplifySegment(Checker* ch);
     int match00();
     int handleDefect();
     void tagID();
+    int makeCoplanar();
 
     void pushTriangle(Triangle tri);
 protected:
@@ -46,7 +48,7 @@ protected:
     void freeSurfaces();
     void printProcess(ull, ull);
     Surface* attachTriangle(vector<Triangle*> tri_list, Surface* cp, bool* checked, ll& count);
-    Surface* attachSurfaces(Surface* cp, ull start, bool* checked, ll& count);
+    Surface* attachSurfaces(Surface* cp, ull start, bool* checked, ll& count, double degree);
     vector<Surface*> makeSurfacesInList(vector<Triangle*>& tri_list, bool* checked, int& combined_count);
     vector<vector<Triangle*>> separateByNormal_6(vector<Triangle>& triangles);
 private:

@@ -13,12 +13,13 @@ int main(int argc, const char * argv[]) {
     //TODO make argv
     double degree_param = 10.00;
     string import_version = "_v0.2.6.1";
-    string export_version = "_v0.2.6.2";
+    string export_version = "_v0.2.6.3";
     const char path[50] = "../Resource/teevr/tvr/";
     //const char path[100] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/";
     const char result_path[50] = "../Result/";
     //const char result_path[50] = "/Users/dong/Documents/dev/TriMeshToGeom/Result/";
     char file_name[] = "main";
+    const int max_genereration = 5;
 
 //    TVRImporter::extractMINtvr(string(path) + string(file_name));
 //    return 0;
@@ -58,10 +59,13 @@ int main(int argc, const char * argv[]) {
             manager->exportJSON(json_file);
             return 0;
         }
+        default:{
+            return 0;
+        }
     }
 
     //Make each surfaces planar and Remove the tilted surface (and remove co-linear).
-    if (manager->cleaning() == -1) return -1;
+    if (manager->cleaning(max_genereration) == -1) return -1;
 
     string json_file = string(result_path) + string(file_name) + "_" + to_string(degree_param).substr(0,4) + export_version + ".json";
     manager->exportJSON(json_file);

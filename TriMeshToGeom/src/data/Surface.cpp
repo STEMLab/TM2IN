@@ -137,41 +137,6 @@ bool Surface::checkDuplicate(Checker* ch){
     return false;
 }
 
-void Surface::removeDuplication(Checker* ch){
-    ull v_size = v_list.size();
-    for (ull i = 0 ; i < v_size - 1; i++){
-        if (ch->isSameVertex(v_list[i] , v_list[i+1])){
-            v_list.erase(v_list.begin() + i + 1);
-            i--;
-            v_size -= 1;
-        }
-    }
-}
-
-void Surface::makeCoplanarParallelWithZ(){
-    Point_3 center = getCenterPoint();
-    Plane_3 plane;
-    if (this->av_normal.z() > 0)
-        plane = Plane_3(center, Vector_3(0,0,1));
-    else if (this->av_normal.z() < 0){
-        plane = Plane_3(center, Vector_3(0,0,-1));
-    }
-    else{
-        cout << "Wrong in makeCoplanarParallelWithZ" << endl;
-        exit(-1);
-    }
-    for (ull index = 0 ; index < this->v_list.size() ; index++ ){
-        Point_3 point(this->v_list[index]->x(),this->v_list[index]->y(),this->v_list[index]->z());
-        Point_3 projected = plane.projection(point);
-
-        this->v_list[index]->setX(projected.x());
-        this->v_list[index]->setY(projected.y());
-        this->v_list[index]->setZ(projected.z());
-//        Vertex* vt = new Vertex(projected.x(), projected.y(), projected.z());
-//        this->v_list[index] = vt;
-    }
-}
-
 
 Point_3 Surface::getCenterPoint(){
     double x=0.0,y=0.0,z=0.0;
@@ -185,11 +150,28 @@ Point_3 Surface::getCenterPoint(){
     return p;
 }
 
+Point_3 Surface::getCenterPointInFartest(){
+    double sq_dist = -1;
+    int si = 0, sj = 1;
+    for (int i = 0 ; i < this->v_list.size() - 1; i++){
+        for (int j = 1; j < this->v_list.size() ; j++){
+            double dist = CGALCalculation::getSquaredDistance(this->v_list[i], this->v_list[j]);
+            if (dist > sq_dist){
+                sq_dist = dist;
+                si = i;
+                sj = j;
+            }
+        }
+    }
+
+    return CGAL::midpoint(CGALCalculation::makePoint(this->v_list[si]), CGALCalculation::makePoint(this->v_list[sj]));
+}
 
 string Surface::toJSONString(){
     string ret;
-    ret.append("{ \n");
-    ret.append(" \"id\" : " + to_string(sf_id) );
+    ret.append("{");
+    ret.append(" \n \"area\" : " + to_string(sq_area) );
+    ret.append(" \n, \"id\" : " + to_string(sf_id) );
     ret.append(" \n, \"normal\" : [");
     ret.append(to_string(this->av_normal.x()) + ", ");
     ret.append(to_string(this->av_normal.y()) + ", ");
@@ -242,6 +224,91 @@ bool Surface::compareArea(Surface* i, Surface* j) {
      return (i->sq_area > j->sq_area);
 }
 
+void Surface::removeStraight(Checker* ch){
+    ll index = 1;
+    Vertex* start_p = this->v_list[0];
+    Vertex* check_p = this->v_list[index];
+
+    int removed_count = 0;
+    vector<Vertex*> new_v_list;
+    do {
+        ll next_index = index + 1;
+        if (next_index == this->v_list.size()) next_index = 0;
+        Vertex* end_p = this->v_list[next_index];
+        if (ch->isCollinear(start_p, check_p, end_p))
+        {
+            removed_count++;
+        }
+        else{
+            new_v_list.push_back(this->v_list[index]);
+            start_p = this->v_list[index];
+        }
+        index = next_index;
+        check_p = this->v_list[index];
+    } while (index != 1);
+
+    this->v_list.clear();
+    this->v_list = new_v_list;
+
+    if (removed_count) cout << removed_count << " are removed in straight" << endl;
+}
+
+void Surface::removeConsecutiveDuplication(Checker* ch){
+    ull v_size = v_list.size();
+    int removed_count = 0;
+    for (ull i = 0 ; i < v_size - 1; i++){
+        if (ch->isSameVertex(v_list[i] , v_list[i+1])){
+            v_list.erase(v_list.begin() + i + 1);
+            i--;
+            v_size -= 1;
+            removed_count += 1;
+        }
+    }
+
+    if (removed_count) cout << removed_count << " are removed in duplication" << endl;
+}
+
+
+
+void Surface::makeCoplanarParallelWithZ(){
+    Point_3 center = getCenterPoint();
+    Plane_3 plane;
+    if (this->av_normal.z() > 0)
+        plane = Plane_3(center, Vector_3(0,0,1));
+    else if (this->av_normal.z() < 0){
+        plane = Plane_3(center, Vector_3(0,0,-1));
+    }
+    else{
+        cout << "Wrong in makeCoplanarParallelWithZ" << endl;
+        exit(-1);
+    }
+    for (ull index = 0 ; index < this->v_list.size() ; index++ ){
+        Point_3 point(this->v_list[index]->x(),this->v_list[index]->y(),this->v_list[index]->z());
+        Point_3 projected = plane.projection(point);
+
+        this->v_list[index]->setX(projected.x());
+        this->v_list[index]->setY(projected.y());
+        this->v_list[index]->setZ(projected.z());
+    }
+}
+
+
+void Surface::makeCoplanarByNormalType(){
+    int type = CGALCalculation::findNormalType10(this->av_normal);
+
+    Point_3 center = getCenterPointInFartest();
+    Plane_3 plane = Plane_3(center, CGALCalculation::normal_list11[type]);
+    for (ull index = 0 ; index < this->v_list.size() ; index++ ){
+        Point_3 point(this->v_list[index]->x(),this->v_list[index]->y(),this->v_list[index]->z());
+        Point_3 projected = plane.projection(point);
+
+        this->v_list[index]->setX(projected.x());
+        this->v_list[index]->setY(projected.y());
+        this->v_list[index]->setZ(projected.z());
+    }
+
+
+}
 /**
 *  Check that Surface is not valid. Straight Line or Point.
 */
