@@ -181,13 +181,14 @@ int TriangleSpace::simplifySegment(){
 
     for (ull i = 0 ; i < p_size - 1; i++)
     {
-        for (ull j = 0 ; j < p_size ; j++)
+        for (ull j = i ; j < p_size ; j++)
         {
             if (i == j) continue;
-            if (i ==0 && j == 2){
+            if (i ==0 && j == 5){
                 debug();
             }
-            CleanPolygonMaker::simplifyLineSegment(this->polygon_list[i], this->polygon_list[j] );
+            bool ret = CleanPolygonMaker::simplifyLineSegment(this->polygon_list[i], this->polygon_list[j] );
+
         }
     }
     return 0;
@@ -241,21 +242,22 @@ int TriangleSpace::match00(){
         }
     }
 
-//
-//    updateMBB();
-//    double diff[3];
-//    for (int i = 0 ; i < 3 ; i++){
-//        diff[i] = -this->min_coords[i];
-//    }
-//
-//    for (ull i = 0 ; i < (int)this->polygon_list.size() ; i++)
-//    {
-//        this->polygon_list[i]->translate(diff);
-//    }
-//
-//    for (ull i = 0 ; i < this->vertex->size() ; i++){
-//        this->vertex->at(i)->translate(diff);
-//    }
+
+    updateMBB();
+    double diff[3];
+    for (int i = 0 ; i < 3 ; i++){
+        diff[i] = -this->min_coords[i];
+    }
+
+    for (ull i = 0 ; i < (int)this->polygon_list.size() ; i++)
+    {
+        this->polygon_list[i]->translate(diff);
+    }
+
+    for (ull i = 0 ; i < this->vertex->size() ; i++){
+        this->vertex->at(i)->translate(diff);
+    }
+
     return 0;
 }
 
@@ -271,7 +273,10 @@ void TriangleSpace::updateMBB(){
         cp->setMBB();
         for (int j = 0 ; j < 3 ; j++){
             this->max_coords[j] = max(this->max_coords[j], cp->max_coords[j]);
-            this->min_coords[j] = min(this->min_coords[j], cp->min_coords[j]);
+            if (this->min_coords[j] > cp->min_coords[j]){
+                this->min_coords[j] = cp->min_coords[j];
+                //cout << j << " : " << i << " : " <<min_coords[j] <<endl;
+            }
         }
     }
 }

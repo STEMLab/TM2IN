@@ -11,9 +11,9 @@ using namespace std;
 
 int main(int argc, const char * argv[]) {
     //TODO make argv
-    double degree_param = 10.0;
+    double degree_param = 10.00;
     string import_version = "_v0.2.6.1";
-    string export_version = "_v0.2.6.1";
+    string export_version = "_v0.2.6.2";
     const char path[50] = "../Resource/teevr/tvr/";
     //const char path[100] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/";
     const char result_path[50] = "../Result/";

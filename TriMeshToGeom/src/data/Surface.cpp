@@ -127,10 +127,12 @@ bool Surface::checkDuplicate(Checker* ch){
 
     sort(sorted_v_list.begin(), sorted_v_list.end(), Vertex::compare);
     for (ull i = 0 ; i < sorted_v_list.size() - 1; i++){
-        if (sorted_v_list[i] == sorted_v_list[i+1])
+        if (sorted_v_list[i] == sorted_v_list[i+1]){
             return true;
-        if (ch->isSameVertex(sorted_v_list[i], sorted_v_list[i+1]))
+        }
+        if (ch->isSameVertex(sorted_v_list[i], sorted_v_list[i+1])){
             return true;
+        }
     }
     return false;
 }
@@ -244,7 +246,10 @@ bool Surface::compareArea(Surface* i, Surface* j) {
 *  Check that Surface is not valid. Straight Line or Point.
 */
 bool Surface::isValid(){
-    if (this->v_list.size() < 3) return false;
+    if (this->v_list.size() < 3) {
+        cout << "The number of vertexes is "  << this->v_list.size() <<endl;
+        return false;
+    }
 
     bool isNOTcollinear = false;
     Point_3 start_p = CGALCalculation::makePoint(this->v_list[0]);

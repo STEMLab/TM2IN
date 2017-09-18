@@ -81,11 +81,12 @@ int OBJCollection::cleaning(Checker* ch){
         }
         for (unsigned int i = 0 ; i < this->space_list[it]->polygon_list.size() ; i++)
         {
-            if (this->space_list[it]->polygon_list[i]->checkDuplicate(ch))
-            {
-                cout << "it has duplicate Vertex" << endl;
-                return -1;
-            }
+            this->space_list[it]->polygon_list[i]->removeDuplication(ch);
+//            if (this->space_list[it]->polygon_list[i]->checkDuplicate(ch))
+//            {
+//                cout << "it has duplicate Vertex" << endl;
+//                return -1;
+//            }
         }
     }
     return 0;

@@ -19,6 +19,8 @@ bool CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checke
 
 
     int seg_num = piece->getSegmentsNumber(end_i, start_i);
+
+
     if (seg_num == -1)
     {
         exit(-1);
@@ -28,6 +30,7 @@ bool CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checke
         return false;
     }
     else if (seg_num == 1){
+        //if (!checker->isSamePlanar(origin->av_normal, piece->av_normal)) return false;
     }
     else{
         if (!checker->isSamePlanar(origin->av_normal, piece->av_normal)) return false;
@@ -144,7 +147,7 @@ bool CleanPolygonMaker::isNeighbor(Surface* cp1, Surface* cp2){
     return true;
 }
 
-int CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece){
+bool CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece){
 
     ll middle_i = -1, middle_j = -1;
     ll piece_size = piece->getLength();
@@ -216,7 +219,7 @@ int CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece){
         if (seg_num == 0)
         {
             /**< Only One Vertex Same*/
-            return false;
+            continue;
         }
 //
 //        Point_3 sp = CGALCalculation::makePoint(piece->v_list[range_start]);
