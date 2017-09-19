@@ -7,14 +7,14 @@
 #include <map>
 #include <queue>
 
-#include "model/Trinagle.h"
+#include "model/Triangle.h"
 #include "logic/TriangleAttacher.h"
 #include "data/Surface.hpp"
 #include "logic/CleanPolygonMaker.h"
 
 using namespace std;
 
-class TriangleSpace
+class Space
 {
 public:
     vector<Vertex*> *vertex;
@@ -23,9 +23,9 @@ public:
 
     string name;
     double whole_area = 0;
-    TriangleSpace();
-    TriangleSpace(string pname, Checker* check);
-    virtual ~TriangleSpace();
+    Space();
+    Space(string pname, Checker* check);
+    virtual ~Space();
     std::vector<Triangle> triangles;
     std::vector<Surface*> polygon_list;
 
@@ -36,19 +36,26 @@ public:
     int makeSurfacesNotJoin();
 
     int combineSurface(double degree);
-    int simplifySegment(Checker* ch);
+    int combineSurfaceByArea(double );
+    int simplifySegment();
     int match00();
     int handleDefect();
     void tagID();
     int makeCoplanar();
+    int updateNormal();
 
     void pushTriangle(Triangle tri);
+
+    //TODO : removed
+    void test();
+
 protected:
     void updateMBB();
     void freeSurfaces();
     void printProcess(ull, ull);
     Surface* attachTriangle(vector<Triangle*> tri_list, Surface* cp, bool* checked, ll& count);
     Surface* attachSurfaces(Surface* cp, ull start, bool* checked, ll& count, double degree);
+    Surface* attachSurfacesByArea(Surface* cp, ull start, bool* checked, ll& count, double degree);
     vector<Surface*> makeSurfacesInList(vector<Triangle*>& tri_list, bool* checked, int& combined_count);
     vector<vector<Triangle*>> separateByNormal_6(vector<Triangle>& triangles);
 private:

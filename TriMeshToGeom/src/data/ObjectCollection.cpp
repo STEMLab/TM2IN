@@ -60,10 +60,15 @@ int OBJCollection::cleaning(Checker* ch, int max_gener){
             }
         }
 
+        this->space_list[it]->updateNormal();
+
         ll p_size = this->space_list[it]->polygon_list.size();
         double degree = 10.0;
-        while (true || max_gener--)
+        int gen = 0;
+
+        while (true && max_gener--)
         {
+            cout << "generation : " << gen << endl;
             if (this->space_list[it]->combineSurface(degree) == -1)
             {
                 cout << "combine error" << endl;
@@ -71,7 +76,42 @@ int OBJCollection::cleaning(Checker* ch, int max_gener){
             }
             if (degree < 45) degree += 2.5;
             this->space_list[it]->tagID();
-            if (this->space_list[it]->simplifySegment(ch) == -1)
+            if (this->space_list[it]->simplifySegment() == -1)
+            {
+                cout << "simplify error" << endl;
+                return -1;
+            }
+            if (this->space_list[it]->handleDefect() == -1)
+            {
+                cout << "" << endl;
+                return -1;
+            }
+
+            if (p_size == this->space_list[it]->polygon_list.size()) break;
+            else p_size = this->space_list[it]->polygon_list.size();
+
+
+            test(gen);
+            gen++;
+
+        }
+
+        this->space_list[it]->updateNormal();
+
+        degree = 45.0;
+        max_gener = 5;
+        ch->ori_degree = 20.0;
+        while (true && max_gener--)
+        {
+            cout << "generation : " << gen << endl;
+            if (this->space_list[it]->combineSurfaceByArea(degree) == -1)
+            {
+                cout << "combine error" << endl;
+                return -1;
+            }
+            if (degree < 60) degree += 2.0;
+            this->space_list[it]->tagID();
+            if (this->space_list[it]->simplifySegment() == -1)
             {
                 cout << "simplify error" << endl;
                 return -1;
@@ -83,7 +123,13 @@ int OBJCollection::cleaning(Checker* ch, int max_gener){
             }
             if (p_size == this->space_list[it]->polygon_list.size()) break;
             else p_size = this->space_list[it]->polygon_list.size();
+
+
+
+            test(gen);
+            gen++;
         }
+        ch->ori_degree = 10.0;
 
 //        if (this->space_list[it]->makeCoplanar() == -1)
 //        {
@@ -98,6 +144,23 @@ int OBJCollection::cleaning(Checker* ch, int max_gener){
 
     }
     return 0;
+}
+
+
+void OBJCollection::test(int gen){
+    cout << "test " << endl;
+    const char result_path[50] = "../Result/generation/";
+
+    ofstream fout;
+    string f_path = string(GENERATION_PATH) + "main_g_" + to_string(gen) + ".json";
+    fout.open(f_path, ios::out|ios::trunc);
+
+    if (!fout) return ;
+    if (JSONMaker::printJSON(fout, this->space_list))
+    {
+        return ;
+    }
+    fout.close();
 }
 
 

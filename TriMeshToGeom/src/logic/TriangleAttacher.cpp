@@ -3,7 +3,7 @@
 
 bool TriangleAttacher::attach(Surface* cp, Triangle* pl, Checker* ch)
 {
-    // check Trinagle is in near polygon or not
+    // check Triangle is in near polygon or not
     if (!isNeighbor(cp, pl)) return false;
 
     // TODO : overlap check (projection)

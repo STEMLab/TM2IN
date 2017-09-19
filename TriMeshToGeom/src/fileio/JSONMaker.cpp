@@ -3,7 +3,7 @@
 
 #include <fstream>
 
-int JSONMaker:: printJSON(ofstream& fout, vector<TriangleSpace*>& ts){
+int JSONMaker:: printJSON(ofstream& fout, vector<Space*>& ts){
     fout << "{ \n";
     fout << " \"spaces\" : [ \n";
     for (unsigned int index = 0 ; index < ts.size(); index++){

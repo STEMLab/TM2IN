@@ -26,12 +26,14 @@ typedef Kernel::Vector_3 Vector_3;
 
 class Checker{
 private:
+
+
+
+public:
     double threshold_vertex = 0.0;
     double ori_degree = 0.0;
     double collinear_degree = 0.1;
 
-
-public:
     Checker(double vertex, double degree){
         threshold_vertex = vertex;
         ori_degree = degree;

@@ -188,20 +188,23 @@ string Surface::toJSONString(){
 }
 
 bool Surface::updateNormal(Checker* ch){
-    Vector_3 normal = Vector_3(0,0,0);
-    for (int i = 1 ; i < (int)v_list.size() - 1; i++){
-        Vector_3 new_normal = CGALCalculation::getCrossProduct(this->v_list[0], this->v_list[i], this->v_list[i+1]);
-        normal = normal + new_normal;
 
-    }
+    //Triangulator::triangulate(this);
 
-    if (normal == CGAL::NULL_VECTOR){
-        return false;
-    }
-    else{
-        this->av_normal = normal * (1 / sqrt(normal.squared_length()) );
-        return true;
-    }
+//    Vector_3 normal = Vector_3(0,0,0);
+//    for (int i = 1 ; i < (int)v_list.size() - 1; i++){
+//        Vector_3 new_normal = CGALCalculation::getCrossProduct(this->v_list[0], this->v_list[i], this->v_list[i+1]);
+//        normal = normal + new_normal;
+//
+//    }
+//
+//    if (normal == CGAL::NULL_VECTOR){
+//        return false;
+//    }
+//    else{
+//        this->av_normal = normal * (1 / sqrt(normal.squared_length()) );
+//        return true;
+//    }
 
 }
 

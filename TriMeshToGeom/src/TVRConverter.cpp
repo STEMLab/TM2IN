@@ -11,7 +11,7 @@ using namespace std;
 
 int main(int argc, const char * argv[]) {
     //TODO make argv
-    double degree_param = 10.00;
+    double degree_param = 10.0;
     string import_version = "_v0.2.6.1";
     string export_version = "_v0.2.6.3";
     const char path[50] = "../Resource/teevr/tvr/";
@@ -19,7 +19,7 @@ int main(int argc, const char * argv[]) {
     const char result_path[50] = "../Result/";
     //const char result_path[50] = "/Users/dong/Documents/dev/TriMeshToGeom/Result/";
     char file_name[] = "main";
-    const int max_genereration = 5;
+    const int max_genereration = 10;
 
 //    TVRImporter::extractMINtvr(string(path) + string(file_name));
 //    return 0;
@@ -55,7 +55,7 @@ int main(int argc, const char * argv[]) {
         }
         case 2:{
             if (manager->importCombined(imported_bin)) return 4;
-            string json_file = string(result_path) + string(file_name) + "_" + to_string(degree_param).substr(0,4) + export_version + "_onlyJoin" + ".json";
+            string json_file = string(result_path) + string(file_name) + export_version + "_onlyJoin" + ".json";
             manager->exportJSON(json_file);
             return 0;
         }
@@ -67,7 +67,7 @@ int main(int argc, const char * argv[]) {
     //Make each surfaces planar and Remove the tilted surface (and remove co-linear).
     if (manager->cleaning(max_genereration) == -1) return -1;
 
-    string json_file = string(result_path) + string(file_name) + "_" + to_string(degree_param).substr(0,4) + export_version + ".json";
+    string json_file = string(result_path) + string(file_name) + export_version + ".json";
     manager->exportJSON(json_file);
 
 

@@ -134,3 +134,28 @@ double CGALCalculation::getSquaredArea(Point_3& p1, Point_3& p2, Point_3& p3){
     Triangle_3 tri(p1,p2,p3);
     return tri.squared_area();
 }
+//
+//vector<vector<int>> CGALCalculation::triangulate(CSurface* sf){
+//    vector<pair<Point, unsigned>> points;
+//    for (int i = 0 ; i < (int)sf->v_list.size() ; i++){
+//        points.push_back(make_pair(makeTPoint(sf->v_list[i]),i));
+//    }
+//
+//    Delaunay triangulation;
+//    triangulation.insert(points.begin(), points.end());
+//
+//    for(Delaunay::Finite_faces_iterator fit = triangulation.finite_faces_begin();
+//    fit != triangulation.finite_faces_end(); ++fit)
+//    {
+//        Delaunay::Face_handle face = fit;
+//        std::cout << "Triangle:\t" << triangulation.triangle(face) << std::endl;
+//        std::cout << "Vertex 0:\t" << triangulation.triangle(face)[0] << std::endl;
+//        std::cout << "Vertex 0:\t" << face->vertex(0)->info() << std::endl;
+//    }
+//
+//}
+
+//T_Point CGALCalculation::makeTPoint(Vertex* vt){
+//    return T_Point(vt->x(), vt->y(), vt->z());
+//}
+

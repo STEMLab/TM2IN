@@ -11,7 +11,9 @@
 
 #include "data/Surface.hpp"
 #include "logic/check.hpp"
-#include "data/TriangleSpace.h"
+#include "data/Space.h"
+#include "fileio/JSONMaker.h"
+#include "predefine.h"
 
 #include <vector>
 #include <cstring>
@@ -22,12 +24,14 @@ using namespace std;
 class OBJCollection{
 public:
     vector<Vertex*> vertex;
-    vector<TriangleSpace*> space_list;
+    vector<Space*> space_list;
     int makeSurfaces(Checker* check);
     void free();
     int cleaning(Checker* ch, int max_gener);
     int validate(Checker* ch);
     void makeGraph(Checker* ch);
+
+    void test(int);
 };
 
 #endif /* ObjectCollection_h */

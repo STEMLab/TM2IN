@@ -5,14 +5,14 @@
 #include <string>
 
 #include "data/Surface.hpp"
-#include "data/TriangleSpace.h"
+#include "data/Space.h"
 
 using namespace std;
 
 class JSONMaker{
 public :
     static int printJSON(ofstream& fout, std::vector<Surface*>& polygon_list);
-    static int printJSON(ofstream& fout, vector<TriangleSpace*>& ts);
+    static int printJSON(ofstream& fout, vector<Space*>& ts);
 };
 
 #endif // JSONMAKER_H_INCLUDED

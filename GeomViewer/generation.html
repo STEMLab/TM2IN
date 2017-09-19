@@ -1,4 +1,3 @@
-
 <html>
 
 <head>
@@ -12,11 +11,22 @@
 			width: 100%;
 			height: 100%
 		}
+
+		button{
+			position: absolute;
+
+		}
 	</style>
 </head>
 
 <body>
+	<div id="generation" style="width:50%">
+
+	</div>
+	<button type="button" style="right:0" onclick="next()">Next </button>
+	<button type="button" style = "right : 10%" onclick="pre()">Previous </button>
 	<div id="container"></div>
+
 	<script src="js/lib/three.js"></script>
 	<script src="js/lib/earcut.js"></script>
 	<script src="js/lib/jquery.js"></script>
@@ -25,6 +35,7 @@
 	<script src="js/lib/jquery.mousewheel.js"></script>
 	<script src="js/threejs/controls/TrackballControls.js"></script>
 	<script>
+	 	var generation = 0;
 		var container, stats;
 		var objects = [];
 		var camera, controls, scene, renderer;
@@ -35,13 +46,40 @@
 		var jsonfile;
 
 		var min_coords = [100000,1000000,1000000];
-		$.getJSON("../Result/main_v0.2.6.3.json", function(data) {
-			console.log(data);
-			jsonfile = data;
 
-			init();
-			animate();
-		})
+		function next(){
+			clearScene();
+			generation++;
+			load();
+		}
+
+		function pre(){
+			clearScene();
+			generation--;
+			load();
+		}
+
+		function clearScene(){
+			objects = [];
+			while(scene.children.length > 0){
+				scene.remove(scene.children[0]);
+			}
+			container = document.getElementById('container');
+			container.removeChild(renderer.domElement);
+		}
+
+		function load(){
+			document.getElementById("generation").innerHTML = generation;
+			$.getJSON("../Result/generation/main_g_"+generation+".json", function(data) {
+				console.log(data);
+				jsonfile = data;
+				init();
+				animate();
+			})
+		}
+
+		load();
+
 
 		var projector = new THREE.Projector();
 
