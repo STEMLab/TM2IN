@@ -2,22 +2,23 @@
 #define Triangulator_H_INCLUDED
 
 #include <iostream>
-
+#include <vector>
+#include <utility>
 
 #include "data/ObjectCollection.h"
 //
-//typedef CGAL::Exact_predicates_inexact_constructions_kernel            T_Kernel;
-//typedef CGAL::Triangulation_vertex_base_with_info_3<unsigned int, T_Kernel> Vb;
-//typedef CGAL::Triangulation_data_structure_3<Vb>                       Tds;
-//typedef CGAL::Delaunay_triangulation_3<T_Kernel, Tds>                    Delaunay;
-//typedef T_Kernel::Point_3                                                Point;
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Triangulation_vertex_base_with_info_3.h>
+#include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/Triangulation_vertex_base_with_info_2.h>
 
 using namespace std;
 
 class Triangulator{
 public:
-//    static vector<vector<int>> triangulate(Surface* sf);
-//    static Point makePoint(Vertex* vt);
+    static vector<vector<int>> triangulate(Surface* sf);
+    static vector<vector<int>> triangulate2D(vector<Vertex*> vt, int type);
 };
 
 

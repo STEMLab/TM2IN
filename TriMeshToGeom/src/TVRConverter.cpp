@@ -13,7 +13,7 @@ int main(int argc, const char * argv[]) {
     //TODO make argv
     double degree_param = 10.0;
     string import_version = "_v0.2.6.1";
-    string export_version = "_v0.2.6.3";
+    string export_version = "_v0.2.6.4";
     const char path[50] = "../Resource/teevr/tvr/";
     //const char path[100] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/";
     const char result_path[50] = "../Result/";
@@ -60,6 +60,7 @@ int main(int argc, const char * argv[]) {
             return 0;
         }
         default:{
+            cout << "no Mode" << endl;
             return 0;
         }
     }

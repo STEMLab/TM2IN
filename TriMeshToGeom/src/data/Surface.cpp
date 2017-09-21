@@ -8,8 +8,13 @@
 
 #include "logic/check.hpp"
 #include "data/Surface.hpp"
+#include "logic/Triangulator.h"
 #include "logic/CleanPolygonMaker.h"
+
+#include "predefine.h"
+
 #include <cstdlib>
+#include <cmath>
 
 using namespace std;
 
@@ -189,23 +194,36 @@ string Surface::toJSONString(){
 
 bool Surface::updateNormal(Checker* ch){
 
-    //Triangulator::triangulate(this);
+    int type = CGALCalculation::findNormalType27(this->av_normal);
+    this->av_normal = CGALCalculation::normal_list27[type];
+    this->av_normal = this->av_normal * this->sq_area * AREA_CONST;
 
+//
+//    vector<vector<int>> indexes = Triangulator::triangulate2D(this->v_list, type);
+//    if (indexes.size() == 0)
+//        return false;
+//
 //    Vector_3 normal = Vector_3(0,0,0);
-//    for (int i = 1 ; i < (int)v_list.size() - 1; i++){
-//        Vector_3 new_normal = CGALCalculation::getCrossProduct(this->v_list[0], this->v_list[i], this->v_list[i+1]);
+//    for (int i = 0 ; i < (int)indexes.size() ; i++){
+//        Vector_3 new_normal = CGALCalculation::getUnitNormal(v_list[indexes[i][0]], v_list[indexes[i][1]], v_list[indexes[i][2]]);
+//        cout << i << " :" << indexes[i][0] << ", " << indexes[i][1] << ", " <<indexes[i][2] << endl;
 //        normal = normal + new_normal;
 //
 //    }
+//    Vector_3 pnormal = Vector_3(0,0,0);
+//    for (int i = 1 ; i < (int)v_list.size() - 1; i++){
+//        Vector_3 new_normal = CGALCalculation::getCrossProduct(this->v_list[0], this->v_list[i], this->v_list[i+1]);
+//        pnormal = pnormal + new_normal;
+//    }
 //
-//    if (normal == CGAL::NULL_VECTOR){
-//        return false;
-//    }
-//    else{
-//        this->av_normal = normal * (1 / sqrt(normal.squared_length()) );
-//        return true;
-//    }
-
+//    indexes.clear();
+//
+    if (this->av_normal == CGAL::NULL_VECTOR){
+        return false;
+    }
+    else{
+        return true;
+    }
 }
 
 bool Surface::isInMBB(Vertex* vt){

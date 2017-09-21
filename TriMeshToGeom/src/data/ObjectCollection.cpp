@@ -90,7 +90,6 @@ int OBJCollection::cleaning(Checker* ch, int max_gener){
             if (p_size == this->space_list[it]->polygon_list.size()) break;
             else p_size = this->space_list[it]->polygon_list.size();
 
-
             test(gen);
             gen++;
 
@@ -123,8 +122,6 @@ int OBJCollection::cleaning(Checker* ch, int max_gener){
             }
             if (p_size == this->space_list[it]->polygon_list.size()) break;
             else p_size = this->space_list[it]->polygon_list.size();
-
-
 
             test(gen);
             gen++;

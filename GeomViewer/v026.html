@@ -118,7 +118,7 @@
 					var normal = polygon_list[j].normal;
 					var triangled_vertices = triangulate(coordinates, normal);
 					if (triangled_vertices.length == 0) {
-						console.log(j);
+					//	console.log(j);
 					}
 					setMinimum(coordinates);
 					var geometry = new THREE.BufferGeometry();
@@ -134,7 +134,7 @@
 					mesh.name = j;
 					scene.add(mesh);
 					objects.push(mesh);
-					// if (j == 10000) break;
+					 if (j == 100000) break;
 					//break;
 				}
 			}
@@ -192,14 +192,14 @@
 					vertices2d.push(coordinates[i][2]);
 				}
 				if (normal[0] < 0) minus =true;
-
+				//return [];
 			}
 			else if (ny > nx && ny > nz){
 				for (var i = 0 ; i < coordinates.length ; i++){
-					vertices2d.push(coordinates[i][0]);
 					vertices2d.push(coordinates[i][2]);
+					vertices2d.push(coordinates[i][0]);
 				}
-				if (normal[1] >= 0) minus =true;
+				if (normal[1] < 0) minus =true;
 
 			}
 			else{
@@ -208,6 +208,7 @@
 					vertices2d.push(coordinates[i][1]);
 				}
 				if (normal[2] < 0) minus =true;
+				//return [];
 			}
 
 			var triangle_index = earcut(vertices2d);
@@ -227,7 +228,6 @@
 					triangled_vertices.push(coordinates[triangle_index[i]][2]);
 				}
 			}
-
 
 			if (triangled_vertices.length == 0){
 				console.log(normal);

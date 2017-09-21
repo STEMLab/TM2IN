@@ -220,6 +220,9 @@ int Space::updateNormal(){
 
     for (ull i = 0 ; i < (int)this->polygon_list.size() ; i++)
     {
+        if (polygon_list[i]->v_list.size() > 6){
+            continue;
+        }
         if (!this->polygon_list[i]->updateNormal(this->checker))
         {
             cout << this->polygon_list[i]->toJSONString() <<endl;

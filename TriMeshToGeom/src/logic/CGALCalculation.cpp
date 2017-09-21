@@ -12,6 +12,9 @@ double CGALCalculation::getAngle(Vector_3& nv1, Vector_3& nv2){
     return acos(cos) * 180.0/PI;
 }
 
+Vector_3 CGALCalculation::getVector(Vertex* va, Vertex* vb){
+    return Vector_3(makePoint(va),makePoint(vb));
+}
 
 int CGALCalculation::findNormalType27(Vector_3& nv)
 {
@@ -60,7 +63,6 @@ Vector_3 CGALCalculation::normal_list27[27] = {
 
 int CGALCalculation::findNormalType10(Vector_3& nv)
 {
-
     int type = 0;
     double diff = 90.0;
     for (int i = 1 ; i < 11 ; i++){
@@ -86,6 +88,17 @@ Vector_3 CGALCalculation::normal_list11[11] = {
     Vector_3(-1,1,0),
     Vector_3(-1,-1,0)
 };
+
+Vector_3 CGALCalculation::normal_list6[6] = {
+    Vector_3(1,0,0),
+    Vector_3(0,1,0),
+    Vector_3(0,0,1),
+    Vector_3(-1,0,0),
+    Vector_3(0,-1,0),
+    Vector_3(0,0,-1)
+};
+
+
 
 Point_3 CGALCalculation::makePoint(Vertex* v){
     Point_3 p3a(v->x(),v->y(),v->z());

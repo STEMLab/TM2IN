@@ -74,6 +74,7 @@ OBJCollection* TVRImporter::import(const char* f_path, Checker* check){
                 Triangle tri;
                 this->makeTriangle(inputstr, tvrcl->vertex, tri);
                 obj->pushTriangle(tri);
+
                 obj->whole_area += tri.getArea();
                 break;
             }
