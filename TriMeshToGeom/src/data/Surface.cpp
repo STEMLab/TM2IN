@@ -56,8 +56,8 @@ Surface::Surface(Triangle* pl){
 void Surface::setMBB(){
     for (int i = 0 ; i < 3 ; i++)
     {
-        this->max_coords[i] = -1000000000;
-        this->min_coords[i] = 1000000000;
+        this->max_coords[i] = -1000000.000;
+        this->min_coords[i] = 10000000.00;
     }
 
     for (unsigned int i = 0 ; i < this->v_list.size() ; i++){
@@ -135,7 +135,7 @@ bool Surface::checkDuplicate(Checker* ch){
         if (sorted_v_list[i] == sorted_v_list[i+1]){
             return true;
         }
-        if (ch->isSameVertex(sorted_v_list[i], sorted_v_list[i+1])){
+        if (ch != NULL && ch->isSameVertex(sorted_v_list[i], sorted_v_list[i+1])){
             return true;
         }
     }
@@ -192,33 +192,72 @@ string Surface::toJSONString(){
     return ret;
 }
 
-bool Surface::updateNormal(Checker* ch){
+Vector_3 Surface::getSimpleNormal(){
+    Vector_3 normal = Vector_3(0,0,0);
+    for (int i = 0 ; i < this->v_list.size() - 1 ; i += 2){
+        int e_i = i + 2 >= this->v_list.size()? 0 : i+2;
+        normal = normal + CGALCalculation::getCrossProduct(v_list[i], v_list[i+1], v_list[e_i]);
+    }
+    return normal;
+}
 
+vector<pair<double, double>> Surface::to2DPoints(){
+    vector<pair<double, double>> points;
+    Point_3 origin = Point_3(0,0,0);
     int type = CGALCalculation::findNormalType27(this->av_normal);
-    this->av_normal = CGALCalculation::normal_list27[type];
-    this->av_normal = this->av_normal * this->sq_area * AREA_CONST;
-
-//
-//    vector<vector<int>> indexes = Triangulator::triangulate2D(this->v_list, type);
-//    if (indexes.size() == 0)
-//        return false;
-//
-//    Vector_3 normal = Vector_3(0,0,0);
-//    for (int i = 0 ; i < (int)indexes.size() ; i++){
-//        Vector_3 new_normal = CGALCalculation::getUnitNormal(v_list[indexes[i][0]], v_list[indexes[i][1]], v_list[indexes[i][2]]);
-//        cout << i << " :" << indexes[i][0] << ", " << indexes[i][1] << ", " <<indexes[i][2] << endl;
-//        normal = normal + new_normal;
-//
-//    }
-//    Vector_3 pnormal = Vector_3(0,0,0);
-//    for (int i = 1 ; i < (int)v_list.size() - 1; i++){
-//        Vector_3 new_normal = CGALCalculation::getCrossProduct(this->v_list[0], this->v_list[i], this->v_list[i+1]);
-//        pnormal = pnormal + new_normal;
-//    }
-//
-//    indexes.clear();
-//
     if (this->av_normal == CGAL::NULL_VECTOR){
+        exit(-1);
+    }
+    Plane_3 plane = Plane_3(CGALCalculation::makePoint(this->v_list[0]), CGALCalculation::normal_list27[type]);
+    for (ull i = 0 ; i < this->v_list.size() ; i++){
+        Point_3 p3 = CGALCalculation::makePoint(this->v_list[i]);
+        Point_2 point2d = plane.to_2d(p3);
+        points.push_back(make_pair(point2d.x(), point2d.y()));
+    }
+
+    return points;
+}
+
+bool Surface::updateNormal(Checker* ch){
+    if (this->v_list.size() < 4){
+        this->av_normal = getSimpleNormal();
+    }
+    this->av_normal = CGALCalculation::normal_list27[CGALCalculation::findNormalType27(this->av_normal)];
+    this->av_normal = this->av_normal / sqrt(this->av_normal.squared_length());
+    this->av_normal = this->av_normal * this->sq_area * AREA_CONST;
+//
+//    else{
+//        vector<pair<double, double>> pointsInPlane = to2DPoints();
+//        vector<vector<int>> indexes = Triangulator::triangulate2D(pointsInPlane, true);
+//
+//        if (indexes.size() == 0)
+//        {
+//            int randomType = rand() % 26 + 1;
+//            cout << "Can not Triangulation " << randomType << endl;
+//            this->av_normal = CGALCalculation::normal_list27[randomType];
+//            return updateNormal(ch);
+//        }
+//
+//        Vector_3 normal = Vector_3(0,0,0);
+//        for (int i = 0 ; i < (int)indexes.size() ; i++)
+//        {
+//            Vector_3 new_normal = CGALCalculation::getUnitNormal(v_list[indexes[i][0]], v_list[indexes[i][1]], v_list[indexes[i][2]]);
+//            normal = normal + new_normal;
+//            cout << indexes[i][0] << " " << indexes[i][1] << " " << indexes[i][2] << endl;
+//        }
+//        cout << toJSONString() << endl;
+//
+//        indexes.clear();
+//        pointsInPlane.clear();
+//
+//        int type = CGALCalculation::findNormalType27(normal);
+//        this->av_normal = CGALCalculation::normal_list27[type];
+//        this->av_normal = this->av_normal * this->sq_area * AREA_CONST;
+//
+//    }
+
+    if (this->av_normal == CGAL::NULL_VECTOR){
+        cout << "Null Vector" << endl;
         return false;
     }
     else{
@@ -256,7 +295,7 @@ void Surface::removeStraight(Checker* ch){
         ll next_index = index + 1;
         if (next_index == this->v_list.size()) next_index = 0;
         Vertex* end_p = this->v_list[next_index];
-        if (ch->isCollinear(start_p, check_p, end_p))
+        if (ch->isSameOrientation(start_p, check_p, end_p, 0.1))
         {
             removed_count++;
         }
@@ -288,7 +327,28 @@ void Surface::removeConsecutiveDuplication(Checker* ch){
 
     if (removed_count) cout << removed_count << " are removed in duplication" << endl;
 }
-
+void Surface::removeHole(Checker* ch)
+{
+    bool isChagned = false;
+    do
+    {
+        isChagned = false;
+        for (ull i = 0 ; i < v_list.size() - 1 ; i++)
+        {
+            for (ull j = i + 1; j < v_list.size() ; j ++)
+            {
+                if (ch->isSameVertex(v_list[i], v_list[j]))
+                {
+                    v_list.erase(v_list.begin() + i, v_list.begin() + j);
+                    isChagned = true;
+                    break;
+                }
+            }
+            if (isChagned) break;
+        }
+    }
+    while (isChagned);
+}
 
 
 void Surface::makeCoplanarParallelWithZ(){

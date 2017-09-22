@@ -22,13 +22,13 @@ int ManagerImpl::import(const char* file_path){
     else return 0;
 }
 
-int ManagerImpl::makeSurfaces(){
-    return objcl->makeSurfaces(this->check);
+int ManagerImpl::makeSurfaces(double degree){
+    return objcl->makeSurfaces(this->check, degree);
 }
 
 
-int ManagerImpl::cleaning(int max_gener){
-    if (objcl->cleaning(check, max_gener) == -1) return -1;
+int ManagerImpl::cleaning(int max_gener, double startDegree){
+    if (objcl->cleaning(check, max_gener, startDegree) == -1) return -1;
 
     //objcl->free();
 

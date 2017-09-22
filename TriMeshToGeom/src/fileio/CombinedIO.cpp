@@ -14,7 +14,7 @@ int CombinedIO:: exportBinary(ofstream& fout, vector<Space*>& ts){
     ll size = ts.size();
     fout.write((char*)&size, sizeof(size));
     for (int i = 0 ; i < size ; i++){
-        exportBinary(fout, ts[i]->polygon_list);
+        exportBinary(fout, ts[i]->surfacesList);
     }
     return 0;
 }
@@ -57,7 +57,7 @@ int CombinedIO::importBinary(ifstream& fin, vector<Vertex*>& vertex, Space* ts){
     for (int i = 0 ; i < size ; i++){
         Surface* cp = new Surface();
         importBinary(fin, vertex, cp);
-        ts->polygon_list.push_back(cp);
+        ts->surfacesList.push_back(cp);
     }
     return 0;
 }

@@ -61,6 +61,21 @@ Vector_3 CGALCalculation::normal_list27[27] = {
     Vector_3(-1,-1,-1)
 };
 
+int CGALCalculation::findNormalType6(Vector_3& nv)
+{
+    int type = 0;
+    double diff = 90.0;
+    for (int i = 0 ; i < 6 ; i++){
+        double temp_diff = CGALCalculation::getAngle(CGALCalculation::normal_list6[i], nv);
+        if (temp_diff < diff){
+            diff = temp_diff;
+            type = i;
+        }
+    }
+    return type;
+}
+
+
 int CGALCalculation::findNormalType10(Vector_3& nv)
 {
     int type = 0;

@@ -31,20 +31,17 @@ private:
 
 public:
     double threshold_vertex = 0.0;
-    double ori_degree = 0.0;
     double collinear_degree = 0.1;
+    double degreeOfMerging = 60.0;
 
-    Checker(double vertex, double degree){
+    Checker(double vertex){
         threshold_vertex = vertex;
-        ori_degree = degree;
     }
 
     void setCollinearDegree(double p){
         collinear_degree = p;
     }
-    void setSameOrientationDegree(double s){
-        ori_degree = s;
-    }
+
     bool isExistDuplication(std::vector<Vertex*> vertex);
 
     bool isSameX(Vertex* a, Vertex* b);
@@ -58,11 +55,10 @@ public:
     bool isSameVertex(Vertex& v1, Vertex& v2);
     bool isSameVertex(Vertex* v1, Vertex* v2);
 
-    bool isSameOrientation(Vector_3& nv1, Vector_3& nv2);
-    bool isSameOrientation(Vertex* origin, Vertex* v1, Vertex* v2);
-    bool isSimilarOrientation(Vector_3& nv1, Vector_3& nv2);
-    bool isSamePlanar(Vector_3& big, Vector_3& small, double degree);
-    bool isSamePlanar(Vertex* origin, Vertex* v1, Vertex* v2);
+    bool isSameOrientation(Vector_3& nv1, Vector_3& nv2, double);
+    bool isSameOrientation(Vertex* origin, Vertex* v1, Vertex* v2, double);
+
+    bool CanbeMerged(Vector_3& big, Vector_3& small, double degree);
 
     bool isCollinear(Vertex* origin, Vertex* v1, Vertex* v2);
 

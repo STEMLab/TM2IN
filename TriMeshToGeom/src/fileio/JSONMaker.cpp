@@ -10,7 +10,7 @@ int JSONMaker:: printJSON(ofstream& fout, vector<Space*>& ts){
         fout << "{\n";
         fout<< " \"name\" : \"" << ts[index]->name << "\", \n" ;
 
-        printJSON(fout, ts[index]->polygon_list);
+        printJSON(fout, ts[index]->surfacesList);
 
         if (index != ts.size() - 1 ) fout << "}, \n";
         else fout <<"}\n";

@@ -27,12 +27,12 @@ public:
     Space(string pname, Checker* check);
     virtual ~Space();
     std::vector<Triangle> triangles;
-    std::vector<Surface*> polygon_list;
+    std::vector<Surface*> surfacesList;
 
 
     int makeSurfacesBySeparation();
     int makeSurfacesByCandidator();
-    int makeSurfacesGreedy();
+    int makeSurfacesGreedy(double degree);
     int makeSurfacesNotJoin();
 
     int combineSurface(double degree);
@@ -53,10 +53,10 @@ protected:
     void updateMBB();
     void freeSurfaces();
     void printProcess(ull, ull);
-    Surface* attachTriangle(vector<Triangle*> tri_list, Surface* cp, bool* checked, ll& count);
+    Surface* attachTriangle(vector<Triangle*> tri_list, Surface* cp, bool* checked, ll& count, double degree);
     Surface* attachSurfaces(Surface* cp, ull start, bool* checked, ll& count, double degree);
     Surface* attachSurfacesByArea(Surface* cp, ull start, bool* checked, ll& count, double degree);
-    vector<Surface*> makeSurfacesInList(vector<Triangle*>& tri_list, bool* checked, int& combined_count);
+    vector<Surface*> makeSurfacesInList(vector<Triangle*>& tri_list, bool* checked, int& combined_count, double degree);
     vector<vector<Triangle*>> separateByNormal_6(vector<Triangle>& triangles);
 private:
     Checker* checker;

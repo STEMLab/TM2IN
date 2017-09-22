@@ -71,11 +71,15 @@ public:
     void removeStraight(Checker* ch);
 
     bool updateNormal(Checker* ch);
+    void removeHole(Checker* ch);
 
     bool isValid();
 private:
     Point_3 getCenterPoint();
     Point_3 getCenterPointInFartest();
+    int findNormalTypeForTri();
+    Vector_3 getSimpleNormal();
+    std::vector<std::pair<double, double>> to2DPoints();
 };
 
 

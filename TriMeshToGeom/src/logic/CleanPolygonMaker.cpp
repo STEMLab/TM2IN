@@ -30,10 +30,12 @@ bool CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checke
         return false;
     }
     else if (seg_num == 1){
-        //if (!checker->isSamePlanar(origin->av_normal, piece->av_normal)) return false;
+
     }
     else{
-        if (!checker->isSamePlanar(origin->av_normal, piece->av_normal, degree)) return false;
+        if (!checker->CanbeMerged(origin->av_normal, piece->av_normal, degree)) {
+            return false;
+        }
     }
 
     //find if another line share.

@@ -1,7 +1,7 @@
 #include "TriangleAttacher.h"
 
 
-bool TriangleAttacher::attach(Surface* cp, Triangle* pl, Checker* ch)
+bool TriangleAttacher::attach(Surface* cp, Triangle* pl, Checker* ch, double degree)
 {
     // check Triangle is in near polygon or not
     if (!isNeighbor(cp, pl)) return false;
@@ -32,7 +32,7 @@ bool TriangleAttacher::attach(Surface* cp, Triangle* pl, Checker* ch)
 
     if (checkMakeHole(cp, index, add)) return false;
 
-    if (ch->isSamePlanar(pl_nv, cp->av_normal, 30.0 ))
+    if (ch->CanbeMerged(pl_nv, cp->av_normal, degree ))
     {
         cp->setMBB(pl);
         cp->av_normal = cp->av_normal + pl_nv;

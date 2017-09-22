@@ -48,14 +48,14 @@ bool Checker::isSameVertex(Vertex& v1, Vertex& v2){
         return false;
 }
 
-bool Checker::isSameOrientation(Vector_3& nv1, Vector_3& nv2){
-    double thres = this->ori_degree;
+bool Checker::isSameOrientation(Vector_3& nv1, Vector_3& nv2, double degree){
+    double thres = degree;
     double angle = CGALCalculation::getAngle(nv1, nv2);
     return (angle <= thres) ;
 }
 
 
-bool Checker::isSameOrientation(Vertex* origin, Vertex* v1, Vertex* v2){
+bool Checker::isSameOrientation(Vertex* origin, Vertex* v1, Vertex* v2, double degree){
     Point_3 p3a(origin->x(),origin->y(),origin->z());
     Point_3 p3b(v1->x(),v1->y(),v1->z());
     Point_3 p3c(v2->x(),v2->y(),v2->z());
@@ -63,37 +63,18 @@ bool Checker::isSameOrientation(Vertex* origin, Vertex* v1, Vertex* v2){
     Vector_3 vec1(p3a,p3b);
     Vector_3 vec2(p3a,p3c);
 
-    return this->isSameOrientation(vec1, vec2);
+    return this->isSameOrientation(vec1, vec2, degree);
 }
 
 
-bool Checker::isSamePlanar(Vector_3& big, Vector_3& small, double degree){
-    double thres = this->ori_degree;
+bool Checker::CanbeMerged(Vector_3& big, Vector_3& small, double degree){
+//    double thres = this->ori_degree;
     double angle = CGALCalculation::getAngle(big, small);
     Vector_3 added = big + small;
-    if (angle <= degree){
-        return (CGALCalculation::getAngle(added, big) <= thres);
-    }
+    if (angle <= this->degreeOfMerging)
+        return (CGALCalculation::getAngle(added, big) <= degree);
     return false;
 }
-
-bool Checker::isSamePlanar(Vertex* origin, Vertex* v1, Vertex* v2){
-    Point_3 p3a(origin->x(),origin->y(),origin->z());
-    Point_3 p3b(v1->x(),v1->y(),v1->z());
-    Point_3 p3c(v2->x(),v2->y(),v2->z());
-
-    Vector_3 vec1(p3a,p3b);
-    Vector_3 vec2(p3a,p3c);
-
-    return isSamePlanar(vec1, vec2, 30.0);
-}
-
-bool Checker::isSimilarOrientation(Vector_3& nv1, Vector_3& nv2){
-    double thres = this->ori_degree;
-    double angle = CGALCalculation::getAngle(nv1, nv2);
-    return (angle <= thres * 2) ;
-}
-
 
 int Checker::compare_vertex(Vertex* a, Vertex* b)
 {
@@ -150,15 +131,5 @@ bool Checker::isSameZ(Vertex* v1, Vertex* v2){
         return false;
 }
 
-bool Checker::isCollinear(Vertex* origin, Vertex* v1, Vertex* v2){
-    double thres = this->collinear_degree;
-    Point_3 p3a(origin->x(),origin->y(),origin->z());
-    Point_3 p3b(v1->x(),v1->y(),v1->z());
-    Point_3 p3c(v2->x(),v2->y(),v2->z());
 
-    Vector_3 vec1(p3a,p3b);
-    Vector_3 vec2(p3a,p3c);
-    double angle = CGALCalculation::getAngle(vec1, vec2);
-    return (angle <= thres);
-}
 

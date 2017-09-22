@@ -25,13 +25,14 @@ class OBJCollection{
 public:
     vector<Vertex*> vertex;
     vector<Space*> space_list;
-    int makeSurfaces(Checker* check);
+    int makeSurfaces(Checker* check, double degree);
     void free();
-    int cleaning(Checker* ch, int max_gener);
+    int cleaning(Checker* ch, int max_gener, double startDegree);
     int validate(Checker* ch);
     void makeGraph(Checker* ch);
 
-    void test(int);
+    void extractGeneration(int);
+    void test();
 };
 
 #endif /* ObjectCollection_h */
