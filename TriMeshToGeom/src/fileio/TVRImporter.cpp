@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <algorithm>
-#include "data/TriangleSpace.h"
+#include "data/Space.h"
 #include "model/vertex.h"
 
 TVRImporter::TVRImporter()
@@ -33,7 +33,7 @@ OBJCollection* TVRImporter::import(const char* f_path, Checker* check){
     int v_count = 0;
     int f_count = 0;
 
-    TriangleSpace* obj = NULL;
+    Space* obj = NULL;
     OBJCollection* tvrcl = new OBJCollection();
 
     vector<Vertex*> sorted_vertex;
@@ -64,7 +64,7 @@ OBJCollection* TVRImporter::import(const char* f_path, Checker* check){
                 group_name = this->getGroupName(inputstr);
                 if (group_name.find('\r') != string::npos) group_name.erase(group_name.find('\r'));
 
-                obj = new TriangleSpace(group_name, check);
+                obj = new Space(group_name, check);
                 break;
             }
             case 'f':{
@@ -74,6 +74,7 @@ OBJCollection* TVRImporter::import(const char* f_path, Checker* check){
                 Triangle tri;
                 this->makeTriangle(inputstr, tvrcl->vertex, tri);
                 obj->pushTriangle(tri);
+
                 obj->whole_area += tri.getArea();
                 break;
             }

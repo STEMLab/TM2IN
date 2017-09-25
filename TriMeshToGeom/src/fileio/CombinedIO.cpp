@@ -10,11 +10,11 @@ typedef Kernel::Point_3 Point_3;
 typedef Kernel::Vector_3 Vector_3;
 typedef Kernel::Plane_3 Plane_3;
 
-int CombinedIO:: exportBinary(ofstream& fout, vector<TriangleSpace*>& ts){
+int CombinedIO:: exportBinary(ofstream& fout, vector<Space*>& ts){
     ll size = ts.size();
     fout.write((char*)&size, sizeof(size));
     for (int i = 0 ; i < size ; i++){
-        exportBinary(fout, ts[i]->polygon_list);
+        exportBinary(fout, ts[i]->surfacesList);
     }
     return 0;
 }
@@ -51,13 +51,13 @@ int CombinedIO::importBinary(ifstream& fin, OBJCollection* objcl){
     return 0;
 }
 
-int CombinedIO::importBinary(ifstream& fin, vector<Vertex*>& vertex, TriangleSpace* ts){
+int CombinedIO::importBinary(ifstream& fin, vector<Vertex*>& vertex, Space* ts){
     ll size;
     fin.read((char*)&size, sizeof(size));
     for (int i = 0 ; i < size ; i++){
         Surface* cp = new Surface();
         importBinary(fin, vertex, cp);
-        ts->polygon_list.push_back(cp);
+        ts->surfacesList.push_back(cp);
     }
     return 0;
 }

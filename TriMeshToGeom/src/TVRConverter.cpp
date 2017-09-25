@@ -9,21 +9,41 @@
 
 using namespace std;
 
+void test(){
+//    Vector_3 a = Vector_3(1,1,1);
+    Vector_3 b = Vector_3(0,0,-1);
+//    cout << CGALCalculation::getAngle(a, b) <<endl;
+
+    Point_3 p1 = Point_3(0,0,0);
+    Point_3 p2 = Point_3(0,-3,2);
+    Point_3 p3 = Point_3(3,-1,1);
+
+    Plane_3 plane1 = Plane_3(Point_3(0,0,1), b);
+
+    cout << plane1.to_2d(p1) << endl;
+    cout << plane1.to_2d(p2) << endl;
+    cout << plane1.to_2d(p3) << endl;
+
+    Plane_3 plane2 = Plane_3(Point_3(0,0,1), -b);
+    cout << plane2.to_2d(p1) << endl;
+    cout << plane2.to_2d(p2) << endl;
+    cout << plane2.to_2d(p3) << endl;
+
+}
+
 int main(int argc, const char * argv[]) {
     //TODO make argv
-    double degree_param = 10.00;
-    string import_version = "_v0.2.6.1";
-    string export_version = "_v0.2.6.3";
-    const char path[50] = "../Resource/teevr/tvr/";
+    string import_version = "_v0.2.7";
+    string export_version = "_v0.2.7.2";
+    const char path[50] = "../Resource/tvr/";
     //const char path[100] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/";
     const char result_path[50] = "../Result/";
     //const char result_path[50] = "/Users/dong/Documents/dev/TriMeshToGeom/Result/";
-    char file_name[] = "main";
-    const int max_genereration = 5;
+    char file_name[] = "office";
+    const int max_genereration = 10;
 
 //    TVRImporter::extractMINtvr(string(path) + string(file_name));
 //    return 0;
-
 
     cout << "select mode" << endl;
     cout << "0 : make new Surfaces" << endl;
@@ -33,7 +53,7 @@ int main(int argc, const char * argv[]) {
 
     Manager* manager = new ManagerImpl();
     manager->setImporter(new TVRImporter());
-    manager->setChecker(new Checker(0.000001, degree_param));
+    manager->setChecker(new Checker(0.000001));
 
     cout << "Load TVR File.." << endl;
     if (manager->import( (string(path) + string(file_name) + ".tvr").c_str()) ){
@@ -41,11 +61,11 @@ int main(int argc, const char * argv[]) {
         return -1;
     }
 
-    string imported_bin = string(result_path) + "cb_" + string(file_name) + import_version + ".bin";
-    string exported_bin = string(result_path) + "cb_" + string(file_name) + export_version + ".bin";
+    string imported_bin = string(result_path) + "polygons/" + string(file_name) + import_version + ".bin";
+    string exported_bin = string(result_path) + "polygons/" + string(file_name) + import_version + ".bin";
     switch(mode){
         case 0:{
-            if (manager->makeSurfaces()) return 1;
+            if (manager->makeSurfaces(10.0)) return 1;
             if (manager->exportCombined(exported_bin)) return 2;
             break;
         }
@@ -55,19 +75,20 @@ int main(int argc, const char * argv[]) {
         }
         case 2:{
             if (manager->importCombined(imported_bin)) return 4;
-            string json_file = string(result_path) + string(file_name) + "_" + to_string(degree_param).substr(0,4) + export_version + "_onlyJoin" + ".json";
+            string json_file = string(result_path) + string(file_name) + export_version + "_onlyJoin" + ".json";
             manager->exportJSON(json_file);
             return 0;
         }
         default:{
+            cout << "no Mode" << endl;
             return 0;
         }
     }
 
     //Make each surfaces planar and Remove the tilted surface (and remove co-linear).
-    if (manager->cleaning(max_genereration) == -1) return -1;
+    if (manager->cleaning(max_genereration, 1.00) == -1) return -1;
 
-    string json_file = string(result_path) + string(file_name) + "_" + to_string(degree_param).substr(0,4) + export_version + ".json";
+    string json_file = string(result_path) + string(file_name) + export_version + ".json";
     manager->exportJSON(json_file);
 
 

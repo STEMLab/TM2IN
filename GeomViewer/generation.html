@@ -1,4 +1,3 @@
-
 <html>
 
 <head>
@@ -12,11 +11,22 @@
 			width: 100%;
 			height: 100%
 		}
+
+		button{
+			position: absolute;
+
+		}
 	</style>
 </head>
 
 <body>
+	<div id="generation" style="width:50%">
+
+	</div>
+	<button type="button" style="right:0" onclick="next()">Next </button>
+	<button type="button" style = "right : 10%" onclick="pre()">Previous </button>
 	<div id="container"></div>
+
 	<script src="js/lib/three.js"></script>
 	<script src="js/lib/earcut.js"></script>
 	<script src="js/lib/jquery.js"></script>
@@ -25,6 +35,7 @@
 	<script src="js/lib/jquery.mousewheel.js"></script>
 	<script src="js/threejs/controls/TrackballControls.js"></script>
 	<script>
+	 	var generation = 0;
 		var container, stats;
 		var objects = [];
 		var camera, controls, scene, renderer;
@@ -35,13 +46,40 @@
 		var jsonfile;
 
 		var min_coords = [100000,1000000,1000000];
-		$.getJSON("../Result/office_v0.2.6.1.json", function(data) {
-			console.log(data);
-			jsonfile = data;
 
-			init();
-			animate();
-		})
+		function next(){
+			clearScene();
+			generation++;
+			load();
+		}
+
+		function pre(){
+			clearScene();
+			generation--;
+			load();
+		}
+
+		function clearScene(){
+			objects = [];
+			while(scene.children.length > 0){
+				scene.remove(scene.children[0]);
+			}
+			container = document.getElementById('container');
+			container.removeChild(renderer.domElement);
+		}
+
+		function load(){
+			document.getElementById("generation").innerHTML = generation;
+			$.getJSON("../Result/generation/office_g_"+generation+".json", function(data) {
+				console.log(data);
+				jsonfile = data;
+				init();
+				animate();
+			})
+		}
+
+		load();
+
 
 		var projector = new THREE.Projector();
 
@@ -118,7 +156,7 @@
 					var normal = polygon_list[j].normal;
 					var triangled_vertices = triangulate(coordinates, normal);
 					if (triangled_vertices.length == 0) {
-					//	console.log(j);
+						console.log(j);
 					}
 					setMinimum(coordinates);
 					var geometry = new THREE.BufferGeometry();
@@ -134,7 +172,7 @@
 					mesh.name = j;
 					scene.add(mesh);
 					objects.push(mesh);
-					 if (j == 100000) break;
+					// if (j == 10000) break;
 					//break;
 				}
 			}
@@ -192,14 +230,14 @@
 					vertices2d.push(coordinates[i][2]);
 				}
 				if (normal[0] < 0) minus =true;
-				//return [];
+
 			}
 			else if (ny > nx && ny > nz){
 				for (var i = 0 ; i < coordinates.length ; i++){
-					vertices2d.push(coordinates[i][2]);
 					vertices2d.push(coordinates[i][0]);
+					vertices2d.push(coordinates[i][2]);
 				}
-				if (normal[1] < 0) minus =true;
+				if (normal[1] >= 0) minus =true;
 
 			}
 			else{
@@ -208,7 +246,6 @@
 					vertices2d.push(coordinates[i][1]);
 				}
 				if (normal[2] < 0) minus =true;
-				//return [];
 			}
 
 			var triangle_index = earcut(vertices2d);
@@ -228,6 +265,7 @@
 					triangled_vertices.push(coordinates[triangle_index[i]][2]);
 				}
 			}
+
 
 			if (triangled_vertices.length == 0){
 				console.log(normal);

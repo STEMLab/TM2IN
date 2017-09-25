@@ -10,16 +10,13 @@ public:
     virtual ~ManagerImpl();
 
     int import(const char*);
-    int makeSurfaces();
-    int cleaning(int);
+    int makeSurfaces(double degree);
+    int cleaning(int, double startDegree);
     //import and export
     int exportJSON(string f_path);
     int exportCombined(string f_path);
     int importCombined(string f_path);
-
-    //TODO
-    void makeSolids() {};
-
+    int makeSolids();
 
 protected:
 
