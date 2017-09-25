@@ -115,6 +115,7 @@ Surface* Space::attachTriangle(vector<Triangle*> tri_list, Surface* cp, bool* ch
     }
     return cp;
 }
+
 int Space::combineSurfaceByArea(double degree){
     cout << "Combine Surfaces By area" << endl;
 
@@ -332,18 +333,8 @@ int Space::match00(){
 
     for (ull i = 0 ; i < (int)this->surfacesList.size() ; i++)
     {
-        this->surfacesList[i]->removeStraight(this->checker);
-        this->surfacesList[i]->removeConsecutiveDuplication(this->checker);
-        this->surfacesList[i]->setMBB();
-
         if (this->surfacesList[i]->isValid())
         {
-            if (!this->surfacesList[i]->updateNormal(this->checker))
-            {
-                cout << this->surfacesList[i]->toJSONString() <<endl;
-                cout << "Cannot make Normal" << endl;
-                exit(-1);
-            }
             this->surfacesList[i]->translate(diff);
         }
         else{
@@ -382,6 +373,13 @@ void Space::updateMBB(){
     }
 }
 
+int Space::makeGraph(Checker* ch){
+    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
+    this->tagID();
+
+    this->surface_graph = new SurfaceGraph();
+    surface_graph->makeAdjacentGraph(this->surfacesList);
+}
 
 
 
@@ -394,19 +392,6 @@ void Space::freeSurfaces(){
 }
 
 
-
-
-void Space::test()
-{
-    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
-        if (this->surfacesList[i]->sf_id == 108){
-
-        }
-    }
-}
-
-
-//
 //
 //int TriangleSpace::makeSurfacesBySeparation()
 //{

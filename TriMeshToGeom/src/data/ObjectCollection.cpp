@@ -50,7 +50,14 @@ void OBJCollection::free(){
     vertex.clear();
 }
 
-int OBJCollection::cleaning(Checker* ch, int max_gener, double startDegree){
+int OBJCollection::makeGraph(Checker* ch){
+    for (ull i = 0 ; i < this->space_list.size(); i++)
+    {
+        this->space_list[i]->makeGraph(ch);
+    }
+}
+
+int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegree){
     for (ull it = 0 ; it < this->space_list.size(); it++)
     {
         for (unsigned int i = 0 ; i < this->space_list[it]->surfacesList.size() ;i++){
@@ -82,7 +89,7 @@ int OBJCollection::cleaning(Checker* ch, int max_gener, double startDegree){
                 return -1;
             }
             if (degree < 45) degree += 0.05;
-            this->space_list[it]->tagID();
+            //this->space_list[it]->tagID();
 
             if (this->space_list[it]->simplifySegment() == -1)
             {
@@ -95,8 +102,8 @@ int OBJCollection::cleaning(Checker* ch, int max_gener, double startDegree){
                 return -1;
             }
 
-            if (p_size == this->space_list[it]->surfacesList.size()) break;
-            else p_size = this->space_list[it]->surfacesList.size();
+            if (p_size == (int)this->space_list[it]->surfacesList.size()) break;
+            else p_size = (int)this->space_list[it]->surfacesList.size();
 
             extractGeneration(gen);
             gen++;
@@ -110,34 +117,17 @@ int OBJCollection::cleaning(Checker* ch, int max_gener, double startDegree){
 //            cout << "makeCoplanar error" << endl;
 //            return -1;
 //        }
-//        if (this->space_list[it]->match00() == -1)
-//        {
-//            cout << "match00 error" << endl;
-//            return -1;
-//        }
+        if (this->space_list[it]->match00() == -1)
+        {
+            cout << "match00 error" << endl;
+            return -1;
+        }
 
     }
     return 0;
 }
 
-void OBJCollection::test(){
-    Surface* zero = this->space_list[0]->surfacesList[0];
-    for (int i = 0 ; i < this->space_list[0]->surfacesList.size() ; i++){
-        Surface* sf = this->space_list[0]->surfacesList[i];
-        if (sf->sf_id == 36)
-        {
-            double angle = CGALCalculation::getAngle(zero->av_normal, sf->av_normal);
-            Vector_3 added = zero->av_normal + sf->av_normal;
-            cout << angle << endl;
-            cout << (CGALCalculation::getAngle(added, zero->av_normal)) << endl;
-        }
-    }
-}
-
 void OBJCollection::extractGeneration(int gen){
-
-    const char result_path[50] = "../Result/generation/";
-
     ofstream fout;
     string f_path = string(GENERATION_PATH) + "office_g_" + to_string(gen) + ".json";
     fout.open(f_path, ios::out|ios::trunc);
@@ -150,4 +140,18 @@ void OBJCollection::extractGeneration(int gen){
     fout.close();
 }
 
+
+void OBJCollection::test(){
+    Surface* zero = this->space_list[0]->surfacesList[0];
+    for (int i = 0 ; i < (int)this->space_list[0]->surfacesList.size() ; i++){
+        Surface* sf = this->space_list[0]->surfacesList[i];
+        if (sf->sf_id == 36)
+        {
+            double angle = CGALCalculation::getAngle(zero->av_normal, sf->av_normal);
+            Vector_3 added = zero->av_normal + sf->av_normal;
+            cout << angle << endl;
+            cout << (CGALCalculation::getAngle(added, zero->av_normal)) << endl;
+        }
+    }
+}
 

@@ -10,7 +10,7 @@ typedef Delaunay::Point                                             Point2D;
 vector<vector<int>> Triangulator::triangulate2D(vector<pair<double, double>>& vt_list, bool positive){
     vector<vector<int>> triangulation_index;
     vector<pair<Point2D, unsigned>> points;
-    for (int i = 0 ; i < vt_list.size() ; i++){
+    for (int i = 0 ; i < (int)vt_list.size() ; i++){
         double x = vt_list[i].first;
         double y = vt_list[i].second;
         points.push_back(make_pair(Point2D(x,y), i));

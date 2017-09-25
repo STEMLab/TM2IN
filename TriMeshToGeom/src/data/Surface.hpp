@@ -54,6 +54,8 @@ public:
     void makeCoplanarByNormalType();
 
     bool isInMBB(Vertex* vt);
+    bool isAdjacent(Surface* sf, ll& middle_i, ll& middle_j);
+
     void setMBB(Triangle* pl);
     void setMBB(Surface* pl);
     void setMBB();

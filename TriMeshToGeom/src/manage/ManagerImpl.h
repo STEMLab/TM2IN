@@ -16,10 +16,7 @@ public:
     int exportJSON(string f_path);
     int exportCombined(string f_path);
     int importCombined(string f_path);
-
-    //TODO
-    void makeSolids() {};
-
+    int makeSolids();
 
 protected:
 

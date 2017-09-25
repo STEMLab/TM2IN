@@ -158,8 +158,8 @@ Point_3 Surface::getCenterPoint(){
 Point_3 Surface::getCenterPointInFartest(){
     double sq_dist = -1;
     int si = 0, sj = 1;
-    for (int i = 0 ; i < this->v_list.size() - 1; i++){
-        for (int j = 1; j < this->v_list.size() ; j++){
+    for (int i = 0 ; i < (int)this->v_list.size() - 1; i++){
+        for (int j = 1; j < (int)this->v_list.size() ; j++){
             double dist = CGALCalculation::getSquaredDistance(this->v_list[i], this->v_list[j]);
             if (dist > sq_dist){
                 sq_dist = dist;
@@ -194,8 +194,8 @@ string Surface::toJSONString(){
 
 Vector_3 Surface::getSimpleNormal(){
     Vector_3 normal = Vector_3(0,0,0);
-    for (int i = 0 ; i < this->v_list.size() - 1 ; i += 2){
-        int e_i = i + 2 >= this->v_list.size()? 0 : i+2;
+    for (int i = 0 ; i < (int)this->v_list.size() - 1 ; i += 2){
+        int e_i = i + 2 >= (int)this->v_list.size()? 0 : i+2;
         normal = normal + CGALCalculation::getCrossProduct(v_list[i], v_list[i+1], v_list[e_i]);
     }
     return normal;
@@ -203,7 +203,6 @@ Vector_3 Surface::getSimpleNormal(){
 
 vector<pair<double, double>> Surface::to2DPoints(){
     vector<pair<double, double>> points;
-    Point_3 origin = Point_3(0,0,0);
     int type = CGALCalculation::findNormalType27(this->av_normal);
     if (this->av_normal == CGAL::NULL_VECTOR){
         exit(-1);
@@ -265,6 +264,10 @@ bool Surface::updateNormal(Checker* ch){
     }
 }
 
+bool Surface::isAdjacent(Surface* sf, ll& middle_i, ll& middle_j){
+    return CleanPolygonMaker::findShareVertex(this->v_list, sf->v_list, middle_i, middle_j);
+}
+
 bool Surface::isInMBB(Vertex* vt){
     if (vt->x() >= this->min_coords[0] && vt->x() <= this->max_coords[0]){
         if (vt->y() >= this->min_coords[1] && vt->y() <= this->max_coords[1]){
@@ -293,7 +296,7 @@ void Surface::removeStraight(Checker* ch){
     vector<Vertex*> new_v_list;
     do {
         ll next_index = index + 1;
-        if (next_index == this->v_list.size()) next_index = 0;
+        if (next_index == (ll)this->v_list.size()) next_index = 0;
         Vertex* end_p = this->v_list[next_index];
         if (ch->isSameOrientation(start_p, check_p, end_p, 0.1))
         {

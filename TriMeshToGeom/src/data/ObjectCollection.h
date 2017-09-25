@@ -27,9 +27,8 @@ public:
     vector<Space*> space_list;
     int makeSurfaces(Checker* check, double degree);
     void free();
-    int cleaning(Checker* ch, int max_gener, double startDegree);
-    int validate(Checker* ch);
-    void makeGraph(Checker* ch);
+    int combineSurfaces(Checker* ch, int max_gener, double startDegree);
+    int makeGraph(Checker* ch);
 
     void extractGeneration(int);
     void test();
