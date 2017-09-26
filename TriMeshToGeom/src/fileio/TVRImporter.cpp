@@ -80,7 +80,7 @@ OBJCollection* TVRImporter::import(const char* f_path, Checker* check){
             }
         }
     }
-    obj->vertex = &tvrcl->vertex;
+    obj->p_vertexList = &tvrcl->vertex;
     tvrcl->space_list.push_back(obj);
 
     return tvrcl;

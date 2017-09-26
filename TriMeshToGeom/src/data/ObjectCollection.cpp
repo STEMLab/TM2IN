@@ -55,6 +55,16 @@ int OBJCollection::makeGraph(Checker* ch){
     {
         this->space_list[i]->makeGraph(ch);
     }
+    return 0;
+}
+
+int OBJCollection::makeSurfacePlanar(Checker *ch){
+    for (ull i = 0 ; i < this->space_list.size(); i++)
+    {
+        this->space_list[i]->remainOnlyUsingVertexes();
+        this->space_list[i]->makeSurfacesPlanar(ch);
+    }
+    return 0;
 }
 
 int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegree){
@@ -88,6 +98,7 @@ int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegre
                 cout << "combine error" << endl;
                 return -1;
             }
+
             if (degree < 45) degree += 0.05;
             //this->space_list[it]->tagID();
 
@@ -101,6 +112,7 @@ int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegre
                 cout << "" << endl;
                 return -1;
             }
+
 
             if (p_size == (int)this->space_list[it]->surfacesList.size()) break;
             else p_size = (int)this->space_list[it]->surfacesList.size();

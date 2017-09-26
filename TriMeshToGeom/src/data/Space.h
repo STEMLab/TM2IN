@@ -19,7 +19,7 @@ using namespace std;
 class Space
 {
 public:
-    vector<Vertex*> *vertex;
+    vector<Vertex*> *p_vertexList;
     double min_coords[3];
     double max_coords[3];
 
@@ -44,7 +44,8 @@ public:
     int match00();
     int handleDefect();
     void tagID();
-    int makeCoplanar();
+    int makeSurfacesPlanar(Checker*);
+    int remainOnlyUsingVertexes();
     int updateNormal();
     int makeGraph(Checker* ch);
     void pushTriangle(Triangle tri);

@@ -8,11 +8,14 @@
 class Vertex{
 public:
     ll index = 0;
+    bool used;
     double coords[3];
+
     Vertex(double px, double py, double pz){
         coords[0] = px;
         coords[1] = py;
         coords[2] = pz;
+        this->used = true;
     }
 
     Vertex(){
@@ -26,6 +29,7 @@ public:
         coords[1] = vt.y();
         coords[2] = vt.z();
         this->index = vt.index;
+        this->used = true;
     }
 
     double x(){return coords[0];}

@@ -30,6 +30,7 @@ int ManagerImpl::makeSurfaces(double degree){
 int ManagerImpl::cleaning(int max_gener, double startDegree){
     if (objcl->combineSurfaces(check, max_gener, startDegree) == -1) return -1;
     if (objcl->makeGraph(check) == -1) return -1;
+    if (objcl->makeSurfacePlanar(check) == -1) return -1;
     return 0;
 }
 

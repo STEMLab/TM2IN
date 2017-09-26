@@ -258,7 +258,7 @@ int Space::simplifySegment(){
             while (CleanPolygonMaker::simplifyLineSegment(this->surfacesList[i], this->surfacesList[j]))
             {
                 loop_count++;
-                if (loop_count > this->surfacesList[j]->v_list.size()){
+                if (loop_count > (int)this->surfacesList[j]->v_list.size()){
                     cout << "Infinite loop in Simplification" << endl;
                     exit(-1);
                 }
@@ -293,31 +293,32 @@ int Space::handleDefect(){
     return 0;
 }
 
-int Space::makeCoplanar(){
-    cout << "\n------------- Make Coplanar --------------\n" << endl;
-    updateMBB();
+int Space::remainOnlyUsingVertices(){
+    for (ull i = 0 ; i < this->p_vertexList->size() ; i++){
+        (*this->p_vertexList)[i]->used = false;
+    }
+    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
+        this->surfacesList[i]->tagVerticesUsed();
+    }
 
-    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
-    //find surfaces whose normal is z direction.
-
-    for (ll i = this->surfacesList.size() - 1 ; i >= 0 ; i--){
-
-        if (this->surfacesList[i]->isValid())
-        {
-            this->surfacesList[i]->makeCoplanarByNormalType();
-            if (!this->surfacesList[i]->updateNormal(this->checker))
-            {
-                cout << this->surfacesList[i]->toJSONString() <<endl;
-                cout << "Cannot make Normal" << endl;
-                exit(-1);
-            }
+    ull removed_count = 0;
+    for (ull i = 0 ; i < this->p_vertexList->size() ;){
+        if (this->p_vertexList->at(i)->used){
+            i++;
         }
         else{
-            cout << this->surfacesList[i]->toJSONString() <<endl;
-            cout << "Erase unvalid surface in makeCoplanar" << endl;
-            exit(-1);
+            this->p_vertexList->erase(this->p_vertexList->begin() + i);
+            removed_count++;
         }
     }
+    cout << "removed vertices : " << removed_count << endl;
+    cout << "remained vertices : " << this->p_vertexList->size() << endl;;
+    return 0;
+}
+
+int Space::makeSurfacesPlanar(Checker* ch){
+    cout << "\n------------- make planar --------------\n" << endl;
+
     return 0;
 }
 
@@ -331,7 +332,7 @@ int Space::match00(){
         diff[i] = -this->min_coords[i];
     }
 
-    for (ull i = 0 ; i < (int)this->surfacesList.size() ; i++)
+    for (ull i = 0 ; i < this->surfacesList.size() ; i++)
     {
         if (this->surfacesList[i]->isValid())
         {
@@ -347,8 +348,8 @@ int Space::match00(){
 
     }
 
-    for (ull i = 0 ; i < this->vertex->size() ; i++){
-        this->vertex->at(i)->translate(diff);
+    for (ull i = 0 ; i < this->p_vertexList->size() ; i++){
+        this->p_vertexList->at(i)->translate(diff);
     }
 
     return 0;
@@ -374,11 +375,15 @@ void Space::updateMBB(){
 }
 
 int Space::makeGraph(Checker* ch){
+    cout << "\n------------- Graph --------------\n" << endl;
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
     this->tagID();
 
     this->surface_graph = new SurfaceGraph();
     surface_graph->makeAdjacentGraph(this->surfacesList);
+
+    surface_graph->print_bfs();
+    return 0;
 }
 
 

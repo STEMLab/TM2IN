@@ -29,6 +29,7 @@ public:
     void free();
     int combineSurfaces(Checker* ch, int max_gener, double startDegree);
     int makeGraph(Checker* ch);
+    int makeSurfacePlanar(Checker *ch);
 
     void extractGeneration(int);
     void test();

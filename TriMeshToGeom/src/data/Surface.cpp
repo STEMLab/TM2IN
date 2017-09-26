@@ -330,8 +330,10 @@ void Surface::removeConsecutiveDuplication(Checker* ch){
 
     if (removed_count) cout << removed_count << " are removed in duplication" << endl;
 }
+
 void Surface::removeHole(Checker* ch)
 {
+    int removed_count= 0;
     bool isChagned = false;
     do
     {
@@ -343,6 +345,7 @@ void Surface::removeHole(Checker* ch)
                 if (ch->isSameVertex(v_list[i], v_list[j]))
                 {
                     v_list.erase(v_list.begin() + i, v_list.begin() + j);
+                    removed_count += j - i;
                     isChagned = true;
                     break;
                 }
@@ -351,6 +354,8 @@ void Surface::removeHole(Checker* ch)
         }
     }
     while (isChagned);
+
+    if (removed_count) cout << removed_count << " are removed in removeHole" << endl;
 }
 
 
@@ -390,8 +395,6 @@ void Surface::makeCoplanarByNormalType(){
         this->v_list[index]->setY(projected.y());
         this->v_list[index]->setZ(projected.z());
     }
-
-
 }
 /**
 *  Check that Surface is not valid. Straight Line or Point.
@@ -416,4 +419,10 @@ bool Surface::isValid(){
         }
     }
     return isNOTcollinear;
+}
+
+void Surface::tagVertexesUsed(){
+    for (ull i = 0 ; i < this->v_list.size() ; i++){
+        this->v_list[i]->used = true;
+    }
 }

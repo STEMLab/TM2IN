@@ -60,7 +60,7 @@ public:
     void setMBB(Surface* pl);
     void setMBB();
     bool isExistSameVertexInRange(ll si, ll ei, Vertex* add_id);
-    int getSegmentsNumber(ll si, ll ei);
+    int getSegmentsNumber(ll start_index, ll end_index);
 
     //compare vector size
     static bool compareLength(Surface* i, Surface* j);
@@ -71,11 +71,12 @@ public:
 
     void removeConsecutiveDuplication(Checker* ch);
     void removeStraight(Checker* ch);
-
-    bool updateNormal(Checker* ch);
     void removeHole(Checker* ch);
+    bool updateNormal(Checker* ch);
 
     bool isValid();
+
+    void tagVertexesUsed();
 private:
     Point_3 getCenterPoint();
     Point_3 getCenterPointInFartest();

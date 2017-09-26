@@ -38,23 +38,9 @@ bool CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checke
         }
     }
 
-    //find if another line share.
-    for (ll i = end_i + 1 ; i != start_i ; i++){
-        if (i == piece_size){
-            i = -1;
-            continue;
-        }
-        for (ll j = end_j - 1 ; j != start_j ; j--){
-            if (j == -1){
-                j = origin_size;
-                continue;
-            }
+    //find if another line share. make Hole?
+    if (isMakingHole(start_i, end_i, start_j, end_j, piece->v_list, origin->v_list)) return false;
 
-            if (piece->v_list[i] == origin->v_list[j]) {
-                return false;
-            }
-        }
-    }
 
 
     vector<Vertex*> new_v_list;
@@ -84,6 +70,35 @@ bool CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checke
         exit(-1);
     }
     return true;
+}
+
+bool CleanPolygonMaker::isMakingHole(ll start_i, ll end_i, ll start_j, ll end_j, vector<Vertex*>& piece_v_list, vector<Vertex*>& origin_v_list)
+{
+    ll piece_size = piece_v_list.size();
+    ll origin_size = origin_v_list.size();
+
+    for (ll i = end_i + 1 ; i != start_i ; i++)
+    {
+        if (i == piece_size)
+        {
+            i = -1;
+            continue;
+        }
+        for (ll j = end_j - 1 ; j != start_j ; j--)
+        {
+            if (j == -1)
+            {
+                j = origin_size;
+                continue;
+            }
+
+            if (piece_v_list[i] == origin_v_list[j])
+            {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 bool CleanPolygonMaker::findShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj, ll& middle_i, ll& middle_j){
@@ -197,7 +212,7 @@ bool CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece){
     //Translate to make it straight
     for (ll i = start_i + 1;;)
     {
-        if (i == piece_vertex_list.size()) i = 0;
+        if (i == (ll)piece_vertex_list.size()) i = 0;
         if (i == end_i) break;
         Point_3 newp = line.projection(CGALCalculation::makePoint(piece_vertex_list[i]));
         piece_vertex_list[i]->translateTo({newp.x(), newp.y(), newp.z()});

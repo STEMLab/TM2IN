@@ -16,6 +16,12 @@
 </head>
 
 <body>
+	<div id="generation" style="width:50%">
+
+	</div>
+	<button type="button" style="right:0" onclick="next()">Next </button>
+	<button type="button" style = "right : 10%" onclick="pre()">Previous </button>
+	<button type="button" style = "left : 10%" onclick="setCamera()">SET </button>
 	<div id="container"></div>
 	<script src="js/lib/three.js"></script>
 	<script src="js/lib/earcut.js"></script>
@@ -25,6 +31,7 @@
 	<script src="js/lib/jquery.mousewheel.js"></script>
 	<script src="js/threejs/controls/TrackballControls.js"></script>
 	<script>
+		var generation = -1;
 		var container, stats;
 		var objects = [];
 		var camera, controls, scene, renderer;
@@ -34,14 +41,61 @@
 		var cross;
 		var jsonfile;
 
-		var min_coords = [100000,1000000,1000000];
-		$.getJSON("../Result/office_v0.2.7.2.json", function(data) {
-			console.log(data);
-			jsonfile = data;
+		var isSetCamera = false, camera_setting;
 
-			init();
-			animate();
-		})
+		var min_coords = [100000,1000000,1000000];
+
+		function next(){
+			clearScene();
+			if (generation < 10 ) generation++;
+			load();
+		}
+
+		function pre(){
+			clearScene();
+			if (generation > -1)
+				generation--;
+			load();
+		}
+
+		function clearScene(){
+			objects = [];
+			while(scene.children.length > 0){
+				scene.remove(scene.children[0]);
+			}
+			container = document.getElementById('container');
+			container.removeChild(renderer.domElement);
+		}
+
+		function load(){
+
+			document.getElementById("generation").innerHTML = generation;
+			if (generation == -1){
+				$.getJSON("../Result/office_v0.2.7.2.json", function(data) {
+					console.log(data);
+					jsonfile = data;
+
+					init();
+					animate();
+				})
+			}
+			else{
+				$.getJSON("../Result/generation/office_g_"+generation+".json", function(data) {
+					console.log(data);
+					jsonfile = data;
+					init();
+					animate();
+				})
+			}
+		}
+
+		load();
+
+		function setCamera(){
+			isSetCamera = true;
+			camera_setting = camera.clone();
+		}
+
 
 		var projector = new THREE.Projector();
 
@@ -72,9 +126,21 @@
 
 		function init() {
 			document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-			camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
-			camera.position.z = 1200;
-			camera.position.y = 400;
+			camera = new THREE.PerspectiveCamera(
+				60,
+				window.innerWidth / window.innerHeight,
+				1,
+				10000);
+			camera.position.x = -767.2;
+			camera.position.y = -891;
+			camera.position.z = 708;
+
+			//camera.lookAt(new THREE.Vector3( 0, 0, 0 ));
+			//camera.updateProjectionMatrix();
+
+			//
+			// camera.position.z = 1200;
+			// camera.position.y = 400;
 			//camera.position.x = 50;
 
 			controls = new THREE.TrackballControls(camera);
@@ -134,7 +200,6 @@
 					mesh.name = j;
 					scene.add(mesh);
 					objects.push(mesh);
-					 if (j == 100000) break;
 					//break;
 				}
 			}
