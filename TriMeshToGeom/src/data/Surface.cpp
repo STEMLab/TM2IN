@@ -184,6 +184,10 @@ string Surface::toJSONString(){
     ret.append("], \n");
     ret.append(" \"coord\" : [");
     for (unsigned int i = 0 ; i < this->v_list.size() ; i++){
+        if (!this->v_list[i]->used){
+            cout << "Wrong in TOJSONSTRING" << endl;
+            exit(-1);
+        }
         ret.append(this->v_list[i]->toJSON());
         ret.append(",");
     }
@@ -203,11 +207,11 @@ Vector_3 Surface::getSimpleNormal(){
 
 vector<pair<double, double>> Surface::to2DPoints(){
     vector<pair<double, double>> points;
-    int type = CGALCalculation::findNormalType27(this->av_normal);
+    int type = CGALCalculation::findNormalType18(this->av_normal);
     if (this->av_normal == CGAL::NULL_VECTOR){
         exit(-1);
     }
-    Plane_3 plane = Plane_3(CGALCalculation::makePoint(this->v_list[0]), CGALCalculation::normal_list27[type]);
+    Plane_3 plane = Plane_3(CGALCalculation::makePoint(this->v_list[0]), CGALCalculation::normal_list18[type]);
     for (ull i = 0 ; i < this->v_list.size() ; i++){
         Point_3 p3 = CGALCalculation::makePoint(this->v_list[i]);
         Point_2 point2d = plane.to_2d(p3);
@@ -221,7 +225,7 @@ bool Surface::updateNormal(Checker* ch){
     if (this->v_list.size() < 4){
         this->av_normal = getSimpleNormal();
     }
-    this->av_normal = CGALCalculation::normal_list27[CGALCalculation::findNormalType27(this->av_normal)];
+    this->av_normal = CGALCalculation::normal_list18[CGALCalculation::findNormalType18(this->av_normal)];
     this->av_normal = this->av_normal / sqrt(this->av_normal.squared_length());
     this->av_normal = this->av_normal * this->sq_area * AREA_CONST;
 //
@@ -263,6 +267,29 @@ bool Surface::updateNormal(Checker* ch){
         return true;
     }
 }
+
+bool Surface::isOpposite(Surface* sf){
+    for (ll i = 0 ; i < sf->v_list.size() ; i++){
+        if (this->v_list[0] == sf->v_list[i]){
+            ll sf_index = i + 1;
+            if (sf_index == sf->v_list.size()) sf_index = 0;
+            ll this_index = v_list.size() - 1;
+            while (this->v_list[this_index] == sf->v_list[sf_index]){
+                this_index--; sf_index++;
+                if (sf_index == sf->v_list.size()) sf_index = 0;
+                if (this_index == 0 || sf_index == i) break;
+
+            }
+            if (this->v_list[this_index] != sf->v_list[sf_index])
+                return false;
+            else
+                return true;
+
+        }
+    }
+    return false;
+}
+
 
 bool Surface::isAdjacent(Surface* sf, ll& middle_i, ll& middle_j){
     return CleanPolygonMaker::findShareVertex(this->v_list, sf->v_list, middle_i, middle_j);
@@ -358,44 +385,14 @@ void Surface::removeHole(Checker* ch)
     if (removed_count) cout << removed_count << " are removed in removeHole" << endl;
 }
 
-
-void Surface::makeCoplanarParallelWithZ(){
-    Point_3 center = getCenterPoint();
-    Plane_3 plane;
-    if (this->av_normal.z() > 0)
-        plane = Plane_3(center, Vector_3(0,0,1));
-    else if (this->av_normal.z() < 0){
-        plane = Plane_3(center, Vector_3(0,0,-1));
-    }
-    else{
-        cout << "Wrong in makeCoplanarParallelWithZ" << endl;
-        exit(-1);
-    }
-    for (ull index = 0 ; index < this->v_list.size() ; index++ ){
-        Point_3 point(this->v_list[index]->x(),this->v_list[index]->y(),this->v_list[index]->z());
-        Point_3 projected = plane.projection(point);
-
-        this->v_list[index]->setX(projected.x());
-        this->v_list[index]->setY(projected.y());
-        this->v_list[index]->setZ(projected.z());
-    }
+bool Surface::hasSameNormalwith(int axis){
+    return CGALCalculation::getAngle(CGALCalculation::normal_list6[axis], this->av_normal) < 0.0001 ;
 }
 
-
-void Surface::makeCoplanarByNormalType(){
-    int type = CGALCalculation::findNormalType10(this->av_normal);
-
-    Point_3 center = getCenterPointInFartest();
-    Plane_3 plane = Plane_3(center, CGALCalculation::normal_list11[type]);
-    for (ull index = 0 ; index < this->v_list.size() ; index++ ){
-        Point_3 point(this->v_list[index]->x(),this->v_list[index]->y(),this->v_list[index]->z());
-        Point_3 projected = plane.projection(point);
-
-        this->v_list[index]->setX(projected.x());
-        this->v_list[index]->setY(projected.y());
-        this->v_list[index]->setZ(projected.z());
-    }
+bool Surface::hasOppositeNormalwith(int axis){
+    return CGALCalculation::getAngle(CGALCalculation::normal_list6[axis + 3], this->av_normal) < 0.0001 ;
 }
+
 /**
 *  Check that Surface is not valid. Straight Line or Point.
 */
@@ -421,8 +418,27 @@ bool Surface::isValid(){
     return isNOTcollinear;
 }
 
-void Surface::tagVertexesUsed(){
+void Surface::tagVerticesUsed(){
     for (ull i = 0 ; i < this->v_list.size() ; i++){
         this->v_list[i]->used = true;
+    }
+}
+
+Plane_3 Surface::getPlanePassedCenter(){
+    Point_3 center = getCenterPoint();
+    return Plane_3(center, this->av_normal);
+}
+
+void Surface::makePlanar(Plane_3 plane, vector<bool>& fixed_vertices){
+    for (ull index = 0 ; index < this->v_list.size() ; index++ )
+    {
+
+        Point_3 point(this->v_list[index]->x(),this->v_list[index]->y(),this->v_list[index]->z());
+        Point_3 projected = plane.projection(point);
+
+        this->v_list[index]->setX(projected.x());
+        this->v_list[index]->setY(projected.y());
+        this->v_list[index]->setZ(projected.z());
+        fixed_vertices[this->v_list[index]->index] = true;
     }
 }

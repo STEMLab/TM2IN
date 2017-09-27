@@ -28,6 +28,7 @@ public:
     Vector_3 getNormal();
     double getArea();
     std::string toJSON();
+    bool isOpposite(Triangle& tri);
 };
 
 

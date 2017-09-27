@@ -16,9 +16,9 @@ private:
     static vector<Vertex*> simplifySegment(vector<Vertex*>& origin, ll start, ll end, Checker* checker);
     static bool isMakingHole(ll start_i, ll end_i, ll start_j, ll end_j , vector<Vertex*>& piece_v_list, vector<Vertex*>& origin_v_list);
 public:
-    static bool combine(Surface* cp1, Surface* cp2, Checker* checker, double degree);
+    static int combine(Surface* cp1, Surface* cp2, Checker* checker, double degree);
     static bool findShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj, ll& middle_i, ll& middle_j);
-    static bool simplifyLineSegment(Surface* origin, Surface*);
+    static int simplifyLineSegment(Surface* origin, Surface*);
 };
 
 #endif // CleanPolygonMaker_H_INCLUDED

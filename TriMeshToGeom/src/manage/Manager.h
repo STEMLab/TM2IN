@@ -22,6 +22,7 @@ class Manager
 
         void setImporter(Importer* p_di){ di = p_di; }
         void setChecker(Checker* ch){ check = ch; }
+        void setProcessWriter(ProcessWriter* pw){objcl->setWriter(pw);}
     protected:
 
     private:

@@ -31,35 +31,20 @@ int CGALCalculation::findNormalType27(Vector_3& nv)
     return type;
 }
 
-Vector_3 CGALCalculation::normal_list27[27] = {
-    Vector_3(0,0,0),
-    Vector_3(0,0,1),
-    Vector_3(0,0,-1),
-    Vector_3(0,1,0),
-    Vector_3(0,1,1),
-    Vector_3(0,1,-1),
-    Vector_3(0,-1,0),
-    Vector_3(0,-1,1),
-    Vector_3(0,-1,-1),
-    Vector_3(1,0,0),
-    Vector_3(1,0,1),
-    Vector_3(1,0,-1),
-    Vector_3(1,1,0),
-    Vector_3(1,1,1),
-    Vector_3(1,1,-1),
-    Vector_3(1,-1,0),
-    Vector_3(1,-1,1),
-    Vector_3(1,-1,-1),
-    Vector_3(-1,0,0),
-    Vector_3(-1,0,1),
-    Vector_3(-1,0,-1),
-    Vector_3(-1,1,0),
-    Vector_3(-1,1,1),
-    Vector_3(-1,1,-1),
-    Vector_3(-1,-1,0),
-    Vector_3(-1,-1,1),
-    Vector_3(-1,-1,-1)
-};
+int CGALCalculation::findNormalType18(Vector_3& nv)
+{
+
+    int type = 0;
+    double diff = 90.0;
+    for (int i = 0 ; i < 18 ; i++){
+        double temp_diff = CGALCalculation::getAngle(CGALCalculation::normal_list18[i], nv);
+        if (temp_diff < diff){
+            diff = temp_diff;
+            type = i;
+        }
+    }
+    return type;
+}
 
 int CGALCalculation::findNormalType6(Vector_3& nv)
 {
@@ -90,6 +75,58 @@ int CGALCalculation::findNormalType10(Vector_3& nv)
     return type;
 }
 
+Vector_3 CGALCalculation::normal_list18[18] = {
+    Vector_3(0,0,1),
+    Vector_3(0,0,-1),
+    Vector_3(0,1,0),
+    Vector_3(0,1,1),
+    Vector_3(0,1,-1),
+    Vector_3(0,-1,0),
+    Vector_3(0,-1,1),
+    Vector_3(0,-1,-1),
+    Vector_3(1,0,0),
+    Vector_3(1,0,1),
+    Vector_3(1,0,-1),
+    Vector_3(1,1,0),
+    Vector_3(1,-1,0),
+    Vector_3(-1,0,0),
+    Vector_3(-1,0,1),
+    Vector_3(-1,0,-1),
+    Vector_3(-1,1,0),
+    Vector_3(-1,-1,0)
+};
+
+Vector_3 CGALCalculation::normal_list27[27] = {
+    Vector_3(0,0,0),
+    Vector_3(0,0,1),
+    Vector_3(0,0,-1),
+    Vector_3(0,1,0),
+    Vector_3(0,1,1),
+    Vector_3(0,1,-1),
+    Vector_3(0,-1,0),
+    Vector_3(0,-1,1),
+    Vector_3(0,-1,-1),
+    Vector_3(1,0,0),
+    Vector_3(1,0,1),
+    Vector_3(1,0,-1),
+    Vector_3(1,1,0),
+    Vector_3(1,1,1),
+    Vector_3(1,1,-1),
+    Vector_3(1,-1,0),
+    Vector_3(1,-1,1),
+    Vector_3(1,-1,-1),
+    Vector_3(-1,0,0),
+    Vector_3(-1,0,1),
+    Vector_3(-1,0,-1),
+    Vector_3(-1,1,0),
+    Vector_3(-1,1,1),
+    Vector_3(-1,1,-1),
+    Vector_3(-1,-1,0),
+    Vector_3(-1,-1,1),
+    Vector_3(-1,-1,-1)
+};
+
+
 Vector_3 CGALCalculation::normal_list11[11] = {
     Vector_3(0,0,0),
     Vector_3(0,0,1),
@@ -105,7 +142,7 @@ Vector_3 CGALCalculation::normal_list11[11] = {
 };
 
 Vector_3 CGALCalculation::normal_list6[6] = {
-    Vector_3(1,0,0),
+    Vector_3(1,0,0), //0, 3
     Vector_3(0,1,0),
     Vector_3(0,0,1),
     Vector_3(-1,0,0),

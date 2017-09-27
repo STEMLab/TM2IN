@@ -36,3 +36,18 @@ double Triangle::getArea(){
 std::string Triangle::toJSON(){
     return NULL;
 }
+
+bool Triangle::isOpposite(Triangle& tri){
+    if (a == tri.a){
+        if (b == tri.c)
+            if (c == tri.b) return true;
+    }
+    else if (a == tri.b){
+            if (b == tri.a)
+                if (c == tri.c) return true;
+    }
+    else if (a == tri.c){
+        if (b == tri.b) if (c == tri.a) return true;
+    }
+    return false;
+}

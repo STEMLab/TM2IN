@@ -14,6 +14,7 @@
 #include "data/Space.h"
 #include "fileio/JSONMaker.h"
 #include "predefine.h"
+#include "fileio/ProcessWriter.h"
 
 #include <vector>
 #include <cstring>
@@ -25,13 +26,16 @@ class OBJCollection{
 public:
     vector<Vertex*> vertex;
     vector<Space*> space_list;
-    int makeSurfaces(Checker* check, double degree);
+    ProcessWriter* process_writer;
+
+    void setWriter(ProcessWriter * pw){process_writer = pw;}
+
+    int makeSurfaces(double degree);
     void free();
     int combineSurfaces(Checker* ch, int max_gener, double startDegree);
-    int makeGraph(Checker* ch);
-    int makeSurfacePlanar(Checker *ch);
+    int makeGraph();
+    int makeSurfacesPlanar();
 
-    void extractGeneration(int);
     void test();
 };
 

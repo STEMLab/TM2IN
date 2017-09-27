@@ -34,14 +34,14 @@ void test(){
 int main(int argc, const char * argv[]) {
     //TODO make argv
     string import_version = "_v0.2.7";
-    string export_version = "_v0.2.7.2";
+    string export_version = "_v0.2.7.3";
     const char path[50] = "../Resource/tvr/";
     //const char path[100] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/";
     const char result_path[50] = "../Result/";
     //const char result_path[50] = "/Users/dong/Documents/dev/TriMeshToGeom/Result/";
     char file_name[] = "office";
     const int max_genereration = 10;
-
+    const char process_path[50] = "../Result/process/";
 //    TVRImporter::extractMINtvr(string(path) + string(file_name));
 //    return 0;
 
@@ -60,6 +60,8 @@ int main(int argc, const char * argv[]) {
         cout << "Load File Error";
         return -1;
     }
+
+    manager->setProcessWriter(new ProcessWriter(string(process_path), string(file_name)));
 
     string imported_bin = string(result_path) + "polygons/" + string(file_name) + import_version + ".bin";
     string exported_bin = string(result_path) + "polygons/" + string(file_name) + import_version + ".bin";

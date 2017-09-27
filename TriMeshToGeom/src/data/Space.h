@@ -33,22 +33,34 @@ public:
     Solid* solid;
     SurfaceGraph* surface_graph;
 
+    void pushTriangle(Triangle tri);
+
     int makeSurfacesBySeparation();
     int makeSurfacesByCandidator();
     int makeSurfacesGreedy(double degree);
     int makeSurfacesNotJoin();
+    int checkTriangles();
+    int checkOpposite();
 
     int combineSurface(double degree);
     int combineSurfaceByArea(double );
     int simplifySegment();
     int match00();
     int handleDefect();
-    void tagID();
-    int makeSurfacesPlanar(Checker*);
-    int remainOnlyUsingVertexes();
     int updateNormal();
-    int makeGraph(Checker* ch);
-    void pushTriangle(Triangle tri);
+
+
+    int makeSurfacesPlanar();
+    int makeGraph();
+    int remainOnlyUsingVertices();
+
+    void tagID();
+
+
+    /**
+    * TODO
+    */
+    int divideSlopeSurfaces();
 
     //TODO : removed
     void test();

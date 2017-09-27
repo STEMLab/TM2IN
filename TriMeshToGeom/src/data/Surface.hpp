@@ -50,11 +50,10 @@ public:
     bool attachTriangle(Triangle* pl, Checker* ch);
     bool attachTriangle2(Triangle* pl, Checker* ch);
     std::string toJSONString();
-    void makeCoplanarParallelWithZ();
-    void makeCoplanarByNormalType();
 
     bool isInMBB(Vertex* vt);
     bool isAdjacent(Surface* sf, ll& middle_i, ll& middle_j);
+    bool isOpposite(Surface* sf);
 
     void setMBB(Triangle* pl);
     void setMBB(Surface* pl);
@@ -75,8 +74,14 @@ public:
     bool updateNormal(Checker* ch);
 
     bool isValid();
+    void tagVerticesUsed();
 
-    void tagVertexesUsed();
+    bool hasSameNormalwith(int axis);
+    bool hasOppositeNormalwith(int axis);
+
+    void makePlanar(Plane_3 pl, std::vector<bool>& fixed_vertices);
+
+    Plane_3 getPlanePassedCenter();
 private:
     Point_3 getCenterPoint();
     Point_3 getCenterPointInFartest();

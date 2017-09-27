@@ -116,6 +116,36 @@ Surface* Space::attachTriangle(vector<Triangle*> tri_list, Surface* cp, bool* ch
     return cp;
 }
 
+int Space::checkTriangles(){
+    cout << "check Triangles" << endl;
+    ull size = this->triangles.size();
+    for (ull index = 0 ; index < size -1; index++)
+    {
+        for (ull j = index + 1 ; j < size; j++)
+        {
+            if (triangles[index].isOpposite(triangles[j])){
+                return -1;
+            }
+        }
+    }
+    return 0;
+}
+
+int Space::checkOpposite()
+{
+    for (unsigned int i = 0 ; i < this->surfacesList.size() - 1; i++)
+    {
+        for (unsigned int j = i + 1 ; j < this->surfacesList.size() ; j++)
+        {
+            if (this->surfacesList[i]->isOpposite(this->surfacesList[j]) )
+            {
+                return -1;
+            }
+        }
+    }
+    return 0;
+}
+
 int Space::combineSurfaceByArea(double degree){
     cout << "Combine Surfaces By area" << endl;
 
@@ -186,7 +216,7 @@ Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count,
     {
         if (!checked[id])
         {
-            if (CleanPolygonMaker::combine(cp, this->surfacesList[id], checker, degree))
+            if (CleanPolygonMaker::combine(cp, this->surfacesList[id], checker, degree) == 0)
             {
                 checked[id] = true;
                 count++;
@@ -206,7 +236,7 @@ Surface* Space::attachSurfacesByArea(Surface* cp, ull start, bool* checked, ll& 
         double id_area = this->surfacesList[id]->sq_area;
         if (!checked[id] && (id_area < 0.00001 || id_area * 1000 < cp_area))
         {
-            if (CleanPolygonMaker::combine(cp, this->surfacesList[id], checker, degree))
+            if (CleanPolygonMaker::combine(cp, this->surfacesList[id], checker, degree) == 0)
             {
                 checked[id] = true;
                 count++;
@@ -247,15 +277,17 @@ void Space::tagID(){
 
 int Space::simplifySegment(){
     cout << "\n------------simplifySegment------------\n" << endl;
-
+    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareLength);
     ull p_size = this->surfacesList.size();
 
     for (ull i = 0 ; i < p_size - 1; i++)
     {
         for (ull j = i + 1; j < p_size ; j++)
         {
+            this->surfacesList[i]->updateNormal(checker);
+            this->surfacesList[j]->updateNormal(checker);
             int loop_count = 0;
-            while (CleanPolygonMaker::simplifyLineSegment(this->surfacesList[i], this->surfacesList[j]))
+            while (CleanPolygonMaker::simplifyLineSegment(this->surfacesList[i], this->surfacesList[j]) == 0)
             {
                 loop_count++;
                 if (loop_count > (int)this->surfacesList[j]->v_list.size()){
@@ -271,7 +303,7 @@ int Space::simplifySegment(){
 
 int Space::handleDefect(){
     cout << "\n------------- handle Defect --------------\n" << endl;
-    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
+    //sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
     {
         Surface* surface = this->surfacesList[i];
@@ -293,34 +325,7 @@ int Space::handleDefect(){
     return 0;
 }
 
-int Space::remainOnlyUsingVertices(){
-    for (ull i = 0 ; i < this->p_vertexList->size() ; i++){
-        (*this->p_vertexList)[i]->used = false;
-    }
-    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
-        this->surfacesList[i]->tagVerticesUsed();
-    }
 
-    ull removed_count = 0;
-    for (ull i = 0 ; i < this->p_vertexList->size() ;){
-        if (this->p_vertexList->at(i)->used){
-            i++;
-        }
-        else{
-            this->p_vertexList->erase(this->p_vertexList->begin() + i);
-            removed_count++;
-        }
-    }
-    cout << "removed vertices : " << removed_count << endl;
-    cout << "remained vertices : " << this->p_vertexList->size() << endl;;
-    return 0;
-}
-
-int Space::makeSurfacesPlanar(Checker* ch){
-    cout << "\n------------- make planar --------------\n" << endl;
-
-    return 0;
-}
 
 
 int Space::match00(){
@@ -374,7 +379,60 @@ void Space::updateMBB(){
     }
 }
 
-int Space::makeGraph(Checker* ch){
+
+int Space::remainOnlyUsingVertices(){
+    for (ull i = 0 ; i < this->p_vertexList->size() ; i++){
+        (*this->p_vertexList)[i]->used = false;
+    }
+    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
+        this->surfacesList[i]->tagVerticesUsed();
+    }
+
+    ull removed_count = 0;
+    for (ull i = 0 ; i < this->p_vertexList->size() ;){
+        if (this->p_vertexList->at(i)->used){
+            this->p_vertexList->at(i)->index = i;
+            i++;
+        }
+        else{
+            delete(this->p_vertexList->at(i));
+            this->p_vertexList->erase(this->p_vertexList->begin() + i);
+            removed_count++;
+        }
+    }
+
+    cout << "removed vertices : " << removed_count << endl;
+    cout << "remained vertices : " << this->p_vertexList->size() << endl;;
+    return 0;
+}
+
+
+int Space::divideSlopeSurfaces(){
+    //TODO
+    return 0;
+}
+
+int Space::makeSurfacesPlanar(){
+    cout << "\n------------- remove Object And make planar --------------\n" << endl;
+    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
+    vector<bool> fixed_vertices(this->p_vertexList->size(), false);
+
+
+    for (int axis = 0; axis < 3 ; axis ++){
+        for (ull i = 0 ; i < this->surfacesList.size() ; i++){
+            Surface* surface = this->surfacesList[i];
+            if (surface->hasSameNormalwith(axis) || surface->hasOppositeNormalwith(axis)){
+
+            }
+
+        }
+    }
+
+    return 0;
+}
+
+
+int Space::makeGraph(){
     cout << "\n------------- Graph --------------\n" << endl;
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
     this->tagID();
@@ -487,3 +545,4 @@ void Space::freeSurfaces(){
 //
 //    return ret;
 //}
+

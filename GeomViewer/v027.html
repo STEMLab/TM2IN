@@ -71,7 +71,7 @@
 
 			document.getElementById("generation").innerHTML = generation;
 			if (generation == -1){
-				$.getJSON("../Result/office_v0.2.7.2.json", function(data) {
+				$.getJSON("../Result/office_v0.2.7.3.json", function(data) {
 					console.log(data);
 					jsonfile = data;
 
@@ -80,7 +80,7 @@
 				})
 			}
 			else{
-				$.getJSON("../Result/generation/office_g_"+generation+".json", function(data) {
+				$.getJSON("../Result/process/office_g_"+generation+".json", function(data) {
 					console.log(data);
 					jsonfile = data;
 					init();

@@ -1,9 +1,9 @@
 #include "logic/CleanPolygonMaker.h"
 #include <stdlib.h>
 
-bool CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checker, double degree){
+int CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checker, double degree){
      // check Polygon is in near polygon or not
-    if (!isNeighbor(origin, piece)) return false;
+    if (!isNeighbor(origin, piece)) return 1;
 
     ll end_i = -1, end_j = -1;
     ll start_i = -1, start_j = -1;
@@ -12,11 +12,12 @@ bool CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checke
     ll origin_size = origin->getLength();
     ll piece_size = piece->getLength();
 
-    if (!findShareVertex(piece->v_list, origin->v_list, middle_i, middle_j)) return false;
-
+    if (!findShareVertex(piece->v_list, origin->v_list, middle_i, middle_j)) return 1;
+    if (CGALCalculation::getAngle(origin->av_normal, piece->av_normal) > 179.999999){
+        return 1;
+    }
     /**< [start_i, end_i], [end_j, start_j] */
     findStartAndEnd(piece->v_list, origin->v_list, middle_i, middle_j, start_i, end_i, start_j, end_j);
-
 
     int seg_num = piece->getSegmentsNumber(end_i, start_i);
 
@@ -27,19 +28,19 @@ bool CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checke
     }
     else if (seg_num == 0){
         /**< Only One Vertex Same*/
-        return false;
+        return 1;
     }
     else if (seg_num == 1){
 
     }
     else{
         if (!checker->CanbeMerged(origin->av_normal, piece->av_normal, degree)) {
-            return false;
+            return 1;
         }
     }
 
     //find if another line share. make Hole?
-    if (isMakingHole(start_i, end_i, start_j, end_j, piece->v_list, origin->v_list)) return false;
+    if (isMakingHole(start_i, end_i, start_j, end_j, piece->v_list, origin->v_list)) return 1;
 
 
 
@@ -69,7 +70,7 @@ bool CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checke
         cout << "Duplicate" << endl;
         exit(-1);
     }
-    return true;
+    return 0;
 }
 
 bool CleanPolygonMaker::isMakingHole(ll start_i, ll end_i, ll start_j, ll end_j, vector<Vertex*>& piece_v_list, vector<Vertex*>& origin_v_list)
@@ -131,6 +132,8 @@ void CleanPolygonMaker::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj
 
     ll next_i = i + 1 == piece_size? 0 : i+1;
     ll next_j = j-1 == -1? origin_size-1 : j-1;
+
+    ll num = 0;
     while (vi[next_i] == vj[next_j])
     {
         i = next_i;
@@ -138,6 +141,13 @@ void CleanPolygonMaker::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj
 
         next_i = i + 1 == piece_size? 0 : i+1;
         next_j = j-1 == -1? origin_size-1 : j-1;
+
+        num++;
+        if ((num > vi.size() + 1) &&(num > vj.size() + 1)){
+            cout << "infinite loop in find Start And End" << endl;
+            exit(-1);
+            return;
+        }
     }
     end_i = i;
     end_j = j;
@@ -147,6 +157,8 @@ void CleanPolygonMaker::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj
 
     next_i = i - 1 == -1? vi.size() -1 : i - 1;
     next_j = j + 1 == origin_size? 0 : j + 1;
+
+    num = 0;
     while (vi[next_i] == vj[next_j])
     {
         i = next_i;
@@ -154,6 +166,12 @@ void CleanPolygonMaker::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj
 
         next_i = i - 1 == -1? vi.size() -1 : i - 1;
         next_j = j + 1 == origin_size? 0 : j + 1;
+        num++;
+        if ((num > vi.size() + 1) && (num > vj.size() + 1)){
+            cout << "infinite loop in find Start And End" << endl;
+            exit(-1);
+            return;
+        }
     }
     start_i = i;
     start_j = j;
@@ -164,7 +182,7 @@ bool CleanPolygonMaker::isNeighbor(Surface* cp1, Surface* cp2){
     return true;
 }
 
-bool CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece){
+int CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece){
 
     ll middle_i = -1, middle_j = -1;
     ll piece_size = piece->getLength();
@@ -194,7 +212,11 @@ bool CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece){
         if (hasTwoShareLine) break;
     }
 
-    if (!hasTwoShareLine) return false;
+    if (!hasTwoShareLine) return 1;
+    if (CGALCalculation::getAngle(origin->av_normal, piece->av_normal) > 179.999999){
+        return 1;
+    }
+
     ll end_i = -1, end_j = -1;
     ll start_i = -1, start_j = -1;
     findStartAndEnd(piece_vertex_list, origin->v_list, middle_i, middle_j, start_i, end_i, start_j, end_j);
@@ -236,6 +258,6 @@ bool CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece){
         origin_vertex_list.erase(origin_vertex_list.begin(), origin_vertex_list.begin() + start_j);
     }
 
-    return true;
+    return 0;
 }
 
