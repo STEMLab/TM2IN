@@ -22,7 +22,6 @@ public:
     void writeRoughSurfaces(ull num, int space_num);
     void writeGenerationJSON(int gen, vector<Space*>& space_list);
     void writeGeneration(int gen, ull num, int space_num);
-private :
 };
 
 #endif // PROCESSWRITER_H_INCLUDED

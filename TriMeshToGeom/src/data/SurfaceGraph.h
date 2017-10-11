@@ -13,9 +13,10 @@ class SurfaceGraph{
 public:
     ull size;
 
-    vector<vector<pair<ull, ii>>> adjList;
+    vector<vector<ull> > adjList;
     void makeAdjacentGraph(vector<Surface*>& surface_list);
     void print_bfs();
+    bool isNeighbor(ull id1, ull id2);
 };
 
 #endif // SURFACEGRAPH_H_INCLUDED

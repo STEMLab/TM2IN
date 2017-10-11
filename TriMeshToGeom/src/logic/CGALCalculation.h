@@ -13,7 +13,7 @@
 #include <CGAL/Line_3.h>
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/squared_distance_3.h>
-
+#include <CGAL/enum.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point_3;

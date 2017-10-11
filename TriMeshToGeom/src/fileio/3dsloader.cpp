@@ -22,6 +22,7 @@ just run: make and you are done.
 of course you may need to change the makefile
 */
 
+/*
 #include <stdio.h>
 #include <stdlib.h>
 #include <cstring>
@@ -221,3 +222,4 @@ vector<pair<string, TriangleSpace*>> Load3DS (char *p_filename)
 	fclose (l_file); // Closes the file stream
     return obj_list;
 }
+*/

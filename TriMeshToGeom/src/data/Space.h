@@ -74,6 +74,7 @@ protected:
     Surface* attachSurfacesByArea(Surface* cp, ull start, bool* checked, ll& count, double degree);
     vector<Surface*> makeSurfacesInList(vector<Triangle*>& tri_list, bool* checked, int& combined_count, double degree);
     vector<vector<Triangle*>> separateByNormal_6(vector<Triangle>& triangles);
+    Surface* findBigSurface(int axis);
 private:
     Checker* checker;
 };

@@ -102,6 +102,27 @@ bool CleanPolygonMaker::isMakingHole(ll start_i, ll end_i, ll start_j, ll end_j,
     return false;
 }
 
+bool CleanPolygonMaker::isShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj){
+    ll piece_size = vi.size();
+    ll origin_size = vj.size();
+
+
+    for (ll i = 0 ; i < piece_size ;i++){
+        for (ll j = origin_size - 1 ; j >= 0 ; j--){
+            if (vi[i] == vj[j]){
+                ll next_i = i + 1 == piece_size? 0 : i+1;
+                ll next_j = j-1 == -1? origin_size-1 : j-1;
+                if (vi[next_i] == vj[next_j]){
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+
 bool CleanPolygonMaker::findShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj, ll& middle_i, ll& middle_j){
     ll piece_size = vi.size();
     ll origin_size = vj.size();

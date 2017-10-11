@@ -291,8 +291,8 @@ bool Surface::isOpposite(Surface* sf){
 }
 
 
-bool Surface::isAdjacent(Surface* sf, ll& middle_i, ll& middle_j){
-    return CleanPolygonMaker::findShareVertex(this->v_list, sf->v_list, middle_i, middle_j);
+bool Surface::isAdjacent(Surface* sf){
+    return CleanPolygonMaker::isShareVertex(this->v_list, sf->v_list);
 }
 
 bool Surface::isInMBB(Vertex* vt){
@@ -424,21 +424,38 @@ void Surface::tagVerticesUsed(){
     }
 }
 
-Plane_3 Surface::getPlanePassedCenter(){
-    Point_3 center = getCenterPoint();
-    return Plane_3(center, this->av_normal);
+Point_3 Surface::findLowestPoint(){
+    Plane_3 plane(getCenterPoint(), this->av_normal);
+
+    double max_dist = -1.0;
+    int max_index = -1;
+    for (ull index= 0 ; index < this->v_list.size() ; index++){
+        Point_3 p = CGALCalculation::makePoint(this->v_list[index]);
+        if (plane.oriented_side(p) != CGAL::ON_POSITIVE_SIDE){
+            double dist = CGAL::squared_distance(plane, p);
+            if (dist > max_dist){
+                max_dist = dist;
+                max_index = index;
+            }
+        }
+    }
+    return CGALCalculation::makePoint(this->v_list[max_index]);
 }
 
-void Surface::makePlanar(Plane_3 plane, vector<bool>& fixed_vertices){
+Plane_3 Surface::getPlaneWithLowest(){
+    Point_3 point = findLowestPoint();
+    return Plane_3(point, this->av_normal);
+}
+
+void Surface::makePlanar(Plane_3 plane){
     for (ull index = 0 ; index < this->v_list.size() ; index++ )
     {
-
         Point_3 point(this->v_list[index]->x(),this->v_list[index]->y(),this->v_list[index]->z());
         Point_3 projected = plane.projection(point);
 
         this->v_list[index]->setX(projected.x());
         this->v_list[index]->setY(projected.y());
         this->v_list[index]->setZ(projected.z());
-        fixed_vertices[this->v_list[index]->index] = true;
     }
 }
+

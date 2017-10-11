@@ -87,7 +87,7 @@ int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegre
 
         }
 
-        this->space_list[it]->updateNormal();
+        //this->space_list[it]->updateNormal();
 
         if (this->space_list[it]->match00() == -1)
         {
@@ -102,16 +102,17 @@ int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegre
 }
 
 int OBJCollection::makeSurfacesPlanar(){
-//    for (ull i = 0 ; i < this->space_list.size(); i++)
-//    {
-//        this->space_list[i]->makeSurfacesPlanar();
-//    }
+    for (ull i = 0 ; i < this->space_list.size(); i++)
+    {
+        this->space_list[i]->makeSurfacesPlanar();
+    }
     return 0;
 }
 
 int OBJCollection::makeGraph(){
     for (ull i = 0 ; i < this->space_list.size(); i++)
     {
+        this->space_list[i]->tagID();
         this->space_list[i]->makeGraph();
     }
     return 0;

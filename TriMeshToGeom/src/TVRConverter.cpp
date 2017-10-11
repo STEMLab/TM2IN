@@ -34,7 +34,7 @@ void test(){
 int main(int argc, const char * argv[]) {
     //TODO make argv
     string import_version = "_v0.2.7";
-    string export_version = "_v0.2.7.3";
+    string export_version = "_v0.2.7.4";
     const char path[50] = "../Resource/tvr/";
     //const char path[100] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/";
     const char result_path[50] = "../Result/";

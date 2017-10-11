@@ -1,6 +1,7 @@
 #include "data/Space.h"
 
 #include <cstdio>
+#include <queue>
 
 Space::Space(string pname, Checker* check)
 {
@@ -412,21 +413,86 @@ int Space::divideSlopeSurfaces(){
     return 0;
 }
 
+Surface* Space::findBigSurface(int axis){
+    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
+        Surface* sf = this->surfacesList[i];
+        if (sf->hasSameNormalwith(axis)){
+            return sf;
+        }
+    }
+    return NULL;
+}
+
 int Space::makeSurfacesPlanar(){
     cout << "\n------------- remove Object And make planar --------------\n" << endl;
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
     vector<bool> fixed_vertices(this->p_vertexList->size(), false);
 
+    Surface* roof = findBigSurface(5);
+    Surface* floor = findBigSurface(2);
 
-    for (int axis = 0; axis < 3 ; axis ++){
-        for (ull i = 0 ; i < this->surfacesList.size() ; i++){
-            Surface* surface = this->surfacesList[i];
-            if (surface->hasSameNormalwith(axis) || surface->hasOppositeNormalwith(axis)){
+    if (roof == NULL || floor == NULL) return -1;
 
-            }
-
+    for (ull i = 0 ; i < this->surfacesList.size() ; ){
+        Surface* sf = this->surfacesList[i];
+        if ( sf == roof || sf == floor) {
+            i++;
+        }
+        else if ( this->surface_graph->isNeighbor(sf->sf_id, roof->sf_id) &&
+                  this->surface_graph->isNeighbor(sf->sf_id, floor->sf_id)){
+            i++;
+        }
+        else{
+            this->surfacesList.erase(this->surfacesList.begin() + i);
         }
     }
+
+    bool changed = true;
+    while (changed){
+        changed = false;
+        for (ull i = 0 ; i < this->surfacesList.size() ; i++){
+            Surface* isf = this->surfacesList[i];
+            for (ull j = i + 1; j < this->surfacesList.size() ; j++){
+                Surface* jsf = this->surfacesList[j];
+                if ( CGALCalculation::getAngle(isf->av_normal, jsf->av_normal) > 179.99){
+                    if ( isf->isAdjacent(jsf) ){
+                        this->surfacesList.erase(this->surfacesList.begin() + j);
+                        this->surfacesList.erase(this->surfacesList.begin() + i);
+                        changed = true;
+                    }
+                }
+            }
+        }
+    }
+
+
+    for (int axis = 2 ; axis >= 0  ; axis--){
+        for (ull i = 0 ; i < this->surfacesList.size() ; i++){
+            Surface* surface = this->surfacesList[i];
+            if (surface->hasSameNormalwith(axis) || surface->hasOppositeNormalwith(axis))
+            {
+                Plane_3 plane = surface->getPlaneWithLowest();
+                surface->makePlanar(plane);
+            }
+        }
+    }
+
+//    queue<Surface*> qu;
+//    qu.push(this->surfacesList[0]);
+//
+//    while (!qu.empty()){
+//        Surface* surface = qu.front();
+//        qu.pop();
+//
+//        for (int axis = 0; axis < 3 ; axis ++)
+//        {
+//            if (surface->hasSameNormalwith(axis) || surface->hasOppositeNormalwith(axis))
+//            {
+//
+//            }
+//        }
+//    }
+
 
     return 0;
 }

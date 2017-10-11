@@ -29,6 +29,7 @@ typedef Kernel::Plane_3 Plane_3;
 class Surface{
 public:
     ull sf_id;
+    bool isHidden;
     std::vector<Vertex*> v_list;
     Vector_3 av_normal = CGAL::NULL_VECTOR;
 
@@ -52,7 +53,7 @@ public:
     std::string toJSONString();
 
     bool isInMBB(Vertex* vt);
-    bool isAdjacent(Surface* sf, ll& middle_i, ll& middle_j);
+    bool isAdjacent(Surface* sf);
     bool isOpposite(Surface* sf);
 
     void setMBB(Triangle* pl);
@@ -79,9 +80,9 @@ public:
     bool hasSameNormalwith(int axis);
     bool hasOppositeNormalwith(int axis);
 
-    void makePlanar(Plane_3 pl, std::vector<bool>& fixed_vertices);
-
-    Plane_3 getPlanePassedCenter();
+    void makePlanar(Plane_3 plane);
+    Point_3 findLowestPoint();
+    Plane_3 getPlaneWithLowest();
 private:
     Point_3 getCenterPoint();
     Point_3 getCenterPointInFartest();
