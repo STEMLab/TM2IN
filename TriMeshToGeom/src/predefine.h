@@ -5,6 +5,8 @@
 #define GENERATION_PATH "../Result/generation/"
 #define AREA_CONST 100
 
+#include <cassert>
+
 class Triangle;
 class Vertex;
 class Surface;
@@ -12,5 +14,6 @@ class SurfaceGraph;
 class Space;
 class OBJCollection;
 class Solid;
+class Segment;
 
 #endif // PREDEFINE_H_INCLUDED

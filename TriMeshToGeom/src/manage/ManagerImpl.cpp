@@ -35,7 +35,9 @@ int ManagerImpl::cleaning(int max_gener, double startDegree){
     return 0;
 }
 
-int ManagerImpl::makeSolids(){
+int ManagerImpl::makeSolids(double degree){
+    if (objcl -> makeWall(degree) == -1 ) return -1;
+
     return 0;
 }
 

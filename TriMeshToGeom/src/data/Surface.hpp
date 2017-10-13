@@ -10,6 +10,7 @@
 #include "model/Triangle.h"
 #include "logic/check.hpp"
 #include "logic/util.h"
+#include "model/Segment.h"
 #include "predefine.h"
 
 #include <CGAL/Simple_cartesian.h>
@@ -35,11 +36,11 @@ public:
 
     double min_coords[3];
     double max_coords[3];
-    double sq_area = 0.0;
+    double area = 0.0;
 
     Surface(){
-
     }
+
 
     Surface(Triangle* pl);
     Surface(Surface* cp);
@@ -73,6 +74,7 @@ public:
     void removeStraight(Checker* ch);
     void removeHole(Checker* ch);
     bool updateNormal(Checker* ch);
+    void updateRectArea();
 
     bool isValid();
     void tagVerticesUsed();
@@ -83,12 +85,17 @@ public:
     void makePlanar(Plane_3 plane);
     Point_3 findLowestPoint();
     Plane_3 getPlaneWithLowest();
+
+    void changeToRectangle();
+    Segment* makeSegmentNoZ();
+    void clipping(Surface* p_surface,Checker* ch);
 private:
     Point_3 getCenterPoint();
     Point_3 getCenterPointInFartest();
     int findNormalTypeForTri();
     Vector_3 getSimpleNormal();
-    std::vector<std::pair<double, double>> to2DPoints();
+    std::vector<std::pair<double, double>> project_to_Plane18();
+    std::vector<Point_2> get2DPoints(Plane_3 plane);
 };
 
 

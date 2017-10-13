@@ -31,6 +31,8 @@
 	<script src="js/lib/jquery.mousewheel.js"></script>
 	<script src="js/threejs/controls/TrackballControls.js"></script>
 	<script>
+		var version = "v0.2.7.4_solid";
+		var data_name = "office";
 		var generation = -1;
 		var container, stats;
 		var objects = [];
@@ -71,7 +73,7 @@
 
 			document.getElementById("generation").innerHTML = generation;
 			if (generation == -1){
-				$.getJSON("../Result/office_v0.2.7.4.json", function(data) {
+				$.getJSON("../Result/"+data_name+"_" + version+".json", function(data) {
 					console.log(data);
 					jsonfile = data;
 
@@ -80,7 +82,7 @@
 				})
 			}
 			else{
-				$.getJSON("../Result/process/office_g_"+generation+".json", function(data) {
+				$.getJSON("../Result/process/"+data_name+"_g_"+generation+".json", function(data) {
 					console.log(data);
 					jsonfile = data;
 					init();
@@ -172,20 +174,14 @@
 				var polygon_list = space[i].Surfaces;
 				console.log("polygon numbers : " + polygon_list.length);
 				for (var j = 0; j < polygon_list.length; j++) {
+					//if ( j < 11) continue;
 					var coordinates = polygon_list[j].coord;
-					if (j == 30) {
-						console.log(coordinates);
-						polygon_list[j].coord.splice(6,1);
-						coordinates.splice(6,1);
-						console.log(coordinates);
-					}
 					coordinates = scaleUp(coordinates, 100);
 
 					var normal = polygon_list[j].normal;
 					var triangled_vertices = triangulate(coordinates, normal);
-					if (triangled_vertices.length == 0) {
-					//	console.log(j);
-					}
+					if (triangled_vertices.length == 0) console.log(j);
+
 					setMinimum(coordinates);
 					var geometry = new THREE.BufferGeometry();
 					var vertices = new Float32Array(triangled_vertices);
@@ -293,13 +289,12 @@
 					triangled_vertices.push(coordinates[triangle_index[i]][2]);
 				}
 			}
-
 			if (triangled_vertices.length == 0){
 				console.log(normal);
 				console.log(coordinates);
 				console.log(vertices2d, "Triangulate Error");
-				//return -1;
 			}
+
 			return triangled_vertices;
 		}
 

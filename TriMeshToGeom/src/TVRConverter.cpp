@@ -53,7 +53,7 @@ int main(int argc, const char * argv[]) {
 
     Manager* manager = new ManagerImpl();
     manager->setImporter(new TVRImporter());
-    manager->setChecker(new Checker(0.000001));
+    manager->setChecker(new Checker(0.000002));
 
     cout << "Load TVR File.." << endl;
     if (manager->import( (string(path) + string(file_name) + ".tvr").c_str()) ){
@@ -93,7 +93,9 @@ int main(int argc, const char * argv[]) {
     string json_file = string(result_path) + string(file_name) + export_version + ".json";
     manager->exportJSON(json_file);
 
-
+    if (manager->makeSolids(10.0) == -1) return -1;
+    string solid_file = string(result_path) + string(file_name) + export_version + "_solid.json";
+    manager->exportJSON(solid_file);
 
     std::cout << "End!\n";
     return 0;

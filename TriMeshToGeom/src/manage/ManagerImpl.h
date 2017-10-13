@@ -16,7 +16,7 @@ public:
     int exportJSON(string f_path);
     int exportCombined(string f_path);
     int importCombined(string f_path);
-    int makeSolids();
+    int makeSolids(double degree);
 
 protected:
 

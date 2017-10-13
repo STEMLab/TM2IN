@@ -14,7 +14,7 @@ class Manager
 
         virtual int import(const char*) = 0;
         virtual int makeSurfaces(double degree) = 0;
-        virtual int makeSolids() = 0;
+        virtual int makeSolids(double degree) = 0;
         virtual int exportJSON(string f_path) = 0;
         virtual int cleaning(int, double){ return -1;}
         virtual int exportCombined(string f_path) = 0;

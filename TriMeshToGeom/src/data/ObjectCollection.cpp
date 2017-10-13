@@ -118,6 +118,15 @@ int OBJCollection::makeGraph(){
     return 0;
 }
 
+int OBJCollection::makeWall(double degree){
+    for (ull i = 0 ; i < this->space_list.size(); i++)
+    {
+        this->space_list[i]->makeWallRectangle();
+        this->space_list[i]->makeClosedWall();
+    }
+    return 0;
+}
+
 void OBJCollection::free(){
     sort( vertex.begin(), vertex.end() );
     vertex.erase( unique( vertex.begin(), vertex.end() ), vertex.end() );

@@ -63,7 +63,7 @@ int CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checker
     origin->v_list.clear();
     origin->v_list = new_v_list;
     origin->av_normal = origin->av_normal + piece->av_normal;
-    origin->sq_area += piece->sq_area;
+    origin->area += piece->area;
     origin->setMBB(piece);
 
     if (origin ->checkDuplicate(checker)){

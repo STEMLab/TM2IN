@@ -1,5 +1,6 @@
 #include "model/Triangle.h"
 
+#include "predefine.h"
 Triangle::Triangle()
 {
     //ctor
@@ -20,7 +21,7 @@ Vector_3 Triangle::getNormal()
     Vertex* vb = this->b;
     Vertex* vc = this->c;
 
-    this->normal = CGALCalculation::getUnitNormal(va, vb, vc) * 100 * this->getArea();
+    this->normal = CGALCalculation::getUnitNormal(va, vb, vc) * AREA_CONST * this->getArea();
     return this->normal;
 }
 
@@ -30,7 +31,8 @@ double Triangle::getArea(){
     Vertex* vb = this->b;
     Vertex* vc = this->c;
 
-    this->area = CGALCalculation::getSquaredArea(va, vb, vc);
+    this->area = sqrt(CGALCalculation::getSquaredArea(va, vb, vc));
+
     return this->area;
 }
 std::string Triangle::toJSON(){

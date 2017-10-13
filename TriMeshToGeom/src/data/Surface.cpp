@@ -25,7 +25,7 @@ Surface::Surface(Surface* cp){
         this->max_coords[i] = cp->max_coords[i];
         this->min_coords[i] = cp->min_coords[i];
     }
-    this->sq_area = cp->sq_area;
+    this->area = cp->area;
 }
 
 Surface::Surface(Triangle* pl){
@@ -50,7 +50,7 @@ Surface::Surface(Triangle* pl){
     }
 
     av_normal = pl->getNormal();
-    sq_area = pl->getArea();
+    area = pl->getArea();
 }
 
 void Surface::setMBB(){
@@ -175,7 +175,7 @@ Point_3 Surface::getCenterPointInFartest(){
 string Surface::toJSONString(){
     string ret;
     ret.append("{");
-    ret.append(" \n \"area\" : " + to_string(sq_area) );
+    ret.append(" \n \"area\" : " + to_string(area) );
     ret.append(" \n, \"id\" : " + to_string(sf_id) );
     ret.append(" \n, \"normal\" : [");
     ret.append(to_string(this->av_normal.x()) + ", ");
@@ -205,7 +205,7 @@ Vector_3 Surface::getSimpleNormal(){
     return normal;
 }
 
-vector<pair<double, double>> Surface::to2DPoints(){
+vector<pair<double, double>> Surface::project_to_Plane18(){
     vector<pair<double, double>> points;
     int type = CGALCalculation::findNormalType18(this->av_normal);
     if (this->av_normal == CGAL::NULL_VECTOR){
@@ -222,12 +222,12 @@ vector<pair<double, double>> Surface::to2DPoints(){
 }
 
 bool Surface::updateNormal(Checker* ch){
-    if (this->v_list.size() < 4){
+    if (this->v_list.size() <= 4){
         this->av_normal = getSimpleNormal();
     }
     this->av_normal = CGALCalculation::normal_list18[CGALCalculation::findNormalType18(this->av_normal)];
     this->av_normal = this->av_normal / sqrt(this->av_normal.squared_length());
-    this->av_normal = this->av_normal * this->sq_area * AREA_CONST;
+    this->av_normal = this->av_normal * this->area * AREA_CONST;
 //
 //    else{
 //        vector<pair<double, double>> pointsInPlane = to2DPoints();
@@ -259,12 +259,18 @@ bool Surface::updateNormal(Checker* ch){
 //
 //    }
 
-    if (this->av_normal == CGAL::NULL_VECTOR){
-        cout << "Null Vector" << endl;
-        return false;
-    }
-    else{
-        return true;
+    assert (this->av_normal != CGAL::NULL_VECTOR);
+
+    return true;
+
+}
+
+void Surface::updateRectArea(){
+    this->area = 0.0;
+    for (int i = 0 ; i < (int)this->v_list.size() - 1 ; i += 2){
+        int e_i = i + 2 >= (int)this->v_list.size()? 0 : i+2;
+        Triangle tri(this->v_list[i], this->v_list[i+1], this->v_list[e_i]);
+        area += tri.getArea();
     }
 }
 
@@ -311,7 +317,7 @@ bool Surface::compareLength(Surface* i, Surface* j) {
 }
 
 bool Surface::compareArea(Surface* i, Surface* j) {
-     return (i->sq_area > j->sq_area);
+     return (i->area > j->area);
 }
 
 void Surface::removeStraight(Checker* ch){
@@ -428,7 +434,7 @@ Point_3 Surface::findLowestPoint(){
     Plane_3 plane(getCenterPoint(), this->av_normal);
 
     double max_dist = -1.0;
-    int max_index = -1;
+    int max_index = 0;
     for (ull index= 0 ; index < this->v_list.size() ; index++){
         Point_3 p = CGALCalculation::makePoint(this->v_list[index]);
         if (plane.oriented_side(p) != CGAL::ON_POSITIVE_SIDE){
@@ -459,3 +465,109 @@ void Surface::makePlanar(Plane_3 plane){
     }
 }
 
+vector<Point_2> Surface::get2DPoints(Plane_3 plane){
+    vector<Point_2> points;
+
+    for (ull i = 0 ; i < this->v_list.size() ; i++){
+        Point_3 p3 = CGALCalculation::makePoint(this->v_list[i]);
+        Point_2 point2d = plane.to_2d(p3);
+        points.push_back(point2d);
+    }
+
+    return points;
+}
+
+void Surface::changeToRectangle(){
+    Plane_3 plane = getPlaneWithLowest();
+    vector<Point_2> points_2d = get2DPoints(plane);
+    double max_x = INT_MIN, max_y = INT_MIN;
+    double min_x = INT_MAX, min_y = INT_MAX;
+    for (ull i = 0 ; i < points_2d.size() ; i++){
+        double x = points_2d[i].x();
+        double y = points_2d[i].y();
+        if (max_x < x){
+            max_x = x;
+        }
+        if (max_y < y){
+            max_y = y;
+        }
+        if (min_x > x) {
+            min_x = x;
+        }
+        if (min_y > y){
+            min_y = y;
+        }
+    }
+
+
+    Point_2 min_point(min_x,min_y);
+    Point_2 center_1(max_x, min_y);
+    Point_2 max_point(max_x,max_y);
+    Point_2 center_2(min_x, max_y);
+
+    vector<Point_3> points_3d;
+    points_3d.push_back(plane.to_3d(min_point));
+    points_3d.push_back(plane.to_3d(center_1));
+    points_3d.push_back(plane.to_3d(max_point));
+    points_3d.push_back(plane.to_3d(center_2));
+
+    this->v_list.clear();
+    for (ull i = 0 ; i < points_3d.size() ; i++){
+        this->v_list.push_back(new Vertex(points_3d[i].x(),points_3d[i].y(),points_3d[i].z()));
+    }
+
+    points_2d.clear();
+    points_3d.clear();
+}
+
+
+Segment* Surface::makeSegmentNoZ(){
+    this->setMBB();
+    Vertex* ft, *ed;
+
+    //Only For Rectangle
+    if (this->v_list.size() != 4){
+        assert("it is not rectangle");
+    }
+
+    for (ull i = 0 ; i < 2; i++){
+        if (this->v_list[i]->z() == this->v_list[i+1]->z()){
+            if (this->v_list[i+2]->z() > this->v_list[i+1]->z()){
+                if (i == 0){
+                    ft = this->v_list[2];
+                    ed = this->v_list[3];
+                }
+                else{
+                    ft = this->v_list[3];
+                    ed = this->v_list[0];
+                }
+
+            }
+            else{
+                ft = this->v_list[i];
+                ed = this->v_list[i+1];
+            }
+            break;
+        }
+    }
+
+    return new Segment(ft, ed);
+}
+
+
+void Surface::clipping(Surface* p_surface, Checker* ch){
+    int num = 0;
+    for (ull i = 0 ; i < this->v_list.size() ; i++){
+        Vertex* vi = this->v_list[i];
+        for (ull j = 0 ; j < p_surface->v_list.size() ; j++){
+            Vertex* vj = p_surface->v_list[j];
+            if (vi != vj && ch->isSameVertex(vi, vj)){
+                num++;
+                //delete vi;
+                vi = vj;
+                break;
+            }
+        }
+    }
+    if (num > 2) assert("Clipping Too Much!");
+}

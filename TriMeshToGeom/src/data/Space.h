@@ -13,6 +13,7 @@
 #include "data/Surface.hpp"
 #include "data/Solid.h"
 #include "logic/CleanPolygonMaker.h"
+#include "model/Segment.h"
 
 using namespace std;
 
@@ -55,7 +56,8 @@ public:
     int remainOnlyUsingVertices();
 
     void tagID();
-
+    int makeWallRectangle();
+    int makeClosedWall();
 
     /**
     * TODO
@@ -75,8 +77,13 @@ protected:
     vector<Surface*> makeSurfacesInList(vector<Triangle*>& tri_list, bool* checked, int& combined_count, double degree);
     vector<vector<Triangle*>> separateByNormal_6(vector<Triangle>& triangles);
     Surface* findBigSurface(int axis);
+    Surface* makeNewSurface(Segment* seg, double base, double height);
+    void clippingWalls(vector<Surface*>& walls);
+    void getWallsInSurfacesList(vector<Surface*>& walls);
+    int countTheNumberOfVertex(vector<Segment*>& lines);
 private:
     Checker* checker;
 };
+
 
 #endif // TRIANGLESPACE_H

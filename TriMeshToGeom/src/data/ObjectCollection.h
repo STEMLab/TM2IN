@@ -35,6 +35,7 @@ public:
     int combineSurfaces(Checker* ch, int max_gener, double startDegree);
     int makeGraph();
     int makeSurfacesPlanar();
+    int makeWall(double degree);
 
     void test();
 };

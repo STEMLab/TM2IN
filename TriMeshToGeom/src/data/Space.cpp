@@ -2,6 +2,7 @@
 
 #include <cstdio>
 #include <queue>
+#include <climits>
 
 Space::Space(string pname, Checker* check)
 {
@@ -230,11 +231,11 @@ Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count,
 Surface* Space::attachSurfacesByArea(Surface* cp, ull start, bool* checked, ll& count, double degree)
 {
     count = 0;
-    double cp_area = cp->sq_area;
+    double cp_area = cp->area;
     if (cp->av_normal == CGAL::NULL_VECTOR) return NULL;
     for (ull id = start ; id < this->surfacesList.size() ; id++)
     {
-        double id_area = this->surfacesList[id]->sq_area;
+        double id_area = this->surfacesList[id]->area;
         if (!checked[id] && (id_area < 0.00001 || id_area * 1000 < cp_area))
         {
             if (CleanPolygonMaker::combine(cp, this->surfacesList[id], checker, degree) == 0)
@@ -443,6 +444,7 @@ int Space::makeSurfacesPlanar(){
             i++;
         }
         else{
+            delete(this->surfacesList[i]);
             this->surfacesList.erase(this->surfacesList.begin() + i);
         }
     }
@@ -477,23 +479,6 @@ int Space::makeSurfacesPlanar(){
         }
     }
 
-//    queue<Surface*> qu;
-//    qu.push(this->surfacesList[0]);
-//
-//    while (!qu.empty()){
-//        Surface* surface = qu.front();
-//        qu.pop();
-//
-//        for (int axis = 0; axis < 3 ; axis ++)
-//        {
-//            if (surface->hasSameNormalwith(axis) || surface->hasOppositeNormalwith(axis))
-//            {
-//
-//            }
-//        }
-//    }
-
-
     return 0;
 }
 
@@ -510,6 +495,180 @@ int Space::makeGraph(){
     return 0;
 }
 
+int Space::makeWallRectangle(){
+    cout << "\n------------- make Wall Rectangle --------------\n" << endl;
+    for (int axis = 1 ; axis >= 0  ; axis--){
+        for (ull i = 0 ; i < this->surfacesList.size() ; i++){
+            Surface* surface = this->surfacesList[i];
+            if (surface->hasSameNormalwith(axis) || surface->hasOppositeNormalwith(axis))
+            {
+                surface->changeToRectangle();
+            }
+        }
+    }
+
+}
+
+Surface* Space::makeNewSurface(Segment* seg, double base, double height){
+    Surface* new_surface = new Surface();
+
+    Vertex* vt1 = new Vertex(*seg->first);
+    vt1->setZ(0);
+
+    Vertex* vt2 = new Vertex(*seg->second);
+    vt2->setZ(0);
+
+    new_surface->v_list.push_back(seg->first);
+    new_surface->v_list.push_back(seg->second);
+    new_surface->v_list.push_back(vt2);
+    new_surface->v_list.push_back(vt1);
+
+    new_surface->updateRectArea();
+    new_surface->updateNormal(this->checker);
+    return new_surface;
+}
+
+void Space::clippingWalls(vector<Surface*>& walls){
+    for (ull i = 0 ; i < walls.size() - 1; i++){
+        Surface* surface = walls[i];
+        for (ull j = i + 1 ; j < walls.size(); j++){
+            surface->clipping(walls[j], this->checker);
+        }
+        assert(surface->isValid());
+    }
+}
+
+void Space::getWallsInSurfacesList(vector<Surface*>& walls){
+    for (int axis = 1 ; axis >= 0  ; axis--){
+        for (ull i = 0 ; i < this->surfacesList.size() ; ){
+            Surface* surface = this->surfacesList[i];
+            if (surface->hasSameNormalwith(axis) || surface->hasOppositeNormalwith(axis))
+            {
+                walls.push_back(surface);
+                this->surfacesList.erase(this->surfacesList.begin() + i);
+            }
+            else{
+                i++;
+            }
+        }
+    }
+}
+
+int Space::countTheNumberOfVertex(vector<Segment*>& lines){
+    vector<Vertex*> vertex_list;
+    for (ull i = 0 ; i < lines.size(); i++){
+        ull j;
+        for (j = 0 ; j < vertex_list.size(); j++){
+            if (vertex_list[j] == lines[i]->first) {
+                break;
+            }
+        }
+        if (j == vertex_list.size() ) vertex_list.push_back(lines[i]->first);
+
+        for (j = 0 ; j < vertex_list.size(); j++){
+            if (vertex_list[j] == lines[i]->second) {
+                break;
+            }
+        }
+        if (j == vertex_list.size() ) vertex_list.push_back(lines[i]->second);
+    }
+    int number_vertex = vertex_list.size();
+    vertex_list.clear();
+    return number_vertex;
+}
+
+int Space::makeClosedWall(){
+    vector<Surface*> walls;
+    vector<Segment*> lines;
+
+    this->updateMBB();
+    this->getWallsInSurfacesList(walls);
+    this->clippingWalls(walls);
+
+    for (ull i = 0 ; i < walls.size() ; i++){
+        lines.push_back(walls[i]->makeSegmentNoZ());
+    }
+
+    double base = 0;
+    double height = this->max_coords[2];
+
+    assert (base < 0.0000001);
+
+    vector<bool> checked;
+    checked.assign(lines.size(), false);
+
+    vector<Segment*> ordered_lines;
+    ordered_lines.push_back(lines[0]);
+    checked[0] = true;
+
+    int check_num = 0;
+    for (int i = 0 ; i < lines.size() ; i++){
+        cout << lines[i]->toJSON() << endl;
+    }
+
+    //Count the number of vertex
+    int number_vertex = this->countTheNumberOfVertex(lines);
+    while (ordered_lines.size() < number_vertex){
+        int pre_num = check_num;
+
+        for (ull j = 0 ; j < lines.size(); j++){
+            if (checked[j]) continue;
+            //front
+            Segment* seg1 = ordered_lines[0];
+            Segment* seg2 = ordered_lines[ordered_lines.size() - 1];
+            if ( seg1 -> first == lines[j] -> second ){
+                ordered_lines.insert(ordered_lines.begin(), lines[j]);
+                check_num++;
+                checked[j] = true;
+            }
+            else if (seg2->first == lines[j]->second){ //end
+                ordered_lines.push_back(lines[j]);
+                check_num++;
+                checked[j] = true;
+            }
+        }
+
+        if (check_num == pre_num) //cannot attach line more
+        {
+            Segment* end_seg = ordered_lines[ordered_lines.size() - 1];
+            int axis;
+
+            if (end_seg->first->coords[0] == end_seg->second->coords[0]) axis = 1;
+            else if (end_seg->first->coords[1] == end_seg->second->coords[1]) axis = 0;
+            else assert(false);
+
+            double min_diff = INT_MAX;
+            int index = -1;
+            for (ull i = 0 ; i < lines.size() ; i++){
+                if(checked[i]) continue;
+                double diff = abs(end_seg->second->coords[1-axis] - lines[i]->first->coords[1-axis] );
+                if (diff < min_diff){
+                    index = i;
+                    min_diff = diff;
+                }
+            }
+
+            if (index == -1){
+                assert(false);
+            }
+
+            Segment* new_seg = new Segment(end_seg->second, lines[index]->first);
+
+            walls.push_back(makeNewSurface(new_seg, base, height));
+            ordered_lines.push_back(new_seg);
+            ordered_lines.push_back(lines[index]);
+            checked[index] = true;
+            check_num += 1;
+        }
+
+    }
+
+    for (ull i = 0 ; i < walls.size() ; i++){
+        this->surfacesList.push_back(walls[i]);
+    }
+
+    return 0;
+}
 
 
 void Space::freeSurfaces(){
