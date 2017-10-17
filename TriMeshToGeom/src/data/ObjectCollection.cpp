@@ -52,20 +52,14 @@ int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegre
         double degree = startDegree;
         int gen = 0;
 
-        while (true && max_gener--)
-        {
+        while (true && max_gener--){
             this->space_list[it]->updateNormal();
             cout << "generation : " << gen << endl;
-//            if (max_gener == 0){
-//                ch->degreeOfMerging = 90.0;
-//                degree = 0.0001;
-//            }
             if (this->space_list[it]->combineSurface(degree) == -1)
             {
                 cout << "combine error" << endl;
                 return -1;
             }
-
             if (degree < 45) degree += 0.05;
             if (this->space_list[it]->simplifySegment() == -1)
             {
@@ -124,6 +118,23 @@ int OBJCollection::makeWall(double degree){
         this->space_list[i]->makeWallRectangle();
         this->space_list[i]->makeClosedWall();
     }
+    return 0;
+}
+
+int OBJCollection::makeFloorAndCeiling(){
+    for (ull i = 0 ; i < this->space_list.size() ; i++){
+        this->space_list[i]->makeFloorAndCeiling();
+    }
+    return 0;
+}
+
+int OBJCollection::makeSolid(){
+    cout << "make Solid" << endl;
+    free();
+    for (ull i = 0 ; i < this->space_list.size();i++){
+        this->space_list[i]->getVertexList(this->vertex);
+    }
+
     return 0;
 }
 

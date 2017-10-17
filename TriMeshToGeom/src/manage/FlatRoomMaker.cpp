@@ -1,4 +1,4 @@
-#include "manage/ManagerImpl.h"
+#include "manage/FlatRoomMaker.h"
 
 #include "fileio/JSONMaker.h"
 #include "fileio/CombinedIO.h"
@@ -6,28 +6,28 @@
 
 using namespace std;
 
-ManagerImpl::ManagerImpl()
+FlatRoomMaker::FlatRoomMaker()
 {
     //ctor
 }
 
-ManagerImpl::~ManagerImpl()
+FlatRoomMaker::~FlatRoomMaker()
 {
     //dtor
 }
 
-int ManagerImpl::import(const char* file_path){
+int FlatRoomMaker::import(const char* file_path){
     this->objcl = di->import(file_path, this->check);
     if (this->objcl == NULL) return -1;
     else return 0;
 }
 
-int ManagerImpl::makeSurfaces(double degree){
+int FlatRoomMaker::makeSurfaces(double degree){
     return objcl->makeSurfaces(degree);
 }
 
 
-int ManagerImpl::cleaning(int max_gener, double startDegree){
+int FlatRoomMaker::cleaning(int max_gener, double startDegree){
     if (objcl->combineSurfaces(check, max_gener, startDegree) == -1) return -1;
     if (objcl->makeGraph() == -1) return -1;
     if (objcl->makeSurfacesPlanar() == -1) return -1;
@@ -35,14 +35,16 @@ int ManagerImpl::cleaning(int max_gener, double startDegree){
     return 0;
 }
 
-int ManagerImpl::makeSolids(double degree){
-    if (objcl -> makeWall(degree) == -1 ) return -1;
-
+int FlatRoomMaker::makeSolids(double degree){
+    if (objcl -> makeWall(degree)) return -1;
+    //if (objcl -> makeFloorAndCeiling()) return -1;
+    //if (objcl -> makeSolid() ) return -1;
     return 0;
 }
 
-int ManagerImpl::exportJSON(string f_path)
+int FlatRoomMaker::exportJSON(string f_path)
 {
+    cout << "export JSON" << endl;
     ofstream fout;
     fout.open(f_path, ios::out|ios::trunc);
 
@@ -55,7 +57,7 @@ int ManagerImpl::exportJSON(string f_path)
     return 0;
 }
 
-int ManagerImpl::exportCombined(string f_path)
+int FlatRoomMaker::exportCombined(string f_path)
 {
     ofstream fout;
     fout.open(f_path, ios::out|ios::trunc|ios::binary);
@@ -68,7 +70,7 @@ int ManagerImpl::exportCombined(string f_path)
     return 0;
 }
 
-int ManagerImpl::importCombined(string f_path)
+int FlatRoomMaker::importCombined(string f_path)
 {
     ifstream fin;
     fin.open(f_path, ios::in|ios::binary);

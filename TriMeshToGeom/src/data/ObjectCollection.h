@@ -36,6 +36,8 @@ public:
     int makeGraph();
     int makeSurfacesPlanar();
     int makeWall(double degree);
+    int makeFloorAndCeiling();
+    int makeSolid();
 
     void test();
 };

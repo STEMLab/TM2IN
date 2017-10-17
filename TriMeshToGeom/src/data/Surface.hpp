@@ -49,6 +49,8 @@ public:
         return v_list.size();
     }
 
+    void setZ(double value);
+
     bool attachTriangle(Triangle* pl, Checker* ch);
     bool attachTriangle2(Triangle* pl, Checker* ch);
     std::string toJSONString();
@@ -73,6 +75,8 @@ public:
     void removeConsecutiveDuplication(Checker* ch);
     void removeStraight(Checker* ch);
     void removeHole(Checker* ch);
+
+    Vector_3 getSimpleNormal();
     bool updateNormal(Checker* ch);
     void updateRectArea();
 
@@ -87,13 +91,13 @@ public:
     Plane_3 getPlaneWithLowest();
 
     void changeToRectangle();
-    Segment* makeSegmentNoZ();
+    Segment* makeSegmentUpperZ(Checker* ch);
+    Segment* makeSegmentLowerZ(Checker* ch);
     void clipping(Surface* p_surface,Checker* ch);
 private:
     Point_3 getCenterPoint();
     Point_3 getCenterPointInFartest();
     int findNormalTypeForTri();
-    Vector_3 getSimpleNormal();
     std::vector<std::pair<double, double>> project_to_Plane18();
     std::vector<Point_2> get2DPoints(Plane_3 plane);
 };

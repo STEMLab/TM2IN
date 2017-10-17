@@ -49,7 +49,7 @@ public:
     int match00();
     int handleDefect();
     int updateNormal();
-
+    int removeObject(int);
 
     int makeSurfacesPlanar();
     int makeGraph();
@@ -59,10 +59,12 @@ public:
     int makeWallRectangle();
     int makeClosedWall();
 
+    int makeFloorAndCeiling();
+    void getVertexList(vector<Vertex*>& vt_list);
     /**
     * TODO
     */
-    int divideSlopeSurfaces();
+    int handleTiltedWalls();
 
     //TODO : removed
     void test();
@@ -78,10 +80,14 @@ protected:
     vector<vector<Triangle*>> separateByNormal_6(vector<Triangle>& triangles);
     Surface* findBigSurface(int axis);
     Surface* makeNewSurface(Segment* seg, double base, double height);
-    void clippingWalls(vector<Surface*>& walls);
-    void getWallsInSurfacesList(vector<Surface*>& walls);
+    vector<Surface*> clippingSurfaces(vector<Surface*>& walls);
+    vector<Surface*> getWallsAndRemoveInSurfacesList(vector<Surface*>& walls);
+    vector<Segment*> cutIntersection(vector<Segment*>& walls_2d);
     int countTheNumberOfVertex(vector<Segment*>& lines);
+    bool connectWall_dfs(int , vector<vector<int> >& , vector<Segment*>& , vector<bool>&);
 private:
+    bool isIntersectIn(Segment* segment, vector<Segment*>& lines);
+    static bool comparePairSegment(pair<int,Segment*>& a, pair<int,Segment*>& b);
     Checker* checker;
 };
 

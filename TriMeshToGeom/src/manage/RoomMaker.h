@@ -5,7 +5,7 @@
 #include "data/ObjectCollection.h"
 #include "logic/util.h"
 
-class Manager
+class RoomMaker
 {
     public:
         Checker* check;

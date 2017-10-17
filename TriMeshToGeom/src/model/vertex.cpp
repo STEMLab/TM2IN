@@ -17,6 +17,11 @@ std::string Vertex::toJSON()
     return ret;
 }
 
+Point_3 Vertex::getCGALPoint(){
+    Vertex* v = this;
+    return Point_3(v->x(),v->y(),v->z());
+}
+
 void Vertex::translate(double diff[]){
     for (int i = 0 ; i < 3 ; i++) coords[i] += diff[i];
 }

@@ -22,6 +22,7 @@
 	<button type="button" style="right:0" onclick="next()">Next </button>
 	<button type="button" style = "right : 10%" onclick="pre()">Previous </button>
 	<button type="button" style = "left : 10%" onclick="showSolid()">SOLID </button>
+    <button type="button" onclick="toggleData()"> TOGGLE </button>
 	<div id="container"></div>
 	<script src="js/lib/three.js"></script>
 	<script src="js/lib/earcut.js"></script>
@@ -31,8 +32,10 @@
 	<script src="js/lib/jquery.mousewheel.js"></script>
 	<script src="js/threejs/controls/TrackballControls.js"></script>
 	<script>
-		var version = "v0.2.7.5";
-		var data_name = "office";
+		var version = "v0.2.8.1";
+        var data_index = 0;
+        var data_array = ["apartment","office"];
+		var data_name = "apartment";
 		var generation = -1;
 		var container, stats;
 		var objects = [];
@@ -59,6 +62,14 @@
 				generation--;
 			load();
 		}
+
+        function toggleData(){
+            clearScene();
+            generation = -1;
+            data_name = data_array[1 - data_index];
+            data_index = 1 - data_index;
+            load();
+        }
 
 		function clearScene(){
 			objects = [];

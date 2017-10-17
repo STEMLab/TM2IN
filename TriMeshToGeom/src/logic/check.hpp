@@ -44,6 +44,7 @@ public:
 
     bool isExistDuplication(std::vector<Vertex*> vertex);
 
+    bool isSameDouble(double a, double b);
     bool isSameX(Vertex* a, Vertex* b);
     bool isSameY(Vertex* a, Vertex* b);
     bool isSameZ(Vertex* a, Vertex* b);

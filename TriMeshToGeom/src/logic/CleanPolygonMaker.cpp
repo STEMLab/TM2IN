@@ -3,7 +3,6 @@
 
 int CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checker, double degree){
      // check Polygon is in near polygon or not
-    if (!isNeighbor(origin, piece)) return 1;
 
     ll end_i = -1, end_j = -1;
     ll start_i = -1, start_j = -1;
@@ -199,19 +198,21 @@ void CleanPolygonMaker::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj
 }
 
 bool CleanPolygonMaker::isNeighbor(Surface* cp1, Surface* cp2){
-    //TODO
-    return true;
+    return CGALCalculation::isIntersect_BBOX(cp1, cp2);
 }
 
-int CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece){
+int CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece, bool again){
+    if (!again && !isNeighbor(origin, piece)) return 1;
 
     ll middle_i = -1, middle_j = -1;
     ll piece_size = piece->getLength();
     ll origin_size = origin->getLength();
+
     vector<Vertex*>& piece_vertex_list = piece->v_list;
     vector<Vertex*>& origin_vertex_list = origin->v_list;
 
     bool hasTwoShareLine = false;
+    ll infinite_check = 0;
     for (ll i = 0 ; i < piece_size ;i++){
         for (ll j = origin_size - 1 ; j >= 0 ; j--){
             if (piece_vertex_list[i] == origin_vertex_list[j]){
@@ -248,16 +249,19 @@ int CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece){
         exit(-1);
     }
 
-    Point_3 sp = CGALCalculation::makePoint(piece_vertex_list[start_i]);
-    Point_3 ep = CGALCalculation::makePoint(piece_vertex_list[end_i]);
+    Point_3 sp = piece_vertex_list[start_i]->getCGALPoint();
+    Point_3 ep = piece_vertex_list[end_i]->getCGALPoint();
     Line_3 line(sp, ep);
 
     //Translate to make it straight
     for (ll i = start_i + 1;;)
     {
+        infinite_check++;
+        assert (infinite_check < piece_size + 100) ;
+
         if (i == (ll)piece_vertex_list.size()) i = 0;
         if (i == end_i) break;
-        Point_3 newp = line.projection(CGALCalculation::makePoint(piece_vertex_list[i]));
+        Point_3 newp = line.projection(piece_vertex_list[i]->getCGALPoint());
         piece_vertex_list[i]->translateTo({newp.x(), newp.y(), newp.z()});
 
         i++;

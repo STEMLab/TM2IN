@@ -1,13 +1,13 @@
-#ifndef MANAGERIMPL_H
-#define MANAGERIMPL_H
+#ifndef RectRoomMaker_H
+#define RectRoomMaker_H
 
-#include "manage/Manager.h"
+#include "manage/RoomMaker.h"
 
 
-class ManagerImpl : public Manager{
+class FlatRoomMaker : public RoomMaker{
 public:
-    ManagerImpl();
-    virtual ~ManagerImpl();
+    FlatRoomMaker();
+    virtual ~FlatRoomMaker();
 
     int import(const char*);
     int makeSurfaces(double degree);
@@ -24,4 +24,4 @@ protected:
 private:
 };
 
-#endif // MANAGERIMPL_H
+#endif // RectRoomMaker_H

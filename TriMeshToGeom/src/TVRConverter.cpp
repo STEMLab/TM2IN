@@ -4,7 +4,7 @@
 #include <string>
 
 #include "fileio/TVRImporter.h"
-#include "manage/ManagerImpl.h"
+#include "manage/FlatRoomMaker.h"
 #include "logic/check.hpp"
 
 using namespace std;
@@ -33,14 +33,14 @@ void test(){
 
 int main(int argc, const char * argv[]) {
     //TODO make argv
-    string import_version = "_v0.2.7";
-    string export_version = "_v0.2.7.4";
+    string import_version = "_v0.2.8";
+    string export_version = "_v0.2.8.2";
     const char path[50] = "../Resource/tvr/";
     //const char path[100] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/";
     const char result_path[50] = "../Result/";
     //const char result_path[50] = "/Users/dong/Documents/dev/TriMeshToGeom/Result/";
     char file_name[] = "office";
-    const int max_genereration = 10;
+    const int max_genereration = 2;
     const char process_path[50] = "../Result/process/";
 //    TVRImporter::extractMINtvr(string(path) + string(file_name));
 //    return 0;
@@ -51,9 +51,9 @@ int main(int argc, const char * argv[]) {
     cout << "2 : import and onlyJoin" <<endl;
     int mode; cin >> mode;
 
-    Manager* manager = new ManagerImpl();
+    RoomMaker* manager = new FlatRoomMaker();
     manager->setImporter(new TVRImporter());
-    manager->setChecker(new Checker(0.000002));
+    manager->setChecker(new Checker(0.000001));
 
     cout << "Load TVR File.." << endl;
     if (manager->import( (string(path) + string(file_name) + ".tvr").c_str()) ){

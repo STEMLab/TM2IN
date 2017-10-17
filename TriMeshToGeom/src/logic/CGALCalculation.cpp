@@ -1,5 +1,8 @@
 #include "logic/CGALCalculation.h"
 
+#include "model/vertex.h"
+#include "model/Segment.h"
+
 #define PI 3.14159265
 
 double CGALCalculation::getAngle(Vector_3& nv1, Vector_3& nv2){
@@ -13,7 +16,7 @@ double CGALCalculation::getAngle(Vector_3& nv1, Vector_3& nv2){
 }
 
 Vector_3 CGALCalculation::getVector(Vertex* va, Vertex* vb){
-    return Vector_3(makePoint(va),makePoint(vb));
+    return Vector_3(va->getCGALPoint(),vb->getCGALPoint());
 }
 
 int CGALCalculation::findNormalType27(Vector_3& nv)
@@ -151,15 +154,9 @@ Vector_3 CGALCalculation::normal_list6[6] = {
 };
 
 
-
-Point_3 CGALCalculation::makePoint(Vertex* v){
-    Point_3 p3a(v->x(),v->y(),v->z());
-    return p3a;
-}
-
 double CGALCalculation::getSquaredDistance(Vertex* v1, Vertex* v2){
     return CGAL::squared_distance(
-                           CGALCalculation::makePoint(v1), CGALCalculation::makePoint(v2));
+                          v1->getCGALPoint(), v2->getCGALPoint());
 }
 
 Vector_3 CGALCalculation::getUnitNormal(Vertex* va, Vertex* vb, Vertex* vc){
@@ -199,6 +196,25 @@ double CGALCalculation::getSquaredArea(Point_3& p1, Point_3& p2, Point_3& p3){
     Triangle_3 tri(p1,p2,p3);
     return tri.squared_area();
 }
+
+bool CGALCalculation::isIntersect2D(Segment* seg1, Segment* seg2){
+    return CGAL::do_intersect(seg1->getCGALSegmentWithoutZ(), seg2->getCGALSegmentWithoutZ());
+}
+
+Point_2 CGALCalculation::getIntersection2D(Segment* seg1, Segment* seg2){
+    Segment_2 seg1_cgal = seg1->getCGALSegmentWithoutZ();
+    Segment_2 seg2_cgal = seg2->getCGALSegmentWithoutZ();
+    CGAL::cpp11::result_of<Intersect_2(Segment_2, Segment_2)>::type result = intersection(seg1_cgal, seg2_cgal);
+    Point_2* p = boost::get<Point_2 >(&*result);
+    return *p;
+}
+
+bool CGALCalculation::isIntersect_BBOX(Surface* s1, Surface* s2){
+    CGAL::Bbox_3 b1(s1->min_coords[0],s1->min_coords[1],s1->min_coords[2],s1->max_coords[0],s1->max_coords[1],s1->max_coords[2]);
+    CGAL::Bbox_3 b2(s2->min_coords[0],s2->min_coords[1],s2->min_coords[2],s2->max_coords[0],s2->max_coords[1],s2->max_coords[2]);
+    return CGAL::do_intersect(b1,b2);
+}
+
 //
 //vector<vector<int>> CGALCalculation::triangulate(CSurface* sf){
 //    vector<pair<Point, unsigned>> points;

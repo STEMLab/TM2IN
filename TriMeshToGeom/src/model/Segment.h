@@ -22,6 +22,9 @@ public :
     }
 
     std::string toJSON();
+    double getSquaredDistance();
+    static double compareDistanceIncreased(Segment*, Segment*);
+    Segment_2 getCGALSegmentWithoutZ();
 
 };
 

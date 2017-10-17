@@ -19,7 +19,7 @@ public:
     static int combine(Surface* cp1, Surface* cp2, Checker* checker, double degree);
     static bool findShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj, ll& middle_i, ll& middle_j);
     static bool isShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj);
-    static int simplifyLineSegment(Surface* origin, Surface*);
+    static int simplifyLineSegment(Surface* origin, Surface*, bool again);
 };
 
 #endif // CleanPolygonMaker_H_INCLUDED
