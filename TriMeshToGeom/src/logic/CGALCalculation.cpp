@@ -3,8 +3,6 @@
 #include "model/vertex.h"
 #include "model/Segment.h"
 
-#define PI 3.14159265
-
 double CGALCalculation::getAngle(Vector_3& nv1, Vector_3& nv2){
     double inner = (nv1 * nv2);
     double cos = inner / ( sqrt(nv1.squared_length()) * sqrt(nv2.squared_length()) );

@@ -39,7 +39,7 @@ public:
     int makeFloorAndCeiling();
     int makeSolid();
 
-    void test();
+    int process(Checker* ch, int max_gener, double startDegree);
 };
 
 #endif /* ObjectCollection_h */

@@ -32,6 +32,7 @@ public:
     ull sf_id;
     bool isHidden;
     std::vector<Vertex*> v_list;
+    std::vector<std::vector<Vertex*> > inner_ring;
     Vector_3 av_normal = CGAL::NULL_VECTOR;
 
     double min_coords[3];

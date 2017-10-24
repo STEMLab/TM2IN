@@ -4,6 +4,8 @@
 #include <queue>
 #include <climits>
 #include <algorithm>
+#include <cmath>
+
 
 Space::Space(string pname, Checker* check)
 {
@@ -302,7 +304,6 @@ int Space::simplifySegment(){
                 }
                 //loop
             }
-            if (loop_count != 0) cout << loop_count << endl;
         }
     }
     return 0;
@@ -325,6 +326,7 @@ int Space::handleDefect(){
             i++;
         }
         else{
+            delete surface;
             this->surfacesList.erase(this->surfacesList.begin() + i);
             cout << "Erase unvalid surface" << endl;
         }
@@ -353,9 +355,8 @@ int Space::match00(){
         else{
             //this->polygon_list.erase(this->polygon_list.begin() + i);
             cout << this->surfacesList[i]->toJSONString() <<endl;
-            cout << "Erase unvalid surface in match00" << endl;
+            cout << "un-valid surface in match00" << endl;
             exit(-1);
-
         }
 
     }
@@ -413,34 +414,33 @@ int Space::remainOnlyUsingVertices(){
     return 0;
 }
 
+Surface* Space::findFirstSurfaceSimilarWithAxis(int axis){
+    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
+        Surface* sf = this->surfacesList[i];
+        if (CGALCalculation::findNormalType6(sf->av_normal) == axis){
+            return sf;
+        }
+    }
+    assert(false);
+}
 
-Surface* Space::findBigSurface(int axis){
+Surface* Space::findFirstSurfaceWithAxis(int axis){
     for (ull i = 0 ; i < this->surfacesList.size() ; i++){
         Surface* sf = this->surfacesList[i];
         if (sf->hasSameNormalwith(axis)){
             return sf;
         }
     }
-    return NULL;
+    assert(false);
 }
 
-int Space::removeObject(int gen){
-    cout << "\n------------- remove Object --------------\n" << endl;
-    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
-    int type = gen % 2;
-    int axis = 2 + type * 3;
-    Surface* big_surface = findBigSurface(2 + type * 3);
-
-    return 0;
-}
-
-int Space::makeSurfacesPlanar(){
-    cout << "\n------------- remove Object And make planar --------------\n" << endl;
+//Floor And Ceiling
+int Space::removeSurfacesNotConnectedFC(){
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
     vector<bool> fixed_vertices(this->p_vertexList->size(), false);
 
-    Surface* roof = findBigSurface(5);
-    Surface* floor = findBigSurface(2);
+    Surface* roof = findFirstSurfaceWithAxis(5);
+    Surface* floor = findFirstSurfaceWithAxis(2);
 
     if (roof == NULL || floor == NULL) return -1;
 
@@ -458,7 +458,12 @@ int Space::makeSurfacesPlanar(){
             this->surfacesList.erase(this->surfacesList.begin() + i);
         }
     }
+    return 0;
+}
 
+
+//TODO : not remove -> cut
+int Space::removeOppositeSurfaces(){
     bool changed = true;
     while (changed){
         changed = false;
@@ -476,7 +481,11 @@ int Space::makeSurfacesPlanar(){
             }
         }
     }
+    return 0;
+}
 
+int Space::makeSurfacesPlanarWithLowest(){
+    cout << "\n------------- make planar --------------\n" << endl;
 
     for (int axis = 2 ; axis >= 0  ; axis--){
         for (ull i = 0 ; i < this->surfacesList.size() ; i++){
@@ -539,6 +548,7 @@ Surface* Space::makeNewSurface(Segment* seg, double base, double height){
 }
 
 vector<Surface*> Space::clippingSurfaces(vector<Surface*>& walls){
+    assert (walls.size() > 0);
     for (ull i = 0 ; i < walls.size() - 1; i++){
         Surface* surface = walls[i];
         for (ull j = i + 1 ; j < walls.size(); j++){
@@ -723,7 +733,7 @@ int Space::makeClosedWall(){
     while ( check_num < (int)walls_2d.size() ){
         int line_index = 0;
         vector<int> ordered;
-        for (; line_index <walls_2d.size() ;){
+        for (; line_index < (int)walls_2d.size() ;){
             if (checked[line_index]) {
             }
             else if (ordered.size() == 0) {
@@ -801,7 +811,7 @@ int Space::makeFloorAndCeiling(){
     int line_index = 0;
     vector<bool> checked(walls_2d.size(), false);
     vector<int> ordered;
-    for (; line_index < walls_2d.size() ;){
+    for (; line_index < (int)walls_2d.size() ;){
         if (checked[line_index]) {
         }
         else if (ordered.size() == 0) {
@@ -827,7 +837,7 @@ int Space::makeFloorAndCeiling(){
 
     assert(ordered.size() == walls_2d.size());
 
-    for (int i = 0 ; i < ordered.size() ; i++){
+    for (int i = 0 ; i < (int)ordered.size() ; i++){
         int order = ordered[i];
         ceil->v_list.push_back(walls_2d[order]->first);
         floor->v_list.push_back(surfacesList[order]->makeSegmentLowerZ(this->checker)->first);
@@ -856,3 +866,70 @@ void Space::freeSurfaces(){
 
 
 
+
+int Space::removeFloorAndCeiling(){
+    cout << "\n------------- remove Object --------------\n" << endl;
+    int axis = 2;
+    int remove_count = 0;
+    int remain_count = 0;
+    for (ull i = 0 ; i < this->surfacesList.size() ; ){
+        Surface* sf = this->surfacesList[i];
+        if (sf->hasOppositeNormalwith(axis) || sf->hasSameNormalwith(axis)){
+            delete sf;
+            this->surfacesList.erase(this->surfacesList.begin() + i);
+            remove_count++;
+        }
+        else{
+            remain_count++;
+            i++;
+        }
+    }
+    cout << "remove : " << remove_count <<endl;
+    cout << "remain : " << remain_count <<endl;
+
+    return 0;
+}
+
+void Space::rotateSpaceByFloorTo00(){
+    cout << " ---------- rotate -------------" << endl;
+    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
+    Surface* floor = findFirstSurfaceSimilarWithAxis(2);
+    floor->setMBB();
+
+    Plane_3 plane(Point_3(0,0,0), floor->av_normal);
+    floor->makePlanar(plane);
+    Vector_3 vector_z(0,0,1);
+    double angle = -CGALCalculation::getAngle(floor->av_normal, vector_z);
+    Vector_3 unit_vector = CGAL::cross_product(vector_z, floor->av_normal);
+    unit_vector = unit_vector / sqrt(unit_vector.squared_length());
+    cout << "rotate " << angle << ", " << unit_vector.squared_length()<< endl;
+    assert(unit_vector.squared_length() < 1.000001 && unit_vector.squared_length() > 0.99999);
+
+    double cos_value = cos(angle * PI /180.0);
+    double sin_value = sin(angle * PI /180.0);
+
+    cout << cos_value << " , " << sin_value << endl;
+    double ux = unit_vector.x();
+    double uy = unit_vector.y();
+    double uz = unit_vector.z();
+
+    Transformation rotateZ(cos_value + ux*ux *(1-cos_value), ux*uy*(1-cos_value) - (uz * sin_value), ux*uz*(1-cos_value) + uy*sin_value,
+                            uy*ux*(1-cos_value) + uz * sin_value,cos_value + uy*uy*(1-cos_value), uy*uz*(1-cos_value)- (ux*sin_value),
+                            uz*ux*(1-cos_value)-uy*sin_value , uz*uy*(1-cos_value) + ux * sin_value, cos_value + uz*uz*(1-cos_value),
+                            1);
+
+    for (ull i = 0 ; i < this->p_vertexList->size() ; i++){
+        this->p_vertexList->at(i)->used = false;
+    }
+
+    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
+        for (ull j = 0 ; j < this->surfacesList[i]->v_list.size() ; j++){
+            if (!this->surfacesList[i]->v_list[j]->used){
+                this->surfacesList[i]->v_list[j]->used = true;
+                Point_3 p = this->surfacesList[i]->v_list[j]->getCGALPoint();
+                p = p.transform(rotateZ);
+                this->surfacesList[i]->v_list[j]->setCoords(p.x(), p.y(), p.z());
+            }
+        }
+    }
+}

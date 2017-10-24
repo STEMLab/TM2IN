@@ -2,6 +2,7 @@
 #define PREDEFINE_H_INCLUDED
 
 
+#define PI 3.14159265
 #define GENERATION_PATH "../Result/generation/"
 #define AREA_CONST 100
 
