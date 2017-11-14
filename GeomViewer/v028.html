@@ -33,10 +33,10 @@
 	<script src="js/lib/jquery.mousewheel.js"></script>
 	<script src="js/threejs/controls/TrackballControls.js"></script>
 	<script>
-		var version = "v0.2.8.1";
+		var version = "v0.2.8.2";
         var data_index = 0;
         var data_array = ["apartment","office"];
-		var data_name = "office";
+		var data_name = "apartment";
 		var result_path = "../Result/";
 		var process_path = result_path + "process/";
 		var json_path = result_path + data_name + "_" + version + "_solid.json";
@@ -78,11 +78,14 @@
 
 		function clearScene(){
 			objects = [];
-			while(scene.children.length > 0){
-				scene.remove(scene.children[0]);
+			if (scene != undefined){
+				while(scene.children.length > 0){
+					scene.remove(scene.children[0]);
+				}
 			}
+
 			container = document.getElementById('container');
-			container.removeChild(renderer.domElement);
+			if (container.hasChildNodes()) container.removeChild(renderer.domElement);
 		}
 
 		function load(){

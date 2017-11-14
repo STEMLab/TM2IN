@@ -21,8 +21,9 @@
 	</div>
 	<button type="button" style="right:0" onclick="next()">Next </button>
 	<button type="button" style = "right : 10%" onclick="pre()">Previous </button>
-	<button type="button" style = "left : 10%" onclick="showSolid()">SOLID </button>
+	<button type="button" style = "left : 10%" onclick="showRaw()">RAW </button>
     <button type="button" onclick="toggleData()"> TOGGLE </button>
+	<button type= "button" onclick="showDoubleSide()"> DoubleSide </button>
 	<div id="container"></div>
 	<script src="js/lib/three.js"></script>
 	<script src="js/lib/earcut.js"></script>
@@ -36,7 +37,11 @@
         var data_index = 0;
         var data_array = ["apartment","office"];
 		var data_name = "apartment";
+		var result_path = "../Result/";
+		var process_path = result_path + "process/";
+		var json_path = result_path + data_name + "_" + version + "_solid.json";
 		var generation = -1;
+		var doubleside = false;
 		var container, stats;
 		var objects = [];
 		var camera, controls, scene, renderer;
@@ -73,40 +78,43 @@
 
 		function clearScene(){
 			objects = [];
-			while(scene.children.length > 0){
-				scene.remove(scene.children[0]);
+			if (scene != undefined){
+				while(scene.children.length > 0){
+					scene.remove(scene.children[0]);
+				}
 			}
+
 			container = document.getElementById('container');
-			container.removeChild(renderer.domElement);
+			if (container.hasChildNodes()) container.removeChild(renderer.domElement);
 		}
 
 		function load(){
 
 			document.getElementById("generation").innerHTML = generation;
 			if (generation == -1){
-				$.getJSON("../Result/"+data_name+"_" + version+".json", function(data) {
-					console.log(data);
-					jsonfile = data;
-
-					init();
-					animate();
-				})
+				json_path = result_path + data_name + "_" + version + "_solid.json";
 			}
 			else{
-				$.getJSON("../Result/process/"+data_name+"_g_"+generation+".json", function(data) {
-					console.log(data);
-					jsonfile = data;
-					init();
-					animate();
-				})
+				json_path = "../Result/process/"+data_name+"_g_"+generation+".json";
 			}
+			loadAndInit();
 		}
 
-		load();
 
-		function showSolid(){
+		function showRaw(){
 			clearScene();
-			$.getJSON("../Result/"+data_name+"_" + version+"_solid.json", function(data) {
+			json_path = "../Result/"+data_name+"_" + version+".json";
+			loadAndInit();
+		}
+
+		function showDoubleSide(){
+			clearScene();
+			doubleside ^= 1;
+			loadAndInit();
+		}
+
+		function loadAndInit(){
+			$.getJSON(json_path, function(data) {
 				console.log(data);
 				jsonfile = data;
 				init();
@@ -116,6 +124,7 @@
 
 
 		var projector = new THREE.Projector();
+		load();
 
 		function onDocumentMouseDown( event ) {
 
@@ -132,14 +141,7 @@
 				console.log(jsonfile.spaces[0].Surfaces[intersects[0].object.name]);
 			}
 
-			/*
-			// Parse all the faces
-			for ( var i in intersects ) {
-			intersects[ i ].face.material[ 0 ].color
-			.setHex( Math.random() * 0xffffff | 0x80000000 );
 		}
-		*/
-	}
 
 
 		function init() {
@@ -203,11 +205,19 @@
 					var vertices = new Float32Array(triangled_vertices);
 
 					geometry.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
-					var material = new THREE.MeshBasicMaterial({
-						color: Math.random() * 0xffffff
-						//,wireframe : true
-						//,side: THREE.DoubleSide
-					});
+					var material;
+					if (doubleside){
+						material = new THREE.MeshBasicMaterial({
+							color: Math.random() * 0xffffff
+							//,wireframe : true
+							,side: THREE.DoubleSide
+						});
+					}
+					else{
+						material = new THREE.MeshBasicMaterial({
+							color: Math.random() * 0xffffff
+						});
+					}
 					var mesh = new THREE.Mesh(geometry, material);
 					mesh.name = j;
 					scene.add(mesh);

@@ -30,9 +30,6 @@ int FlatRoomMaker::makeSurfaces(double degree){
 int FlatRoomMaker::cleaning(int max_gener, double startDegree){
     objcl->process(check, max_gener, startDegree);
     //if (objcl->combineSurfaces(check, max_gener, startDegree) == -1) return -1;
-    //if (objcl->makeGraph() == -1) return -1;
-    //if (objcl->makeSurfacesPlanar() == -1) return -1;
-
     return 0;
 }
 

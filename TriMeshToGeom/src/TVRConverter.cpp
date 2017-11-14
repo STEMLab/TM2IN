@@ -39,7 +39,7 @@ int main(int argc, const char * argv[]) {
     //const char path[100] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/";
     const char result_path[50] = "../Result/";
     //const char result_path[50] = "/Users/dong/Documents/dev/TriMeshToGeom/Result/";
-    char file_name[] = "office";
+    char file_name[] = "apartment";
     const int max_genereration = 2;
     const char process_path[50] = "../Result/process/";
 //    TVRImporter::extractMINtvr(string(path) + string(file_name));

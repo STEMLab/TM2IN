@@ -82,35 +82,19 @@ int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegre
 
         }
 
-        //this->space_list[it]->updateNormal();
-
         if (this->space_list[it]->match00() == -1)
         {
             cout << "match00 error" << endl;
             return -1;
         }
 
-       // this->space_list[it]->remainOnlyUsingVertices();
+        this->space_list[it]->tagID();
+        this->space_list[it]->makeGraph();
 
-    }
-    return 0;
-}
+        this->space_list[it]->removeSurfacesNotConnectedFC();
+        this->space_list[it]->removeOppositeSurfaces();
+        this->space_list[it]->makeSurfacesPlanarWithLowest();
 
-int OBJCollection::makeSurfacesPlanar(){
-    for (ull i = 0 ; i < this->space_list.size(); i++)
-    {
-        this->space_list[i]->removeSurfacesNotConnectedFC();
-        this->space_list[i]->removeOppositeSurfaces();
-        this->space_list[i]->makeSurfacesPlanarWithLowest();
-    }
-    return 0;
-}
-
-int OBJCollection::makeGraph(){
-    for (ull i = 0 ; i < this->space_list.size(); i++)
-    {
-        this->space_list[i]->tagID();
-        this->space_list[i]->makeGraph();
     }
     return 0;
 }
@@ -175,6 +159,12 @@ int OBJCollection::process(Checker* ch, int max_gener, double startDegree){
             cout << "combine error" << endl;
             return -1;
         }
+        if (this->space_list[it]->simplifySegment() == -1)
+        {
+            cout << "simplify error" << endl;
+            return -1;
+        }
+
         if (this->space_list[it]->handleDefect() == -1)
         {
             cout << "" << endl;
