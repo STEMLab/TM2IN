@@ -908,7 +908,6 @@ void Space::rotateSpaceByFloorTo00(){
     double cos_value = cos(angle * PI /180.0);
     double sin_value = sin(angle * PI /180.0);
 
-    cout << cos_value << " , " << sin_value << endl;
     double ux = unit_vector.x();
     double uy = unit_vector.y();
     double uz = unit_vector.z();
