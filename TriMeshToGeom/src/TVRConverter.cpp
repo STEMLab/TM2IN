@@ -17,7 +17,7 @@ int main(int argc, const char * argv[]) {
     //const char path[100] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/";
     const char result_path[50] = "../Result/";
     //const char result_path[50] = "/Users/dong/Documents/dev/TriMeshToGeom/Result/";
-    char file_name[] = "office";
+    char file_name[] = "apartment";
     const int max_genereration = 2;
     const char process_path[50] = "../Result/process/";
 //    TVRImporter::extractMINtvr(string(path) + string(file_name));
@@ -56,7 +56,7 @@ int main(int argc, const char * argv[]) {
         case 2:{
             if (manager->importCombined(imported_bin)) return 4;
             string json_file = string(result_path) + string(file_name) + export_version + "_onlyJoin" + ".json";
-            manager->exportJSON(json_file);
+            manager->exportSpaceJSON(json_file);
             return 0;
         }
         default:{
@@ -69,11 +69,11 @@ int main(int argc, const char * argv[]) {
     if (manager->cleaning(max_genereration, 1.00) == -1) return -1;
 
     string json_file = string(result_path) + string(file_name) + export_version + ".json";
-    manager->exportJSON(json_file);
+    manager->exportSpaceJSON(json_file);
 
-    if (manager->makeSolids(10.0) == -1) return -1;
+    if (manager->makeSolids(0.03) == -1) return -1;
     string solid_file = string(result_path) + string(file_name) + export_version + "_solid.json";
-    manager->exportJSON(solid_file);
+    manager->exportSolidJSON(solid_file);
 
     std::cout << "End!\n";
     return 0;

@@ -13,7 +13,8 @@ public:
     int makeSurfaces(double degree);
     int cleaning(int, double startDegree);
     //import and export
-    int exportJSON(string f_path);
+    int exportSpaceJSON(string f_path);
+    int exportSolidJSON(string f_path);
     int exportCombined(string f_path);
     int importCombined(string f_path);
     int makeSolids(double degree);

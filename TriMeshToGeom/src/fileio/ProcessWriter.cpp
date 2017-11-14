@@ -14,7 +14,7 @@ void ProcessWriter::writeGenerationJSON(int gen, vector<Space*>& space_list){
     fout.close();
 }
 
-void ProcessWriter::writeGeneration(int gen, ull num, int space_num){
+void ProcessWriter::writeGenerationStat(int gen, ull num, int space_num){
     ofstream statout;
     statout.open(string(process_path)+ data_name + "_" + to_string(space_num) + ".txt", ios::app);
     statout << "Generation " << gen << " : " << num << endl;

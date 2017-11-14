@@ -115,11 +115,13 @@ int OBJCollection::makeSimpleSpaceGreedy(){
 }
 
 
-int OBJCollection::makeSolid(){
+int OBJCollection::makeSolid(double degree){
     cout << "make Solid" << endl;
-//    for (ull i = 0 ; i < this->space_list.size();i++){
-//        this->space_list[i]->getVertexList(this->vertex);
-//    }
+    for (ull i = 0 ; i < this->space_list.size();i++){
+        Space* space = this->space_list[i];
+        space->solid = new Solid();
+        space->solid->surfacesList = space->getTopSurfaces(degree);
+    }
 
     return 0;
 }
@@ -139,7 +141,7 @@ void OBJCollection::free(){
 }
 
 
-int OBJCollection::rotateSurfaces(Checker* ch, int max_gener, double startDegree){
+int OBJCollection::rotateSurfaces(){
     for (ull it = 0 ; it < this->space_list.size(); it++)
     {
         Space* space = this->space_list[it];

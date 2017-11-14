@@ -67,8 +67,11 @@ public:
     void getVertexList(vector<Vertex*>& vt_list);
 
     Surface* findFirstSurfaceSimilarWithAxis(int axis);
+    int findFirstSurfaceIndexSimilarWithAxis(int axis);
     int removeFloorAndCeiling();
     void rotateSpaceByFloorTo00();
+    vector<Surface*> getTopSurfaces(double percent);
+
     /**
     * TODO
     */
@@ -86,7 +89,7 @@ protected:
     Surface* attachSurfacesByArea(Surface* cp, ull start, bool* checked, ll& count, double degree);
     vector<Surface*> makeSurfacesInList(vector<Triangle*>& tri_list, bool* checked, int& combined_count, double degree);
     vector<vector<Triangle*>> separateByNormal_6(vector<Triangle>& triangles);
-    Surface* findFirstSurfaceWithAxis(int axis);
+
     Surface* makeNewSurface(Segment* seg, double base, double height);
     vector<Surface*> clippingSurfaces(vector<Surface*>& walls);
     vector<Surface*> getWallsAndRemoveInSurfacesList(vector<Surface*>& walls);

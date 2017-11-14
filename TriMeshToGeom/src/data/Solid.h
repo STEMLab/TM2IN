@@ -8,8 +8,8 @@ using namespace std;
 class Solid{
 public:
     Solid(){}
+    std::vector<Surface*> surfacesList;
 
-    void makeSimpleSolid(vector<Surface*> sf_list);
 };
 
 #endif // SOLID_H_INCLUDED

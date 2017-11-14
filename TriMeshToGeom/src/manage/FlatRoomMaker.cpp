@@ -34,22 +34,29 @@ int FlatRoomMaker::cleaning(int max_gener, double startDegree){
 }
 
 int FlatRoomMaker::makeSolids(double degree){
-    if (objcl -> makeSimpleSpaceGreedy()) return -1;
-    if (objcl -> makeSolid() ) return -1;
+    //if (objcl -> makeSimpleSpaceGreedy()) return -1;
+    if (objcl -> makeSolid(degree) ) return -1;
     return 0;
 }
 
-int FlatRoomMaker::exportJSON(string f_path)
+int FlatRoomMaker::exportSpaceJSON(string f_path)
 {
-    cout << "export JSON" << endl;
     ofstream fout;
     fout.open(f_path, ios::out|ios::trunc);
 
     if (!fout) return -1;
-    if (JSONMaker::printJSON(fout, this->objcl->space_list))
-    {
-        return -1;
-    }
+    if (JSONMaker::printJSON(fout, this->objcl->space_list)) return -1;
+    fout.close();
+    return 0;
+}
+
+int FlatRoomMaker::exportSolidJSON(string f_path)
+{
+    ofstream fout;
+    fout.open(f_path, ios::out|ios::trunc);
+
+    if (!fout) return -1;
+    if (JSONMaker::printSolidJSON(fout, this->objcl->space_list)) return -1;
     fout.close();
     return 0;
 }

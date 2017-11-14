@@ -21,7 +21,7 @@
 	</div>
 	<button type="button" style="right:0" onclick="next()">Next </button>
 	<button type="button" style = "right : 10%" onclick="pre()">Previous </button>
-	<button type="button" style = "left : 10%" onclick="showRaw()">RAW </button>
+	<button type="button" id="raw" style = "left : 10%" onclick="showRaw()">RAW</button>
     <button type="button" onclick="toggleData()"> TOGGLE </button>
 	<button type= "button" onclick="showDoubleSide()"> DoubleSide </button>
 	<div id="container"></div>
@@ -36,7 +36,7 @@
 		var version = "v1.0.0.1";
         var data_index = 0;
         var data_array = ["apartment","office"];
-		var data_name = "office";
+		var data_name = "apartment";
 		var result_path = "../Result/";
 		var process_path = result_path + "process/";
 		var json_path = result_path + data_name + "_" + version + "_solid.json";
@@ -44,6 +44,7 @@
 		var doubleside = false;
 		var container, stats;
 		var objects = [];
+		var solid_mode = "RAW";
 		var camera, controls, scene, renderer;
 
 		var raycaster;
@@ -102,7 +103,18 @@
 
 		function showRaw(){
 			clearScene();
-			json_path = "../Result/"+data_name+"_" + version+".json";
+			var inner = document.getElementById("raw");
+			if (solid_mode == "RAW"){
+				json_path = "../Result/"+data_name+"_" + version+".json";
+				solid_mode = "SOLID";
+				inner.value == solid_mode;
+
+			}
+			else {
+				json_path = "../Result/"+data_name+"_" + version+"_solid.json";
+				solid_mode = "RAW";
+				inner.value == solid_mode;
+			}
 			loadAndInit();
 		}
 

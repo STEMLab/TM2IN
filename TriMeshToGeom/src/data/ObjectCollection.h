@@ -36,7 +36,7 @@ public:
     int rotateSurfaces();
 
     int makeSimpleSpaceGreedy();
-    int makeSolid();
+    int makeSolid(double);
 private:
     int combine_simplify_handle(Space* space, double degree);
 };

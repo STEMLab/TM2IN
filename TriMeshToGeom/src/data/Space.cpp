@@ -76,7 +76,7 @@ vector<Surface*> Space::makeSurfacesInList(vector<Triangle*>& tri_list, bool* ch
 
     for (ull index = 0 ; index < size; index++)
     {
-        this->printProcess(combined_count, this->triangles.size());
+        this->printProcess(index, tri_list.size());
         if (checked[index])
         {
             continue;
@@ -92,7 +92,7 @@ vector<Surface*> Space::makeSurfacesInList(vector<Triangle*>& tri_list, bool* ch
             if (combined_count % 250 == 1 )
             {
                 cout << "\n------------ " << index << " -----------  size : " << size << endl;
-                this->printProcess(combined_count, this->triangles.size());
+                this->printProcess(index, tri_list.size());
             }
             combined_count += count;
         }
@@ -431,6 +431,17 @@ Surface* Space::findFirstSurfaceSimilarWithAxis(int axis){
         Surface* sf = this->surfacesList[i];
         if (CGALCalculation::findNormalType6(sf->av_normal) == axis){
             return sf;
+        }
+    }
+    assert(false);
+}
+
+
+int Space::findFirstSurfaceIndexSimilarWithAxis(int axis){
+    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
+        Surface* sf = this->surfacesList[i];
+        if (CGALCalculation::findNormalType6(sf->av_normal) == axis){
+            return i;
         }
     }
     assert(false);
@@ -881,16 +892,25 @@ int Space::removeFloorAndCeiling(){
     return 0;
 }
 
+
 void Space::rotateSpaceByFloorTo00(){
     cout << " ---------- rotate -------------" << endl;
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
-    Surface* floor = findFirstSurfaceSimilarWithAxis(2);
+    int floor_index = findFirstSurfaceIndexSimilarWithAxis(2);
+    Surface* floor = this->surfacesList[floor_index];
     floor->setMBB();
-
     Plane_3 plane(Point_3(0,0,0), floor->av_normal);
     floor->makePlanar(plane);
+
     Vector_3 vector_z(0,0,1);
     double angle = -CGALCalculation::getAngle(floor->av_normal, vector_z);
+    if (angle == 0.0){
+        floor->av_normal = vector_z;
+        Plane_3 xy_plane(Point_3(0,0,0), vector_z);
+        floor->makePlanar(xy_plane);
+        return;
+    }
+
     Vector_3 unit_vector = CGAL::cross_product(vector_z, floor->av_normal);
     unit_vector = unit_vector / sqrt(unit_vector.squared_length());
     cout << "rotate " << angle << ", " << unit_vector.squared_length()<< endl;
@@ -922,4 +942,13 @@ void Space::rotateSpaceByFloorTo00(){
             }
         }
     }
+}
+
+
+vector<Surface*> Space::getTopSurfaces(double percent){
+    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
+    int num = (int)((double)this->surfacesList.size() * percent);
+    if (num < 1) num = 1;
+    vector<Surface*> ret(this->surfacesList.begin(), this->surfacesList.begin() + num);
+    return ret;
 }

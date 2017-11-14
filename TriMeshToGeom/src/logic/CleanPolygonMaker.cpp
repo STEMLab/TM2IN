@@ -144,7 +144,7 @@ bool CleanPolygonMaker::findShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj
     return false;
 }
 
-void CleanPolygonMaker::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj, ll middle_i, ll middle_j, ll& start_i, ll& end_i, ll& start_j, ll& end_j){
+int CleanPolygonMaker::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj, ll middle_i, ll middle_j, ll& start_i, ll& end_i, ll& start_j, ll& end_j){
     ll piece_size = vi.size();
     ll origin_size = vj.size();
 
@@ -163,10 +163,9 @@ void CleanPolygonMaker::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj
         next_j = j-1 == -1? origin_size-1 : j-1;
 
         num++;
-        if ((num > vi.size() + 1) &&(num > vj.size() + 1)){
+        if ((num > vi.size() + 1) &&(num > vj.size() + 1)){ //maybe same surface but opposite
             cout << "infinite loop in find Start And End" << endl;
-            exit(-1);
-            return;
+            return 1;
         }
     }
     end_i = i;
@@ -187,14 +186,14 @@ void CleanPolygonMaker::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj
         next_i = i - 1 == -1? vi.size() -1 : i - 1;
         next_j = j + 1 == origin_size? 0 : j + 1;
         num++;
-        if ((num > vi.size() + 1) && (num > vj.size() + 1)){
+        if ((num > vi.size() + 1) && (num > vj.size() + 1)){//maybe same surface but opposite
             cout << "infinite loop in find Start And End" << endl;
-            exit(-1);
-            return;
+            return 1;
         }
     }
     start_i = i;
     start_j = j;
+    return 0;
 }
 
 bool CleanPolygonMaker::isNeighbor(Surface* cp1, Surface* cp2){
@@ -241,7 +240,9 @@ int CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece, bool
 
     ll end_i = -1, end_j = -1;
     ll start_i = -1, start_j = -1;
-    findStartAndEnd(piece_vertex_list, origin->v_list, middle_i, middle_j, start_i, end_i, start_j, end_j);
+    if (findStartAndEnd(piece_vertex_list, origin->v_list, middle_i, middle_j, start_i, end_i, start_j, end_j)){
+        return 1;
+    }
 
     int seg_num = piece->getSegmentsNumber(start_i, end_i);
     if (seg_num <= 1) {
