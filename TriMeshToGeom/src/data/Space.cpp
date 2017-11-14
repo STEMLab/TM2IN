@@ -290,8 +290,8 @@ int Space::simplifySegment(){
         printProcess(i, p_size);
         for (ull j = i + 1; j < p_size ; j++)
         {
-            this->surfacesList[i]->updateNormal(checker);
-            this->surfacesList[j]->updateNormal(checker);
+            //this->surfacesList[i]->updateNormal(checker);
+            //this->surfacesList[j]->updateNormal(checker);
             int loop_count = 0;
             bool again = false;
             while (CleanPolygonMaker::simplifyLineSegment(this->surfacesList[i], this->surfacesList[j], again) == 0)
@@ -311,7 +311,6 @@ int Space::simplifySegment(){
 
 int Space::handleDefect(){
     cout << "\n------------- handle Defect --------------\n" << endl;
-    //sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
     {
         Surface* surface = this->surfacesList[i];
@@ -414,20 +413,23 @@ int Space::remainOnlyUsingVertices(){
     return 0;
 }
 
+
+int Space::makeGraph(){
+    cout << "\n------------- Graph --------------\n" << endl;
+    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
+    this->tagID();
+
+    this->surface_graph = new SurfaceGraph();
+    surface_graph->makeAdjacentGraph(this->surfacesList);
+
+    surface_graph->print_bfs();
+    return 0;
+}
+
 Surface* Space::findFirstSurfaceSimilarWithAxis(int axis){
     for (ull i = 0 ; i < this->surfacesList.size() ; i++){
         Surface* sf = this->surfacesList[i];
         if (CGALCalculation::findNormalType6(sf->av_normal) == axis){
-            return sf;
-        }
-    }
-    assert(false);
-}
-
-Surface* Space::findFirstSurfaceWithAxis(int axis){
-    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
-        Surface* sf = this->surfacesList[i];
-        if (sf->hasSameNormalwith(axis)){
             return sf;
         }
     }
@@ -439,8 +441,8 @@ int Space::removeSurfacesNotConnectedFC(){
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
     vector<bool> fixed_vertices(this->p_vertexList->size(), false);
 
-    Surface* roof = findFirstSurfaceWithAxis(5);
-    Surface* floor = findFirstSurfaceWithAxis(2);
+    Surface* roof = findFirstSurfaceSimilarWithAxis(5);
+    Surface* floor = findFirstSurfaceSimilarWithAxis(2);
 
     if (roof == NULL || floor == NULL) return -1;
 
@@ -502,17 +504,6 @@ int Space::makeSurfacesPlanarWithLowest(){
 }
 
 
-int Space::makeGraph(){
-    cout << "\n------------- Graph --------------\n" << endl;
-    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
-    this->tagID();
-
-    this->surface_graph = new SurfaceGraph();
-    surface_graph->makeAdjacentGraph(this->surfacesList);
-
-    surface_graph->print_bfs();
-    return 0;
-}
 
 int Space::makeWallRectangle(){
     cout << "\n------------- make Wall Rectangle --------------\n" << endl;

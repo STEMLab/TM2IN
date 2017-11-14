@@ -9,28 +9,6 @@
 
 using namespace std;
 
-void test(){
-//    Vector_3 a = Vector_3(1,1,1);
-    Vector_3 b = Vector_3(0,0,-1);
-//    cout << CGALCalculation::getAngle(a, b) <<endl;
-
-    Point_3 p1 = Point_3(0,0,0);
-    Point_3 p2 = Point_3(0,-3,2);
-    Point_3 p3 = Point_3(3,-1,1);
-
-    Plane_3 plane1 = Plane_3(Point_3(0,0,1), b);
-
-    cout << plane1.to_2d(p1) << endl;
-    cout << plane1.to_2d(p2) << endl;
-    cout << plane1.to_2d(p3) << endl;
-
-    Plane_3 plane2 = Plane_3(Point_3(0,0,1), -b);
-    cout << plane2.to_2d(p1) << endl;
-    cout << plane2.to_2d(p2) << endl;
-    cout << plane2.to_2d(p3) << endl;
-
-}
-
 int main(int argc, const char * argv[]) {
     //TODO make argv
     string import_version = "_v1.0.0";

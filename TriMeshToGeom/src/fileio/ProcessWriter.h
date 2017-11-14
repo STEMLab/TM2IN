@@ -21,7 +21,7 @@ public:
     void writeBeforeJoin(ull num, int space_num);
     void writeRoughSurfaces(ull num, int space_num);
     void writeGenerationJSON(int gen, vector<Space*>& space_list);
-    void writeGeneration(int gen, ull num, int space_num);
+    void writeGenerationStat(int gen, ull num, int space_num);
 };
 
 #endif // PROCESSWRITER_H_INCLUDED

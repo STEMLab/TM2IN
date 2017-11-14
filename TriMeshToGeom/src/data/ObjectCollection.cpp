@@ -36,50 +36,55 @@ int OBJCollection::makeSurfaces(double degree){
     return 0;
 }
 
+int OBJCollection::combine_simplify_handle(Space* space, double degree){
+    if (space->combineSurface(degree) == -1)
+    {
+        cout << "combine error" << endl;
+        return -1;
+    }
+    if (space->simplifySegment() == -1)
+    {
+        cout << "simplify error" << endl;
+        return -1;
+    }
+    if (space->handleDefect() == -1)
+    {
+        cout << "" << endl;
+        return -1;
+    }
+    return 0;
+}
 
 int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegree){
     for (ull it = 0 ; it < this->space_list.size(); it++)
     {
+        Space* space = this->space_list[it];
         for (unsigned int i = 0 ; i < this->space_list[it]->surfacesList.size() ;i++){
-            if (this->space_list[it]->surfacesList[i]->checkDuplicate(ch)){
+            if (space->surfacesList[i]->checkDuplicate(ch)){
                 cout << "it has duplicate Vertex" << endl;
                 return -1;
             }
         }
 
-        ll p_size = this->space_list[it]->surfacesList.size();
-        this->process_writer->writeRoughSurfaces(p_size, it);
+        ll p_size = space->surfacesList.size();
+        //this->process_writer->writeRoughSurfaces(p_size, it);
 
         double degree = startDegree;
         int gen = 0;
 
         while (true && max_gener--){
-            this->space_list[it]->updateNormal();
+            space->updateNormal();
             cout << "generation : " << gen << endl;
-            if (this->space_list[it]->combineSurface(degree) == -1)
-            {
-                cout << "combine error" << endl;
-                return -1;
-            }
-            if (degree < 45) degree += 0.05;
-            if (this->space_list[it]->simplifySegment() == -1)
-            {
-                cout << "simplify error" << endl;
-                return -1;
-            }
-            if (this->space_list[it]->handleDefect() == -1)
-            {
-                cout << "" << endl;
-                return -1;
-            }
 
-            if (p_size == (int)this->space_list[it]->surfacesList.size()) break;
-            else p_size = (int)this->space_list[it]->surfacesList.size();
+            if (this->combine_simplify_handle(space, degree)) return -1;
+
+            if (p_size == (int)space->surfacesList.size()) break;
+            else p_size = (int)space->surfacesList.size();
 
             this->process_writer->writeGenerationJSON(gen, space_list);
-            this->process_writer->writeGeneration(gen, this->space_list[it]->surfacesList.size(), it);
-            gen++;
 
+            gen++;
+            if (degree < 15) degree += 0.05;
         }
 
         if (this->space_list[it]->match00() == -1)
@@ -90,30 +95,25 @@ int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegre
 
         this->space_list[it]->tagID();
         this->space_list[it]->makeGraph();
-
-        this->space_list[it]->removeSurfacesNotConnectedFC();
-        this->space_list[it]->removeOppositeSurfaces();
-        this->space_list[it]->makeSurfacesPlanarWithLowest();
-
     }
     return 0;
 }
 
-int OBJCollection::makeWall(double degree){
+int OBJCollection::makeSimpleSpaceGreedy(){
     for (ull i = 0 ; i < this->space_list.size(); i++)
     {
-        this->space_list[i]->makeWallRectangle();
-        this->space_list[i]->makeClosedWall();
+        Space* space = this->space_list[i];
+        space->updateNormal();
+        space->removeSurfacesNotConnectedFC();
+        space->removeOppositeSurfaces();
+        space->makeSurfacesPlanarWithLowest();
+        space->makeWallRectangle();
+        space->makeClosedWall();
+        space->makeFloorAndCeiling();
     }
     return 0;
 }
 
-int OBJCollection::makeFloorAndCeiling(){
-    for (ull i = 0 ; i < this->space_list.size() ; i++){
-        this->space_list[i]->makeFloorAndCeiling();
-    }
-    return 0;
-}
 
 int OBJCollection::makeSolid(){
     cout << "make Solid" << endl;
@@ -139,42 +139,11 @@ void OBJCollection::free(){
 }
 
 
-int OBJCollection::process(Checker* ch, int max_gener, double startDegree){
+int OBJCollection::rotateSurfaces(Checker* ch, int max_gener, double startDegree){
     for (ull it = 0 ; it < this->space_list.size(); it++)
     {
         Space* space = this->space_list[it];
-        for (unsigned int i = 0 ; i < space->surfacesList.size() ;i++){
-            if (space->surfacesList[i]->checkDuplicate(ch)){
-                cout << "it has duplicate Vertex" << endl;
-                return -1;
-            }
-        }
-
-        double degree = 1.0;
-        int gen = 0;
-        //space->updateNormal();
-        cout << space->surfacesList.size() << endl;
-        if (space->combineSurface(degree) == -1)
-        {
-            cout << "combine error" << endl;
-            return -1;
-        }
-        if (this->space_list[it]->simplifySegment() == -1)
-        {
-            cout << "simplify error" << endl;
-            return -1;
-        }
-
-        if (this->space_list[it]->handleDefect() == -1)
-        {
-            cout << "" << endl;
-            return -1;
-        }
-
-        cout << "\n\n" <<space->surfacesList.size() << endl;
-        space->match00();
         space->rotateSpaceByFloorTo00();
-
     }
     return 0;
 }
