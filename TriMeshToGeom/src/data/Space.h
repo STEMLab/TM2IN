@@ -7,6 +7,8 @@
 #include <map>
 #include <queue>
 
+#include "predefine.h"
+
 #include "data/SurfaceGraph.h"
 #include "model/Triangle.h"
 #include "logic/TriangleAttacher.h"
@@ -49,9 +51,11 @@ public:
     int match00();
     int handleDefect();
     int updateNormal();
-    int removeObject(int);
 
-    int makeSurfacesPlanar();
+    int removeSurfacesNotConnectedFC();
+    int removeOppositeSurfaces();
+    int makeSurfacesPlanarWithLowest();
+
     int makeGraph();
     int remainOnlyUsingVertices();
 
@@ -61,6 +65,10 @@ public:
 
     int makeFloorAndCeiling();
     void getVertexList(vector<Vertex*>& vt_list);
+
+    Surface* findFirstSurfaceSimilarWithAxis(int axis);
+    int removeFloorAndCeiling();
+    void rotateSpaceByFloorTo00();
     /**
     * TODO
     */
@@ -78,7 +86,7 @@ protected:
     Surface* attachSurfacesByArea(Surface* cp, ull start, bool* checked, ll& count, double degree);
     vector<Surface*> makeSurfacesInList(vector<Triangle*>& tri_list, bool* checked, int& combined_count, double degree);
     vector<vector<Triangle*>> separateByNormal_6(vector<Triangle>& triangles);
-    Surface* findBigSurface(int axis);
+    Surface* findFirstSurfaceWithAxis(int axis);
     Surface* makeNewSurface(Segment* seg, double base, double height);
     vector<Surface*> clippingSurfaces(vector<Surface*>& walls);
     vector<Surface*> getWallsAndRemoveInSurfacesList(vector<Surface*>& walls);

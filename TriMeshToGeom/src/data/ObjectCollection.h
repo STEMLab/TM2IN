@@ -33,13 +33,12 @@ public:
     int makeSurfaces(double degree);
     void free();
     int combineSurfaces(Checker* ch, int max_gener, double startDegree);
-    int makeGraph();
-    int makeSurfacesPlanar();
+
     int makeWall(double degree);
     int makeFloorAndCeiling();
     int makeSolid();
 
-    void test();
+    int process(Checker* ch, int max_gener, double startDegree);
 };
 
 #endif /* ObjectCollection_h */

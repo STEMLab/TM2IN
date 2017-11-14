@@ -28,17 +28,15 @@ int FlatRoomMaker::makeSurfaces(double degree){
 
 
 int FlatRoomMaker::cleaning(int max_gener, double startDegree){
-    if (objcl->combineSurfaces(check, max_gener, startDegree) == -1) return -1;
-    if (objcl->makeGraph() == -1) return -1;
-    if (objcl->makeSurfacesPlanar() == -1) return -1;
-
+    objcl->process(check, max_gener, startDegree);
+    //if (objcl->combineSurfaces(check, max_gener, startDegree) == -1) return -1;
     return 0;
 }
 
 int FlatRoomMaker::makeSolids(double degree){
-    if (objcl -> makeWall(degree)) return -1;
+    //if (objcl -> makeWall(degree)) return -1;
     //if (objcl -> makeFloorAndCeiling()) return -1;
-    //if (objcl -> makeSolid() ) return -1;
+    if (objcl -> makeSolid() ) return -1;
     return 0;
 }
 

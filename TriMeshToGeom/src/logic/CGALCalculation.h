@@ -17,10 +17,11 @@
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/enum.h>
-
+#include <CGAL/Aff_transformation_3.h>
 #include <CGAL/intersections.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
+typedef CGAL::Aff_transformation_3<Kernel> Transformation;
 typedef Kernel::Point_3 Point_3;
 typedef Kernel::Point_2 Point_2;
 typedef Kernel::Vector_3 Vector_3;

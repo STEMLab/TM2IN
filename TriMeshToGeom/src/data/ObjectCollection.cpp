@@ -36,6 +36,7 @@ int OBJCollection::makeSurfaces(double degree){
     return 0;
 }
 
+
 int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegree){
     for (ull it = 0 ; it < this->space_list.size(); it++)
     {
@@ -81,33 +82,19 @@ int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegre
 
         }
 
-        //this->space_list[it]->updateNormal();
-
         if (this->space_list[it]->match00() == -1)
         {
             cout << "match00 error" << endl;
             return -1;
         }
 
-       // this->space_list[it]->remainOnlyUsingVertices();
+        this->space_list[it]->tagID();
+        this->space_list[it]->makeGraph();
 
-    }
-    return 0;
-}
+        this->space_list[it]->removeSurfacesNotConnectedFC();
+        this->space_list[it]->removeOppositeSurfaces();
+        this->space_list[it]->makeSurfacesPlanarWithLowest();
 
-int OBJCollection::makeSurfacesPlanar(){
-    for (ull i = 0 ; i < this->space_list.size(); i++)
-    {
-        this->space_list[i]->makeSurfacesPlanar();
-    }
-    return 0;
-}
-
-int OBJCollection::makeGraph(){
-    for (ull i = 0 ; i < this->space_list.size(); i++)
-    {
-        this->space_list[i]->tagID();
-        this->space_list[i]->makeGraph();
     }
     return 0;
 }
@@ -130,10 +117,9 @@ int OBJCollection::makeFloorAndCeiling(){
 
 int OBJCollection::makeSolid(){
     cout << "make Solid" << endl;
-    free();
-    for (ull i = 0 ; i < this->space_list.size();i++){
-        this->space_list[i]->getVertexList(this->vertex);
-    }
+//    for (ull i = 0 ; i < this->space_list.size();i++){
+//        this->space_list[i]->getVertexList(this->vertex);
+//    }
 
     return 0;
 }
@@ -152,17 +138,43 @@ void OBJCollection::free(){
     vertex.clear();
 }
 
-void OBJCollection::test(){
-    Surface* zero = this->space_list[0]->surfacesList[0];
-    for (int i = 0 ; i < (int)this->space_list[0]->surfacesList.size() ; i++){
-        Surface* sf = this->space_list[0]->surfacesList[i];
-        if (sf->sf_id == 36)
-        {
-            double angle = CGALCalculation::getAngle(zero->av_normal, sf->av_normal);
-            Vector_3 added = zero->av_normal + sf->av_normal;
-            cout << angle << endl;
-            cout << (CGALCalculation::getAngle(added, zero->av_normal)) << endl;
-        }
-    }
-}
 
+int OBJCollection::process(Checker* ch, int max_gener, double startDegree){
+    for (ull it = 0 ; it < this->space_list.size(); it++)
+    {
+        Space* space = this->space_list[it];
+        for (unsigned int i = 0 ; i < space->surfacesList.size() ;i++){
+            if (space->surfacesList[i]->checkDuplicate(ch)){
+                cout << "it has duplicate Vertex" << endl;
+                return -1;
+            }
+        }
+
+        double degree = 1.0;
+        int gen = 0;
+        //space->updateNormal();
+        cout << space->surfacesList.size() << endl;
+        if (space->combineSurface(degree) == -1)
+        {
+            cout << "combine error" << endl;
+            return -1;
+        }
+        if (this->space_list[it]->simplifySegment() == -1)
+        {
+            cout << "simplify error" << endl;
+            return -1;
+        }
+
+        if (this->space_list[it]->handleDefect() == -1)
+        {
+            cout << "" << endl;
+            return -1;
+        }
+
+        cout << "\n\n" <<space->surfacesList.size() << endl;
+        space->match00();
+        space->rotateSpaceByFloorTo00();
+
+    }
+    return 0;
+}

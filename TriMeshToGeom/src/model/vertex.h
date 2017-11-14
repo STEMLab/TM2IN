@@ -47,6 +47,11 @@ public:
     void setX(double value){coords[0] = value;}
     void setY(double value){coords[1] = value;}
     void setZ(double value){coords[2] = value;}
+    void setCoords(double x, double y, double z){
+        coords[0] = x;
+        coords[1] = y;
+        coords[2] = z;
+    }
 
     double operator[](int idx){
         return coords[idx];
