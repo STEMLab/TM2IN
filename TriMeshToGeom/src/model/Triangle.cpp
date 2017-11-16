@@ -39,6 +39,22 @@ std::string Triangle::toJSON(){
     return NULL;
 }
 
+bool Triangle::isAdjacent(Triangle& tri){
+    if (a == tri.a){
+        if (b == tri.c) return true;
+        else if (c == tri.b) return true;
+    }
+    else if (a == tri.b){
+        if (b == tri.a || c == tri.c) return true;
+
+    }
+    else if (a == tri.c){
+        if (b == tri.b || c == tri.a) return true;
+    }
+    return false;
+
+}
+
 bool Triangle::isOpposite(Triangle& tri){
     if (a == tri.a){
         if (b == tri.c)

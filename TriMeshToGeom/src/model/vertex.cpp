@@ -13,6 +13,8 @@ std::string Vertex::toJSON()
     ret.append(to_string(y()));
     ret.append(",");
     ret.append(to_string(z()));
+    ret.append(",");
+    ret.append(to_string(this->index));
     ret.append("]");
     return ret;
 }

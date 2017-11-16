@@ -11,6 +11,7 @@
 
 #include "data/Surface.hpp"
 #include "logic/check.hpp"
+#include "space_maker/SpaceMaker.h"
 #include "data/Space.h"
 #include "fileio/JSONMaker.h"
 #include "predefine.h"
@@ -26,17 +27,17 @@ class OBJCollection{
 public:
     vector<Vertex*> vertex;
     vector<Space*> space_list;
+    vector<Space*> simple_space_list;
     ProcessWriter* process_writer;
 
     void setWriter(ProcessWriter * pw){process_writer = pw;}
 
-    int makeSurfaces(double degree);
+    int mergeTriangles(double degree);
     void free();
     int combineSurfaces(Checker* ch, int max_gener, double startDegree);
     int rotateSurfaces();
 
-    int makeSimpleSpaceGreedy();
-    int makeSolid(double);
+    int makeSimpleSpaces(SpaceMaker* sm);
 private:
     int combine_simplify_handle(Space* space, double degree);
 };

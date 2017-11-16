@@ -8,6 +8,8 @@
 
 #include "data/ObjectCollection.h"
 
+#include "space_maker/SpaceMaker.h"
+#include "logic/SurfacesListCalculation.h"
 
 #include <fstream>
 #include <string>
@@ -18,14 +20,19 @@
 
 using namespace std;
 
-int OBJCollection::makeSurfaces(double degree){
+int OBJCollection::mergeTriangles(double degree){
 
     for (ull i = 0 ; i < this->space_list.size(); i++)
     {
-        this->process_writer->writeBeforeJoin(this->space_list[i]->triangles.size(), i);
+//        cout << "make Triangle Graph" << endl;
+//        SurfaceGraph* sg = new SurfaceGraph();
+//        sg->makeAdjacentGraph(this->space_list[i]->triangles);
+//        if (!sg->isClosedTrinagleMesh()){
+//            cout << "Not Closed Polyhedral" << endl;
+//            return -1;
+//        }
         cout << this->space_list[i] -> name << " is converting..." << endl;
-        int ret = this->space_list[i]->makeSurfacesGreedy(degree);
-        if (ret)
+        if (this->space_list[i]->mergeTrianglesGreedy(degree))
         {
             cout << "make Surfaces error" << endl;
             return -1;
@@ -67,16 +74,23 @@ int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegre
         }
 
         ll p_size = space->surfacesList.size();
-        //this->process_writer->writeRoughSurfaces(p_size, it);
-
         double degree = startDegree;
-        int gen = 0;
 
-        while (true && max_gener--){
+        this->process_writer->writeGenerationJSON(0, space_list);
+
+        int gen = 1;
+
+        while (true && max_gener-- > 0){
+
             space->updateNormal();
             cout << "generation : " << gen << endl;
 
-            if (this->combine_simplify_handle(space, degree)) return -1;
+          //  if (this->combine_simplify_handle(space, degree)) return -1;
+            if (space->combineSurface(degree) == -1)
+            {
+                cout << "combine error" << endl;
+                return -1;
+            }
 
             if (p_size == (int)space->surfacesList.size()) break;
             else p_size = (int)space->surfacesList.size();
@@ -87,40 +101,40 @@ int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegre
             if (degree < 15) degree += 0.05;
         }
 
-        if (this->space_list[it]->match00() == -1)
-        {
+//        if (space->simplifySegment() == -1){
+//            cout << "simplify error" << endl;
+//            return -1;
+//        }
+        if (space->combineSurfaceMoreGreedy()) return -1;
+        if (space->handleDefect() == -1){
+            cout << "" << endl;
+            return -1;
+        }
+        if (space->match00() == -1){
             cout << "match00 error" << endl;
             return -1;
         }
 
-        this->space_list[it]->tagID();
-        this->space_list[it]->makeGraph();
+        SLC::tagID(space->surfacesList);
+//
+//        cout << space->surfacesList.size() << endl;
+//
+//        while (true && max_gener-- > 0){
+//            this->combine_simplify_handle(space, degree);
+//        }
+//        cout << space->surfacesList.size() << endl;
     }
     return 0;
 }
 
-int OBJCollection::makeSimpleSpaceGreedy(){
-    for (ull i = 0 ; i < this->space_list.size(); i++)
-    {
-        Space* space = this->space_list[i];
-        space->updateNormal();
-        space->removeSurfacesNotConnectedFC();
-        space->removeOppositeSurfaces();
-        space->makeSurfacesPlanarWithLowest();
-        space->makeWallRectangle();
-        space->makeClosedWall();
-        space->makeFloorAndCeiling();
-    }
-    return 0;
-}
-
-
-int OBJCollection::makeSolid(double degree){
-    cout << "make Solid" << endl;
+int OBJCollection::makeSimpleSpaces(SpaceMaker* sm){
     for (ull i = 0 ; i < this->space_list.size();i++){
         Space* space = this->space_list[i];
-        space->solid = new Solid();
-        space->solid->surfacesList = space->getTopSurfaces(degree);
+        space->updateNormal();
+        Space* new_space = new Space(space->name, space->checker);
+        sm->checker = space->checker;
+        new_space->surfacesList = sm->makeSimpleSurfaces(space->surfacesList);
+        this->simple_space_list.push_back(new_space);
     }
 
     return 0;

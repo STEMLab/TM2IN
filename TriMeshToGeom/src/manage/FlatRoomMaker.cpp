@@ -23,19 +23,18 @@ int FlatRoomMaker::import(const char* file_path){
 }
 
 int FlatRoomMaker::makeSurfaces(double degree){
-    return objcl->makeSurfaces(degree);
+    return objcl->mergeTriangles(degree);
 }
 
 
 int FlatRoomMaker::cleaning(int max_gener, double startDegree){
     if (objcl->combineSurfaces(check, max_gener, startDegree) == -1) return -1;
-    objcl->rotateSurfaces();
+    //objcl->rotateSurfaces();
     return 0;
 }
 
-int FlatRoomMaker::makeSolids(double degree){
-    //if (objcl -> makeSimpleSpaceGreedy()) return -1;
-    if (objcl -> makeSolid(degree) ) return -1;
+int FlatRoomMaker::makeSimpleSpaces(SpaceMaker* sm){
+    if (objcl -> makeSimpleSpaces(sm) ) return -1;
     return 0;
 }
 
@@ -50,13 +49,13 @@ int FlatRoomMaker::exportSpaceJSON(string f_path)
     return 0;
 }
 
-int FlatRoomMaker::exportSolidJSON(string f_path)
+int FlatRoomMaker::exportSimpleSpaceJSON(string f_path)
 {
     ofstream fout;
     fout.open(f_path, ios::out|ios::trunc);
 
     if (!fout) return -1;
-    if (JSONMaker::printSolidJSON(fout, this->objcl->space_list)) return -1;
+    if (JSONMaker::printJSON(fout, this->objcl->simple_space_list)) return -1;
     fout.close();
     return 0;
 }

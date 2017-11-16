@@ -43,6 +43,7 @@ public:
     }
 
 
+    Surface(Triagnle& pl);
     Surface(Triangle* pl);
     Surface(Surface* cp);
 

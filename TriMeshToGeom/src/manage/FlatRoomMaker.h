@@ -14,10 +14,10 @@ public:
     int cleaning(int, double startDegree);
     //import and export
     int exportSpaceJSON(string f_path);
-    int exportSolidJSON(string f_path);
+    int exportSimpleSpaceJSON(string f_path);
     int exportCombined(string f_path);
     int importCombined(string f_path);
-    int makeSolids(double degree);
+    int makeSimpleSpaces(SpaceMaker* sm);
 
 protected:
 

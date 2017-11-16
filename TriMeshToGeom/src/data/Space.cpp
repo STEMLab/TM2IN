@@ -1,4 +1,5 @@
 #include "data/Space.h"
+#include "logic/SurfacesListCalculation.h"
 
 #include <cstdio>
 #include <queue>
@@ -6,6 +7,9 @@
 #include <algorithm>
 #include <cmath>
 
+Space::Space(){
+
+}
 
 Space::Space(string pname, Checker* check)
 {
@@ -22,7 +26,7 @@ void Space::pushTriangle(Triangle tri){
     this->triangles.push_back(tri);
 }
 
-int Space::makeSurfacesGreedy(double degree){
+int Space::mergeTrianglesGreedy(double degree){
     int combined_count = 0;
     vector<Triangle*> p_triangles;
     ull size = this->triangles.size();
@@ -63,11 +67,6 @@ int Space::makeSurfacesNotJoin(){
     return 0;
 }
 
-void Space::printProcess(ull index, ull size){
-    cout << "\r==========" << (int)((double)index/(double)size * 100) <<"% ========";
-}
-
-
 vector<Surface*> Space::makeSurfacesInList(vector<Triangle*>& tri_list, bool* checked, int& combined_count, double degree)
 {
     vector<Surface*> result_list;
@@ -76,7 +75,7 @@ vector<Surface*> Space::makeSurfacesInList(vector<Triangle*>& tri_list, bool* ch
 
     for (ull index = 0 ; index < size; index++)
     {
-        this->printProcess(index, tri_list.size());
+        printProcess(index, tri_list.size());
         if (checked[index])
         {
             continue;
@@ -92,7 +91,7 @@ vector<Surface*> Space::makeSurfacesInList(vector<Triangle*>& tri_list, bool* ch
             if (combined_count % 250 == 1 )
             {
                 cout << "\n------------ " << index << " -----------  size : " << size << endl;
-                this->printProcess(index, tri_list.size());
+                printProcess(index, tri_list.size());
             }
             combined_count += count;
         }
@@ -151,36 +150,6 @@ int Space::checkOpposite()
     return 0;
 }
 
-int Space::combineSurfaceByArea(double degree){
-    cout << "Combine Surfaces By area" << endl;
-
-    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
-    ull p_size = this->surfacesList.size();
-    bool* checked = (bool*)malloc(sizeof(bool) * p_size);
-    std::fill(checked, checked + p_size, false);
-
-    vector<Surface*> new_poly_list;
-    int combined_count = 0;
-    for (ull i = 0 ; i < this->surfacesList.size() ; i++)
-    {
-        if (checked[i]) continue;
-        checked[i] = true;
-
-        ll count = -1;
-        Surface* newcp = new Surface(this->surfacesList[i]);
-        while(count != 0){
-            newcp = attachSurfacesByArea(newcp, i+1, checked, count, degree);
-            if (newcp == NULL) break;
-            this->printProcess(combined_count, 1);
-            combined_count += count;
-        }
-        if (newcp != NULL) new_poly_list.push_back(newcp);
-    }
-
-    freeSurfaces();
-    this->surfacesList = new_poly_list;
-    return 0;
-}
 
 int Space::combineSurface(double degree){
     cout << "Combine Surfaces" << endl;
@@ -202,7 +171,7 @@ int Space::combineSurface(double degree){
         while(count != 0){
             newcp = attachSurfaces(newcp, i+1, checked, count, degree);
             if (newcp == NULL) break;
-            this->printProcess(combined_count, 1);
+            printProcess(combined_count, 1);
             combined_count += count;
         }
         if (newcp != NULL) new_poly_list.push_back(newcp);
@@ -231,24 +200,18 @@ Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count,
     return cp;
 }
 
-Surface* Space::attachSurfacesByArea(Surface* cp, ull start, bool* checked, ll& count, double degree)
-{
-    count = 0;
-    double cp_area = cp->area;
-    if (cp->av_normal == CGAL::NULL_VECTOR) return NULL;
-    for (ull id = start ; id < this->surfacesList.size() ; id++)
-    {
-        double id_area = this->surfacesList[id]->area;
-        if (!checked[id] && (id_area < 0.00001 || id_area * 1000 < cp_area))
-        {
-            if (CleanPolygonMaker::combine(cp, this->surfacesList[id], checker, degree) == 0)
-            {
-                checked[id] = true;
-                count++;
+int Space::combineSurfaceMoreGreedy(){
+    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
+        for (ull j = i+1 ; j < this->surfacesList.size() ; ){
+            if (CleanPolygonMaker::combineGreedy(this->surfacesList[i], this->surfacesList[j])){
+                this->surfacesList.erase(this->surfacesList.begin() + j);
+            }
+            else{
+                j++;
             }
         }
     }
-    return cp;
+    return 0;
 }
 
 int Space::updateNormal(){
@@ -272,13 +235,6 @@ int Space::updateNormal(){
     return 0;
 }
 
-void Space::tagID(){
-    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareLength);
-    for (ull i = 0 ; i < (ull)this->surfacesList.size() ; i++)
-    {
-        this->surfacesList[i]->sf_id = i;
-    }
-}
 
 int Space::simplifySegment(){
     cout << "\n------------simplifySegment------------\n" << endl;
@@ -290,8 +246,6 @@ int Space::simplifySegment(){
         printProcess(i, p_size);
         for (ull j = i + 1; j < p_size ; j++)
         {
-            //this->surfacesList[i]->updateNormal(checker);
-            //this->surfacesList[j]->updateNormal(checker);
             int loop_count = 0;
             bool again = false;
             while (CleanPolygonMaker::simplifyLineSegment(this->surfacesList[i], this->surfacesList[j], again) == 0)
@@ -368,494 +322,12 @@ int Space::match00(){
 }
 
 void Space::updateMBB(){
-    for (int i = 0 ; i < 3 ; i++)
-    {
-        this->max_coords[i] = -1000000000;
-        this->min_coords[i] = 1000000000;
+    vector<vector<double> > min_max;
+    SLC::getMBB(this->surfacesList, min_max);
+    for (int i = 0 ; i < 3 ; i++){
+        this->min_coords[i] = min_max[0][i];
+        this->max_coords[i] = min_max[1][i];
     }
-
-    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
-        Surface* cp = this->surfacesList[i];
-        cp->setMBB();
-        for (int j = 0 ; j < 3 ; j++){
-            this->max_coords[j] = max(this->max_coords[j], cp->max_coords[j]);
-            if (this->min_coords[j] > cp->min_coords[j]){
-                this->min_coords[j] = cp->min_coords[j];
-            }
-        }
-    }
-}
-
-
-int Space::remainOnlyUsingVertices(){
-    for (ull i = 0 ; i < this->p_vertexList->size() ; i++){
-        (*this->p_vertexList)[i]->used = false;
-    }
-    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
-        this->surfacesList[i]->tagVerticesUsed();
-    }
-
-    ull removed_count = 0;
-    for (ull i = 0 ; i < this->p_vertexList->size() ;){
-        if (this->p_vertexList->at(i)->used){
-            this->p_vertexList->at(i)->index = i;
-            i++;
-        }
-        else{
-            delete(this->p_vertexList->at(i));
-            this->p_vertexList->erase(this->p_vertexList->begin() + i);
-            removed_count++;
-        }
-    }
-
-    cout << "removed vertices : " << removed_count << endl;
-    cout << "remained vertices : " << this->p_vertexList->size() << endl;;
-    return 0;
-}
-
-
-int Space::makeGraph(){
-    cout << "\n------------- Graph --------------\n" << endl;
-    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
-    this->tagID();
-
-    this->surface_graph = new SurfaceGraph();
-    surface_graph->makeAdjacentGraph(this->surfacesList);
-
-    surface_graph->print_bfs();
-    return 0;
-}
-
-Surface* Space::findFirstSurfaceSimilarWithAxis(int axis){
-    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
-        Surface* sf = this->surfacesList[i];
-        if (CGALCalculation::findNormalType6(sf->av_normal) == axis){
-            return sf;
-        }
-    }
-    assert(false);
-}
-
-
-int Space::findFirstSurfaceIndexSimilarWithAxis(int axis){
-    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
-        Surface* sf = this->surfacesList[i];
-        if (CGALCalculation::findNormalType6(sf->av_normal) == axis){
-            return i;
-        }
-    }
-    assert(false);
-}
-
-//Floor And Ceiling
-int Space::removeSurfacesNotConnectedFC(){
-    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
-    vector<bool> fixed_vertices(this->p_vertexList->size(), false);
-
-    Surface* roof = findFirstSurfaceSimilarWithAxis(5);
-    Surface* floor = findFirstSurfaceSimilarWithAxis(2);
-
-    if (roof == NULL || floor == NULL) return -1;
-
-    for (ull i = 0 ; i < this->surfacesList.size() ; ){
-        Surface* sf = this->surfacesList[i];
-        if ( sf == roof || sf == floor) {
-            i++;
-        }
-        else if ( this->surface_graph->isNeighbor(sf->sf_id, roof->sf_id) &&
-                  this->surface_graph->isNeighbor(sf->sf_id, floor->sf_id)){
-            i++;
-        }
-        else{
-            delete(this->surfacesList[i]);
-            this->surfacesList.erase(this->surfacesList.begin() + i);
-        }
-    }
-    return 0;
-}
-
-
-//TODO : not remove -> cut
-int Space::removeOppositeSurfaces(){
-    bool changed = true;
-    while (changed){
-        changed = false;
-        for (ull i = 0 ; i < this->surfacesList.size() ; i++){
-            Surface* isf = this->surfacesList[i];
-            for (ull j = i + 1; j < this->surfacesList.size() ; j++){
-                Surface* jsf = this->surfacesList[j];
-                if ( CGALCalculation::getAngle(isf->av_normal, jsf->av_normal) > 179.99){
-                    if ( isf->isAdjacent(jsf) ){
-                        this->surfacesList.erase(this->surfacesList.begin() + j);
-                        this->surfacesList.erase(this->surfacesList.begin() + i);
-                        changed = true;
-                    }
-                }
-            }
-        }
-    }
-    return 0;
-}
-
-int Space::makeSurfacesPlanarWithLowest(){
-    cout << "\n------------- make planar --------------\n" << endl;
-
-    for (int axis = 2 ; axis >= 0  ; axis--){
-        for (ull i = 0 ; i < this->surfacesList.size() ; i++){
-            Surface* surface = this->surfacesList[i];
-            if (surface->hasSameNormalwith(axis) || surface->hasOppositeNormalwith(axis))
-            {
-                Plane_3 plane = surface->getPlaneWithLowest();
-                surface->makePlanar(plane);
-            }
-        }
-    }
-
-    return 0;
-}
-
-
-
-int Space::makeWallRectangle(){
-    cout << "\n------------- make Wall Rectangle --------------\n" << endl;
-    for (int axis = 1 ; axis >= 0  ; axis--){
-        for (ull i = 0 ; i < this->surfacesList.size() ; i++){
-            Surface* surface = this->surfacesList[i];
-            if (surface->hasSameNormalwith(axis) || surface->hasOppositeNormalwith(axis))
-            {
-                surface->changeToRectangle();
-            }
-        }
-    }
-    return 0;
-}
-
-Surface* Space::makeNewSurface(Segment* seg, double base, double height){
-    Surface* new_surface = new Surface();
-
-    Vertex* vt1 = new Vertex(*seg->first);
-    vt1->setZ(0);
-
-    Vertex* vt2 = new Vertex(*seg->second);
-    vt2->setZ(0);
-
-    new_surface->v_list.push_back(seg->first);
-    new_surface->v_list.push_back(seg->second);
-    new_surface->v_list.push_back(vt2);
-    new_surface->v_list.push_back(vt1);
-
-    new_surface->updateRectArea();
-    new_surface->updateNormal(this->checker);
-    return new_surface;
-}
-
-vector<Surface*> Space::clippingSurfaces(vector<Surface*>& walls){
-    assert (walls.size() > 0);
-    for (ull i = 0 ; i < walls.size() - 1; i++){
-        Surface* surface = walls[i];
-        for (ull j = i + 1 ; j < walls.size(); j++){
-            surface->clipping(walls[j], this->checker);
-        }
-        assert(surface->isValid());
-    }
-    return walls;
-}
-
-vector<Surface*> Space::getWallsAndRemoveInSurfacesList(vector<Surface*>& walls){
-    int axis = 2;
-    for (ull i = 0 ; i < this->surfacesList.size() ; ){
-        Surface* surface = this->surfacesList[i];
-        if (surface->hasSameNormalwith(axis) || surface->hasOppositeNormalwith(axis))
-        {
-            delete surface;
-            this->surfacesList.erase(this->surfacesList.begin() + i);
-        }
-        else{
-            walls.push_back(surface);
-            this->surfacesList.erase(this->surfacesList.begin() + i);
-        }
-    }
-
-    return walls;
-}
-
-int Space::countTheNumberOfVertex(vector<Segment*>& walls_2d){
-    vector<Vertex*> vertex_list;
-    for (ull i = 0 ; i < walls_2d.size(); i++){
-        ull j;
-        for (j = 0 ; j < vertex_list.size(); j++){
-            if (vertex_list[j] == walls_2d[i]->first) {
-                break;
-            }
-        }
-        if (j == vertex_list.size() ) vertex_list.push_back(walls_2d[i]->first);
-
-        for (j = 0 ; j < vertex_list.size(); j++){
-            if (vertex_list[j] == walls_2d[i]->second) {
-                break;
-            }
-        }
-        if (j == vertex_list.size() ) vertex_list.push_back(walls_2d[i]->second);
-    }
-    int number_vertex = vertex_list.size();
-    vertex_list.clear();
-    return number_vertex;
-}
-
-bool Space::isIntersectIn(Segment* segment, vector<Segment*>& walls_2d){
-    for (ull i = 0 ; i < walls_2d.size() ; i++){
-        Segment* line_seg = walls_2d[i];
-        if (segment->first == line_seg->second){
-        }
-        else if (segment->second == line_seg->first){
-        }
-        else{
-            if (CGALCalculation::isIntersect2D(segment, line_seg) ){
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-bool Space::comparePairSegment(pair<int,Segment*>& a, pair<int,Segment*>& b){
-    return a.second->getSquaredDistance() < b.second->getSquaredDistance();
-}
-
-bool Space::connectWall_dfs(int index, vector<vector<int> >& ordered_index, vector<Segment*>& walls_2d, vector<bool>& checked){
-    int num = 0 ;
-    for (int i = 0 ; i < checked.size() ; i++){
-        if (checked[i]) num ++;
-    }
-    if (num == (int)ordered_index.size()) return true;
-
-    vector<int>& curr_order = ordered_index[index];
-    int curr = curr_order[curr_order.size() - 1];
-    Vertex* curr_end = walls_2d[curr]->second;
-
-    vector<pair<int, Segment*>> candidates;
-    for (int i = 0 ; i < (int)ordered_index.size() ; i++){
-        if (checked[i]) continue;
-        if (i == index) continue;
-        vector<int>& next_order = ordered_index[i];
-        int next = next_order[0];
-        Vertex* next_first = walls_2d[next]->first;
-        Segment* segment = new Segment(curr_end, next_first);
-        if (isIntersectIn(segment, walls_2d)){
-            //delete segment;
-        }
-        else{
-            candidates.push_back(make_pair(i, segment));
-        }
-    }
-
-    sort(candidates.begin(), candidates.end(), comparePairSegment);
-
-    for (int i = 0 ; i < (int)candidates.size() ; i++){
-        int next_index = candidates[i].first;
-        Segment* next_seg = candidates[i].second;
-        checked[next_index] = true;
-        walls_2d.push_back(next_seg);
-        if (connectWall_dfs(next_index, ordered_index, walls_2d, checked) ){
-            return true;
-        }
-        checked[next_index] = false;
-        walls_2d.erase(walls_2d.end());
-    }
-
-    return false;
-
-}
-
-vector<Segment*> Space::cutIntersection(vector<Segment*>& walls_2d){
-    for (ull i = 0 ; i < walls_2d.size() ; i++){
-        for (ull j = i + 1 ; j < walls_2d.size() ; j++){
-            if (CGALCalculation::isIntersect2D(walls_2d[i], walls_2d[j])){
-                //is Clipped?
-                if ((walls_2d[i]->first == walls_2d[j]->second) ||
-                    (walls_2d[i]->second == walls_2d[j]->first)){
-
-                }
-                else{ // cut
-                    Point_2 point = CGALCalculation::getIntersection2D(walls_2d[i], walls_2d[j]);
-                    if (checker->isSameDouble(point.x(), walls_2d[i]->second->x())
-                        && checker->isSameDouble(point.y(), walls_2d[i]->second->y())){
-                        delete walls_2d[j]->first;
-                        walls_2d[j]->first = walls_2d[i]->second;
-                    }
-                    else if (checker->isSameDouble(point.x(), walls_2d[j]->second->x())
-                        && checker->isSameDouble(point.y(), walls_2d[j]->second->y())){
-                        delete walls_2d[i]->first;
-                        walls_2d[i]->first = walls_2d[j]->second;
-                    }
-                    else{//cross
-                        Point_2 i_first(walls_2d[i]->first->x(), walls_2d[i]->first->y());
-                        Point_2 j_second(walls_2d[j]->second->x(), walls_2d[j]->second->y());
-                        Vertex* new_vertex = new Vertex(point.x(), point.y(), walls_2d[i]->first->z());
-                        if (CGAL::left_turn(i_first, point, j_second)){
-                            walls_2d[i]->second = new_vertex;
-                            walls_2d[j]->first = new_vertex;
-                        }
-                        else{
-                            walls_2d[j]->second = new_vertex;
-                            walls_2d[i]->first = new_vertex;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return walls_2d;
-}
-
-int Space::makeClosedWall(){
-    cout << "-------- make Closed Wall ------"<<endl;
-    vector<Surface*> walls;
-    vector<Segment*> walls_2d;
-
-    this->updateMBB();
-    walls = this->getWallsAndRemoveInSurfacesList(walls);
-    walls = this->clippingSurfaces(walls);
-
-    for (ull i = 0 ; i < walls.size() ; i++){
-        walls_2d.push_back(walls[i]->makeSegmentUpperZ(this->checker));
-    }
-    walls_2d = this->cutIntersection(walls_2d);
-
-    double base = 0;
-    double height = this->max_coords[2];
-
-    assert (base < 0.0000001);
-
-    vector<bool> checked(walls_2d.size(), false);
-
-    vector<vector<int> > ordered_index;
-
-    int check_num = 0;
-    while ( check_num < (int)walls_2d.size() ){
-        int line_index = 0;
-        vector<int> ordered;
-        for (; line_index < (int)walls_2d.size() ;){
-            if (checked[line_index]) {
-            }
-            else if (ordered.size() == 0) {
-                check_num++;
-                checked[line_index] = true;
-                ordered.push_back(line_index);
-            }
-            else{
-                Segment* seg_front = walls_2d[ordered[0]];
-                Segment* seg_end = walls_2d[ordered[ordered.size() - 1]];
-                if ( seg_front -> first == walls_2d[line_index] -> second ){
-                    ordered.insert(ordered.begin(), line_index);
-                    check_num++;
-                    checked[line_index] = true;
-                    line_index = -1;
-                }
-                else if (seg_end->second == walls_2d[line_index]->first){ //end
-                    ordered.push_back(line_index);
-                    check_num++;
-                    checked[line_index] = true;
-                    line_index = -1;
-                }
-            }
-            line_index++;
-        }
-        ordered_index.push_back(ordered);
-    }
-
-//    for (int i = 0 ; i < ordered_index.size() ; i ++){
-//        for (int j = 0 ; j < ordered_index[i].size() ; j++){
-//            cout << ordered_index[i][j] << " ";
-//        }
-//        cout << endl;
-//    }
-
-    vector<bool> checked_2(ordered_index.size(), false);
-    bool can_connect = connectWall_dfs(0, ordered_index, walls_2d, checked_2);
-    assert(can_connect);
-
-    walls.clear();
-    for (ull i = 0 ; i < walls_2d.size() ; i++){
-        walls.push_back(makeNewSurface(walls_2d[i], base, height));
-    }
-    walls = this->clippingSurfaces(walls);
-
-    for (ull i = 0 ; i < walls_2d.size() ; i++){
-        this->surfacesList.push_back(walls[i]);
-    }
-    cout << "new Walls Size : "<< walls_2d.size() - check_num << endl;
-    cout << "Walls Size : " << check_num << endl;
-
-    walls.clear();
-    walls_2d.clear();
-
-    for (ull i = 0 ; i < ordered_index.size() ; i++){
-        ordered_index[i].clear();
-    }
-    ordered_index.clear();
-
-    return 0;
-}
-
-int Space::makeFloorAndCeiling(){
-    cout << "--------make Floor and Ceiling -------" << endl;
-    Surface* ceil = new Surface();
-    Surface* floor = new Surface();
-    ceil->av_normal = CGALCalculation::normal_list6[5];
-    floor->av_normal = CGALCalculation::normal_list6[2];
-
-    vector<Segment*> walls_2d;
-    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
-        walls_2d.push_back(surfacesList[i]->makeSegmentUpperZ(this->checker));
-    }
-
-    int line_index = 0;
-    vector<bool> checked(walls_2d.size(), false);
-    vector<int> ordered;
-    for (; line_index < (int)walls_2d.size() ;){
-        if (checked[line_index]) {
-        }
-        else if (ordered.size() == 0) {
-            checked[line_index] = true;
-            ordered.push_back(line_index);
-        }
-        else{
-            Segment* seg_front = walls_2d[ordered[0]];
-            Segment* seg_end = walls_2d[ordered[ordered.size() - 1]];
-            if ( seg_front -> first == walls_2d[line_index] -> second ){
-                ordered.insert(ordered.begin(), line_index);
-                checked[line_index] = true;
-                line_index = -1;
-            }
-            else if (seg_end->second == walls_2d[line_index]->first){ //end
-                ordered.push_back(line_index);
-                checked[line_index] = true;
-                line_index = -1;
-            }
-        }
-        line_index++;
-    }
-
-    assert(ordered.size() == walls_2d.size());
-
-    for (int i = 0 ; i < (int)ordered.size() ; i++){
-        int order = ordered[i];
-        ceil->v_list.push_back(walls_2d[order]->first);
-        floor->v_list.push_back(surfacesList[order]->makeSegmentLowerZ(this->checker)->first);
-    }
-
-    reverse(floor->v_list.begin(), floor->v_list.end());
-
-    this->surfacesList.push_back(floor);
-    this->surfacesList.push_back(ceil);
-    return 0;
-}
-
-void Space::getVertexList(vector<Vertex*>& vt_list){
-    cout << "get Vertex List" << endl;
-    vector<Vertex*> new_vertices;
-    vt_list = new_vertices;
 }
 
 void Space::freeSurfaces(){
@@ -868,35 +340,10 @@ void Space::freeSurfaces(){
 
 
 
-
-int Space::removeFloorAndCeiling(){
-    cout << "\n------------- remove Object --------------\n" << endl;
-    int axis = 2;
-    int remove_count = 0;
-    int remain_count = 0;
-    for (ull i = 0 ; i < this->surfacesList.size() ; ){
-        Surface* sf = this->surfacesList[i];
-        if (sf->hasOppositeNormalwith(axis) || sf->hasSameNormalwith(axis)){
-            delete sf;
-            this->surfacesList.erase(this->surfacesList.begin() + i);
-            remove_count++;
-        }
-        else{
-            remain_count++;
-            i++;
-        }
-    }
-    cout << "remove : " << remove_count <<endl;
-    cout << "remain : " << remain_count <<endl;
-
-    return 0;
-}
-
-
 void Space::rotateSpaceByFloorTo00(){
     cout << " ---------- rotate -------------" << endl;
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
-    int floor_index = findFirstSurfaceIndexSimilarWithAxis(2);
+    int floor_index = SLC::findFirstSurfaceIndexSimilarWithAxis(this->surfacesList, 2);
     Surface* floor = this->surfacesList[floor_index];
     floor->setMBB();
     Plane_3 plane(Point_3(0,0,0), floor->av_normal);
@@ -952,3 +399,34 @@ vector<Surface*> Space::getTopSurfaces(double percent){
     vector<Surface*> ret(this->surfacesList.begin(), this->surfacesList.begin() + num);
     return ret;
 }
+
+
+
+
+int Space::remainOnlyUsingVertices(){
+    for (ull i = 0 ; i < this->p_vertexList->size() ; i++){
+        (*this->p_vertexList)[i]->used = false;
+    }
+    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
+        this->surfacesList[i]->tagVerticesUsed();
+    }
+
+    ull removed_count = 0;
+    for (ull i = 0 ; i < this->p_vertexList->size() ;){
+        if (this->p_vertexList->at(i)->used){
+            this->p_vertexList->at(i)->index = i;
+            i++;
+        }
+        else{
+            delete(this->p_vertexList->at(i));
+            this->p_vertexList->erase(this->p_vertexList->begin() + i);
+            removed_count++;
+        }
+    }
+
+    cout << "removed vertices : " << removed_count << endl;
+    cout << "remained vertices : " << this->p_vertexList->size() << endl;;
+    return 0;
+}
+
+

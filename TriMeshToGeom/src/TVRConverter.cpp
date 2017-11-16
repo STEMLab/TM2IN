@@ -6,6 +6,7 @@
 #include "fileio/TVRImporter.h"
 #include "manage/FlatRoomMaker.h"
 #include "logic/check.hpp"
+#include "space_maker/OnlyWallSpaceMaker.h"
 
 using namespace std;
 
@@ -17,8 +18,8 @@ int main(int argc, const char * argv[]) {
     //const char path[100] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/";
     const char result_path[50] = "../Result/";
     //const char result_path[50] = "/Users/dong/Documents/dev/TriMeshToGeom/Result/";
-    char file_name[] = "apartment";
-    const int max_genereration = 2;
+    char file_name[] = "171103_APT";
+    const int max_genereration = 10;
     const char process_path[50] = "../Result/process/";
 //    TVRImporter::extractMINtvr(string(path) + string(file_name));
 //    return 0;
@@ -31,7 +32,7 @@ int main(int argc, const char * argv[]) {
 
     RoomMaker* manager = new FlatRoomMaker();
     manager->setImporter(new TVRImporter());
-    manager->setChecker(new Checker(0.000001));
+    manager->setChecker(new Checker(0.0000001));
 
     cout << "Load TVR File.." << endl;
     if (manager->import( (string(path) + string(file_name) + ".tvr").c_str()) ){
@@ -71,9 +72,9 @@ int main(int argc, const char * argv[]) {
     string json_file = string(result_path) + string(file_name) + export_version + ".json";
     manager->exportSpaceJSON(json_file);
 
-    if (manager->makeSolids(0.03) == -1) return -1;
-    string solid_file = string(result_path) + string(file_name) + export_version + "_solid.json";
-    manager->exportSolidJSON(solid_file);
+    //if (manager->makeSimpleSpaces(new OnlyWallSpaceMaker()) == -1) return -1;
+    //string solid_file = string(result_path) + string(file_name) + export_version + "_solid.json";
+    //manager->exportSimpleSpaceJSON(solid_file);
 
     std::cout << "End!\n";
     return 0;

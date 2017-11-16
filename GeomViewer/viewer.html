@@ -35,11 +35,10 @@
 	<script>
 		var version = "v1.0.0.1";
         var data_index = 0;
-        var data_array = ["apartment","office"];
-		var data_name = "apartment";
+        var data_array = ["office","171103_APT", "apartment"];
 		var result_path = "../Result/";
 		var process_path = result_path + "process/";
-		var json_path = result_path + data_name + "_" + version + "_solid.json";
+		var json_path = result_path + data_array[data_index] + "_" + version + ".json";
 		var generation = -1;
 		var doubleside = false;
 		var container, stats;
@@ -72,8 +71,8 @@
         function toggleData(){
             clearScene();
             generation = -1;
-            data_name = data_array[1 - data_index];
-            data_index = 1 - data_index;
+            data_index++;
+			if (data_index == data_array.length) data_index = 0;
             load();
         }
 
@@ -92,10 +91,10 @@
 		function load(){
 			document.getElementById("generation").innerHTML = generation;
 			if (generation == -1){
-				json_path = result_path + data_name + "_" + version + "_solid.json";
+				json_path = result_path + data_array[data_index] + "_" + version + "_solid.json";
 			}
 			else{
-				json_path = "../Result/process/"+data_name+"_g_"+generation+".json";
+				json_path = "../Result/process/"+data_array[data_index]+"_g_"+generation+".json";
 			}
 			loadAndInit();
 		}
@@ -105,13 +104,13 @@
 			clearScene();
 			var inner = document.getElementById("raw");
 			if (solid_mode == "RAW"){
-				json_path = "../Result/"+data_name+"_" + version+".json";
+				json_path = "../Result/"+data_array[data_index]+"_" + version+".json";
 				solid_mode = "SOLID";
 				inner.value == solid_mode;
 
 			}
 			else {
-				json_path = "../Result/"+data_name+"_" + version+"_solid.json";
+				json_path = "../Result/"+data_array[data_index]+"_" + version+"_solid.json";
 				solid_mode = "RAW";
 				inner.value == solid_mode;
 			}
@@ -154,6 +153,20 @@
 
 		}
 
+		function match(){
+			var coord1 = jsonfile.spaces[0].Surfaces[686].coord;
+			var coord2 = jsonfile.spaces[0].Surfaces[0].coord;
+			var num = 0;
+			for (var i = coord1.length-1 ; i >= 0 ; i--){
+				var pre_num = 0;
+				for (var j = 0 ;  j < coord2.length ; j++){
+					if (coord1[i][3] == coord2[j][3]) pre_num ++;
+				}
+				if (pre_num > 1) console.log(pre_num);
+				num += pre_num;
+			}
+			console.log("NJNJ:", num);
+		}
 
 		function init() {
 			document.addEventListener( 'mousedown', onDocumentMouseDown, false );
@@ -203,7 +216,7 @@
 				var polygon_list = space[i].Surfaces;
 				console.log("polygon numbers : " + polygon_list.length);
 				for (var j = 0; j < polygon_list.length; j++) {
-					//if ( j < 11) continue;
+					//if (j != 39 && j!= 181) continue;
 					var coordinates = polygon_list[j].coord;
 					coordinates = scaleUp(coordinates, 100);
 

@@ -15,6 +15,9 @@ public:
 
     vector<vector<ull> > adjList;
     void makeAdjacentGraph(vector<Surface*>& surface_list);
+    void makeAdjacentGraph(vector<Triangle>& tri_list);
+
+    bool isClosedTrinagleMesh();
     void print_bfs();
     bool isNeighbor(ull id1, ull id2);
 };

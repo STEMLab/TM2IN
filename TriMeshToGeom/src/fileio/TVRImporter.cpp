@@ -48,7 +48,9 @@ OBJCollection* TVRImporter::import(const char* f_path, Checker* check){
                 Vertex vt;
                 this->makeVertex(v_count, inputstr, vt);
 
+                //Vertex* pt_v = new Vertex(vt);
                 Vertex* pt_v = this->findSameVertex(sorted_vertex, check, vt);
+                pt_v->index = v_count;
                 tvrcl->vertex.push_back(pt_v);
 
                 v_count++;
@@ -93,14 +95,15 @@ Vertex* TVRImporter::findSameVertex(vector<Vertex*>& vertex, Checker* check, Ver
     up = std::upper_bound(vertex.begin(), vertex.end(), vt.x(), CompareVertexAndX() );
 
     for (it = low ; it != up ; it++){
-        if (check->compare_vertex( (*it), &vt) > 0){
+        double diff = check->compare_vertex( (*it), &vt);
+        if (diff > 0){
             break;
         }
-        else if (check->compare_vertex( (*it), &vt) < 0){
+        else if (diff < 0){
             continue;
         }
         else{
-            cout << "Same Vertex" << endl;
+            cout << "Same Vertex " << diff << endl;
             return *it;
         }
     }

@@ -14,7 +14,12 @@ class Surface;
 class SurfaceGraph;
 class Space;
 class OBJCollection;
-class Solid;
 class Segment;
+class SurfacesListCalculation;
+
+typedef SurfacesListCalculation SLC;
+
+
+
 
 #endif // PREDEFINE_H_INCLUDED

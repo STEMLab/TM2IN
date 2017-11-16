@@ -14,9 +14,9 @@ class RoomMaker
 
         virtual int import(const char*) = 0;
         virtual int makeSurfaces(double degree) = 0;
-        virtual int makeSolids(double degree) = 0;
+        virtual int makeSimpleSpaces(SpaceMaker* sm) = 0;
         virtual int exportSpaceJSON(string f_path) = 0;
-        virtual int exportSolidJSON(string f_path) = 0;
+        virtual int exportSimpleSpaceJSON(string f_path) = 0;
         virtual int cleaning(int, double){ return -1;}
         virtual int exportCombined(string f_path) = 0;
         virtual int importCombined(string f_path) = 0;

@@ -41,8 +41,6 @@ int CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checker
     //find if another line share. make Hole?
     if (isMakingHole(start_i, end_i, start_j, end_j, piece->v_list, origin->v_list)) return 1;
 
-
-
     vector<Vertex*> new_v_list;
 
     for (ll j = start_j; ; ){
@@ -214,7 +212,7 @@ int CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece, bool
     ll infinite_check = 0;
     for (ll i = 0 ; i < piece_size ;i++){
         for (ll j = origin_size - 1 ; j >= 0 ; j--){
-            if (piece_vertex_list[i] == origin_vertex_list[j]){
+                if (piece_vertex_list[i] == origin_vertex_list[j]){
                 ll next_i = i + 1 == piece_size? 0 : i+1;
                 ll next_j = j-1 == -1? origin_size-1 : j-1;
 
@@ -285,5 +283,10 @@ int CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece, bool
     }
 
     return 0;
+}
+
+
+int CleanPolygonMaker::combineGreedy(Surface* cp1, Surface* cp2){
+
 }
 
