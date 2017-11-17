@@ -132,9 +132,13 @@
 			});
 		}
 
+		function refresh(){
+			init();
+			animate();
+		}
 
 		var projector = new THREE.Projector();
-		load();
+		loadAndInit();
 
 		function onDocumentMouseDown( event ) {
 
@@ -153,19 +157,68 @@
 
 		}
 
-		function match(){
-			var coord1 = jsonfile.spaces[0].Surfaces[686].coord;
-			var coord2 = jsonfile.spaces[0].Surfaces[0].coord;
-			var num = 0;
-			for (var i = coord1.length-1 ; i >= 0 ; i--){
-				var pre_num = 0;
+		function match(id1, id2){
+			var coord1 = jsonfile.spaces[0].Surfaces[id1].coord;
+			var coord2 = jsonfile.spaces[0].Surfaces[id2].coord;
+			coord2.splice(coord2.length - 1, 1);
+			console.log(coord1.length, coord2.length);
+			var start_i, num = 0;
+			var start_j = -1;
+
+			for (var i = 0 ; i < coord1.length -1 ; i++){
 				for (var j = 0 ;  j < coord2.length ; j++){
-					if (coord1[i][3] == coord2[j][3]) pre_num ++;
+					if (coord1[i][3] == coord2[j][3]){
+						num++;
+					}
 				}
-				if (pre_num > 1) console.log(pre_num);
-				num += pre_num;
 			}
-			console.log("NJNJ:", num);
+			console.log(num);
+			if (num != coord1.length - 1){
+				console.log("not matched whole");
+				return;
+			}
+			for (var j = coord2.length - 2; j >= 0 ; j--){
+				if (coord1[0][3] == coord2[j][3]){
+					start_j = j;
+					break;
+				}
+			}
+			if (start_j == -1){
+				console.log("WRONG");
+				return;
+			}
+
+			var i = 0;
+			for (var j = start_j; i < coord1.length -1 ;){
+				if (coord2[j][3] == coord1[i][3]){
+					i++;
+					console.log("i ", i);
+				}
+				else{
+					var miss_start_j = j;
+					while (coord2[j][3] != coord1[i][3]){
+						j++;
+						if (j == coord2.length) j = 0;
+					}
+					var mis_length;
+					if (miss_start_j < j){
+						mis_length = j - miss_start_j;
+					}
+					else {
+
+					}
+				}
+				console.log("remove ", j);
+				coord2.splice(j, 1);
+				j--;
+				if (j < 0){
+					j = coord2.length - 1;
+				}
+			}
+			coord2.push(coord2[0]);
+			jsonfile.spaces[0].Surfaces.splice(id1, 1);
+			clearScene();
+			refresh();
 		}
 
 		function init() {
@@ -216,7 +269,7 @@
 				var polygon_list = space[i].Surfaces;
 				console.log("polygon numbers : " + polygon_list.length);
 				for (var j = 0; j < polygon_list.length; j++) {
-					//if (j != 39 && j!= 181) continue;
+					//if (polygon_list[j].id != 2 && polygon_list[j].id!= 308) continue;
 					var coordinates = polygon_list[j].coord;
 					coordinates = scaleUp(coordinates, 100);
 
