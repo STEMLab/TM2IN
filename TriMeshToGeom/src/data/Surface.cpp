@@ -26,6 +26,7 @@ Surface::Surface(Surface* cp){
         this->min_coords[i] = cp->min_coords[i];
     }
     this->area = cp->area;
+    this->tri_list = cp->tri_list;
 }
 
 void Surface::setZ(double value){
@@ -34,29 +35,17 @@ void Surface::setZ(double value){
     }
 }
 
-Surface::Surface(Triangle* pl){
-    Vertex* v[3] = {pl->a, pl->b, pl->c};
+Surface::Surface(Triangle& pl){
+    Vertex* v[3] = {pl.a, pl.b, pl.c};
 
     for (int i = 0 ; i < 3 ;i++){
         v_list.push_back(v[i]);
     }
 
-    double max_list[3] = {v[0]->x(), v[0]->y(), v[0]->z()};
-    double min_list[3] = {v[0]->x(), v[0]->y(), v[0]->z()};
-    for (int i = 1 ; i < 3 ; i++){
-        for (int j = 0 ; j < 3 ; j++){
-            max_list[j] = max(max_list[j], v[i]->coords[j]);
-            min_list[j] = min(min_list[j], v[i]->coords[j]);
-        }
-    }
-
-    for (int i = 0 ; i < 3 ; i++){
-        this->max_coords[i] = max_list[i];
-        this->min_coords[i] = min_list[i];
-    }
-
-    av_normal = pl->getNormal();
-    area = pl->getArea();
+    av_normal = pl.getNormal();
+    area = pl.getArea();
+    this->setMBB();
+    this->tri_list.push_back(&pl);
 }
 
 void Surface::setMBB(){
@@ -76,13 +65,8 @@ void Surface::setMBB(){
 
 
 void Surface::setMBB(Triangle* pl){
-    Vertex* v[3] = {pl->a, pl->b, pl->c};
-    for (int i = 0 ; i < 3 ; i++){
-        for (int j = 0 ; j < 3 ; j++){
-            this->max_coords[j] = max(this->max_coords[j], v[i]->coords[j]);
-            this->min_coords[j] = min(this->min_coords[j], v[i]->coords[j]);
-        }
-    }
+    Surface* sf = new Surface(pl);
+    this->setMBB(sf);
 }
 
 void Surface::setMBB(Surface* cp){

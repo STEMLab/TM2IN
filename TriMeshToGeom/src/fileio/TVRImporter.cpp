@@ -48,8 +48,8 @@ OBJCollection* TVRImporter::import(const char* f_path, Checker* check){
                 Vertex vt;
                 this->makeVertex(v_count, inputstr, vt);
 
-                //Vertex* pt_v = new Vertex(vt);
-                Vertex* pt_v = this->findSameVertex(sorted_vertex, check, vt);
+                Vertex* pt_v = new Vertex(vt);
+                //Vertex* pt_v = this->findSameVertex(sorted_vertex, check, vt);
                 pt_v->index = v_count;
                 tvrcl->vertex.push_back(pt_v);
 

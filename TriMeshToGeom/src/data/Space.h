@@ -41,7 +41,7 @@ public:
     int makeSurfacesBySeparation();
     int makeSurfacesByCandidator();
     int mergeTrianglesGreedy(double degree);
-    int makeSurfacesNotJoin();
+    int mergeTrianglesNotJoin();
 
     int checkTriangles();
     int checkOpposite();
@@ -52,14 +52,11 @@ public:
     int handleDefect();
     int updateNormal();
 
-    int combineSurfaceMoreGreedy();
-
-    int remainOnlyUsingVertices();
-
+    int combineSurfaceMoreGreedy(double);
     void rotateSpaceByFloorTo00();
     vector<Surface*> getTopSurfaces(double percent);
 
-    SimpleSpace* makeSimpleSpace();
+    int remainOnlyUsingVertices();
     //TODO : removed
     void test();
 
@@ -68,7 +65,7 @@ protected:
     void freeSurfaces();
     Surface* attachTriangle(vector<Triangle*> tri_list, Surface* cp, bool* checked, ll& count, double degree);
     Surface* attachSurfaces(Surface* cp, ull start, bool* checked, ll& count, double degree);
-    vector<Surface*> makeSurfacesInList(vector<Triangle*>& tri_list, bool* checked, int& combined_count, double degree);
+    vector<Surface*> makeSurfacesInTriangleList(vector<Triangle*>& tri_list, bool* checked, int& combined_count, double degree);
 
 private:
 

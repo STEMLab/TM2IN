@@ -10,10 +10,21 @@
 
 using namespace std;
 
+void test(){
+    Point_3 p1(6.11105, 9.531836, 0.638514);
+    Point_3 p2(6.259156, 9.60813, 0.617178);
+    Point_3 p3(6.255268, 9.602945, 0.617898);
+
+    Vector_3 vc1(p1,p2);
+    Vector_3 vc2(p1,p3);
+    cout << CGALCalculation::getAngle(vc1, vc2) << endl;
+}
+
 int main(int argc, const char * argv[]) {
-    //TODO make argv
+    //test(); return 0;
+
     string import_version = "_v1.0.0";
-    string export_version = "_v1.0.0.1";
+    string export_version = "_v1.0.0.2";
     const char path[50] = "../Resource/tvr/";
     //const char path[100] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/";
     const char result_path[50] = "../Result/";
@@ -46,7 +57,7 @@ int main(int argc, const char * argv[]) {
     string exported_bin = string(result_path) + "polygons/" + string(file_name) + import_version + ".bin";
     switch(mode){
         case 0:{
-            if (manager->makeSurfaces(10.0)) return 1;
+            if (manager->makeSurfaces(30.0)) return 1;
             if (manager->exportCombined(exported_bin)) return 2;
             break;
         }
@@ -72,9 +83,9 @@ int main(int argc, const char * argv[]) {
     string json_file = string(result_path) + string(file_name) + export_version + ".json";
     manager->exportSpaceJSON(json_file);
 
-    //if (manager->makeSimpleSpaces(new OnlyWallSpaceMaker()) == -1) return -1;
-    //string solid_file = string(result_path) + string(file_name) + export_version + "_solid.json";
-    //manager->exportSimpleSpaceJSON(solid_file);
+//    if (manager->makeSimpleSpaces(new OnlyWallSpaceMaker()) == -1) return -1;
+//    string solid_file = string(result_path) + string(file_name) + export_version + "_solid.json";
+//    manager->exportSimpleSpaceJSON(solid_file);
 
     std::cout << "End!\n";
     return 0;

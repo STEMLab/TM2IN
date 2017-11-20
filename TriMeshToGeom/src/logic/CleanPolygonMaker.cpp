@@ -286,7 +286,3 @@ int CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece, bool
 }
 
 
-int CleanPolygonMaker::combineGreedy(Surface* cp1, Surface* cp2){
-
-}
-

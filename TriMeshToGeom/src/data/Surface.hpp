@@ -33,6 +33,7 @@ public:
     bool isHidden;
     std::vector<Vertex*> v_list;
     std::vector<std::vector<Vertex*> > inner_ring;
+    std::vector<Triangle*> tri_list;
     Vector_3 av_normal = CGAL::NULL_VECTOR;
 
     double min_coords[3];
@@ -41,10 +42,8 @@ public:
 
     Surface(){
     }
-
-
-    Surface(Triagnle& pl);
-    Surface(Triangle* pl);
+    Surface(Triangle& pl);
+    Surface(Triangle* pl) : Surface(*pl) {}
     Surface(Surface* cp);
 
     ull getLength(){

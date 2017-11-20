@@ -24,13 +24,13 @@ int OBJCollection::mergeTriangles(double degree){
 
     for (ull i = 0 ; i < this->space_list.size(); i++)
     {
-//        cout << "make Triangle Graph" << endl;
-//        SurfaceGraph* sg = new SurfaceGraph();
-//        sg->makeAdjacentGraph(this->space_list[i]->triangles);
-//        if (!sg->isClosedTrinagleMesh()){
-//            cout << "Not Closed Polyhedral" << endl;
-//            return -1;
-//        }
+        cout << "make Triangle Graph" << endl;
+        SurfaceGraph* sg = new SurfaceGraph();
+        sg->makeAdjacentGraph(this->space_list[i]->triangles);
+        if (!sg->isClosedTrinagleMesh()){
+            cout << "Not Closed Polyhedral" << endl;
+            return -1;
+        }
         cout << this->space_list[i] -> name << " is converting..." << endl;
         if (this->space_list[i]->mergeTrianglesGreedy(degree))
         {
@@ -92,7 +92,10 @@ int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegre
                 return -1;
             }
 
-            if (p_size == (int)space->surfacesList.size()) break;
+            if (p_size == (int)space->surfacesList.size()) {
+                cout << "generation " << gen  << " done.. "<< endl;
+                break;
+            }
             else p_size = (int)space->surfacesList.size();
 
             this->process_writer->writeGenerationJSON(gen, space_list);
@@ -105,24 +108,20 @@ int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegre
 //            cout << "simplify error" << endl;
 //            return -1;
 //        }
-        if (space->combineSurfaceMoreGreedy()) return -1;
-        if (space->handleDefect() == -1){
-            cout << "" << endl;
-            return -1;
-        }
+        cout << space->surfacesList.size() << endl;
+        degree = 10.0;
+        cout << space->surfacesList.size() << endl;
+
+        if (space->handleDefect() == -1){ cout << "" << endl; return -1; }
+        if (space->combineSurfaceMoreGreedy(degree)) { cout << "combineSurfaceMoreGreedy" << endl; return -1;}
         if (space->match00() == -1){
             cout << "match00 error" << endl;
             return -1;
         }
 
         SLC::tagID(space->surfacesList);
-//
-//        cout << space->surfacesList.size() << endl;
-//
-//        while (true && max_gener-- > 0){
-//            this->combine_simplify_handle(space, degree);
-//        }
-//        cout << space->surfacesList.size() << endl;
+
+//        space->pinningToBigSurface();
     }
     return 0;
 }

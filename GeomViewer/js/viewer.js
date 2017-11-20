@@ -38,7 +38,7 @@ function isExistInCoords(id, coords){
 }
 
 function shareTwoVertices(big, small){
-	var num = 0; 
+	var num = 0;
 	for (var i = 0 ; i < small.length - 1 ; i++){
 		for (var j = 0 ; j < big.length - 1 ; j++){
 			if (small[i][3] == big[j][3]) {
@@ -55,7 +55,7 @@ function EuclideanDistance(coord1, coord2){
 	var ret = 0;
 	for (var i = 0 ; i < 3 ; i++){
 		ret += Math.pow(coord1[i] - coord2[i], 2);
-	}	
+	}
 	ret = Math.sqrt(ret);
 	return ret;
 }
@@ -70,7 +70,7 @@ function makeBig(){
 		var normal = sf_i.normal;
 		if (normal[2] * normal[2] > normal[1]* normal[1] + normal[0] * normal[0]){
 			if (shareTwoVertices(floor, sf_i.coord)){
-				console.log("add ", i);	
+				console.log("add ", i);
 				floor_zol.push(sf_i.coord);
 				zol_index_list.push(i);
 			}
@@ -96,7 +96,7 @@ function makeBig(){
 			if (ccw(floor[i], floor[i+1], floor[j], index_list) < 0) {
 				is = true;
 				break;
-			}	
+			}
 		}
 		if (!is) {
 			max_index = i;
@@ -111,15 +111,15 @@ function makeBig(){
 
 	var checked = new Array(floor.length);
 	checked.fill(false);
-	checked[max_index] = true; 
+	checked[max_index] = true;
 	var loop_count = 0;
 	var curr_i = max_index + 1;
 	if (curr_i == floor.length - 1) curr_i = 0;
 	while (!checked[curr_i]){
 		if (loop_count ++ > floor.length){
-			console.log("infinite");	
+			console.log("infinite");
 			return;
-		} 
+		}
 		//if (loop_count == 30) break;
 		big_coords.push(floor[curr_i]);
 		var vertex_id = floor[curr_i][3];
@@ -195,19 +195,24 @@ function makeBig(){
 function match(id1, id2){
 	var coord1 = jsonfile.spaces[0].Surfaces[id1].coord;
 	var coord2 = jsonfile.spaces[0].Surfaces[id2].coord;
-	coord2.splice(coord2.length - 1, 1);
+	//coord2.splice(coord2.length - 1, 1);
 	console.log(coord1.length, coord2.length);
 	var start_i, num = 0;
 	var start_j = -1;
 
+	var new_coord1 = []
 	for (var i = 0 ; i < coord1.length -1 ; i++){
 		for (var j = 0 ;  j < coord2.length ; j++){
 			if (coord1[i][3] == coord2[j][3]){
 				num++;
+				new_coord1.push(coord1[i]);
 			}
 		}
 	}
+	new_coord1.push(new_coord1[0]);
+	jsonfile.spaces[0].Surfaces[id1].coord = new_coord1;
 	console.log(num);
+
 	if (num != coord1.length - 1){
 		console.log("not matched whole");
 		return;

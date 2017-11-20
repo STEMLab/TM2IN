@@ -37,18 +37,18 @@ int Space::mergeTrianglesGreedy(double degree){
     bool* checked = (bool*)malloc(sizeof(bool) * size);
     std::fill(checked, checked + size, false);
 
-    vector<Surface*> c_list = makeSurfacesInList(p_triangles, checked, combined_count, degree);
+    vector<Surface*> c_list = makeSurfacesInTriangleList(p_triangles, checked, combined_count, degree);
     this->surfacesList.insert(this->surfacesList.end(), c_list.begin(), c_list.end());
 
     free(checked);
 
-    this->triangles.clear();
+    //this->triangles.clear();
 
     cout << "\ndone make Surfaces" << endl;
     return 0;
 }
 
-int Space::makeSurfacesNotJoin(){
+int Space::mergeTrianglesNotJoin(){
     vector<Triangle*> p_triangles;
     ull size = this->triangles.size();
     for (ull i = 0 ; i < size; i++){
@@ -67,7 +67,7 @@ int Space::makeSurfacesNotJoin(){
     return 0;
 }
 
-vector<Surface*> Space::makeSurfacesInList(vector<Triangle*>& tri_list, bool* checked, int& combined_count, double degree)
+vector<Surface*> Space::makeSurfacesInTriangleList(vector<Triangle*>& tri_list, bool* checked, int& combined_count, double degree)
 {
     vector<Surface*> result_list;
     ull size = tri_list.size();
@@ -112,6 +112,7 @@ Surface* Space::attachTriangle(vector<Triangle*> tri_list, Surface* cp, bool* ch
             //if (cp->attachTriangle(tri_list[id], checker))
             if (TriangleAttacher::attach(cp, tri_list[id], checker, degree))
             {
+                cp->tri_list.push_back(tri_list[id]);
                 checked[id] = true;
                 count++;
             }
@@ -190,8 +191,10 @@ Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count,
     {
         if (!checked[id])
         {
-            if (CleanPolygonMaker::combine(cp, this->surfacesList[id], checker, degree) == 0)
+            Surface* sf = this->surfacesList[id];
+            if (CleanPolygonMaker::combine(cp, sf, checker, degree) == 0)
             {
+                cp->tri_list.insert(cp->tri_list.end(), sf->tri_list.begin(), sf->tri_list.end());
                 checked[id] = true;
                 count++;
             }
@@ -200,16 +203,81 @@ Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count,
     return cp;
 }
 
-int Space::combineSurfaceMoreGreedy(){
+int Space::combineSurfaceMoreGreedy(double degree){
+    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
     for (ull i = 0 ; i < this->surfacesList.size() ; i++){
-        for (ull j = i+1 ; j < this->surfacesList.size() ; ){
-            if (CleanPolygonMaker::combineGreedy(this->surfacesList[i], this->surfacesList[j])){
-                this->surfacesList.erase(this->surfacesList.begin() + j);
+        Surface* sfi = this->surfacesList[i];
+        for (ull j = i + 1 ; j < this->surfacesList.size() ; ){
+            Surface* sfj = this->surfacesList[j];
+            //Same Normal and isNeighbor
+            if (this->checker->CanbeMerged(sfi->av_normal, sfj->av_normal, degree) && CGALCalculation::isIntersect_BBOX(sfi, sfj)){
+                int same_num = 0;
+                for (ull vi = 0 ; vi < sfi->v_list.size() ; vi++){
+                    for (ull vj = 0 ; vj < sfj->v_list.size() ; vj++){
+                        if (sfi->v_list[vi] == sfj->v_list[vj]) same_num++;
+                    }
+                }
+                if (same_num == sfj->v_list.size() ) {
+                    cout << "same : " <<same_num << endl;
+                    if (sfj->v_list.size() < sfi->v_list.size()){
+                        for (ull vi = 0 ; vi < sfi->v_list.size() ; ){
+                            ull vj;
+                            for (vj = 0; vj < sfj->v_list.size() ; ){
+                                if (sfi->v_list[vi] == sfj->v_list[vj]) break;
+                                else vj++;
+                            }
+                            if (vj == sfj->v_list.size()) vi++;
+                            else{
+                                sfi->v_list.erase(sfi->v_list.begin() + vi);
+                                sfj->v_list.erase(sfj->v_list.begin() + vj);
+                            }
+                        }
+                        if (sfj->v_list.size() != 0) {
+                            cout << "Wrong" << endl;
+                            return -1;
+                        }
+                        else{
+                            this->surfacesList.erase(this->surfacesList.begin() + j);
+                        }
+                    }
+                    else{
+                        j++;
+                        cout << "sfj is bigger" << endl;
+                    }
+                }
+                else if (same_num > sfj->v_list.size() ) {
+                    j++;
+                    cout << "wrong " <<endl;
+                }
+                else j++;
+
+//                vector<bool> checked(sfj->tri_list.size(), false);
+//                int merged_num = 0;
+//                for (ull tri_id = 0 ; tri_id < sfj->tri_list.size() ; tri_id++){
+//                    if (!checked[tri_id]){
+//                        if (TriangleAttacher::attach(sfi, sfj->tri_list[tri_id], this->checker, degree)){
+//                            tri_id = 0;
+//                            checked[tri_id] = true;
+//                            merged_num++;
+//                        }
+//                    }
+//                }
+//                if (merged_num == 0){
+//                    j++;
+//                }
+//                else if (merged_num == sfj->tri_list.size()){
+//                    this->surfacesList.erase(this->surfacesList.begin() + j);
+//                }
+//                else{
+//                    cout << "Not All attatched" << endl;
+//                    this->surfacesList.erase(this->surfacesList.begin() + j);
+//                }
             }
             else{
                 j++;
             }
         }
+
     }
     return 0;
 }
@@ -268,21 +336,21 @@ int Space::handleDefect(){
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
     {
         Surface* surface = this->surfacesList[i];
-        surface->removeStraight(this->checker);
-        surface->removeConsecutiveDuplication(this->checker);
+        //surface->removeStraight(this->checker);
+        //surface->removeConsecutiveDuplication(this->checker);
         surface->setMBB();
-        if (surface->checkDuplicate(this->checker)){
-            surface->removeHole(this->checker);
-        }
-
-        if (surface->isValid()){
-            i++;
-        }
-        else{
-            delete surface;
-            this->surfacesList.erase(this->surfacesList.begin() + i);
-            cout << "Erase unvalid surface" << endl;
-        }
+//        if (surface->checkDuplicate(this->checker)){
+//            surface->removeHole(this->checker);
+//        }
+//
+//        if (surface->isValid()){
+//            i++;
+//        }
+//        else{
+//            delete surface;
+//            this->surfacesList.erase(this->surfacesList.begin() + i);
+//            cout << "Erase unvalid surface" << endl;
+//        }
     }
     return 0;
 }
@@ -301,17 +369,17 @@ int Space::match00(){
 
     for (ull i = 0 ; i < this->surfacesList.size() ; i++)
     {
-        if (this->surfacesList[i]->isValid())
-        {
-            this->surfacesList[i]->translate(diff);
-        }
-        else{
-            //this->polygon_list.erase(this->polygon_list.begin() + i);
-            cout << this->surfacesList[i]->toJSONString() <<endl;
-            cout << "un-valid surface in match00" << endl;
-            exit(-1);
-        }
-
+        this->surfacesList[i]->translate(diff);
+//        if (this->surfacesList[i]->isValid())
+//        {
+//            this->surfacesList[i]->translate(diff);
+//        }
+//        else{
+//            //this->polygon_list.erase(this->polygon_list.begin() + i);
+//            cout << this->surfacesList[i]->toJSONString() <<endl;
+//            cout << "un-valid surface in match00" << endl;
+//            exit(-1);
+//        }
     }
 
     for (ull i = 0 ; i < this->p_vertexList->size() ; i++){
