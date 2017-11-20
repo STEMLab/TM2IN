@@ -25,6 +25,7 @@
     <button type="button" onclick="toggleData()"> TOGGLE </button>
 	<button type= "button" onclick="showDoubleSide()"> DoubleSide </button>
 	<div id="container"></div>
+	<script type="text/javascript" src="js/viewer.js"></script>
 	<script src="js/lib/three.js"></script>
 	<script src="js/lib/earcut.js"></script>
 	<script src="js/lib/jquery.js"></script>
@@ -117,10 +118,9 @@
 			loadAndInit();
 		}
 
-		function showDoubleSide(){
-			clearScene();
+		function showDoubleSide(){	
 			doubleside ^= 1;
-			loadAndInit();
+			refresh();
 		}
 
 		function loadAndInit(){
@@ -133,6 +133,7 @@
 		}
 
 		function refresh(){
+			clearScene();
 			init();
 			animate();
 		}
@@ -155,70 +156,6 @@
 				console.log(jsonfile.spaces[0].Surfaces[intersects[0].object.name]);
 			}
 
-		}
-
-		function match(id1, id2){
-			var coord1 = jsonfile.spaces[0].Surfaces[id1].coord;
-			var coord2 = jsonfile.spaces[0].Surfaces[id2].coord;
-			coord2.splice(coord2.length - 1, 1);
-			console.log(coord1.length, coord2.length);
-			var start_i, num = 0;
-			var start_j = -1;
-
-			for (var i = 0 ; i < coord1.length -1 ; i++){
-				for (var j = 0 ;  j < coord2.length ; j++){
-					if (coord1[i][3] == coord2[j][3]){
-						num++;
-					}
-				}
-			}
-			console.log(num);
-			if (num != coord1.length - 1){
-				console.log("not matched whole");
-				return;
-			}
-			for (var j = coord2.length - 2; j >= 0 ; j--){
-				if (coord1[0][3] == coord2[j][3]){
-					start_j = j;
-					break;
-				}
-			}
-			if (start_j == -1){
-				console.log("WRONG");
-				return;
-			}
-
-			var i = 0;
-			for (var j = start_j; i < coord1.length -1 ;){
-				if (coord2[j][3] == coord1[i][3]){
-					i++;
-					console.log("i ", i);
-				}
-				else{
-					var miss_start_j = j;
-					while (coord2[j][3] != coord1[i][3]){
-						j++;
-						if (j == coord2.length) j = 0;
-					}
-					var mis_length;
-					if (miss_start_j < j){
-						mis_length = j - miss_start_j;
-					}
-					else {
-
-					}
-				}
-				console.log("remove ", j);
-				coord2.splice(j, 1);
-				j--;
-				if (j < 0){
-					j = coord2.length - 1;
-				}
-			}
-			coord2.push(coord2[0]);
-			jsonfile.spaces[0].Surfaces.splice(id1, 1);
-			clearScene();
-			refresh();
 		}
 
 		function init() {
@@ -271,13 +208,15 @@
 				for (var j = 0; j < polygon_list.length; j++) {
 					//if (polygon_list[j].id != 2 && polygon_list[j].id!= 308) continue;
 					var coordinates = polygon_list[j].coord;
-					coordinates = scaleUp(coordinates, 100);
+
+					var new_coordinates = scaleUp(coordinates, 100);
+					//	new_coordinates.splice(10, coordinates.length);
 
 					var normal = polygon_list[j].normal;
-					var triangled_vertices = triangulate(coordinates, normal);
+					var triangled_vertices = triangulate(new_coordinates, normal);
 					if (triangled_vertices.length == 0) console.log(j);
 
-					setMinimum(coordinates);
+					setMinimum(new_coordinates);
 					var geometry = new THREE.BufferGeometry();
 					var vertices = new Float32Array(triangled_vertices);
 
@@ -299,7 +238,7 @@
 					mesh.name = j;
 					scene.add(mesh);
 					objects.push(mesh);
-					//break;
+					//	break;
 				}
 			}
 
@@ -403,16 +342,20 @@
 
 		function scaleUp(coordinates, scale){
 			scale = scale || 100; //if undefined, 100.
+			var new_coords = [];
 			if (!Array.isArray(coordinates)){
 				console.log("not array");
 				return null;
 			}
 			for (var i = 0 ; i < coordinates.length ; i++){
-				coordinates[i][0] *= scale;
-				coordinates[i][1] *= scale;
-				coordinates[i][2] *= scale;
+				var coord = [];
+				coord.push(coordinates[i][0] * scale);
+				coord.push(coordinates[i][1] * scale);
+				coord.push(coordinates[i][2] * scale);
+				coord.push(coordinates[i][3]);
+				new_coords.push(coord);
 			}
-			return coordinates;
+			return new_coords;
 		}
 
 		function onWindowResize() {
