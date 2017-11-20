@@ -45,9 +45,9 @@ bool Checker::isSameVertex(Vertex& v1, Vertex& v2){
 }
 
 bool Checker::isSameOrientation(Vector_3& nv1, Vector_3& nv2, double degree){
-    double thres = degree;
     double angle = CGALCalculation::getAngle(nv1, nv2);
-    return (angle <= thres) ;
+    if (degree < 0) return (angle >= 180 + degree);
+    else return (angle <= degree) ;
 }
 
 

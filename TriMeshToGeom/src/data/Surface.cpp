@@ -318,6 +318,7 @@ bool Surface::compareArea(Surface* i, Surface* j) {
 }
 
 void Surface::removeStraight(Checker* ch){
+    if (this->v_list.size() < 3) return;
     ll index = 1;
     Vertex* start_p = this->v_list[0];
     Vertex* check_p = this->v_list[index];
@@ -328,8 +329,7 @@ void Surface::removeStraight(Checker* ch){
         ll next_index = index + 1;
         if (next_index == (ll)this->v_list.size()) next_index = 0;
         Vertex* end_p = this->v_list[next_index];
-        if (ch->isSameOrientation(start_p, check_p, end_p, 0.1))
-        {
+        if (ch->isSameOrientation(start_p, check_p, end_p, 0.01)){
             removed_count++;
         }
         else{
@@ -339,6 +339,36 @@ void Surface::removeStraight(Checker* ch){
         index = next_index;
         check_p = this->v_list[index];
     } while (index != 1);
+
+    for (ull i = 1 ; i < new_v_list.size() - 1; ){
+        if ( i == 187)
+            cout<< new_v_list[i]->toJSON() << endl;
+        Vertex* start_p = new_v_list[i-1];
+        ull second = i;
+        Vertex* check_p = new_v_list[second];
+        ull third = i+1;
+        Vertex* end_p = new_v_list[third];
+        if (ch->isSameOrientation(start_p, check_p, end_p, 0.1)){
+            new_v_list.erase(new_v_list.begin() + i);
+        }
+        else if(ch->isSameOrientation(start_p, check_p, end_p, -0.1)){
+            new_v_list.erase(new_v_list.begin() + i);
+        }
+        else{
+            i++;
+        }
+    }
+
+//    for (ull i = new_v_list.size() - 2 ; i >= 1 ; i--){
+//        Vertex* start_p = this->v_list[i+1];
+//        ull second = i;
+//        Vertex* check_p = this->v_list[second];
+//        ull third = i-1;
+//        Vertex* end_p = this->v_list[third];
+//        if (ch->isSameOrientation(start_p, check_p, end_p, 0.01)){
+//            this->v_list.erase(this->v_list.begin() + i);
+//        }
+//    }
 
     this->v_list.clear();
     this->v_list = new_v_list;
@@ -404,7 +434,8 @@ bool Surface::isValid(){
         cout << "The number of vertexes is "  << this->v_list.size() <<endl;
         return false;
     }
-
+    return true;
+    /*
     bool isNOTcollinear = false;
     Point_3 start_p = this->v_list[0]->getCGALPoint();
     Point_3 end_p = this->v_list[1]->getCGALPoint();
@@ -422,6 +453,7 @@ bool Surface::isValid(){
         }
     }
     return isNOTcollinear;
+    */
 }
 
 void Surface::tagVerticesUsed(){

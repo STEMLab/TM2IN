@@ -65,7 +65,7 @@ function makeBig(){
 	var floor = jsonfile.spaces[0].Surfaces[0].coord;
 	var floor_zol = [];
 	var zol_index_list = [];
-	for (var i = 0 ; i < jsonfile.spaces[0].Surfaces.length ; i++){
+	for (var i = 1 ; i < jsonfile.spaces[0].Surfaces.length ; i++){
 		var sf_i = jsonfile.spaces[0].Surfaces[i];
 		var normal = sf_i.normal;
 		if (normal[2] * normal[2] > normal[1]* normal[1] + normal[0] * normal[0]){
@@ -81,9 +81,9 @@ function makeBig(){
 	for (var i = 0 ; i < zol_index_list.length ; i++){
 		new_surfaces.push(jsonfile.spaces[0].Surfaces[zol_index_list[i]]);
 	}
-	jsonfile.spaces[0].Surfaces = new_surfaces;
-	refresh();
-	return;
+	// jsonfile.spaces[0].Surfaces = new_surfaces;
+	// refresh();
+	// return;
 
 	console.log("zol : ", floor_zol);
 
@@ -158,7 +158,7 @@ function makeBig(){
 			var index_list = [0,1];
 			var ccw_value = ccw(floor[curr_i], floor_coord, zol_coord, index_list);
 
-			if (ccw_value > 0){//floor
+			if (ccw_value >= 0){//floor
 				console.log("go floor", next_i);
 				checked[curr_i] = true;
 				curr_i = next_i;
@@ -188,7 +188,8 @@ function makeBig(){
 		jsonfile.spaces[0].Surfaces.splice(zol_index_list[i],1);
 	}
 	jsonfile.spaces[0].Surfaces[0].coord = big_coords;
-
+	//new_surfaces.push(jsonfile.spaces[0].Surfaces[0]);
+	//jsonfile.spaces[0].Surfaces = new_surfaces;
 	refresh();
 }
 
@@ -196,23 +197,34 @@ function match(id1, id2){
 	var coord1 = jsonfile.spaces[0].Surfaces[id1].coord;
 	var coord2 = jsonfile.spaces[0].Surfaces[id2].coord;
 	//coord2.splice(coord2.length - 1, 1);
-	console.log(coord1.length, coord2.length);
+	console.log("length : ",coord1.length, coord2.length);
 	var start_i, num = 0;
 	var start_j = -1;
 
-	var new_coord1 = []
+	var new_coord1 = [];
+	var pre_j = -1;
 	for (var i = 0 ; i < coord1.length -1 ; i++){
+
 		for (var j = 0 ;  j < coord2.length ; j++){
 			if (coord1[i][3] == coord2[j][3]){
+				console.log(i, j);
+				if (j + 1 != pre_j){
+					console.log("There is a gap", j+1, pre_j);
+				}
+				pre_j = j;
+				//console.log(coord1[i], coord2[j]);
 				num++;
-				new_coord1.push(coord1[i]);
+				break;
+				// new_coord1.push(coord1[i]);
 			}
 		}
 	}
-	new_coord1.push(new_coord1[0]);
-	jsonfile.spaces[0].Surfaces[id1].coord = new_coord1;
+	// new_coord1.push(new_coord1[0]);
+	// jsonfile.spaces[0].Surfaces[id1].coord = new_coord1;
 	console.log(num);
+	return;
 
+	/*
 	if (num != coord1.length - 1){
 		console.log("not matched whole");
 		return;
@@ -267,4 +279,5 @@ function match(id1, id2){
 	}
 	coord2.push(coord2[0]);
 	jsonfile.spaces[0].Surfaces.splice(id1, 1);
+	*/
 }

@@ -33,13 +33,17 @@ public:
     void setWriter(ProcessWriter * pw){process_writer = pw;}
 
     int mergeTriangles(double degree);
-    void free();
+
     int combineSurfaces(Checker* ch, int max_gener, double startDegree);
     int rotateSurfaces();
+    int finish();
 
     int makeSimpleSpaces(SpaceMaker* sm);
+    int clusterAndMakeSurfaces(double degree);
+
+    void free();
 private:
-    int combine_simplify_handle(Space* space, double degree);
+    int process_generation(Space* space, int& maxGeneration, int& currentGeneration, double& degree);
 };
 
 #endif /* ObjectCollection_h */

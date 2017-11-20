@@ -110,7 +110,7 @@ Surface* Space::attachTriangle(vector<Triangle*> tri_list, Surface* cp, bool* ch
         if (!checked[id])
         {
             //if (cp->attachTriangle(tri_list[id], checker))
-            if (TriangleAttacher::attach(cp, tri_list[id], checker, degree))
+            if (TriangleCalculation::attach(cp, tri_list[id], checker, degree))
             {
                 cp->tri_list.push_back(tri_list[id]);
                 checked[id] = true;
@@ -283,6 +283,7 @@ int Space::combineSurfaceMoreGreedy(double degree){
 }
 
 int Space::updateNormal(){
+    cout << "\n------------updateNormal------------\n" << endl;
     clock_t time_begin = clock();
 
     for (ull i = 0 ; i < (int)this->surfacesList.size() ; i++)
@@ -335,22 +336,23 @@ int Space::handleDefect(){
     cout << "\n------------- handle Defect --------------\n" << endl;
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
     {
+        cout << "Surface " << i << " handleDefect " <<endl;
         Surface* surface = this->surfacesList[i];
-        //surface->removeStraight(this->checker);
-        //surface->removeConsecutiveDuplication(this->checker);
+        surface->removeConsecutiveDuplication(this->checker);
+        surface->removeStraight(this->checker);
         surface->setMBB();
 //        if (surface->checkDuplicate(this->checker)){
 //            surface->removeHole(this->checker);
 //        }
-//
-//        if (surface->isValid()){
-//            i++;
-//        }
-//        else{
-//            delete surface;
-//            this->surfacesList.erase(this->surfacesList.begin() + i);
-//            cout << "Erase unvalid surface" << endl;
-//        }
+
+        if (surface->isValid()){
+            i++;
+        }
+        else{
+            delete surface;
+            this->surfacesList.erase(this->surfacesList.begin() + i);
+            cout << "Erase unvalid surface" << endl;
+        }
     }
     return 0;
 }
@@ -414,15 +416,13 @@ void Space::rotateSpaceByFloorTo00(){
     int floor_index = SLC::findFirstSurfaceIndexSimilarWithAxis(this->surfacesList, 2);
     Surface* floor = this->surfacesList[floor_index];
     floor->setMBB();
-    Plane_3 plane(Point_3(0,0,0), floor->av_normal);
-    floor->makePlanar(plane);
+    //Plane_3 plane(this->surfacesList[floor_index]->v_list[0]->getCGALPoint(), floor->av_normal);
+    //floor->makePlanar(plane);
 
     Vector_3 vector_z(0,0,1);
     double angle = -CGALCalculation::getAngle(floor->av_normal, vector_z);
     if (angle == 0.0){
-        floor->av_normal = vector_z;
-        Plane_3 xy_plane(Point_3(0,0,0), vector_z);
-        floor->makePlanar(xy_plane);
+        cout << "angle is 0.0" << endl;
         return;
     }
 
@@ -444,19 +444,21 @@ void Space::rotateSpaceByFloorTo00(){
                             1);
 
     for (ull i = 0 ; i < this->p_vertexList->size() ; i++){
-        this->p_vertexList->at(i)->used = false;
+        Point_3 p = this->p_vertexList->at(i)->getCGALPoint();
+        p = p.transform(rotateZ);
+        this->p_vertexList->at(i)->setCoords(p.x(), p.y(), p.z());
     }
 
-    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
-        for (ull j = 0 ; j < this->surfacesList[i]->v_list.size() ; j++){
-            if (!this->surfacesList[i]->v_list[j]->used){
-                this->surfacesList[i]->v_list[j]->used = true;
-                Point_3 p = this->surfacesList[i]->v_list[j]->getCGALPoint();
-                p = p.transform(rotateZ);
-                this->surfacesList[i]->v_list[j]->setCoords(p.x(), p.y(), p.z());
-            }
-        }
-    }
+//    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
+//        for (ull j = 0 ; j < this->surfacesList[i]->v_list.size() ; j++){
+//            if (!this->surfacesList[i]->v_list[j]->used){
+//                this->surfacesList[i]->v_list[j]->used = true;
+//                Point_3 p = this->surfacesList[i]->v_list[j]->getCGALPoint();
+//                p = p.transform(rotateZ);
+//                this->surfacesList[i]->v_list[j]->setCoords(p.x(), p.y(), p.z());
+//            }
+//        }
+//    }
 }
 
 

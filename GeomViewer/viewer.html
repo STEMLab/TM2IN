@@ -152,10 +152,14 @@
 
 			if ( intersects.length > 0 ) {
 				intersects[ 0 ].object.material.color.setHex( Math.random() * 0xffffff );
-				console.log(intersects[0].object.name);
-				console.log(jsonfile.spaces[0].Surfaces[intersects[0].object.name]);
+				clickSurface(intersects[0].object.name);
 			}
 
+		}
+
+		function clickSurface(index){
+			console.log(index);
+			console.log(jsonfile.spaces[0].Surfaces[index]);
 		}
 
 		function init() {
@@ -197,10 +201,11 @@
 			raycaster = new THREE.Raycaster();
 			mouse = new THREE.Vector2();
 
-			scene.fog = new THREE.FogExp2(0xcccccc, 0.0002);
+			//scene.fog = new THREE.FogExp2(0xcccccc, 0.0002);
 			if (jsonfile == undefined){
 				console.log("no json");
 			}
+
 			var space = jsonfile.spaces;
 			for (var i = 0; i < space.length; i++) {
 				var polygon_list = space[i].Surfaces;
@@ -291,6 +296,7 @@
 
 			if (nx >= ny && nx >= nz){
 				for (var i = 0 ; i < coordinates.length ; i++){
+					if (coordinates[i][2] == 0.0) console.log(coordinates[i]);
 					vertices2d.push(coordinates[i][1]);
 					vertices2d.push(coordinates[i][2]);
 				}

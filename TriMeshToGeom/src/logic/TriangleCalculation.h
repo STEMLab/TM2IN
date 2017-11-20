@@ -3,10 +3,13 @@
 
 #include "data/Surface.hpp"
 
-class TriangleAttacher
+using namespace std;
+
+class TriangleCalculation
 {
 public:
     static bool attach(Surface* cp, Triangle* pl, Checker* ch, double degree);
+    static vector<Surface*> clusterAndmakeSurfaces(vector<Triangle>& tri_list);
 private:
     static bool isNeighbor(Surface* cp, Triangle* pl);
     static bool checkMakeHole(Surface* cp, ll index, Vertex* add_id);

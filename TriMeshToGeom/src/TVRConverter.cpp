@@ -11,9 +11,9 @@
 using namespace std;
 
 void test(){
-    Point_3 p1(6.11105, 9.531836, 0.638514);
-    Point_3 p2(6.259156, 9.60813, 0.617178);
-    Point_3 p3(6.255268, 9.602945, 0.617898);
+    Point_3 p1(-7.061515, 0.230018, -0.434049);
+    Point_3 p2(-7.05937, 0.231965, -0.4344);
+    Point_3 p3(-7.155125, 0.145083, -0.418723);
 
     Vector_3 vc1(p1,p2);
     Vector_3 vc2(p1,p3);
@@ -43,7 +43,7 @@ int main(int argc, const char * argv[]) {
 
     RoomMaker* manager = new FlatRoomMaker();
     manager->setImporter(new TVRImporter());
-    manager->setChecker(new Checker(0.0000001));
+    manager->setChecker(new Checker(0.000002));
 
     cout << "Load TVR File.." << endl;
     if (manager->import( (string(path) + string(file_name) + ".tvr").c_str()) ){

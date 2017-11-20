@@ -8,12 +8,26 @@ bool SurfaceGraph::isNeighbor(ull id1, ull id2){
     return false;
 }
 
+void SurfaceGraph::attachNewTriagle(vector<Triangle>& tri_list){
+    vector<ull> open_list;
+    for (ull i = 0; i < adjList.size() ; i++){
+        if (adjList[i].size() > 3){
+            cout << adjList[i].size() <<endl;
+            assert(false);
+        }
+        if (adjList[i].size() < 3){
+            open_list.push_back(i);
+        }
+    }
+
+}
+
 void SurfaceGraph::makeAdjacentGraph(vector<Surface*>& surface_list){
     adjList.assign(surface_list.size(), vector<ull>());
     size = surface_list.size();
     for (ull i = 0 ; i < surface_list.size() - 1 ; i++){
         Surface* surface_i = surface_list[i];
-        for (ull j = i ; j < surface_list.size() ; j ++){
+        for (ull j = i + 1 ; j < surface_list.size() ; j ++){
             if (surface_i->isAdjacent(surface_list[j])){
                 adjList[surface_i->sf_id].push_back(surface_list[j]->sf_id);
                 adjList[surface_list[j]->sf_id].push_back(surface_i->sf_id);

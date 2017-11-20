@@ -1,7 +1,7 @@
-#include "TriangleAttacher.h"
+#include "TriangleCalculation.h"
 
 
-bool TriangleAttacher::attach(Surface* cp, Triangle* pl, Checker* ch, double degree)
+bool TriangleCalculation::attach(Surface* cp, Triangle* pl, Checker* ch, double degree)
 {
     // check Triangle is in near polygon or not
     if (!isNeighbor(cp, pl)) return false;
@@ -46,7 +46,14 @@ bool TriangleAttacher::attach(Surface* cp, Triangle* pl, Checker* ch, double deg
     return false;
 }
 
-bool TriangleAttacher::isShareThreeLine(Surface* cp, ll index){
+vector<Surface*> TriangleCalculation::clusterAndmakeSurfaces(vector<Triangle>& triangles){
+    vector<pair<Vector_3, Plane_3>> representative;
+
+    vector<Surface*> result;
+    return result;
+}
+
+bool TriangleCalculation::isShareThreeLine(Surface* cp, ll index){
     ll n_index = index + 3;
     if (n_index >= (int)cp->v_list.size()) n_index -= cp->v_list.size();
 
@@ -54,7 +61,7 @@ bool TriangleAttacher::isShareThreeLine(Surface* cp, ll index){
 
 }
 
-ll TriangleAttacher::findShareLine(Surface* cp, Triangle* pl, Checker* ch, Vertex** add)
+ll TriangleCalculation::findShareLine(Surface* cp, Triangle* pl, Checker* ch, Vertex** add)
 {
     for (ull id = 0 ; id < cp->v_list.size() ; id++)
     {
@@ -83,7 +90,7 @@ ll TriangleAttacher::findShareLine(Surface* cp, Triangle* pl, Checker* ch, Verte
     return -1;
 }
 
-int TriangleAttacher::isShareTwoLine(Surface* cp, ll index, Vertex* add_id){
+int TriangleCalculation::isShareTwoLine(Surface* cp, ll index, Vertex* add_id){
     ll b_index = index - 1;
     if (b_index < 0) b_index = cp->v_list.size() - 1;
 
@@ -98,7 +105,7 @@ int TriangleAttacher::isShareTwoLine(Surface* cp, ll index, Vertex* add_id){
 }
 
 
-bool TriangleAttacher::checkMakeHole(Surface* cp, ll index, Vertex* add_id){
+bool TriangleCalculation::checkMakeHole(Surface* cp, ll index, Vertex* add_id){
     for (ll i = 0 ; i < (ll)cp->v_list.size() ; i++)
     {
         if (cp->v_list[i] == add_id)
@@ -117,7 +124,7 @@ bool TriangleAttacher::checkMakeHole(Surface* cp, ll index, Vertex* add_id){
 }
 
 
-bool TriangleAttacher::isNeighbor(Surface* cp, Triangle* pl){
+bool TriangleCalculation::isNeighbor(Surface* cp, Triangle* pl){
     Vertex* v_list[3] = {pl->a, pl->b, pl->c};
 
     for (int i = 0 ; i < 3 ; i++){

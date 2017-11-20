@@ -11,7 +11,7 @@
 
 #include "data/SurfaceGraph.h"
 #include "model/Triangle.h"
-#include "logic/TriangleAttacher.h"
+#include "logic/TriangleCalculation.h"
 #include "data/Surface.hpp"
 #include "logic/CleanPolygonMaker.h"
 #include "model/Segment.h"

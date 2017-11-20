@@ -48,8 +48,8 @@ OBJCollection* TVRImporter::import(const char* f_path, Checker* check){
                 Vertex vt;
                 this->makeVertex(v_count, inputstr, vt);
 
-                Vertex* pt_v = new Vertex(vt);
-                //Vertex* pt_v = this->findSameVertex(sorted_vertex, check, vt);
+                //Vertex* pt_v = new Vertex(vt);
+                Vertex* pt_v = this->findSameVertex(sorted_vertex, check, vt);
                 pt_v->index = v_count;
                 tvrcl->vertex.push_back(pt_v);
 
@@ -84,17 +84,16 @@ OBJCollection* TVRImporter::import(const char* f_path, Checker* check){
     }
     obj->p_vertexList = &tvrcl->vertex;
     tvrcl->space_list.push_back(obj);
-
+    cout << "removed vertex : " << tvrcl->vertex.size() - sorted_vertex.size() << endl;
     return tvrcl;
 }
 
 
 Vertex* TVRImporter::findSameVertex(vector<Vertex*>& vertex, Checker* check, Vertex& vt){
-    std::vector<Vertex*>::iterator low, up, it;
-    low = std::lower_bound(vertex.begin(), vertex.end(), vt.x(), CompareVertexAndX() );
-    up = std::upper_bound(vertex.begin(), vertex.end(), vt.x(), CompareVertexAndX() );
+    vector<Vertex*>::iterator it, low;
+    low = std::lower_bound(vertex.begin(), vertex.end(), vt.x() - check->threshold_vertex * 2, CompareVertexAndX() );
 
-    for (it = low ; it != up ; it++){
+    for (it = low ; it != vertex.end() ; it++){
         double diff = check->compare_vertex( (*it), &vt);
         if (diff > 0){
             break;
@@ -103,7 +102,6 @@ Vertex* TVRImporter::findSameVertex(vector<Vertex*>& vertex, Checker* check, Ver
             continue;
         }
         else{
-            cout << "Same Vertex " << diff << endl;
             return *it;
         }
     }
