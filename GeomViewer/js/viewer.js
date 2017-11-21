@@ -198,13 +198,10 @@ function match(id1, id2){
 	var coord2 = jsonfile.spaces[0].Surfaces[id2].coord;
 	//coord2.splice(coord2.length - 1, 1);
 	console.log("length : ",coord1.length, coord2.length);
-	var start_i, num = 0;
-	var start_j = -1;
-
+	var num = 0;
 	var new_coord1 = [];
 	var pre_j = -1;
 	for (var i = 0 ; i < coord1.length -1 ; i++){
-
 		for (var j = 0 ;  j < coord2.length ; j++){
 			if (coord1[i][3] == coord2[j][3]){
 				console.log(i, j);

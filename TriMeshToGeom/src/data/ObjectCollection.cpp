@@ -69,6 +69,8 @@ int OBJCollection::process_generation(Space* space, int& maxGeneration, int& cur
             return -1;
         }
 
+        double diff = 0.01;
+        space->snapSurface(diff);
         if (space->handleDefect(angle) == -1){ cout << "" << endl; return -1; }
 
         if (p_size == (int)space->surfacesList.size()) {
@@ -105,10 +107,13 @@ int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegre
 
         angle = 1.0;
         if (space->handleDefect(angle) == -1){ cout << "" << endl; return -1; }
+
+        max_gener = 10;
         if (process_generation(space, max_gener, gen, degree, angle)) return -1;
 
         sort(space->surfacesList.begin(), space->surfacesList.end(), Surface::compareArea);
         SLC::tagID(space->surfacesList);
+
 //        if (space->simplifySegment() == -1){
 //            cout << "simplify error" << endl;
 //            return -1;

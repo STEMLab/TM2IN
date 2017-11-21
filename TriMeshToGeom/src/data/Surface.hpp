@@ -94,6 +94,8 @@ public:
     void changeToRectangle();
     Segment* makeSegmentUpperZ(Checker* ch);
     Segment* makeSegmentLowerZ(Checker* ch);
+
+    void snapping(Surface* p_surface, double p_diff);
     void clipping(Surface* p_surface,Checker* ch);
 private:
     Point_3 getCenterPoint();

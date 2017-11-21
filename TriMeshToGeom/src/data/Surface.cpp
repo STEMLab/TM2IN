@@ -341,8 +341,6 @@ void Surface::removeStraight(double degree){
     } while (index != 1);
 
     for (ull i = 1 ; i < new_v_list.size() - 1; ){
-        if ( new_v_list[i]->index == 6879)
-            cout<< new_v_list[i]->toJSON() << endl;
         Vertex* start_p = new_v_list[i-1];
         ull second = i;
         Vertex* check_p = new_v_list[second];
@@ -610,6 +608,54 @@ Segment* Surface::makeSegmentUpperZ(Checker* ch){
     return new Segment(ft, ed);
 }
 
+void Surface::snapping(Surface* p_surface, double p_diff){
+    vector<pair<ull,ull>> match_list;
+    int match_num = 0;
+    for (ull vj = 0 ; vj < p_surface->v_list.size() ; vj++){
+        for (ull vi = 0 ; vi < this->v_list.size() ; vi++){
+            if (this->v_list[vi]->index == p_surface->v_list[vj]->index){
+                match_list.push_back(make_pair(vi, vj));
+                match_num++;
+                break;
+            }
+        }
+    }
+    if (match_num == 0) return;
+
+    for (int i = 0 ; i < match_list.size() - 1; i++){
+        ull next_first = match_list[i].first == 0? this->v_list.size() - 1 : match_list[i].first - 1;
+        if (match_list[i].second + 1 != match_list[i+1].second){
+            if (next_first != match_list[i+1].first){
+                ull nn_first = next_first == 0 ? this->v_list.size() - 1 : next_first - 1;
+                if (nn_first == match_list[i+1].first){
+//                    removed_first.push_back(next_first);
+//                    removed_second.push_back(match_list[i].second + 1);
+                    this->v_list[next_first] = p_surface->v_list[match_list[i].second + 1];
+                }
+                else{
+                    p_surface->v_list[match_list[i].second + 1] = p_surface->v_list[match_list[i].second];
+                    //removed_second.push_back(match_list[i].second + 1);
+                }
+            }
+            else{
+                p_surface->v_list[match_list[i].second + 1] = p_surface->v_list[match_list[i].second];
+                //removed_second.push_back(match_list[i].second + 1);
+            }
+        }
+        else{
+            if (next_first != match_list[i+1].first){
+                ull nn_first = next_first == 0 ? this->v_list.size() - 1 : next_first - 1;
+                if (nn_first == match_list[i+1].first){
+                    //removed_first.push_back(next_first);
+                    this->v_list[next_first] = this->v_list[match_list[i].first];
+                }
+            }
+            else{
+            }
+        }
+    }
+
+}
 
 void Surface::clipping(Surface* p_surface, Checker* ch){
     int num = 0;

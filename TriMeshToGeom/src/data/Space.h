@@ -52,7 +52,7 @@ public:
     int handleDefect(double angle);
     int updateNormal();
 
-    int combineSurfaceMoreGreedy(double);
+    int snapSurface(double);
     void rotateSpaceByFloorTo00();
     vector<Surface*> getTopSurfaces(double percent);
 

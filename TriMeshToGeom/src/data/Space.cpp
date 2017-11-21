@@ -203,85 +203,6 @@ Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count,
     return cp;
 }
 
-int Space::combineSurfaceMoreGreedy(double degree){
-    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
-    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
-        Surface* sfi = this->surfacesList[i];
-        for (ull j = i + 1 ; j < this->surfacesList.size() ; ){
-            Surface* sfj = this->surfacesList[j];
-            //Same Normal and isNeighbor
-            if (this->checker->CanbeMerged(sfi->av_normal, sfj->av_normal, degree) && CGALCalculation::isIntersect_BBOX(sfi, sfj)){
-                int same_num = 0;
-                for (ull vi = 0 ; vi < sfi->v_list.size() ; vi++){
-                    for (ull vj = 0 ; vj < sfj->v_list.size() ; vj++){
-                        if (sfi->v_list[vi] == sfj->v_list[vj]) same_num++;
-                    }
-                }
-                if (same_num == sfj->v_list.size() ) {
-                    cout << "same : " <<same_num << endl;
-                    if (sfj->v_list.size() < sfi->v_list.size()){
-                        for (ull vi = 0 ; vi < sfi->v_list.size() ; ){
-                            ull vj;
-                            for (vj = 0; vj < sfj->v_list.size() ; ){
-                                if (sfi->v_list[vi] == sfj->v_list[vj]) break;
-                                else vj++;
-                            }
-                            if (vj == sfj->v_list.size()) vi++;
-                            else{
-                                sfi->v_list.erase(sfi->v_list.begin() + vi);
-                                sfj->v_list.erase(sfj->v_list.begin() + vj);
-                            }
-                        }
-                        if (sfj->v_list.size() != 0) {
-                            cout << "Wrong" << endl;
-                            return -1;
-                        }
-                        else{
-                            this->surfacesList.erase(this->surfacesList.begin() + j);
-                        }
-                    }
-                    else{
-                        j++;
-                        cout << "sfj is bigger" << endl;
-                    }
-                }
-                else if (same_num > sfj->v_list.size() ) {
-                    j++;
-                    cout << "wrong " <<endl;
-                }
-                else j++;
-
-//                vector<bool> checked(sfj->tri_list.size(), false);
-//                int merged_num = 0;
-//                for (ull tri_id = 0 ; tri_id < sfj->tri_list.size() ; tri_id++){
-//                    if (!checked[tri_id]){
-//                        if (TriangleAttacher::attach(sfi, sfj->tri_list[tri_id], this->checker, degree)){
-//                            tri_id = 0;
-//                            checked[tri_id] = true;
-//                            merged_num++;
-//                        }
-//                    }
-//                }
-//                if (merged_num == 0){
-//                    j++;
-//                }
-//                else if (merged_num == sfj->tri_list.size()){
-//                    this->surfacesList.erase(this->surfacesList.begin() + j);
-//                }
-//                else{
-//                    cout << "Not All attatched" << endl;
-//                    this->surfacesList.erase(this->surfacesList.begin() + j);
-//                }
-            }
-            else{
-                j++;
-            }
-        }
-
-    }
-    return 0;
-}
-
 int Space::updateNormal(){
     cout << "\n------------updateNormal------------\n" << endl;
     clock_t time_begin = clock();
@@ -336,14 +257,11 @@ int Space::handleDefect(double angle){
     cout << "\n------------- handle Defect --------------\n" << endl;
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
     {
-        cout << "Surface " << i << " handleDefect " <<endl;
+        //cout << "Surface " << i << " handleDefect " <<endl;
         Surface* surface = this->surfacesList[i];
         surface->removeConsecutiveDuplication(this->checker);
         surface->removeStraight(angle);
         surface->setMBB();
-//        if (surface->checkDuplicate(this->checker)){
-//            surface->removeHole(this->checker);
-//        }
 
         if (surface->isValid()){
             i++;
@@ -459,6 +377,28 @@ void Space::rotateSpaceByFloorTo00(){
 //            }
 //        }
 //    }
+}
+
+
+
+int Space::snapSurface(double p_diff){
+    cout << "snap Surface " << endl;
+    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareLength);
+    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
+        Surface* sfi = this->surfacesList[i];
+        for (ull j = i + 1 ; j < this->surfacesList.size() ; j++){
+            Surface* sfj = this->surfacesList[j];
+            if (sfj->v_list.size() < 3) continue;
+            //Same Normal and isNeighbor
+            if (this->checker->CanbeMerged(sfi->av_normal, sfj->av_normal, 10.0)){
+                sfi->snapping(sfj, p_diff);
+            }
+            if (sfj->v_list.size() < 3 || sfi->v_list.size() < 3) cout << "snapping make wrong surface---" << endl;
+
+        }
+
+    }
+    return 0;
 }
 
 
