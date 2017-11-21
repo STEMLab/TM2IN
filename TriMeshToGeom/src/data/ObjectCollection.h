@@ -43,7 +43,7 @@ public:
 
     void free();
 private:
-    int process_generation(Space* space, int& maxGeneration, int& currentGeneration, double& degree);
+    int process_generation(Space* space, int& maxGeneration, int& currentGeneration, double& degree, double angle);
 };
 
 #endif /* ObjectCollection_h */

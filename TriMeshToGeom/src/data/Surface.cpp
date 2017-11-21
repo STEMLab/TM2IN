@@ -317,7 +317,7 @@ bool Surface::compareArea(Surface* i, Surface* j) {
      return (i->area > j->area);
 }
 
-void Surface::removeStraight(Checker* ch){
+void Surface::removeStraight(double degree){
     if (this->v_list.size() < 3) return;
     ll index = 1;
     Vertex* start_p = this->v_list[0];
@@ -329,7 +329,7 @@ void Surface::removeStraight(Checker* ch){
         ll next_index = index + 1;
         if (next_index == (ll)this->v_list.size()) next_index = 0;
         Vertex* end_p = this->v_list[next_index];
-        if (ch->isSameOrientation(start_p, check_p, end_p, 0.01)){
+        if (CGALCalculation::isAngleLowerThan(start_p, check_p, end_p, degree)){
             removed_count++;
         }
         else{
@@ -341,34 +341,25 @@ void Surface::removeStraight(Checker* ch){
     } while (index != 1);
 
     for (ull i = 1 ; i < new_v_list.size() - 1; ){
-        if ( i == 187)
+        if ( new_v_list[i]->index == 6879)
             cout<< new_v_list[i]->toJSON() << endl;
         Vertex* start_p = new_v_list[i-1];
         ull second = i;
         Vertex* check_p = new_v_list[second];
         ull third = i+1;
         Vertex* end_p = new_v_list[third];
-        if (ch->isSameOrientation(start_p, check_p, end_p, 0.1)){
+        if (CGALCalculation::isAngleLowerThan(start_p, check_p, end_p, degree)
+           || CGALCalculation::isAngleLowerThan(end_p, check_p, start_p, degree) ){
             new_v_list.erase(new_v_list.begin() + i);
         }
-        else if(ch->isSameOrientation(start_p, check_p, end_p, -0.1)){
+        else if(CGALCalculation::isAngleLowerThan(start_p, check_p, end_p, -degree)
+           || CGALCalculation::isAngleLowerThan(end_p, check_p, start_p, -degree) ){
             new_v_list.erase(new_v_list.begin() + i);
         }
         else{
             i++;
         }
     }
-
-//    for (ull i = new_v_list.size() - 2 ; i >= 1 ; i--){
-//        Vertex* start_p = this->v_list[i+1];
-//        ull second = i;
-//        Vertex* check_p = this->v_list[second];
-//        ull third = i-1;
-//        Vertex* end_p = this->v_list[third];
-//        if (ch->isSameOrientation(start_p, check_p, end_p, 0.01)){
-//            this->v_list.erase(this->v_list.begin() + i);
-//        }
-//    }
 
     this->v_list.clear();
     this->v_list = new_v_list;

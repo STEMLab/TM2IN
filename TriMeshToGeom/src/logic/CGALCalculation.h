@@ -55,6 +55,9 @@ public:
     static Vector_3 normal_list11[11];
     static Vector_3 normal_list6[6];
 
+    static bool isAngleLowerThan(Vector_3& nv1, Vector_3& nv2, double);
+    static bool isAngleLowerThan(Vertex* origin, Vertex* v1, Vertex* v2, double);
+
     static double getSquaredDistance(Vertex* v1, Vertex* v2);
     CGALCalculation(){
 

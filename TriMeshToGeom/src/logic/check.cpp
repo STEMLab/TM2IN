@@ -44,23 +44,6 @@ bool Checker::isSameVertex(Vertex& v1, Vertex& v2){
     return (fabs(v1.z() - v2.z()) < thres && fabs(v1.x() - v2.x()) < thres && fabs(v1.y() - v2.y()) < thres);
 }
 
-bool Checker::isSameOrientation(Vector_3& nv1, Vector_3& nv2, double degree){
-    double angle = CGALCalculation::getAngle(nv1, nv2);
-    if (degree < 0) return (angle >= 180 + degree);
-    else return (angle <= degree) ;
-}
-
-
-bool Checker::isSameOrientation(Vertex* origin, Vertex* v1, Vertex* v2, double degree){
-    Point_3 p3a(origin->x(),origin->y(),origin->z());
-    Point_3 p3b(v1->x(),v1->y(),v1->z());
-    Point_3 p3c(v2->x(),v2->y(),v2->z());
-
-    Vector_3 vec1(p3a,p3b);
-    Vector_3 vec2(p3a,p3c);
-
-    return this->isSameOrientation(vec1, vec2, degree);
-}
 
 
 bool Checker::CanbeMerged(Vector_3& big, Vector_3& small, double degree){

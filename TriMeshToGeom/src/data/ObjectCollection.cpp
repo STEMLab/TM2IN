@@ -59,7 +59,7 @@ int OBJCollection::mergeTriangles(double degree){
     return 0;
 }
 
-int OBJCollection::process_generation(Space* space, int& maxGeneration, int& currentGeneration, double& degree){
+int OBJCollection::process_generation(Space* space, int& maxGeneration, int& currentGeneration, double& degree, double angle){
     ll p_size = space->surfacesList.size();
     while (true && maxGeneration-- > 0){
         cout << "generation : " << currentGeneration << endl;
@@ -68,6 +68,8 @@ int OBJCollection::process_generation(Space* space, int& maxGeneration, int& cur
             cout << "combine error" << endl;
             return -1;
         }
+
+        if (space->handleDefect(angle) == -1){ cout << "" << endl; return -1; }
 
         if (p_size == (int)space->surfacesList.size()) {
             cout << "generation " << currentGeneration  << " done.. "<< endl;
@@ -95,27 +97,23 @@ int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegre
         }
 
         double degree = startDegree;
+        double angle = 0.1;
         this->process_writer->writeGenerationJSON(0, space_list);
         int gen = 1;
 
-        if (process_generation(space, max_gener, gen, degree)) return -1;
+        if (process_generation(space, max_gener, gen, degree, angle)) return -1;
 
+        angle = 1.0;
+        if (space->handleDefect(angle) == -1){ cout << "" << endl; return -1; }
+        if (process_generation(space, max_gener, gen, degree, angle)) return -1;
+
+        sort(space->surfacesList.begin(), space->surfacesList.end(), Surface::compareArea);
+        SLC::tagID(space->surfacesList);
 //        if (space->simplifySegment() == -1){
 //            cout << "simplify error" << endl;
 //            return -1;
 //        }
-        cout << space->surfacesList.size() << endl;
-        degree = 10.0;
-
-        if (space->handleDefect() == -1){ cout << "" << endl; return -1; }
-        if (process_generation(space, max_gener, gen, degree)) return -1;
-        cout << space->surfacesList.size() << endl;
-
-        sort(space->surfacesList.begin(), space->surfacesList.end(), Surface::compareArea);
-        SLC::tagID(space->surfacesList);
-
-
-//        space->pinningToBigSurface();
+        //CleanPolygonMaker::combine(space->surfacesList[13], space->surfacesList[152], ch, degree);
     }
     return 0;
 }

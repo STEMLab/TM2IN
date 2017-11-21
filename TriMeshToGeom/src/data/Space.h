@@ -49,7 +49,7 @@ public:
     int combineSurface(double degree);
     int simplifySegment();
     int match00();
-    int handleDefect();
+    int handleDefect(double angle);
     int updateNormal();
 
     int combineSurfaceMoreGreedy(double);

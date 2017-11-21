@@ -11,9 +11,9 @@
 using namespace std;
 
 void test(){
-    Point_3 p1(-7.061515, 0.230018, -0.434049);
-    Point_3 p2(-7.05937, 0.231965, -0.4344);
-    Point_3 p3(-7.155125, 0.145083, -0.418723);
+    Point_3 p1(-3.064549, -5.711147, 1.013514);
+    Point_3 p2(-3.074714, -5.721137, 0.854335);
+    Point_3 p3(-3.026292, -5.738762, 0.772338);
 
     Vector_3 vc1(p1,p2);
     Vector_3 vc2(p1,p3);
@@ -21,7 +21,7 @@ void test(){
 }
 
 int main(int argc, const char * argv[]) {
-    //test(); return 0;
+   // test(); return 0;
 
     string import_version = "_v1.0.0";
     string export_version = "_v1.0.0.2";

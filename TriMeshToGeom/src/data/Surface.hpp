@@ -74,7 +74,7 @@ public:
     bool checkDuplicate(Checker* ch);
 
     void removeConsecutiveDuplication(Checker* ch);
-    void removeStraight(Checker* ch);
+    void removeStraight(double degree);
     void removeHole(Checker* ch);
 
     Vector_3 getSimpleNormal();

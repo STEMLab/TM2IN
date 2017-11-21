@@ -332,14 +332,14 @@ int Space::simplifySegment(){
     return 0;
 }
 
-int Space::handleDefect(){
+int Space::handleDefect(double angle){
     cout << "\n------------- handle Defect --------------\n" << endl;
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
     {
         cout << "Surface " << i << " handleDefect " <<endl;
         Surface* surface = this->surfacesList[i];
         surface->removeConsecutiveDuplication(this->checker);
-        surface->removeStraight(this->checker);
+        surface->removeStraight(angle);
         surface->setMBB();
 //        if (surface->checkDuplicate(this->checker)){
 //            surface->removeHole(this->checker);
