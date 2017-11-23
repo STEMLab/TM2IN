@@ -5,7 +5,7 @@
 #include <map>
 
 #include "logic/CGALCalculation.h"
-#include "data/Surface.hpp"
+#include "model/Surface.hpp"
 #include "logic/util.h"
 
 using namespace std;

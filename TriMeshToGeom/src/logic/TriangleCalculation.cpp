@@ -10,7 +10,7 @@ bool TriangleCalculation::attach(Surface* cp, Triangle* pl, Checker* ch, double 
     Vector_3 pl_nv = pl->getNormal();
 
     Vertex* add;
-    ll index = findShareLine(cp, pl, ch, &add);
+    ll index = findShareLine(cp, pl, &add);
     if (index == -1) return false;
 
     int share_two_line = isShareTwoLine(cp, index, add); //before : 0, next : 1, no : -1
@@ -61,7 +61,7 @@ bool TriangleCalculation::isShareThreeLine(Surface* cp, ll index){
 
 }
 
-ll TriangleCalculation::findShareLine(Surface* cp, Triangle* pl, Checker* ch, Vertex** add)
+ll TriangleCalculation::findShareLine(Surface* cp, Triangle* pl, Vertex** add)
 {
     for (ull id = 0 ; id < cp->v_list.size() ; id++)
     {

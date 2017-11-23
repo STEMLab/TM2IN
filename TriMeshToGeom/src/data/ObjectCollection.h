@@ -9,7 +9,7 @@
 #ifndef ObjectCollection_h
 #define ObjectCollection_h
 
-#include "data/Surface.hpp"
+#include "model/Surface.hpp"
 #include "logic/check.hpp"
 #include "space_maker/SpaceMaker.h"
 #include "data/Space.h"
@@ -32,7 +32,7 @@ public:
 
     void setWriter(ProcessWriter * pw){process_writer = pw;}
 
-    int mergeTriangles(double degree);
+    int makeTriangleToSurface(double degree);
 
     int combineSurfaces(Checker* ch, int max_gener, double startDegree);
     int rotateSurfaces();

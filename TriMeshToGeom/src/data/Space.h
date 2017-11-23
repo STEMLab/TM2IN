@@ -12,7 +12,7 @@
 #include "data/SurfaceGraph.h"
 #include "model/Triangle.h"
 #include "logic/TriangleCalculation.h"
-#include "data/Surface.hpp"
+#include "model/Surface.hpp"
 #include "logic/CleanPolygonMaker.h"
 #include "model/Segment.h"
 

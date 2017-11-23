@@ -1,7 +1,7 @@
 #ifndef SPACEMAKER_H_INCLUDED
 #define SPACEMAKER_H_INCLUDED
 
-#include "data/Surface.hpp"
+#include "model/Surface.hpp"
 
 class SpaceMaker{
 public:

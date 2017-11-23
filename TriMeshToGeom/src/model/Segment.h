@@ -1,7 +1,7 @@
 #ifndef SEGMENT_H_INCLUDED
 #define SEGMENT_H_INCLUDED
 
-#include "data/Surface.hpp"
+#include "model/Surface.hpp"
 
 class Segment{
 public :

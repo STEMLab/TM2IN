@@ -2,7 +2,7 @@
 #define SURFACESLISTCALCULATION_H_INCLUDED
 
 #include "predefine.h"
-#include "data/Surface.hpp"
+#include "model/Surface.hpp"
 
 using namespace std;
 

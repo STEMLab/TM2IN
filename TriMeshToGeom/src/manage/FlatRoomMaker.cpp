@@ -17,7 +17,7 @@ FlatRoomMaker::~FlatRoomMaker()
 }
 
 int FlatRoomMaker::makeSurfaces(double degree){
-    return objcl->mergeTriangles(degree);
+    return objcl->makeTriangleToSurface(degree);
 }
 
 

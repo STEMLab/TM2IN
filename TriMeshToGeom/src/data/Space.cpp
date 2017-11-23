@@ -110,7 +110,7 @@ Surface* Space::attachTriangle(vector<Triangle*> tri_list, Surface* cp, bool* ch
         if (!checked[id])
         {
             //if (cp->attachTriangle(tri_list[id], checker))
-            if (TriangleCalculation::attach(cp, tri_list[id], checker, degree))
+            if (TriangleCalculation::attach(cp, tri_list[id], this->checker, degree))
             {
                 cp->tri_list.push_back(tri_list[id]);
                 checked[id] = true;
@@ -194,6 +194,7 @@ Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count,
             Surface* sf = this->surfacesList[id];
             if (CleanPolygonMaker::combine(cp, sf, checker, degree) == 0)
             {
+                printProcess(id, this->surfacesList.size());
                 cp->tri_list.insert(cp->tri_list.end(), sf->tri_list.begin(), sf->tri_list.end());
                 checked[id] = true;
                 count++;
@@ -257,10 +258,9 @@ int Space::handleDefect(double angle){
     cout << "\n------------- handle Defect --------------\n" << endl;
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
     {
-        //cout << "Surface " << i << " handleDefect " <<endl;
         Surface* surface = this->surfacesList[i];
         surface->removeConsecutiveDuplication(this->checker);
-        surface->removeStraight(angle);
+        //surface->removeStraight(angle);
         surface->setMBB();
 
         if (surface->isValid()){

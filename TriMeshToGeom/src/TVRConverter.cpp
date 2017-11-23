@@ -23,13 +23,13 @@ void test(){
 int main(int argc, const char * argv[]) {
    // test(); return 0;
 
-    string import_version = "_v1.0.0";
-    string export_version = "_v1.0.0.2";
+    string import_version = "_v1.0.1";
+    string export_version = "_v1.0.1.1";
     const char path[50] = "../Resource/tvr/";
     //const char path[100] = "/Users/dong/Documents/dev/TriMeshToGeom/Resource/teevr/tvr/";
     const char result_path[50] = "../Result/";
     //const char result_path[50] = "/Users/dong/Documents/dev/TriMeshToGeom/Result/";
-    char file_name[] = "office";
+    char file_name[] = "171103_APT";
     const int max_genereration = 10;
     const char process_path[50] = "../Result/process/";
 //    TVRImporter::extractMINtvr(string(path) + string(file_name));
@@ -43,7 +43,7 @@ int main(int argc, const char * argv[]) {
 
     RoomMaker* manager = new FlatRoomMaker();
     manager->setImporter(new TVRImporter());
-    manager->setChecker(new Checker(0.000002));
+    manager->setChecker(new Checker(0.0000001));
 
     cout << "Load TVR File.." << endl;
     if (manager->import( (string(path) + string(file_name) + ".tvr").c_str()) ){

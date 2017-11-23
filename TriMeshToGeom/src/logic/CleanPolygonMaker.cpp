@@ -3,6 +3,7 @@
 
 int CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checker, double degree){
      // check Polygon is in near polygon or not
+    if (!isNeighbor(origin, piece)) return 1;
 
     ll end_i = -1, end_j = -1;
     ll start_i = -1, start_j = -1;
@@ -16,7 +17,7 @@ int CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checker
         return 1;
     }
     /**< [start_i, end_i], [end_j, start_j] */
-    findStartAndEnd(piece->v_list, origin->v_list, middle_i, middle_j, start_i, end_i, start_j, end_j);
+    if (findStartAndEnd(piece->v_list, origin->v_list, middle_i, middle_j, start_i, end_i, start_j, end_j)) return 1;
 
     int seg_num = piece->getSegmentsNumber(end_i, start_i);
 

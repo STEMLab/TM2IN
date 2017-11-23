@@ -7,7 +7,7 @@
 //
 
 #include "logic/check.hpp"
-#include "data/Surface.hpp"
+#include "model/Surface.hpp"
 #include "logic/Triangulator.h"
 #include "logic/CleanPolygonMaker.h"
 
@@ -319,12 +319,14 @@ bool Surface::compareArea(Surface* i, Surface* j) {
 
 void Surface::removeStraight(double degree){
     if (this->v_list.size() < 3) return;
+
+    vector<Vertex*> new_v_list;// = this->v_list;
+
     ll index = 1;
     Vertex* start_p = this->v_list[0];
     Vertex* check_p = this->v_list[index];
-
     int removed_count = 0;
-    vector<Vertex*> new_v_list;
+
     do {
         ll next_index = index + 1;
         if (next_index == (ll)this->v_list.size()) next_index = 0;

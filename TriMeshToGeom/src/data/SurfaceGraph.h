@@ -1,7 +1,7 @@
 #ifndef SURFACEGRAPH_H_INCLUDED
 #define SURFACEGRAPH_H_INCLUDED
 
-#include "data/Surface.hpp"
+#include "model/Surface.hpp"
 #include "logic/util.h"
 #include <queue>
 

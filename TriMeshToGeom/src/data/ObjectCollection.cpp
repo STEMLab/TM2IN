@@ -20,7 +20,7 @@
 
 using namespace std;
 
-int OBJCollection::mergeTriangles(double degree){
+int OBJCollection::makeTriangleToSurface(double degree){
 
     for (ull i = 0 ; i < this->space_list.size(); i++)
     {
@@ -50,10 +50,12 @@ int OBJCollection::mergeTriangles(double degree){
         cout << this->space_list[i]->triangles.size() << endl;
 
         cout << this->space_list[i] -> name << " is converting..." << endl;
-        if (this->space_list[i]->mergeTrianglesGreedy(degree)){
+        //if (this->space_list[i]->mergeTrianglesGreedy(degree)){
+        if (this->space_list[i]->mergeTrianglesNotJoin()){
             cout << "make Surfaces error" << endl;
             return -1;
         }
+        this->process_writer->writeGenerationJSON(0, this->space_list);
     }
 
     return 0;
@@ -70,8 +72,8 @@ int OBJCollection::process_generation(Space* space, int& maxGeneration, int& cur
         }
 
         double diff = 0.01;
-        space->snapSurface(diff);
-        if (space->handleDefect(angle) == -1){ cout << "" << endl; return -1; }
+        //space->snapSurface(diff);
+        //if (space->handleDefect(angle) == -1){ cout << "" << endl; return -1; }
 
         if (p_size == (int)space->surfacesList.size()) {
             cout << "generation " << currentGeneration  << " done.. "<< endl;
@@ -79,9 +81,9 @@ int OBJCollection::process_generation(Space* space, int& maxGeneration, int& cur
         }
         else p_size = (int)space->surfacesList.size();
 
+        currentGeneration++;
         this->process_writer->writeGenerationJSON(currentGeneration, space_list);
 
-        currentGeneration++;
         if (degree < 15) degree += 0.05;
     }
     return 0;
@@ -110,7 +112,7 @@ int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegre
 
         max_gener = 10;
         if (process_generation(space, max_gener, gen, degree, angle)) return -1;
-
+        if (space->handleDefect(angle) == -1){ cout << "" << endl; return -1; }
         sort(space->surfacesList.begin(), space->surfacesList.end(), Surface::compareArea);
         SLC::tagID(space->surfacesList);
 

@@ -5,7 +5,7 @@
 #include <string>
 #include <fstream>
 
-#include "data/Surface.hpp"
+#include "model/Surface.hpp"
 #include "data/Space.h"
 #include "data/ObjectCollection.h"
 

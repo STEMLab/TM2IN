@@ -1,7 +1,7 @@
 #ifndef TRIANGLEATTACHER_H_INCLUDED
 #define TRIANGLEATTACHER_H_INCLUDED
 
-#include "data/Surface.hpp"
+#include "model/Surface.hpp"
 
 using namespace std;
 
@@ -14,7 +14,7 @@ private:
     static bool isNeighbor(Surface* cp, Triangle* pl);
     static bool checkMakeHole(Surface* cp, ll index, Vertex* add_id);
     static int isShareTwoLine(Surface* cp, ll index, Vertex* add_id);
-    static ll findShareLine(Surface* cp, Triangle* pl, Checker* ch, Vertex** add);
+    static ll findShareLine(Surface* cp, Triangle* pl, Vertex** add);
     static bool isShareThreeLine(Surface* cp, ll index);
 
 };
