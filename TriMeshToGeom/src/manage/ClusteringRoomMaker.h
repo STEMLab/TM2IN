@@ -5,8 +5,8 @@
 
 class ClusteringRoomMaker : public RoomMaker{
 public:
-    int makeSurfaces(double degree);
-    int cleaning(int, double startDegree);
+    int pre_process(double degree);
+    int constructSpace(int, double startDegree);
     int makeSimpleSpaces(SpaceMaker* sm);
 
 };

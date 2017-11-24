@@ -1,5 +1,5 @@
-#ifndef TRINAGLE_H
-#define TRINAGLE_H
+#ifndef TRIANGLE_H
+#define TRIANGLE_H
 
 #include "model/vertex.h"
 #include "logic/CGALCalculation.h"
@@ -33,4 +33,4 @@ public:
 };
 
 
-#endif // TRINAGLE_H
+#endif // TRIANGLE_H

@@ -1,12 +1,12 @@
 #include "ClusteringRoomMaker.h"
 
 
-int ClusteringRoomMaker::makeSurfaces(double degree){
+int ClusteringRoomMaker::pre_process(double degree){
     return this->objcl->clusterAndMakeSurfaces(degree);
 }
 
 
-int ClusteringRoomMaker::cleaning(int max_gener, double startDegree){
+int ClusteringRoomMaker::constructSpace(int max_gener, double startDegree){
     return 0;
 }
 

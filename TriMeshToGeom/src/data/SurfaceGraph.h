@@ -18,7 +18,7 @@ public:
     void makeAdjacentGraph(vector<Triangle>& tri_list);
     void attachNewTriagle(vector<Triangle>& tri_list);
 
-    bool isClosedTrinagleMesh();
+    bool isClosedTriangleMesh();
     void print_bfs();
     bool isNeighbor(ull id1, ull id2);
 };

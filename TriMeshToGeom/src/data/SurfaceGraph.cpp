@@ -24,7 +24,6 @@ void SurfaceGraph::attachNewTriagle(vector<Triangle>& tri_list){
 
 void SurfaceGraph::makeAdjacentGraph(vector<Surface*>& surface_list){
     adjList.assign(surface_list.size(), vector<ull>());
-    size = surface_list.size();
     for (ull i = 0 ; i < surface_list.size() - 1 ; i++){
         Surface* surface_i = surface_list[i];
         for (ull j = i + 1 ; j < surface_list.size() ; j ++){
@@ -38,7 +37,6 @@ void SurfaceGraph::makeAdjacentGraph(vector<Surface*>& surface_list){
 
 void SurfaceGraph::makeAdjacentGraph(vector<Triangle>& tri_list){
     adjList.assign(tri_list.size(), vector<ull>());
-    size = tri_list.size();
     for (ull i = 0 ; i < tri_list.size() - 1 ; i++){
         printProcess(i, tri_list.size());
         for (ull j = i + 1 ; j < tri_list.size() ; j ++){
@@ -50,7 +48,7 @@ void SurfaceGraph::makeAdjacentGraph(vector<Triangle>& tri_list){
     }
 }
 
-bool SurfaceGraph::isClosedTrinagleMesh(){
+bool SurfaceGraph::isClosedTriangleMesh(){
     for (ull i = 0; i < adjList.size() ; i++){
         if (adjList[i].size() != 3){
             return false;

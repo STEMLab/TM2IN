@@ -21,41 +21,44 @@
 using namespace std;
 
 int OBJCollection::makeTriangleToSurface(double degree){
-
-    for (ull i = 0 ; i < this->space_list.size(); i++)
+    for (ull s_i = 0 ; s_i < this->space_list.size(); s_i++)
     {
-//        cout << "make Triangle Graph" << endl;
-//        SurfaceGraph* sg = new SurfaceGraph();
-//        sg->makeAdjacentGraph(this->space_list[i]->triangles);
-//        if (!sg->isClosedTrinagleMesh()){
-//            cout << "Not Closed Polyhedral" << endl;
-//            sg->attachNewTriagle(this->space_list[i]->triangles);
-//            if (!sg->isClosedTrinagleMesh()) return -1;
-//        }
-        cout << "Remove unvaild triangles : " << this->space_list[i]->triangles.size() << endl;
-        for (ull j = 0 ; j < this->space_list[i]->triangles.size() ; ){
-            if (this->space_list[i]->triangles[j].a == this->space_list[i]->triangles[j].b){
-                this->space_list[i]->triangles.erase(this->space_list[i]->triangles.begin() + j);
-            }
-            else if (this->space_list[i]->triangles[j].a == this->space_list[i]->triangles[j].c){
-                this->space_list[i]->triangles.erase(this->space_list[i]->triangles.begin() + j);
-            }
-            else if (this->space_list[i]->triangles[j].c == this->space_list[i]->triangles[j].b){
-                this->space_list[i]->triangles.erase(this->space_list[i]->triangles.begin() + j);
+        for (ull j = 0 ; j < this->space_list[s_i]->triangles.size() ; ){
+            if (this->space_list[s_i]->triangles[j].a == this->space_list[s_i]->triangles[j].b ||
+                this->space_list[s_i]->triangles[j].a == this->space_list[s_i]->triangles[j].c ||
+                this->space_list[s_i]->triangles[j].c == this->space_list[s_i]->triangles[j].b){
+                cout << "Wrong Triangle" << endl;
+                return -1;
+                //this->space_list[i]->triangles.erase(this->space_list[i]->triangles.begin() + j);
             }
             else{
                 j++;
             }
         }
-        cout << this->space_list[i]->triangles.size() << endl;
 
-        cout << this->space_list[i] -> name << " is converting..." << endl;
+        cout << "make Triangle Graph" << endl;
+        SurfaceGraph* sg = new SurfaceGraph();
+        sg->makeAdjacentGraph(this->space_list[s_i]->triangles);
+        for (ull i = 0 ; i < sg->adjList.size() ; i++){
+            if (sg->adjList[i].size() != 3){
+                cout << i << " : " << sg->adjList[i].size() << endl;
+            }
+        }
+        if (!sg->isClosedTriangleMesh()){
+            cout << "Not Closed Polyhedral" << endl;
+            sg->attachNewTriagle(this->space_list[s_i]->triangles);
+            if (!sg->isClosedTriangleMesh()) return -1;
+        }
+
+
+        cout << this->space_list[s_i]->triangles.size() << endl;
+
+        cout << this->space_list[s_i] -> name << " is converting..." << endl;
         //if (this->space_list[i]->mergeTrianglesGreedy(degree)){
-        if (this->space_list[i]->mergeTrianglesNotJoin()){
+        if (this->space_list[s_i]->changeTrianglesToSurfaces()){
             cout << "make Surfaces error" << endl;
             return -1;
         }
-        this->process_writer->writeGenerationJSON(0, this->space_list);
     }
 
     return 0;
@@ -93,8 +96,8 @@ int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegre
     for (ull it = 0 ; it < this->space_list.size(); it++)
     {
         Space* space = this->space_list[it];
-        for (unsigned int i = 0 ; i < this->space_list[it]->surfacesList.size() ;i++){
-            if (space->surfacesList[i]->checkDuplicate(ch)){
+        for (unsigned int s_i = 0 ; s_i < this->space_list[it]->surfacesList.size() ;s_i++){
+            if (space->surfacesList[s_i]->checkDuplicate(ch)){
                 cout << "it has duplicate Vertex" << endl;
                 return -1;
             }
@@ -151,8 +154,8 @@ int OBJCollection::finish(){
 }
 
 int OBJCollection::makeSimpleSpaces(SpaceMaker* sm){
-    for (ull i = 0 ; i < this->space_list.size();i++){
-        Space* space = this->space_list[i];
+    for (ull s_i = 0 ; s_i < this->space_list.size();s_i++){
+        Space* space = this->space_list[s_i];
         space->updateNormal();
         Space* new_space = new Space(space->name, space->checker);
         sm->checker = space->checker;
@@ -167,10 +170,10 @@ void OBJCollection::free(){
     sort( vertex.begin(), vertex.end() );
     vertex.erase( unique( vertex.begin(), vertex.end() ), vertex.end() );
 
-    for (int i = 0 ; i < (int)this->vertex.size() ; i++){
-        if (this->vertex[i] != NULL){
-            delete this->vertex[i];
-            this->vertex[i] = NULL;
+    for (int s_i = 0 ; s_i < (int)this->vertex.size() ; s_i++){
+        if (this->vertex[s_i] != NULL){
+            delete this->vertex[s_i];
+            this->vertex[s_i] = NULL;
         }
 
     }
@@ -178,10 +181,10 @@ void OBJCollection::free(){
 }
 
 int OBJCollection::clusterAndMakeSurfaces(double degree){
-    for (ull i = 0 ; i < this->space_list.size(); i++)
+    for (ull s_i = 0 ; s_i < this->space_list.size(); s_i++)
     {
-        this->space_list[i]->surfacesList = TriangleCalculation::clusterAndmakeSurfaces(this->space_list[i]->triangles);
-        this->space_list[i]->match00();
+        this->space_list[s_i]->surfacesList = TriangleCalculation::clusterAndmakeSurfaces(this->space_list[s_i]->triangles);
+        this->space_list[s_i]->match00();
 
     }
 

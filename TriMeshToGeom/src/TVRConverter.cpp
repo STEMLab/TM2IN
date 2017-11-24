@@ -57,7 +57,7 @@ int main(int argc, const char * argv[]) {
     string exported_bin = string(result_path) + "polygons/" + string(file_name) + import_version + ".bin";
     switch(mode){
         case 0:{
-            if (manager->makeSurfaces(30.0)) return 1;
+            if (manager->pre_process(0.0)) return 1;
             if (manager->exportCombined(exported_bin)) return 2;
             break;
         }
@@ -78,7 +78,7 @@ int main(int argc, const char * argv[]) {
     }
 
     //Make each surfaces planar and Remove the tilted surface (and remove co-linear).
-    if (manager->cleaning(max_genereration, 1.00) == -1) return -1;
+    if (manager->constructSpace(max_genereration, 1.00) == -1) return -1;
 
     string json_file = string(result_path) + string(file_name) + export_version + ".json";
     manager->exportSpaceJSON(json_file);

@@ -13,9 +13,9 @@ class RoomMaker
         OBJCollection* objcl;
 
         int import(const char*);
-        virtual int makeSurfaces(double degree) = 0;
+        virtual int pre_process(double degree) = 0;
         virtual int makeSimpleSpaces(SpaceMaker* sm) = 0;
-        virtual int cleaning(int, double){ return -1;}
+        virtual int constructSpace(int, double){ return -1;}
         int exportSpaceJSON(string f_path);
         int exportSimpleSpaceJSON(string f_path);
         int exportCombined(string f_path);

@@ -16,12 +16,12 @@ FlatRoomMaker::~FlatRoomMaker()
     //dtor
 }
 
-int FlatRoomMaker::makeSurfaces(double degree){
+int FlatRoomMaker::pre_process(double degree){
     return objcl->makeTriangleToSurface(degree);
 }
 
 
-int FlatRoomMaker::cleaning(int max_gener, double startDegree){
+int FlatRoomMaker::constructSpace(int max_gener, double startDegree){
     if (objcl->combineSurfaces(check, max_gener, startDegree) == -1) return -1;
     //objcl->rotateSurfaces();
     //if (objcl->finish()) return -1;

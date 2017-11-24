@@ -35,13 +35,14 @@ public:
     string name;
     double whole_area = 0;
     SurfaceGraph* surface_graph;
+    SurfaceGraph* mesh_graph;
 
     void pushTriangle(Triangle tri);
 
     int makeSurfacesBySeparation();
     int makeSurfacesByCandidator();
     int mergeTrianglesGreedy(double degree);
-    int mergeTrianglesNotJoin();
+    int changeTrianglesToSurfaces();
 
     int checkTriangles();
     int checkOpposite();
