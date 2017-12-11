@@ -8,6 +8,8 @@
 
 #include "data/ObjectCollection.h"
 
+#include "space_maker/SpaceMaker.h"
+#include "logic/SurfacesListCalculation.h"
 
 #include <fstream>
 #include <string>
@@ -18,23 +20,146 @@
 
 using namespace std;
 
-int OBJCollection::makeSurfaces(Checker* check, double degree){
+int OBJCollection::mergeTriangles(double degree){
 
-    for (auto it = this->space_list.begin() ; it != this->space_list.end() ; it++)
+    for (ull i = 0 ; i < this->space_list.size(); i++)
     {
-        cout << (*it) -> name << " is converting..." << endl;
-        int ret = (*it)->makeSurfacesGreedy(degree);
-        if (ret)
-        {
+//        cout << "make Triangle Graph" << endl;
+//        SurfaceGraph* sg = new SurfaceGraph();
+//        sg->makeAdjacentGraph(this->space_list[i]->triangles);
+//        if (!sg->isClosedTrinagleMesh()){
+//            cout << "Not Closed Polyhedral" << endl;
+//            sg->attachNewTriagle(this->space_list[i]->triangles);
+//            if (!sg->isClosedTrinagleMesh()) return -1;
+//        }
+        cout << "Remove unvaild triangles : " << this->space_list[i]->triangles.size() << endl;
+        for (ull j = 0 ; j < this->space_list[i]->triangles.size() ; ){
+            if (this->space_list[i]->triangles[j].a == this->space_list[i]->triangles[j].b){
+                this->space_list[i]->triangles.erase(this->space_list[i]->triangles.begin() + j);
+            }
+            else if (this->space_list[i]->triangles[j].a == this->space_list[i]->triangles[j].c){
+                this->space_list[i]->triangles.erase(this->space_list[i]->triangles.begin() + j);
+            }
+            else if (this->space_list[i]->triangles[j].c == this->space_list[i]->triangles[j].b){
+                this->space_list[i]->triangles.erase(this->space_list[i]->triangles.begin() + j);
+            }
+            else{
+                j++;
+            }
+        }
+        cout << this->space_list[i]->triangles.size() << endl;
+
+        cout << this->space_list[i] -> name << " is converting..." << endl;
+        if (this->space_list[i]->mergeTrianglesGreedy(degree)){
             cout << "make Surfaces error" << endl;
             return -1;
         }
-
     }
 
     return 0;
 }
 
+int OBJCollection::process_generation(Space* space, int& maxGeneration, int& currentGeneration, double& degree, double angle){
+    ll p_size = space->surfacesList.size();
+    while (true && maxGeneration-- > 0){
+        cout << "generation : " << currentGeneration << endl;
+        if (space->combineSurface(degree) == -1)
+        {
+            cout << "combine error" << endl;
+            return -1;
+        }
+
+        double diff = 0.01;
+        space->snapSurface(diff);
+        if (space->handleDefect(angle) == -1){ cout << "" << endl; return -1; }
+
+        if (p_size == (int)space->surfacesList.size()) {
+            cout << "generation " << currentGeneration  << " done.. "<< endl;
+            break;
+        }
+        else p_size = (int)space->surfacesList.size();
+
+        this->process_writer->writeGenerationJSON(currentGeneration, space_list);
+
+        currentGeneration++;
+        if (degree < 15) degree += 0.05;
+    }
+    return 0;
+}
+
+int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegree){
+    for (ull it = 0 ; it < this->space_list.size(); it++)
+    {
+        Space* space = this->space_list[it];
+        for (unsigned int i = 0 ; i < this->space_list[it]->surfacesList.size() ;i++){
+            if (space->surfacesList[i]->checkDuplicate(ch)){
+                cout << "it has duplicate Vertex" << endl;
+                return -1;
+            }
+        }
+
+        double degree = startDegree;
+        double angle = 0.1;
+        this->process_writer->writeGenerationJSON(0, space_list);
+        int gen = 1;
+
+        if (process_generation(space, max_gener, gen, degree, angle)) return -1;
+
+        angle = 1.0;
+        if (space->handleDefect(angle) == -1){ cout << "" << endl; return -1; }
+
+        max_gener = 10;
+        if (process_generation(space, max_gener, gen, degree, angle)) return -1;
+
+        sort(space->surfacesList.begin(), space->surfacesList.end(), Surface::compareArea);
+        SLC::tagID(space->surfacesList);
+
+//        if (space->simplifySegment() == -1){
+//            cout << "simplify error" << endl;
+//            return -1;
+//        }
+        //CleanPolygonMaker::combine(space->surfacesList[13], space->surfacesList[152], ch, degree);
+    }
+    return 0;
+}
+
+
+
+int OBJCollection::rotateSurfaces(){
+    for (ull it = 0 ; it < this->space_list.size(); it++)
+    {
+        Space* space = this->space_list[it];
+        space->rotateSpaceByFloorTo00();
+        if (space->match00() == -1){
+            cout << "match00 error" << endl;
+            return -1;
+        }
+    }
+    return 0;
+}
+
+
+int OBJCollection::finish(){
+    for (ull it = 0 ; it < this->space_list.size(); it++)
+    {
+        Space* space = this->space_list[it];
+        space->updateNormal();
+
+    }
+}
+
+int OBJCollection::makeSimpleSpaces(SpaceMaker* sm){
+    for (ull i = 0 ; i < this->space_list.size();i++){
+        Space* space = this->space_list[i];
+        space->updateNormal();
+        Space* new_space = new Space(space->name, space->checker);
+        sm->checker = space->checker;
+        new_space->surfacesList = sm->makeSimpleSurfaces(space->surfacesList);
+        this->simple_space_list.push_back(new_space);
+    }
+
+    return 0;
+}
 
 void OBJCollection::free(){
     sort( vertex.begin(), vertex.end() );
@@ -50,108 +175,14 @@ void OBJCollection::free(){
     vertex.clear();
 }
 
-int OBJCollection::makeGraph(Checker* ch){
+int OBJCollection::clusterAndMakeSurfaces(double degree){
     for (ull i = 0 ; i < this->space_list.size(); i++)
     {
-        this->space_list[i]->makeGraph(ch);
-    }
-}
-
-int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegree){
-    for (ull it = 0 ; it < this->space_list.size(); it++)
-    {
-        for (unsigned int i = 0 ; i < this->space_list[it]->surfacesList.size() ;i++){
-            if (this->space_list[it]->surfacesList[i]->checkDuplicate(ch)){
-                cout << "it has duplicate Vertex" << endl;
-                return -1;
-            }
-        }
-
-
-
-        ll p_size = this->space_list[it]->surfacesList.size();
-        double degree = startDegree;
-        int gen = 0;
-
-        while (true && max_gener--)
-        {
-            this->space_list[it]->updateNormal();
-            cout << "generation : " << gen << endl;
-
-            if (max_gener == 0){
-                ch->degreeOfMerging = 90.0;
-                degree = 0.0001;
-            }
-
-            if (this->space_list[it]->combineSurface(degree) == -1)
-            {
-                cout << "combine error" << endl;
-                return -1;
-            }
-            if (degree < 45) degree += 0.05;
-            //this->space_list[it]->tagID();
-
-            if (this->space_list[it]->simplifySegment() == -1)
-            {
-                cout << "simplify error" << endl;
-                return -1;
-            }
-            if (this->space_list[it]->handleDefect() == -1)
-            {
-                cout << "" << endl;
-                return -1;
-            }
-
-            if (p_size == (int)this->space_list[it]->surfacesList.size()) break;
-            else p_size = (int)this->space_list[it]->surfacesList.size();
-
-            extractGeneration(gen);
-            gen++;
-
-        }
-
-        this->space_list[it]->updateNormal();
-
-//        if (this->space_list[it]->makeCoplanar() == -1)
-//        {
-//            cout << "makeCoplanar error" << endl;
-//            return -1;
-//        }
-        if (this->space_list[it]->match00() == -1)
-        {
-            cout << "match00 error" << endl;
-            return -1;
-        }
+        this->space_list[i]->surfacesList = TriangleCalculation::clusterAndmakeSurfaces(this->space_list[i]->triangles);
+        this->space_list[i]->match00();
 
     }
+
     return 0;
+
 }
-
-void OBJCollection::extractGeneration(int gen){
-    ofstream fout;
-    string f_path = string(GENERATION_PATH) + "office_g_" + to_string(gen) + ".json";
-    fout.open(f_path, ios::out|ios::trunc);
-
-    if (!fout) return ;
-    if (JSONMaker::printJSON(fout, this->space_list))
-    {
-        return ;
-    }
-    fout.close();
-}
-
-
-void OBJCollection::test(){
-    Surface* zero = this->space_list[0]->surfacesList[0];
-    for (int i = 0 ; i < (int)this->space_list[0]->surfacesList.size() ; i++){
-        Surface* sf = this->space_list[0]->surfacesList[i];
-        if (sf->sf_id == 36)
-        {
-            double angle = CGALCalculation::getAngle(zero->av_normal, sf->av_normal);
-            Vector_3 added = zero->av_normal + sf->av_normal;
-            cout << angle << endl;
-            cout << (CGALCalculation::getAngle(added, zero->av_normal)) << endl;
-        }
-    }
-}
-

@@ -20,13 +20,12 @@ int JSONMaker:: printJSON(ofstream& fout, vector<Space*>& ts){
     return 0;
 }
 
-
 int JSONMaker::printJSON(ofstream& fout, vector<Surface*>& cp){
-    cout << "The number of Surfaces : " << cp.size() <<endl;
+    cout << "\nThe number of Surfaces : " << cp.size() <<endl;
     fout << " \"Surfaces\" : [ \n";
     for (unsigned int id = 0 ; id < cp.size() ; id++)
     {
-        if (cp[id]->v_list.size() == 1) cout << "1 tri" << endl;
+        //if (cp[id]->v_list.size() == 1) cout << "1 tri" << endl;
 
         string cp_coords = cp[id]->toJSONString();
         fout << cp_coords;

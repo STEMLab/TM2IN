@@ -10,6 +10,7 @@
 #include "model/Triangle.h"
 #include "logic/check.hpp"
 #include "logic/util.h"
+#include "model/Segment.h"
 #include "predefine.h"
 
 #include <CGAL/Simple_cartesian.h>
@@ -29,38 +30,41 @@ typedef Kernel::Plane_3 Plane_3;
 class Surface{
 public:
     ull sf_id;
+    bool isHidden;
     std::vector<Vertex*> v_list;
+    std::vector<std::vector<Vertex*> > inner_ring;
+    std::vector<Triangle*> tri_list;
     Vector_3 av_normal = CGAL::NULL_VECTOR;
 
     double min_coords[3];
     double max_coords[3];
-    double sq_area = 0.0;
+    double area = 0.0;
 
     Surface(){
-
     }
-
-    Surface(Triangle* pl);
+    Surface(Triangle& pl);
+    Surface(Triangle* pl) : Surface(*pl) {}
     Surface(Surface* cp);
 
     ull getLength(){
         return v_list.size();
     }
 
+    void setZ(double value);
+
     bool attachTriangle(Triangle* pl, Checker* ch);
     bool attachTriangle2(Triangle* pl, Checker* ch);
     std::string toJSONString();
-    void makeCoplanarParallelWithZ();
-    void makeCoplanarByNormalType();
 
     bool isInMBB(Vertex* vt);
-    bool isAdjacent(Surface* sf, ll& middle_i, ll& middle_j);
+    bool isAdjacent(Surface* sf);
+    bool isOpposite(Surface* sf);
 
     void setMBB(Triangle* pl);
     void setMBB(Surface* pl);
     void setMBB();
     bool isExistSameVertexInRange(ll si, ll ei, Vertex* add_id);
-    int getSegmentsNumber(ll si, ll ei);
+    int getSegmentsNumber(ll start_index, ll end_index);
 
     //compare vector size
     static bool compareLength(Surface* i, Surface* j);
@@ -70,18 +74,35 @@ public:
     bool checkDuplicate(Checker* ch);
 
     void removeConsecutiveDuplication(Checker* ch);
-    void removeStraight(Checker* ch);
-
-    bool updateNormal(Checker* ch);
+    void removeStraight(double degree);
     void removeHole(Checker* ch);
 
+    Vector_3 getSimpleNormal();
+    bool updateNormal(Checker* ch);
+    void updateRectArea();
+
     bool isValid();
+    void tagVerticesUsed();
+
+    bool hasSameNormalwith(int axis);
+    bool hasOppositeNormalwith(int axis);
+
+    void makePlanar(Plane_3 plane);
+    Point_3 findLowestPoint();
+    Plane_3 getPlaneWithLowest();
+
+    void changeToRectangle();
+    Segment* makeSegmentUpperZ(Checker* ch);
+    Segment* makeSegmentLowerZ(Checker* ch);
+
+    void snapping(Surface* p_surface, double p_diff);
+    void clipping(Surface* p_surface,Checker* ch);
 private:
     Point_3 getCenterPoint();
     Point_3 getCenterPointInFartest();
     int findNormalTypeForTri();
-    Vector_3 getSimpleNormal();
-    std::vector<std::pair<double, double>> to2DPoints();
+    std::vector<std::pair<double, double>> project_to_Plane18();
+    std::vector<Point_2> get2DPoints(Plane_3 plane);
 };
 
 

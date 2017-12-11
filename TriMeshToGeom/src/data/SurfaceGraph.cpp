@@ -1,19 +1,62 @@
 #include "data/SurfaceGraph.h"
 #include <iostream>
 
+bool SurfaceGraph::isNeighbor(ull id1, ull id2){
+    for (ull i = 0 ; i < adjList[id1].size() ; i++){
+        if (adjList[id1][i] == id2) return true;
+    }
+    return false;
+}
+
+void SurfaceGraph::attachNewTriagle(vector<Triangle>& tri_list){
+    vector<ull> open_list;
+    for (ull i = 0; i < adjList.size() ; i++){
+        if (adjList[i].size() > 3){
+            cout << adjList[i].size() <<endl;
+            assert(false);
+        }
+        if (adjList[i].size() < 3){
+            open_list.push_back(i);
+        }
+    }
+
+}
+
 void SurfaceGraph::makeAdjacentGraph(vector<Surface*>& surface_list){
-    adjList.assign(surface_list.size(), vector<pair<ull, ii>>());
+    adjList.assign(surface_list.size(), vector<ull>());
     size = surface_list.size();
     for (ull i = 0 ; i < surface_list.size() - 1 ; i++){
         Surface* surface_i = surface_list[i];
-        for (ull j = i ; j < surface_list.size() ; j ++){
-            ll s_i, s_j;
-            if (surface_i->isAdjacent(surface_list[j], s_i, s_j)){
-                adjList[i].push_back(make_pair(j, make_pair(s_i,s_j)));
-                adjList[j].push_back(make_pair(i, make_pair(s_j,s_i)));
+        for (ull j = i + 1 ; j < surface_list.size() ; j ++){
+            if (surface_i->isAdjacent(surface_list[j])){
+                adjList[surface_i->sf_id].push_back(surface_list[j]->sf_id);
+                adjList[surface_list[j]->sf_id].push_back(surface_i->sf_id);
             }
         }
     }
+}
+
+void SurfaceGraph::makeAdjacentGraph(vector<Triangle>& tri_list){
+    adjList.assign(tri_list.size(), vector<ull>());
+    size = tri_list.size();
+    for (ull i = 0 ; i < tri_list.size() - 1 ; i++){
+        printProcess(i, tri_list.size());
+        for (ull j = i + 1 ; j < tri_list.size() ; j ++){
+            if (tri_list[i].isAdjacent(tri_list[j])){
+                adjList[i].push_back(j);
+                adjList[j].push_back(i);
+            }
+        }
+    }
+}
+
+bool SurfaceGraph::isClosedTrinagleMesh(){
+    for (ull i = 0; i < adjList.size() ; i++){
+        if (adjList[i].size() != 3){
+            return false;
+        }
+    }
+    return true;
 }
 
 void SurfaceGraph::print_bfs(){
@@ -34,8 +77,8 @@ void SurfaceGraph::print_bfs(){
 
             level += 1;
 
-            for (int nb = 0 ; nb < adjList[current].size() ; nb++){
-                int next_surface = adjList[current][nb].first;
+            for (unsigned int nb = 0 ; nb < adjList[current].size() ; nb++){
+                ull next_surface = adjList[current][nb];
                 if (checked[next_surface]) continue;
                 else{
                     checked[next_surface] = true;

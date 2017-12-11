@@ -11,9 +11,11 @@
 
 #include "data/Surface.hpp"
 #include "logic/check.hpp"
+#include "space_maker/SpaceMaker.h"
 #include "data/Space.h"
 #include "fileio/JSONMaker.h"
 #include "predefine.h"
+#include "fileio/ProcessWriter.h"
 
 #include <vector>
 #include <cstring>
@@ -25,13 +27,23 @@ class OBJCollection{
 public:
     vector<Vertex*> vertex;
     vector<Space*> space_list;
-    int makeSurfaces(Checker* check, double degree);
-    void free();
-    int combineSurfaces(Checker* ch, int max_gener, double startDegree);
-    int makeGraph(Checker* ch);
+    vector<Space*> simple_space_list;
+    ProcessWriter* process_writer;
 
-    void extractGeneration(int);
-    void test();
+    void setWriter(ProcessWriter * pw){process_writer = pw;}
+
+    int mergeTriangles(double degree);
+
+    int combineSurfaces(Checker* ch, int max_gener, double startDegree);
+    int rotateSurfaces();
+    int finish();
+
+    int makeSimpleSpaces(SpaceMaker* sm);
+    int clusterAndMakeSurfaces(double degree);
+
+    void free();
+private:
+    int process_generation(Space* space, int& maxGeneration, int& currentGeneration, double& degree, double angle);
 };
 
 #endif /* ObjectCollection_h */

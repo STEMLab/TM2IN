@@ -1,6 +1,15 @@
 #include "data/Space.h"
+#include "logic/SurfacesListCalculation.h"
 
 #include <cstdio>
+#include <queue>
+#include <climits>
+#include <algorithm>
+#include <cmath>
+
+Space::Space(){
+
+}
 
 Space::Space(string pname, Checker* check)
 {
@@ -17,7 +26,7 @@ void Space::pushTriangle(Triangle tri){
     this->triangles.push_back(tri);
 }
 
-int Space::makeSurfacesGreedy(double degree){
+int Space::mergeTrianglesGreedy(double degree){
     int combined_count = 0;
     vector<Triangle*> p_triangles;
     ull size = this->triangles.size();
@@ -28,18 +37,18 @@ int Space::makeSurfacesGreedy(double degree){
     bool* checked = (bool*)malloc(sizeof(bool) * size);
     std::fill(checked, checked + size, false);
 
-    vector<Surface*> c_list = makeSurfacesInList(p_triangles, checked, combined_count, degree);
+    vector<Surface*> c_list = makeSurfacesInTriangleList(p_triangles, checked, combined_count, degree);
     this->surfacesList.insert(this->surfacesList.end(), c_list.begin(), c_list.end());
 
     free(checked);
 
-    this->triangles.clear();
+    //this->triangles.clear();
 
     cout << "\ndone make Surfaces" << endl;
     return 0;
 }
 
-int Space::makeSurfacesNotJoin(){
+int Space::mergeTrianglesNotJoin(){
     vector<Triangle*> p_triangles;
     ull size = this->triangles.size();
     for (ull i = 0 ; i < size; i++){
@@ -58,12 +67,7 @@ int Space::makeSurfacesNotJoin(){
     return 0;
 }
 
-void Space::printProcess(ull index, ull size){
-    cout << "\r==========" << (int)((double)index/(double)size * 100) <<"% ========";
-}
-
-
-vector<Surface*> Space::makeSurfacesInList(vector<Triangle*>& tri_list, bool* checked, int& combined_count, double degree)
+vector<Surface*> Space::makeSurfacesInTriangleList(vector<Triangle*>& tri_list, bool* checked, int& combined_count, double degree)
 {
     vector<Surface*> result_list;
     ull size = tri_list.size();
@@ -71,7 +75,7 @@ vector<Surface*> Space::makeSurfacesInList(vector<Triangle*>& tri_list, bool* ch
 
     for (ull index = 0 ; index < size; index++)
     {
-        this->printProcess(combined_count, this->triangles.size());
+        printProcess(index, tri_list.size());
         if (checked[index])
         {
             continue;
@@ -87,7 +91,7 @@ vector<Surface*> Space::makeSurfacesInList(vector<Triangle*>& tri_list, bool* ch
             if (combined_count % 250 == 1 )
             {
                 cout << "\n------------ " << index << " -----------  size : " << size << endl;
-                this->printProcess(combined_count, this->triangles.size());
+                printProcess(index, tri_list.size());
             }
             combined_count += count;
         }
@@ -106,8 +110,9 @@ Surface* Space::attachTriangle(vector<Triangle*> tri_list, Surface* cp, bool* ch
         if (!checked[id])
         {
             //if (cp->attachTriangle(tri_list[id], checker))
-            if (TriangleAttacher::attach(cp, tri_list[id], checker, degree))
+            if (TriangleCalculation::attach(cp, tri_list[id], checker, degree))
             {
+                cp->tri_list.push_back(tri_list[id]);
                 checked[id] = true;
                 count++;
             }
@@ -116,36 +121,36 @@ Surface* Space::attachTriangle(vector<Triangle*> tri_list, Surface* cp, bool* ch
     return cp;
 }
 
-int Space::combineSurfaceByArea(double degree){
-    cout << "Combine Surfaces By area" << endl;
-
-    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
-    ull p_size = this->surfacesList.size();
-    bool* checked = (bool*)malloc(sizeof(bool) * p_size);
-    std::fill(checked, checked + p_size, false);
-
-    vector<Surface*> new_poly_list;
-    int combined_count = 0;
-    for (ull i = 0 ; i < this->surfacesList.size() ; i++)
+int Space::checkTriangles(){
+    cout << "check Triangles" << endl;
+    ull size = this->triangles.size();
+    for (ull index = 0 ; index < size -1; index++)
     {
-        if (checked[i]) continue;
-        checked[i] = true;
-
-        ll count = -1;
-        Surface* newcp = new Surface(this->surfacesList[i]);
-        while(count != 0){
-            newcp = attachSurfacesByArea(newcp, i+1, checked, count, degree);
-            if (newcp == NULL) break;
-            this->printProcess(combined_count, 1);
-            combined_count += count;
+        for (ull j = index + 1 ; j < size; j++)
+        {
+            if (triangles[index].isOpposite(triangles[j])){
+                return -1;
+            }
         }
-        if (newcp != NULL) new_poly_list.push_back(newcp);
     }
-
-    freeSurfaces();
-    this->surfacesList = new_poly_list;
     return 0;
 }
+
+int Space::checkOpposite()
+{
+    for (unsigned int i = 0 ; i < this->surfacesList.size() - 1; i++)
+    {
+        for (unsigned int j = i + 1 ; j < this->surfacesList.size() ; j++)
+        {
+            if (this->surfacesList[i]->isOpposite(this->surfacesList[j]) )
+            {
+                return -1;
+            }
+        }
+    }
+    return 0;
+}
+
 
 int Space::combineSurface(double degree){
     cout << "Combine Surfaces" << endl;
@@ -167,7 +172,7 @@ int Space::combineSurface(double degree){
         while(count != 0){
             newcp = attachSurfaces(newcp, i+1, checked, count, degree);
             if (newcp == NULL) break;
-            this->printProcess(combined_count, 1);
+            printProcess(combined_count, 1);
             combined_count += count;
         }
         if (newcp != NULL) new_poly_list.push_back(newcp);
@@ -186,28 +191,10 @@ Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count,
     {
         if (!checked[id])
         {
-            if (CleanPolygonMaker::combine(cp, this->surfacesList[id], checker, degree))
+            Surface* sf = this->surfacesList[id];
+            if (CleanPolygonMaker::combine(cp, sf, checker, degree) == 0)
             {
-                checked[id] = true;
-                count++;
-            }
-        }
-    }
-    return cp;
-}
-
-Surface* Space::attachSurfacesByArea(Surface* cp, ull start, bool* checked, ll& count, double degree)
-{
-    count = 0;
-    double cp_area = cp->sq_area;
-    if (cp->av_normal == CGAL::NULL_VECTOR) return NULL;
-    for (ull id = start ; id < this->surfacesList.size() ; id++)
-    {
-        double id_area = this->surfacesList[id]->sq_area;
-        if (!checked[id] && (id_area < 0.00001 || id_area * 1000 < cp_area))
-        {
-            if (CleanPolygonMaker::combine(cp, this->surfacesList[id], checker, degree))
-            {
+                cp->tri_list.insert(cp->tri_list.end(), sf->tri_list.begin(), sf->tri_list.end());
                 checked[id] = true;
                 count++;
             }
@@ -217,6 +204,7 @@ Surface* Space::attachSurfacesByArea(Surface* cp, ull start, bool* checked, ll& 
 }
 
 int Space::updateNormal(){
+    cout << "\n------------updateNormal------------\n" << endl;
     clock_t time_begin = clock();
 
     for (ull i = 0 ; i < (int)this->surfacesList.size() ; i++)
@@ -237,28 +225,24 @@ int Space::updateNormal(){
     return 0;
 }
 
-void Space::tagID(){
-    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareLength);
-    for (ull i = 0 ; i < (ull)this->surfacesList.size() ; i++)
-    {
-        this->surfacesList[i]->sf_id = i;
-    }
-}
 
 int Space::simplifySegment(){
     cout << "\n------------simplifySegment------------\n" << endl;
-
+    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareLength);
     ull p_size = this->surfacesList.size();
 
     for (ull i = 0 ; i < p_size - 1; i++)
     {
+        printProcess(i, p_size);
         for (ull j = i + 1; j < p_size ; j++)
         {
             int loop_count = 0;
-            while (CleanPolygonMaker::simplifyLineSegment(this->surfacesList[i], this->surfacesList[j]))
+            bool again = false;
+            while (CleanPolygonMaker::simplifyLineSegment(this->surfacesList[i], this->surfacesList[j], again) == 0)
             {
+                again = true;
                 loop_count++;
-                if (loop_count > this->surfacesList[j]->v_list.size()){
+                if (loop_count > (int)this->surfacesList[j]->v_list.size()){
                     cout << "Infinite loop in Simplification" << endl;
                     exit(-1);
                 }
@@ -269,23 +253,21 @@ int Space::simplifySegment(){
     return 0;
 }
 
-int Space::handleDefect(){
+int Space::handleDefect(double angle){
     cout << "\n------------- handle Defect --------------\n" << endl;
-    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
     {
+        //cout << "Surface " << i << " handleDefect " <<endl;
         Surface* surface = this->surfacesList[i];
-        surface->removeStraight(this->checker);
         surface->removeConsecutiveDuplication(this->checker);
+        surface->removeStraight(angle);
         surface->setMBB();
-        if (surface->checkDuplicate(this->checker)){
-            surface->removeHole(this->checker);
-        }
 
         if (surface->isValid()){
             i++;
         }
         else{
+            delete surface;
             this->surfacesList.erase(this->surfacesList.begin() + i);
             cout << "Erase unvalid surface" << endl;
         }
@@ -293,33 +275,7 @@ int Space::handleDefect(){
     return 0;
 }
 
-int Space::makeCoplanar(){
-    cout << "\n------------- Make Coplanar --------------\n" << endl;
-    updateMBB();
 
-    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
-    //find surfaces whose normal is z direction.
-
-    for (ll i = this->surfacesList.size() - 1 ; i >= 0 ; i--){
-
-        if (this->surfacesList[i]->isValid())
-        {
-            this->surfacesList[i]->makeCoplanarByNormalType();
-            if (!this->surfacesList[i]->updateNormal(this->checker))
-            {
-                cout << this->surfacesList[i]->toJSONString() <<endl;
-                cout << "Cannot make Normal" << endl;
-                exit(-1);
-            }
-        }
-        else{
-            cout << this->surfacesList[i]->toJSONString() <<endl;
-            cout << "Erase unvalid surface in makeCoplanar" << endl;
-            exit(-1);
-        }
-    }
-    return 0;
-}
 
 
 int Space::match00(){
@@ -331,154 +287,156 @@ int Space::match00(){
         diff[i] = -this->min_coords[i];
     }
 
-    for (ull i = 0 ; i < (int)this->surfacesList.size() ; i++)
+    for (ull i = 0 ; i < this->surfacesList.size() ; i++)
     {
-        if (this->surfacesList[i]->isValid())
-        {
-            this->surfacesList[i]->translate(diff);
-        }
-        else{
-            //this->polygon_list.erase(this->polygon_list.begin() + i);
-            cout << this->surfacesList[i]->toJSONString() <<endl;
-            cout << "Erase unvalid surface in match00" << endl;
-            exit(-1);
-
-        }
-
+        this->surfacesList[i]->translate(diff);
+//        if (this->surfacesList[i]->isValid())
+//        {
+//            this->surfacesList[i]->translate(diff);
+//        }
+//        else{
+//            //this->polygon_list.erase(this->polygon_list.begin() + i);
+//            cout << this->surfacesList[i]->toJSONString() <<endl;
+//            cout << "un-valid surface in match00" << endl;
+//            exit(-1);
+//        }
     }
 
-    for (ull i = 0 ; i < this->vertex->size() ; i++){
-        this->vertex->at(i)->translate(diff);
+    for (ull i = 0 ; i < this->p_vertexList->size() ; i++){
+        this->p_vertexList->at(i)->translate(diff);
     }
 
     return 0;
 }
 
 void Space::updateMBB(){
-    for (int i = 0 ; i < 3 ; i++)
-    {
-        this->max_coords[i] = -1000000000;
-        this->min_coords[i] = 1000000000;
-    }
-
-    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
-        Surface* cp = this->surfacesList[i];
-        cp->setMBB();
-        for (int j = 0 ; j < 3 ; j++){
-            this->max_coords[j] = max(this->max_coords[j], cp->max_coords[j]);
-            if (this->min_coords[j] > cp->min_coords[j]){
-                this->min_coords[j] = cp->min_coords[j];
-            }
-        }
+    vector<vector<double> > min_max;
+    SLC::getMBB(this->surfacesList, min_max);
+    for (int i = 0 ; i < 3 ; i++){
+        this->min_coords[i] = min_max[0][i];
+        this->max_coords[i] = min_max[1][i];
     }
 }
-
-int Space::makeGraph(Checker* ch){
-    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
-    this->tagID();
-
-    this->surface_graph = new SurfaceGraph();
-    surface_graph->makeAdjacentGraph(this->surfacesList);
-}
-
-
 
 void Space::freeSurfaces(){
-    for (ull id = 0 ; id < this->surfacesList.size() ; id++)
+    for (ull i = 0 ; i < this->surfacesList.size() ; i++)
     {
-        delete(this->surfacesList[id]);
+        delete(this->surfacesList[i]);
     }
     this->surfacesList.clear();
 }
 
 
-//
-//int TriangleSpace::makeSurfacesBySeparation()
-//{
-//    // Separation by Normal
-//    vector<vector<Triangle*>> poly_set;
-//    poly_set = separateByNormal_6(this->triangles);
-//    if (poly_set.size() != 6 ) return -1;
-//
-//    int combined_count = 0;
-//    for (unsigned int dir = 0 ; dir < 6 ; dir++)
-//    {
-//        ull c_size = poly_set[dir].size();
-//        bool* checked = (bool*)malloc(sizeof(bool) * c_size);
-//        std::fill(checked, checked + c_size, false);
-//
-//        vector<Surface*> c_list = makeSurfacesInList(poly_set[dir], checked, combined_count);
-//        this->polygon_list.insert(this->polygon_list.end(), c_list.begin(), c_list.end());
-//
-//        free(checked);
-//    }
-//
-//    this->triangles.clear();
-//
-//    cout << "\ndone make Surfaces" << endl;
-//    return 0;
-//}
-//
-//int TriangleSpace::makeSurfacesByCandidator()
-//{
-//    ull size = this->triangles.size();
-//    bool* checked = (bool*)malloc(sizeof(bool) * size);
-//    std::fill(checked, checked + size, false);
-//
-//    int combined_count = 0;
-//    for (ull index = 0 ; index < size; index++)
-//    {
-//        if (checked[index])
-//        {
-//            continue;
-//        }
-//        checked[index] = true ;
-//
-//        Vector_3 pl_nv = this->triangles[index].getNormal();
-//        vector<Triangle*> candidates;
-//        for (ull index2 = 0 ; index2 < size ; index2++){
-//            if (checked[index2])
-//            {
-//                continue;
-//            }
-//
-//            Vector_3 normal = this->triangles[index2].getNormal();
-//            if (checker->isSamePlanar(pl_nv, normal)){
-//                candidates.push_back(&this->triangles[index2]);
-//                //pl_nv = pl_nv + normal;
-//                checked[index2] = true ;
+
+void Space::rotateSpaceByFloorTo00(){
+    cout << " ---------- rotate -------------" << endl;
+    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
+    int floor_index = SLC::findFirstSurfaceIndexSimilarWithAxis(this->surfacesList, 2);
+    Surface* floor = this->surfacesList[floor_index];
+    floor->setMBB();
+    //Plane_3 plane(this->surfacesList[floor_index]->v_list[0]->getCGALPoint(), floor->av_normal);
+    //floor->makePlanar(plane);
+
+    Vector_3 vector_z(0,0,1);
+    double angle = -CGALCalculation::getAngle(floor->av_normal, vector_z);
+    if (angle == 0.0){
+        cout << "angle is 0.0" << endl;
+        return;
+    }
+
+    Vector_3 unit_vector = CGAL::cross_product(vector_z, floor->av_normal);
+    unit_vector = unit_vector / sqrt(unit_vector.squared_length());
+    cout << "rotate " << angle << ", " << unit_vector.squared_length()<< endl;
+    assert(unit_vector.squared_length() < 1.000001 && unit_vector.squared_length() > 0.99999);
+
+    double cos_value = cos(angle * PI /180.0);
+    double sin_value = sin(angle * PI /180.0);
+
+    double ux = unit_vector.x();
+    double uy = unit_vector.y();
+    double uz = unit_vector.z();
+
+    Transformation rotateZ(cos_value + ux*ux *(1-cos_value), ux*uy*(1-cos_value) - (uz * sin_value), ux*uz*(1-cos_value) + uy*sin_value,
+                            uy*ux*(1-cos_value) + uz * sin_value,cos_value + uy*uy*(1-cos_value), uy*uz*(1-cos_value)- (ux*sin_value),
+                            uz*ux*(1-cos_value)-uy*sin_value , uz*uy*(1-cos_value) + ux * sin_value, cos_value + uz*uz*(1-cos_value),
+                            1);
+
+    for (ull i = 0 ; i < this->p_vertexList->size() ; i++){
+        Point_3 p = this->p_vertexList->at(i)->getCGALPoint();
+        p = p.transform(rotateZ);
+        this->p_vertexList->at(i)->setCoords(p.x(), p.y(), p.z());
+    }
+
+//    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
+//        for (ull j = 0 ; j < this->surfacesList[i]->v_list.size() ; j++){
+//            if (!this->surfacesList[i]->v_list[j]->used){
+//                this->surfacesList[i]->v_list[j]->used = true;
+//                Point_3 p = this->surfacesList[i]->v_list[j]->getCGALPoint();
+//                p = p.transform(rotateZ);
+//                this->surfacesList[i]->v_list[j]->setCoords(p.x(), p.y(), p.z());
 //            }
 //        }
-//
-//        ull c_size = candidates.size();
-//        bool* checked2 = (bool*)malloc(sizeof(bool) * c_size);
-//        std::fill(checked2, checked2 + c_size, false);
-//
-//        vector<Surface*> c_list = makeSurfacesInList(candidates, checked2, combined_count);
-//        this->polygon_list.insert(this->polygon_list.end(), c_list.begin(), c_list.end());
-//
-//        free(checked2);
-//
-//        candidates.clear();
 //    }
-//
-//    this->triangles.clear();
-//
-//    cout << "\ndone make Surfaces" << endl;
-//    return 0;
-//}
-//
-//
-//vector<vector<Triangle*>> TriangleSpace::separateByNormal_6(vector<Triangle>& triangles)
-//{
-//    vector<vector<Triangle*>> ret(6, vector<Triangle*>());
-//
-//    ull size = triangles.size();
-//    for (ull index = 0 ; index < size; index++){
-//        Vector_3 normal = triangles[index].getNormal();
-//        int type = CGALCalculation::findNormalType(normal);
-//        ret[type].push_back(&triangles[index]);
-//    }
-//
-//    return ret;
-//}
+}
+
+
+
+int Space::snapSurface(double p_diff){
+    cout << "snap Surface " << endl;
+    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareLength);
+    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
+        Surface* sfi = this->surfacesList[i];
+        for (ull j = i + 1 ; j < this->surfacesList.size() ; j++){
+            Surface* sfj = this->surfacesList[j];
+            if (sfj->v_list.size() < 3) continue;
+            //Same Normal and isNeighbor
+            if (this->checker->CanbeMerged(sfi->av_normal, sfj->av_normal, 10.0)){
+                sfi->snapping(sfj, p_diff);
+            }
+            if (sfj->v_list.size() < 3 || sfi->v_list.size() < 3) cout << "snapping make wrong surface---" << endl;
+
+        }
+
+    }
+    return 0;
+}
+
+
+vector<Surface*> Space::getTopSurfaces(double percent){
+    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
+    int num = (int)((double)this->surfacesList.size() * percent);
+    if (num < 1) num = 1;
+    vector<Surface*> ret(this->surfacesList.begin(), this->surfacesList.begin() + num);
+    return ret;
+}
+
+
+
+
+int Space::remainOnlyUsingVertices(){
+    for (ull i = 0 ; i < this->p_vertexList->size() ; i++){
+        (*this->p_vertexList)[i]->used = false;
+    }
+    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
+        this->surfacesList[i]->tagVerticesUsed();
+    }
+
+    ull removed_count = 0;
+    for (ull i = 0 ; i < this->p_vertexList->size() ;){
+        if (this->p_vertexList->at(i)->used){
+            this->p_vertexList->at(i)->index = i;
+            i++;
+        }
+        else{
+            delete(this->p_vertexList->at(i));
+            this->p_vertexList->erase(this->p_vertexList->begin() + i);
+            removed_count++;
+        }
+    }
+
+    cout << "removed vertices : " << removed_count << endl;
+    cout << "remained vertices : " << this->p_vertexList->size() << endl;;
+    return 0;
+}
+
+

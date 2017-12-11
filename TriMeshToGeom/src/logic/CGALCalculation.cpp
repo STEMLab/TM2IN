@@ -1,19 +1,28 @@
 #include "logic/CGALCalculation.h"
 
-#define PI 3.14159265
+#include "model/vertex.h"
+#include "model/Segment.h"
+
+using namespace std;
 
 double CGALCalculation::getAngle(Vector_3& nv1, Vector_3& nv2){
-    double inner = (nv1 * nv2);
-    double cos = inner / ( sqrt(nv1.squared_length()) * sqrt(nv2.squared_length()) );
-    if (cos > 0.999999){
-        return 0;
-    }
+    double nv1_length = sqrt(nv1.squared_length());
+    double nv2_length = sqrt(nv2.squared_length());
 
-    return acos(cos) * 180.0/PI;
+    Vector_3 unit_nv1 = nv1 / nv1_length;
+    Vector_3 unit_nv2 = nv2 / nv2_length;
+
+    double inner = (unit_nv1 * unit_nv2);
+    double cos = inner;
+    //cout << " cos : " << cos <<endl;
+    if (cos > 0.99999) cos = 1;
+    double angle = acos(cos) * 180.0/PI;
+
+    return angle;
 }
 
 Vector_3 CGALCalculation::getVector(Vertex* va, Vertex* vb){
-    return Vector_3(makePoint(va),makePoint(vb));
+    return Vector_3(va->getCGALPoint(),vb->getCGALPoint());
 }
 
 int CGALCalculation::findNormalType27(Vector_3& nv)
@@ -30,6 +39,71 @@ int CGALCalculation::findNormalType27(Vector_3& nv)
     }
     return type;
 }
+
+int CGALCalculation::findNormalType18(Vector_3& nv)
+{
+
+    int type = 0;
+    double diff = 90.0;
+    for (int i = 0 ; i < 18 ; i++){
+        double temp_diff = CGALCalculation::getAngle(CGALCalculation::normal_list18[i], nv);
+        if (temp_diff < diff){
+            diff = temp_diff;
+            type = i;
+        }
+    }
+    return type;
+}
+
+int CGALCalculation::findNormalType6(Vector_3& nv)
+{
+    int type = 0;
+    double diff = 90.0;
+    for (int i = 0 ; i < 6 ; i++){
+        double temp_diff = CGALCalculation::getAngle(CGALCalculation::normal_list6[i], nv);
+        if (temp_diff < diff){
+            diff = temp_diff;
+            type = i;
+        }
+    }
+    return type;
+}
+
+
+int CGALCalculation::findNormalType10(Vector_3& nv)
+{
+    int type = 0;
+    double diff = 90.0;
+    for (int i = 1 ; i < 11 ; i++){
+        double temp_diff = CGALCalculation::getAngle(CGALCalculation::normal_list11[i], nv);
+        if (temp_diff < diff){
+            diff = temp_diff;
+            type = i;
+        }
+    }
+    return type;
+}
+
+Vector_3 CGALCalculation::normal_list18[18] = {
+    Vector_3(0,0,1),
+    Vector_3(0,0,-1),
+    Vector_3(0,1,0),
+    Vector_3(0,1,1),
+    Vector_3(0,1,-1),
+    Vector_3(0,-1,0),
+    Vector_3(0,-1,1),
+    Vector_3(0,-1,-1),
+    Vector_3(1,0,0),
+    Vector_3(1,0,1),
+    Vector_3(1,0,-1),
+    Vector_3(1,1,0),
+    Vector_3(1,-1,0),
+    Vector_3(-1,0,0),
+    Vector_3(-1,0,1),
+    Vector_3(-1,0,-1),
+    Vector_3(-1,1,0),
+    Vector_3(-1,-1,0)
+};
 
 Vector_3 CGALCalculation::normal_list27[27] = {
     Vector_3(0,0,0),
@@ -61,34 +135,6 @@ Vector_3 CGALCalculation::normal_list27[27] = {
     Vector_3(-1,-1,-1)
 };
 
-int CGALCalculation::findNormalType6(Vector_3& nv)
-{
-    int type = 0;
-    double diff = 90.0;
-    for (int i = 0 ; i < 6 ; i++){
-        double temp_diff = CGALCalculation::getAngle(CGALCalculation::normal_list6[i], nv);
-        if (temp_diff < diff){
-            diff = temp_diff;
-            type = i;
-        }
-    }
-    return type;
-}
-
-
-int CGALCalculation::findNormalType10(Vector_3& nv)
-{
-    int type = 0;
-    double diff = 90.0;
-    for (int i = 1 ; i < 11 ; i++){
-        double temp_diff = CGALCalculation::getAngle(CGALCalculation::normal_list11[i], nv);
-        if (temp_diff < diff){
-            diff = temp_diff;
-            type = i;
-        }
-    }
-    return type;
-}
 
 Vector_3 CGALCalculation::normal_list11[11] = {
     Vector_3(0,0,0),
@@ -105,7 +151,7 @@ Vector_3 CGALCalculation::normal_list11[11] = {
 };
 
 Vector_3 CGALCalculation::normal_list6[6] = {
-    Vector_3(1,0,0),
+    Vector_3(1,0,0), //0, 3
     Vector_3(0,1,0),
     Vector_3(0,0,1),
     Vector_3(-1,0,0),
@@ -114,15 +160,9 @@ Vector_3 CGALCalculation::normal_list6[6] = {
 };
 
 
-
-Point_3 CGALCalculation::makePoint(Vertex* v){
-    Point_3 p3a(v->x(),v->y(),v->z());
-    return p3a;
-}
-
 double CGALCalculation::getSquaredDistance(Vertex* v1, Vertex* v2){
     return CGAL::squared_distance(
-                           CGALCalculation::makePoint(v1), CGALCalculation::makePoint(v2));
+                          v1->getCGALPoint(), v2->getCGALPoint());
 }
 
 Vector_3 CGALCalculation::getUnitNormal(Vertex* va, Vertex* vb, Vertex* vc){
@@ -162,6 +202,44 @@ double CGALCalculation::getSquaredArea(Point_3& p1, Point_3& p2, Point_3& p3){
     Triangle_3 tri(p1,p2,p3);
     return tri.squared_area();
 }
+
+bool CGALCalculation::isIntersect2D(Segment* seg1, Segment* seg2){
+    return CGAL::do_intersect(seg1->getCGALSegmentWithoutZ(), seg2->getCGALSegmentWithoutZ());
+}
+
+Point_2 CGALCalculation::getIntersection2D(Segment* seg1, Segment* seg2){
+    Segment_2 seg1_cgal = seg1->getCGALSegmentWithoutZ();
+    Segment_2 seg2_cgal = seg2->getCGALSegmentWithoutZ();
+    CGAL::cpp11::result_of<Intersect_2(Segment_2, Segment_2)>::type result = intersection(seg1_cgal, seg2_cgal);
+    Point_2* p = boost::get<Point_2 >(&*result);
+    return *p;
+}
+
+bool CGALCalculation::isIntersect_BBOX(Surface* s1, Surface* s2){
+    CGAL::Bbox_3 b1(s1->min_coords[0],s1->min_coords[1],s1->min_coords[2],s1->max_coords[0],s1->max_coords[1],s1->max_coords[2]);
+    CGAL::Bbox_3 b2(s2->min_coords[0],s2->min_coords[1],s2->min_coords[2],s2->max_coords[0],s2->max_coords[1],s2->max_coords[2]);
+    return CGAL::do_intersect(b1,b2);
+}
+
+
+bool CGALCalculation::isAngleLowerThan(Vector_3& nv1, Vector_3& nv2, double degree){
+    double angle = CGALCalculation::getAngle(nv1, nv2);
+    if (degree < 0) return (angle >= 180 + degree);
+    else return (angle <= degree) ;
+}
+
+
+bool CGALCalculation::isAngleLowerThan(Vertex* origin, Vertex* v1, Vertex* v2, double degree){
+    Point_3 p3a(origin->x(),origin->y(),origin->z());
+    Point_3 p3b(v1->x(),v1->y(),v1->z());
+    Point_3 p3c(v2->x(),v2->y(),v2->z());
+
+    Vector_3 vec1(p3a,p3b);
+    Vector_3 vec2(p3a,p3c);
+
+    return CGALCalculation::isAngleLowerThan(vec1, vec2, degree);
+}
+
 //
 //vector<vector<int>> CGALCalculation::triangulate(CSurface* sf){
 //    vector<pair<Point, unsigned>> points;

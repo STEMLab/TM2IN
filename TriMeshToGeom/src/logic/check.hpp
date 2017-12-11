@@ -44,6 +44,7 @@ public:
 
     bool isExistDuplication(std::vector<Vertex*> vertex);
 
+    bool isSameDouble(double a, double b);
     bool isSameX(Vertex* a, Vertex* b);
     bool isSameY(Vertex* a, Vertex* b);
     bool isSameZ(Vertex* a, Vertex* b);
@@ -54,9 +55,6 @@ public:
 
     bool isSameVertex(Vertex& v1, Vertex& v2);
     bool isSameVertex(Vertex* v1, Vertex* v2);
-
-    bool isSameOrientation(Vector_3& nv1, Vector_3& nv2, double);
-    bool isSameOrientation(Vertex* origin, Vertex* v1, Vertex* v2, double);
 
     bool CanbeMerged(Vector_3& big, Vector_3& small, double degree);
 

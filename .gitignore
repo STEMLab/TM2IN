@@ -5,7 +5,7 @@ DerivedData/
 #viewer
 GeomViewer/misc_controls_trackball.html
 GeomViewer/js/lib/
-GeomViewer/threejs/
+GeomViewer/js/threejs/
 
 
 #data

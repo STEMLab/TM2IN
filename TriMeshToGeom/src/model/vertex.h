@@ -4,28 +4,40 @@
 #include <string>
 
 #include "logic/util.h"
+#include "logic/CGALCalculation.h"
 
 class Vertex{
 public:
     ll index = 0;
-    double coords[3];
+    bool used;
+    double* coords;
+
     Vertex(double px, double py, double pz){
+        coords = (double*)malloc(sizeof(double) * 3);
         coords[0] = px;
         coords[1] = py;
         coords[2] = pz;
+        this->used = true;
     }
 
     Vertex(){
+        coords = (double*)malloc(sizeof(double) * 3);
         coords[0] = 0.0;
         coords[1] = 0.0;
         coords[2] = 0.0;
     }
 
     Vertex(Vertex& vt){
+        coords = (double*)malloc(sizeof(double) * 3);
         coords[0] = vt.x();
         coords[1] = vt.y();
         coords[2] = vt.z();
         this->index = vt.index;
+        this->used = true;
+    }
+
+    ~Vertex(){
+        delete[] coords;
     }
 
     double x(){return coords[0];}
@@ -35,6 +47,11 @@ public:
     void setX(double value){coords[0] = value;}
     void setY(double value){coords[1] = value;}
     void setZ(double value){coords[2] = value;}
+    void setCoords(double x, double y, double z){
+        coords[0] = x;
+        coords[1] = y;
+        coords[2] = z;
+    }
 
     double operator[](int idx){
         return coords[idx];
@@ -45,6 +62,7 @@ public:
 
     std::string toJSON();
     static bool compare(Vertex*,Vertex*);
+    Point_3 getCGALPoint();
 };
 
 /** < for Searching upper_bound and lower_bound */
