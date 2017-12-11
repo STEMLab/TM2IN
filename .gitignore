@@ -3,10 +3,8 @@
 DerivedData/
 
 #viewer
-GeomViewer/misc_controls_trackball.html
 GeomViewer/js/lib/
 GeomViewer/js/threejs/
-
 
 #data
 *.3DS
