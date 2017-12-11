@@ -2,6 +2,12 @@
 *.xcodeproj
 DerivedData/
 
+#viewer
+GeomViewer/misc_controls_trackball.html
+GeomViewer/js/lib/
+GeomViewer/threejs/
+
+
 #data
 *.3DS
 *.tvr
