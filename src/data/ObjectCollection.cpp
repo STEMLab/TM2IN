@@ -208,15 +208,3 @@ void OBJCollection::free(){
     }
     vertex.clear();
 }
-
-int OBJCollection::clusterAndMakeSurfaces(double degree){
-    for (ull s_i = 0 ; s_i < this->space_list.size(); s_i++)
-    {
-        this->space_list[s_i]->surfacesList = TriangleCalculation::clusterAndmakeSurfaces(this->space_list[s_i]->triangles);
-        this->space_list[s_i]->match00();
-
-    }
-
-    return 0;
-
-}
