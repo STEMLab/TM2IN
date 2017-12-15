@@ -21,8 +21,8 @@ int FlatRoomMaker::pre_process(double degree){
 }
 
 
-int FlatRoomMaker::constructSpace(int max_gener, double startDegree){
-    if (objcl->combineSurfaces(check, max_gener, startDegree) == -1) return -1;
+int FlatRoomMaker::constructSpace(CombineParameter* cp){
+    if (objcl->combineSurfaces(check, cp) == -1) return -1;
     //objcl->rotateSurfaces();
     //if (objcl->finish()) return -1;
     return 0;

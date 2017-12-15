@@ -10,7 +10,7 @@ public:
     virtual ~FlatRoomMaker();
 
     int pre_process(double degree);
-    int constructSpace(int, double startDegree);
+    int constructSpace(CombineParameter* );
     int makeSimpleSpaces(SpaceMaker* sm);
 
 protected:

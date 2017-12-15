@@ -64,7 +64,7 @@ int CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checker
     origin->area += piece->area;
     origin->setMBB(piece);
 
-    if (origin ->checkDuplicate(checker)){
+    if (origin->checkDuplicate(checker)){
         cout << "Duplicate" << endl;
         exit(-1);
     }

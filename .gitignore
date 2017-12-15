@@ -2,10 +2,6 @@
 *.xcodeproj
 DerivedData/
 
-#viewer
-GeomViewer/js/lib/
-GeomViewer/js/threejs/
-
 #data
 *.3DS
 *.tvr

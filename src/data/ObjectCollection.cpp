@@ -23,19 +23,19 @@ using namespace std;
 int OBJCollection::makeTriangleToSurface(double degree){
     for (ull s_i = 0 ; s_i < this->space_list.size(); s_i++)
     {
+
         for (ull j = 0 ; j < this->space_list[s_i]->triangles.size() ; ){
             if (this->space_list[s_i]->triangles[j].a == this->space_list[s_i]->triangles[j].b ||
                 this->space_list[s_i]->triangles[j].a == this->space_list[s_i]->triangles[j].c ||
                 this->space_list[s_i]->triangles[j].c == this->space_list[s_i]->triangles[j].b){
                 cout << "Wrong Triangle" << endl;
                 return -1;
-                //this->space_list[i]->triangles.erase(this->space_list[i]->triangles.begin() + j);
             }
             else{
                 j++;
             }
         }
-
+/*
         cout << "make Triangle Graph" << endl;
         SurfaceGraph* sg = new SurfaceGraph();
         sg->makeAdjacentGraph(this->space_list[s_i]->triangles);
@@ -50,7 +50,7 @@ int OBJCollection::makeTriangleToSurface(double degree){
             if (!sg->isClosedTriangleMesh()) return -1;
         }
 
-
+*/
         cout << this->space_list[s_i]->triangles.size() << endl;
 
         cout << this->space_list[s_i] -> name << " is converting..." << endl;
@@ -64,7 +64,7 @@ int OBJCollection::makeTriangleToSurface(double degree){
     return 0;
 }
 
-int OBJCollection::process_generation(Space* space, int& maxGeneration, int& currentGeneration, double& degree, double angle){
+int OBJCollection::process_generation(Space* space, int& maxGeneration, int& currentGeneration, double& degree){
     ll p_size = space->surfacesList.size();
     while (true && maxGeneration-- > 0){
         cout << "generation : " << currentGeneration << endl;
@@ -74,9 +74,8 @@ int OBJCollection::process_generation(Space* space, int& maxGeneration, int& cur
             return -1;
         }
 
-        double diff = 0.01;
-        //space->snapSurface(diff);
-        //if (space->handleDefect(angle) == -1){ cout << "" << endl; return -1; }
+//        if (space->snapSurface(0.01) == -1){ cout << "snap Surface" << endl; return -1;}
+//        if (space->handleDefect(0.1) == -1){ cout << "cannot handle defect" << endl; return -1; }
 
         if (p_size == (int)space->surfacesList.size()) {
             cout << "generation " << currentGeneration  << " done.. "<< endl;
@@ -85,16 +84,26 @@ int OBJCollection::process_generation(Space* space, int& maxGeneration, int& cur
         else p_size = (int)space->surfacesList.size();
 
         currentGeneration++;
-        this->process_writer->writeGenerationJSON(currentGeneration, space_list);
-
+        this->generation_writer->writeGenerationJSON(currentGeneration, this->space_list);
+        this->generation_writer->writeGenerationStat(currentGeneration, space->surfacesList.size());
         if (degree < 15) degree += 0.05;
     }
     return 0;
 }
 
-int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegree){
+int OBJCollection::combineSurfaces(Checker* ch, CombineParameter* cp){
+    int maxGENperOneCycle = cp->maxGEN;
+    double startDegree = cp->startDegree;
+    bool simplify_mode = cp->simplifyLine;
+    bool snap_mode = cp->snapSurface;
+
+    double diff = 0.0001;
+
+    if (this->space_list.size() == 0) cout << "there is no space" << endl;
+    int temp_maxGENperOneCycle = maxGENperOneCycle;
     for (ull it = 0 ; it < this->space_list.size(); it++)
     {
+        this->generation_writer->clearGenerationStat();
         Space* space = this->space_list[it];
         for (unsigned int s_i = 0 ; s_i < this->space_list[it]->surfacesList.size() ;s_i++){
             if (space->surfacesList[s_i]->checkDuplicate(ch)){
@@ -105,25 +114,38 @@ int OBJCollection::combineSurfaces(Checker* ch, int max_gener, double startDegre
 
         double degree = startDegree;
         double angle = 0.1;
-        this->process_writer->writeGenerationJSON(0, space_list);
-        int gen = 1;
+        int gen = 0;
+        this->generation_writer->writeGenerationJSON(gen, space_list);
+        this->generation_writer->writeGenerationStat(gen, space->surfacesList.size());
 
-        if (process_generation(space, max_gener, gen, degree, angle)) return -1;
+        while (true){
+            ll p_size = space->surfacesList.size();
+            if (process_generation(space, maxGENperOneCycle, gen, degree)) return -1;
+            if (p_size == (int)space->surfacesList.size()) {
+                cout << "generation " << gen  << " done.. "<< endl;
+                break;
+            }
+            maxGENperOneCycle = temp_maxGENperOneCycle;
 
-        angle = 1.0;
-        if (space->handleDefect(angle) == -1){ cout << "" << endl; return -1; }
+            if (snap_mode){
+                if (space->snapSurface(diff) == -1){ cout << "snap Surface" << endl; return -1;}
+                if (space->handleDefect(angle) == -1){ cout << "cannot handle defect" << endl; return -1; }
+            }
 
-        max_gener = 10;
-        if (process_generation(space, max_gener, gen, degree, angle)) return -1;
-        if (space->handleDefect(angle) == -1){ cout << "" << endl; return -1; }
+            //angle = 1.0;
+            cout << "simplify and handleDefect" << endl;
+            if (simplify_mode)
+                if (space->simplifySegment() == -1){ cout << "simplify error" << endl; return -1;}
+            if (space->handleDefect(angle) == -1){ cout << "cannot handle defect" << endl; return -1; }
+
+        }
+
         sort(space->surfacesList.begin(), space->surfacesList.end(), Surface::compareArea);
         SLC::tagID(space->surfacesList);
 
-//        if (space->simplifySegment() == -1){
-//            cout << "simplify error" << endl;
-//            return -1;
-//        }
-        //CleanPolygonMaker::combine(space->surfacesList[13], space->surfacesList[152], ch, degree);
+        Vector_3 vc1(space->surfacesList[0]->v_list[577]->getCGALPoint(), space->surfacesList[0]->v_list[578]->getCGALPoint());
+        Vector_3 vc2(space->surfacesList[0]->v_list[577]->getCGALPoint(), space->surfacesList[0]->v_list[579]->getCGALPoint());
+        cout << CGALCalculation::getAngle(vc1, vc2) << endl;
     }
     return 0;
 }
@@ -157,10 +179,10 @@ int OBJCollection::makeSimpleSpaces(SpaceMaker* sm){
     for (ull s_i = 0 ; s_i < this->space_list.size();s_i++){
         Space* space = this->space_list[s_i];
         space->updateNormal();
-        Space* new_space = new Space(space->name, space->checker);
+        //Space* new_space = new Space(space->name, space->checker);
         sm->checker = space->checker;
-        new_space->surfacesList = sm->makeSimpleSurfaces(space->surfacesList);
-        this->simple_space_list.push_back(new_space);
+        space->surfacesList = sm->makeSimpleSurfaces(space->surfacesList);
+        //this->simple_space_list.push_back(new_space);
     }
 
     return 0;

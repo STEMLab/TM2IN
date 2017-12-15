@@ -180,7 +180,7 @@ int Space::handleDefect(double angle){
     {
         Surface* surface = this->surfacesList[i];
         surface->removeConsecutiveDuplication(this->checker);
-        //surface->removeStraight(angle);
+        surface->removeStraight(angle);
         surface->setMBB();
 
         if (surface->isValid()){

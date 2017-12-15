@@ -15,26 +15,40 @@
 #include "data/Space.h"
 #include "fileio/JSONMaker.h"
 #include "predefine.h"
-#include "fileio/ProcessWriter.h"
+#include "fileio/GenerationWriter.h"
 
 #include <vector>
 #include <cstring>
 #include <string>
 
 using namespace std;
+class CombineParameter{
+public:
+    int maxGEN;
+    double startDegree;
+    bool simplifyLine;
+    bool snapSurface;
+
+    CombineParameter(int _mg, int _sd, bool _sl, bool _ssf){
+        maxGEN = _mg;
+        startDegree = _sd;
+        simplifyLine = _sl;
+        snapSurface = _ssf;
+    };
+};
 
 class OBJCollection{
 public:
     vector<Vertex*> vertex;
     vector<Space*> space_list;
     vector<Space*> simple_space_list;
-    ProcessWriter* process_writer;
+    GenerationWriter* generation_writer;
 
-    void setWriter(ProcessWriter * pw){process_writer = pw;}
+    void setWriter(GenerationWriter * pw){generation_writer = pw;}
 
     int makeTriangleToSurface(double degree);
 
-    int combineSurfaces(Checker* ch, int max_gener, double startDegree);
+    int combineSurfaces(Checker* ch, CombineParameter* cp);
     int rotateSurfaces();
     int finish();
 
@@ -43,7 +57,7 @@ public:
 
     void free();
 private:
-    int process_generation(Space* space, int& maxGeneration, int& currentGeneration, double& degree, double angle);
+    int process_generation(Space* space, int& maxGeneration, int& currentGeneration, double& degree);
 };
 
 #endif /* ObjectCollection_h */
