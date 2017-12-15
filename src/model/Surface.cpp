@@ -623,38 +623,47 @@ void Surface::snapping(Surface* p_surface, double p_diff){
         }
     }
     if (match_num == 0) return;
+    if (match_list.size() < 3) return;
+    for (int i = 0 ; i < match_list.size() - 2; i++){
+        ull should_next_first = match_list[i].first == 0? this->v_list.size() - 1 : match_list[i].first - 1;
+        ull should_next_second = match_list[i].second + 1;
+        if (match_list[i+1].second != should_next_second){
+            if (match_list[i+1].first != should_next_first){
+                ull should_nn_second = should_next_second+1;
+                ull should_nn_first = should_next_first == 0? this->v_list.size() - 1 : should_next_first - 1;
+                if (match_list[i+2].second == should_nn_second && match_list[i+2].first == should_nn_first){
+                    p_surface->v_list[match_list[i+1].second] = this->v_list[match_list[i+1].first];
+                }
+            }
 
-    for (int i = 0 ; i < match_list.size() - 1; i++){
+        }
+        /*
         ull next_first = match_list[i].first == 0? this->v_list.size() - 1 : match_list[i].first - 1;
         if (match_list[i].second + 1 != match_list[i+1].second){
             if (next_first != match_list[i+1].first){
                 ull nn_first = next_first == 0 ? this->v_list.size() - 1 : next_first - 1;
                 if (nn_first == match_list[i+1].first){
-//                    removed_first.push_back(next_first);
-//                    removed_second.push_back(match_list[i].second + 1);
                     this->v_list[next_first] = p_surface->v_list[match_list[i].second + 1];
                 }
                 else{
                     p_surface->v_list[match_list[i].second + 1] = p_surface->v_list[match_list[i].second];
-                    //removed_second.push_back(match_list[i].second + 1);
                 }
             }
             else{
                 p_surface->v_list[match_list[i].second + 1] = p_surface->v_list[match_list[i].second];
-                //removed_second.push_back(match_list[i].second + 1);
             }
         }
         else{
             if (next_first != match_list[i+1].first){
                 ull nn_first = next_first == 0 ? this->v_list.size() - 1 : next_first - 1;
                 if (nn_first == match_list[i+1].first){
-                    //removed_first.push_back(next_first);
                     this->v_list[next_first] = this->v_list[match_list[i].first];
                 }
             }
             else{
             }
         }
+        */
     }
 
 }

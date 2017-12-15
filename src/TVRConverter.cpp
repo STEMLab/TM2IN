@@ -11,9 +11,9 @@
 using namespace std;
 
 void test(){
-    Point_3 p1(-0.514636, 1.815419, -1.287682);
-    Point_3 p2(-0.505437, 1.807147, -1.288355);
-    Point_3 p3(-0.505941, 1.807601, -1.288318);
+    Point_3 p1(-4.167291, 3.42887, -0.936589);
+    Point_3 p2(-4.188357, 3.580666, -0.941703);
+    Point_3 p3(-4.185606, 3.592505, -0.942622);
 
     Vector_3 vc1(p1,p2);
     Vector_3 vc2(p1,p3);
@@ -25,7 +25,7 @@ int main(int argc, const char * argv[]) {
 
     string import_version = "1.0.1.2";
     string export_version = "1.0.1.2";
-
+    cout << export_version << endl;
     /**
     * for Mac
     */
@@ -72,15 +72,16 @@ int main(int argc, const char * argv[]) {
             break;
         }
         case 1:{
-
-            cout << "choose Generation" << endl;
-            // TODO
-            /*
-            int gen; cin >> gen;
-            string import_path = string(result_path) + file_name + "/" + import_version + "/generation_" + gen;
+            string import_path = string(result_path) + file_name + "/" + export_version + "/surfaces.bin";
             if (manager->importGeneration(import_path)) return 3;
-            */
-            break;
+            cout << "do simple?(y or n)" << endl;
+            char ans_simple; cin >> ans_simple;
+            if (ans_simple == 'y'){
+                if (manager->makeSimpleSpaces(new OnlyWallSpaceMaker()) == -1) return -1;
+                string simple_file = string(result_path) + file_name + export_version + "_solid.json";
+                manager->exportSpaceJSON(simple_file);
+            }
+            return 0;
         }
         case 2:{
             // TODO
@@ -107,14 +108,16 @@ int main(int argc, const char * argv[]) {
 
     if (manager->constructSpace(new CombineParameter(maxGENperOneCycle, 1.00, simplifyLine, snapSurface)) == -1) return -1;
 
-    string json_file = string(result_path) + string(file_name) + "/" + export_version + "/" + "surfaces.json";
+    string json_file = string(result_path) + file_name + "/" + export_version + "/" + "surfaces.json";
     manager->exportSpaceJSON(json_file);
+    string export_bin_path = string(result_path) + file_name + "/" + export_version + "/surfaces.bin";
+    manager->exportCombined(export_bin_path);
 
     cout << "do simple?(y or n)" << endl;
     char ans_simple; cin >> ans_simple;
     if (ans_simple == 'y'){
         if (manager->makeSimpleSpaces(new OnlyWallSpaceMaker()) == -1) return -1;
-        string simple_file = string(result_path) + string(file_name) + export_version + "_solid.json";
+        string simple_file = string(result_path) + file_name + export_version + "_solid.json";
         manager->exportSpaceJSON(simple_file);
     }
 

@@ -17,7 +17,12 @@ int CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checker
         return 1;
     }
     /**< [start_i, end_i], [end_j, start_j] */
-    if (findStartAndEnd(piece->v_list, origin->v_list, middle_i, middle_j, start_i, end_i, start_j, end_j)) return 1;
+    if (findStartAndEnd(piece->v_list, origin->v_list, middle_i, middle_j, start_i, end_i, start_j, end_j)){
+        cout << "\n" << origin->toJSONString() << endl;
+        cout << "\n" << piece->toJSONString() <<endl;
+        cout << CGALCalculation::getAngle(origin->av_normal, piece->av_normal)  << endl;
+        return 1;
+    }
 
     int seg_num = piece->getSegmentsNumber(end_i, start_i);
 

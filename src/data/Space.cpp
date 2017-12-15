@@ -92,7 +92,7 @@ int Space::combineSurface(double degree){
         while(count != 0){
             newcp = attachSurfaces(newcp, i+1, checked, count, degree);
             if (newcp == NULL) break;
-            printProcess(combined_count, 1);
+            printProcess(combined_count, this->surfacesList.size(), "combineSurface");
             combined_count += count;
         }
         if (newcp != NULL) new_poly_list.push_back(newcp);
@@ -114,7 +114,7 @@ Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count,
             Surface* sf = this->surfacesList[id];
             if (CleanPolygonMaker::combine(cp, sf, checker, degree) == 0)
             {
-                printProcess(id, this->surfacesList.size());
+                printProcess(id, this->surfacesList.size(), "attachSurfaces");
                 cp->tri_list.insert(cp->tri_list.end(), sf->tri_list.begin(), sf->tri_list.end());
                 checked[id] = true;
                 count++;
@@ -154,7 +154,7 @@ int Space::simplifySegment(){
 
     for (ull i = 0 ; i < p_size - 1; i++)
     {
-        printProcess(i, p_size);
+        printProcess(i, p_size, "");
         for (ull j = i + 1; j < p_size ; j++)
         {
             int loop_count = 0;
@@ -331,6 +331,37 @@ vector<Surface*> Space::getTopSurfaces(double percent){
 }
 
 
+int Space::remainOnlyUsingVertices(){
+    for (ull i = 0 ; i < this->p_vertexList->size() ; i++){
+        (*this->p_vertexList)[i]->used = false;
+    }
+    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
+        this->surfacesList[i]->tagVerticesUsed();
+    }
+
+    ull removed_count = 0;
+    for (ull i = 0 ; i < this->p_vertexList->size() ;){
+        if (this->p_vertexList->at(i)->used){
+            this->p_vertexList->at(i)->index = i;
+            i++;
+        }
+        else{
+            delete(this->p_vertexList->at(i));
+            this->p_vertexList->erase(this->p_vertexList->begin() + i);
+            removed_count++;
+        }
+    }
+
+    cout << "removed vertices : " << removed_count << endl;
+    cout << "remained vertices : " << this->p_vertexList->size() << endl;;
+    return 0;
+}
+
+
+
+
+/*
+
 
 int Space::mergeTrianglesGreedy(double degree){
     int combined_count = 0;
@@ -362,7 +393,7 @@ vector<Surface*> Space::makeSurfacesInTriangleList(vector<Triangle*>& tri_list, 
 
     for (ull index = 0 ; index < size; index++)
     {
-        printProcess(index, tri_list.size());
+        printProcess(index, tri_list.size(), "");
         if (checked[index])
         {
             continue;
@@ -407,31 +438,4 @@ Surface* Space::attachTriangle(vector<Triangle*> tri_list, Surface* cp, bool* ch
     }
     return cp;
 }
-
-int Space::remainOnlyUsingVertices(){
-    for (ull i = 0 ; i < this->p_vertexList->size() ; i++){
-        (*this->p_vertexList)[i]->used = false;
-    }
-    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
-        this->surfacesList[i]->tagVerticesUsed();
-    }
-
-    ull removed_count = 0;
-    for (ull i = 0 ; i < this->p_vertexList->size() ;){
-        if (this->p_vertexList->at(i)->used){
-            this->p_vertexList->at(i)->index = i;
-            i++;
-        }
-        else{
-            delete(this->p_vertexList->at(i));
-            this->p_vertexList->erase(this->p_vertexList->begin() + i);
-            removed_count++;
-        }
-    }
-
-    cout << "removed vertices : " << removed_count << endl;
-    cout << "remained vertices : " << this->p_vertexList->size() << endl;;
-    return 0;
-}
-
-
+*/

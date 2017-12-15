@@ -16,6 +16,7 @@ double CGALCalculation::getAngle(Vector_3& nv1, Vector_3& nv2){
     double cos = inner;
     //cout << " cos : " << cos <<endl;
     if (cos > 0.99999) cos = 1;
+    else if (cos < -0.99999) cos = -1;
     double angle = acos(cos) * 180.0/PI;
 
     return angle;

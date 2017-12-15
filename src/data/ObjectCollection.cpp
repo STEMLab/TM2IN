@@ -29,7 +29,8 @@ int OBJCollection::makeTriangleToSurface(double degree){
                 this->space_list[s_i]->triangles[j].a == this->space_list[s_i]->triangles[j].c ||
                 this->space_list[s_i]->triangles[j].c == this->space_list[s_i]->triangles[j].b){
                 cout << "Wrong Triangle" << endl;
-                return -1;
+                this->space_list[s_i]->triangles.erase(this->space_list[s_i]->triangles.begin() + j);
+                //return -1;
             }
             else{
                 j++;
@@ -67,7 +68,7 @@ int OBJCollection::makeTriangleToSurface(double degree){
 int OBJCollection::process_generation(Space* space, int& maxGeneration, int& currentGeneration, double& degree){
     ll p_size = space->surfacesList.size();
     while (true && maxGeneration-- > 0){
-        cout << "generation : " << currentGeneration << endl;
+        cout << "generation " << currentGeneration << ": " << space->surfacesList.size()<< endl;
         if (space->combineSurface(degree) == -1)
         {
             cout << "combine error" << endl;
@@ -105,6 +106,7 @@ int OBJCollection::combineSurfaces(Checker* ch, CombineParameter* cp){
     {
         this->generation_writer->clearGenerationStat();
         Space* space = this->space_list[it];
+
         for (unsigned int s_i = 0 ; s_i < this->space_list[it]->surfacesList.size() ;s_i++){
             if (space->surfacesList[s_i]->checkDuplicate(ch)){
                 cout << "it has duplicate Vertex" << endl;
@@ -127,25 +129,30 @@ int OBJCollection::combineSurfaces(Checker* ch, CombineParameter* cp){
             }
             maxGENperOneCycle = temp_maxGENperOneCycle;
 
-            if (snap_mode){
-                if (space->snapSurface(diff) == -1){ cout << "snap Surface" << endl; return -1;}
-                if (space->handleDefect(angle) == -1){ cout << "cannot handle defect" << endl; return -1; }
-            }
-
-            //angle = 1.0;
+            if (angle < 1.0) angle += 0.1;
             cout << "simplify and handleDefect" << endl;
+
             if (simplify_mode)
                 if (space->simplifySegment() == -1){ cout << "simplify error" << endl; return -1;}
             if (space->handleDefect(angle) == -1){ cout << "cannot handle defect" << endl; return -1; }
+            //space->updateNormal();
 
         }
+
 
         sort(space->surfacesList.begin(), space->surfacesList.end(), Surface::compareArea);
         SLC::tagID(space->surfacesList);
 
-        Vector_3 vc1(space->surfacesList[0]->v_list[577]->getCGALPoint(), space->surfacesList[0]->v_list[578]->getCGALPoint());
-        Vector_3 vc2(space->surfacesList[0]->v_list[577]->getCGALPoint(), space->surfacesList[0]->v_list[579]->getCGALPoint());
-        cout << CGALCalculation::getAngle(vc1, vc2) << endl;
+        if (snap_mode){
+            if (space->snapSurface(diff) == -1){ cout << "snap Surface" << endl; return -1;}
+            if (process_generation(space, maxGENperOneCycle, gen, degree)) return -1;
+            if (space->handleDefect(angle) == -1){ cout << "cannot handle defect" << endl; return -1; }
+        }
+
+
+        //Vector_3 vc1(space->surfacesList[0]->v_list[577]->getCGALPoint(), space->surfacesList[0]->v_list[578]->getCGALPoint());
+        //Vector_3 vc2(space->surfacesList[0]->v_list[577]->getCGALPoint(), space->surfacesList[0]->v_list[579]->getCGALPoint());
+        //cout << CGALCalculation::getAngle(vc1, vc2) << endl;
     }
     return 0;
 }

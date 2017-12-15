@@ -15,5 +15,5 @@ std::vector<std::string> split(const std::string &s, char delim);
 template<typename Out>
 void split(const std::string &s, char delim, Out result);
 void debug();
-void printProcess(ull index, ull size);
+void printProcess(ull index, ull size, std::string str);
 #endif // UTIL_H_INCLUDED

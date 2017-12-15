@@ -18,7 +18,7 @@ class RoomMaker
         virtual int constructSpace(CombineParameter* ){ return -1;}
         int exportSpaceJSON(string f_path);
         int exportSimpleSpaceJSON(string f_path);
-//        int exportCombined(string f_path);
+        int exportCombined(string f_path);
         int importGeneration(string f_path);
 
         void setImporter(Importer* p_di){ di = p_di; }

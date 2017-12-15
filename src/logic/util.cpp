@@ -23,6 +23,6 @@ void debug(){
     std::cout << "Only for Debuggin...remove it later" << std::endl;
 }
 
-void printProcess(ull index, ull size){
-    std::cout << "\r==========" << (int)((double)index/(double)size * 100) <<"% ========";
+void printProcess(ull index, ull size, std::string str){
+    std::cout << "\r" << str << " ==========" << (int)((double)index/(double)size * 100) <<"% ========";
 }
