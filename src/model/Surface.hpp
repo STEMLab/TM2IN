@@ -30,7 +30,6 @@ typedef Kernel::Plane_3 Plane_3;
 class Surface{
 public:
     ull sf_id;
-    bool isHidden;
     std::vector<Vertex*> v_list;
     std::vector<std::vector<Vertex*> > inner_ring;
     std::vector<Triangle*> tri_list;
@@ -52,8 +51,6 @@ public:
 
     void setZ(double value);
 
-    bool attachTriangle(Triangle* pl, Checker* ch);
-    bool attachTriangle2(Triangle* pl, Checker* ch);
     std::string toJSONString();
 
     bool isInMBB(Vertex* vt);

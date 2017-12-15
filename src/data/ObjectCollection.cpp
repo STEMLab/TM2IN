@@ -56,7 +56,7 @@ int OBJCollection::makeTriangleToSurface(double degree){
 
         cout << this->space_list[s_i] -> name << " is converting..." << endl;
         //if (this->space_list[i]->mergeTrianglesGreedy(degree)){
-        if (this->space_list[s_i]->changeTrianglesToSurfaces()){
+        if (this->space_list[s_i]->convertTrianglesToSurfaces()){
             cout << "make Surfaces error" << endl;
             return -1;
         }

@@ -26,7 +26,7 @@ void Space::pushTriangle(Triangle tri){
     this->triangles.push_back(tri);
 }
 
-int Space::changeTrianglesToSurfaces(){
+int Space::convertTrianglesToSurfaces(){
     vector<Surface*> c_list;
     ull size = this->triangles.size();
     for (ull i = 0 ; i < size; i++){
@@ -319,15 +319,6 @@ int Space::snapSurface(double p_diff){
 
     }
     return 0;
-}
-
-
-vector<Surface*> Space::getTopSurfaces(double percent){
-    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
-    int num = (int)((double)this->surfacesList.size() * percent);
-    if (num < 1) num = 1;
-    vector<Surface*> ret(this->surfacesList.begin(), this->surfacesList.begin() + num);
-    return ret;
 }
 
 

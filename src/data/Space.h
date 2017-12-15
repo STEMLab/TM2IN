@@ -42,7 +42,7 @@ public:
     int makeSurfacesBySeparation();
     int makeSurfacesByCandidator();
     int mergeTrianglesGreedy(double degree);
-    int changeTrianglesToSurfaces();
+    int convertTrianglesToSurfaces();
 
     int checkTriangles();
     int checkOpposite();
@@ -55,17 +55,17 @@ public:
 
     int snapSurface(double);
     void rotateSpaceByFloorTo00();
-    vector<Surface*> getTopSurfaces(double percent);
 
     int remainOnlyUsingVertices();
     //TODO : removed
     void test();
 
 protected:
+    Surface* attachSurfaces(Surface* cp, ull start, bool* checked, ll& count, double degree);
     void updateMBB();
     void freeSurfaces();
+
     Surface* attachTriangle(vector<Triangle*> tri_list, Surface* cp, bool* checked, ll& count, double degree);
-    Surface* attachSurfaces(Surface* cp, ull start, bool* checked, ll& count, double degree);
     vector<Surface*> makeSurfacesInTriangleList(vector<Triangle*>& tri_list, bool* checked, int& combined_count, double degree);
 
 private:
