@@ -8,7 +8,6 @@
 
 #include "logic/check.hpp"
 #include "model/Surface.hpp"
-#include "logic/Triangulator.h"
 #include "logic/CleanPolygonMaker.h"
 
 #include "predefine.h"
