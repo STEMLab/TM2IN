@@ -21,4 +21,5 @@ obj/
 cscope.out
 *.cscope_file_list
 
-
+#idea
+.idea/
