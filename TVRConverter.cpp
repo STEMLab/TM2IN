@@ -2,7 +2,6 @@
 #include <iostream>
 #include <fstream>
 #include <boost/filesystem.hpp>
-#include <dirent.h>
 #include <string>
 
 #include "fileio/TVRImporter.h"
@@ -34,7 +33,7 @@ int main(int argc, const char * argv[]) {
     cout << "write file name" << endl;
     cin >> fileName;
     const int maxGENperOneCycle = 20;
-    string generationWritePath = resultPath + fileName+"/" + exportVersion + "/gen/";
+    string generationWritePath = resultPath + fileName+"/" + exportVersion + "/";
 
 //    TVRImporter::extractMINtvr(string(path) + string(fileName));
 //    return 0;
@@ -58,17 +57,7 @@ int main(int argc, const char * argv[]) {
     // create Result directory
     if (boost::filesystem::exists(resultPath + fileName)){
         if (boost::filesystem::exists(resultPath + fileName + "/" + exportVersion)){
-            DIR *theFolder = opendir(string(resultPath + fileName + "/" + exportVersion).c_str());
-            struct dirent *next_file;
-            char filepath[256];
-
-            while ( (next_file = readdir(theFolder)) != NULL )
-            {
-                // build the path for each file in the folder
-                sprintf(filepath, "%s/%s", string(resultPath + fileName + "/" + exportVersion).c_str(), next_file->d_name);
-                remove(filepath);
-            }
-            closedir(theFolder);
+            removeFilesInDirectory(resultPath + fileName + "/" + exportVersion);
         }
         else{
             boost::filesystem::create_directory(resultPath + fileName + "/" + exportVersion);
@@ -103,12 +92,9 @@ int main(int argc, const char * argv[]) {
             return 0;
         }
         case 2:{
-            // TODO
-            /*
-            if (manager->importGeneration(imported_bin)) return 4;
-            string json_file = string(result_path) + fileName + exportVersion + "_onlyJoin" + ".json";
+            if (manager->convertTriangleMeshToSpace(0.0)) return 1;
+            string json_file = string(resultPath) + fileName + "/" + exportVersion + "/" + "triangles.json";
             manager->exportSpaceJSON(json_file);
-            */
             return 0;
         }
         default:{

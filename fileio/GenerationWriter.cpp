@@ -1,11 +1,16 @@
 #include "GenerationWriter.h"
 #include "fileio/JSONMaker.h"
 
+#include <boost/filesystem.hpp>
 
 void GenerationWriter::start(Space* p_space){
     this->space = p_space;
 
     //Create Generation directory
+    if (boost::filesystem::exists(process_path + this->space->name)) {
+        boost::filesystem::remove_all(process_path + this->space->name);
+    }
+    boost::filesystem::create_directories(process_path + this->space->name);
 
     ofstream statout;
     statout.open(process_path + this->space->name + "/gs" + ".txt", ios::out|ios::trunc);

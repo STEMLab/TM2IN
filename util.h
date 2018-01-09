@@ -16,4 +16,5 @@ template<typename Out>
 void split(const std::string &s, char delim, Out result);
 void debug();
 void printProcess(ull index, ull size, std::string str);
+void removeFilesInDirectory(std::string path);
 #endif // UTIL_H_INCLUDED
