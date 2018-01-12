@@ -12,11 +12,15 @@ using namespace std;
 
 class TriangleMeshGraph : public Graph{
 public:
-    void makeAdjacentGraph(TriangleMesh* tm);
+    ull sizeOfTriangles = 0;
+    void makeAdjacentGraph(vector<Triangle>& triangles);
 
     bool isClosedTriangleMesh();
-    void print_bfs();
     bool isNeighbor(ull id1, ull id2);
+
+    vector<ull> bfs(ull src, vector<bool>& checked);
+    vector<vector<ull>> getConnectedComponent();
 };
 
-#endif // SURFACEGRAPH_H_INCLUDED
+
+#endif

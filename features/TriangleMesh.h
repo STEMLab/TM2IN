@@ -13,15 +13,14 @@ class TriangleMesh{
 private:
 
 public:
-    vector<pair<string, vector<Triangle>>> triangles;
+    vector<pair<string, vector<Triangle*>>> triangles;
     vector<Vertex*> vertices;
-    TriangleMeshGraph* graph;
+    vector<TriangleMeshGraph*> graphs;
 
     TriangleMesh(){}
 
-    TriangleMesh* correct();
     void makeGraph();
-    void saveFile(const char*);
+    void saveAsTVR(const char *);
     bool checkValid();
 };
 

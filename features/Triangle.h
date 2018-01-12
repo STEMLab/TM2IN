@@ -2,6 +2,7 @@
 #define TRIANGLE_H
 
 #include "features/vertex.h"
+#include "predefine.h"
 #include "logic/CGALCalculation.h"
 
 #include <CGAL/Simple_cartesian.h>
@@ -17,19 +18,26 @@ private:
     Vector_3 normal = CGAL::NULL_VECTOR;
     double area = 0.0;
 public:
-    Vertex* a;
-    Vertex* b;
-    Vertex* c;
+    std::vector<HalfEdge* > edges;
 
-    Triangle();
+    Triangle(){}
 
     Triangle(Vertex* pa, Vertex *pb, Vertex* pc);
+
+    bool checkAndSetAdjacent(Triangle *tri);
+    bool isOpposite(Triangle* tri);
+    int findShareSameHalfEdge(Triangle *pTriangle);
+
+    Vertex* operator[](int idx);
+    Vertex* vertex(int idx);
+
+
+    bool isAdjacent(Triangle& tri);
+    bool isOpposite(Triangle& tri);
 
     Vector_3 getNormal();
     double getArea();
     std::string toJSON();
-    bool isAdjacent(Triangle& tri);
-    bool isOpposite(Triangle& tri);
 };
 
 
