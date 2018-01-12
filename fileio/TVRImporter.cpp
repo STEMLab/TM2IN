@@ -34,7 +34,7 @@ TriangleMesh* TVRImporter::import(const char* f_path){
     int f_count = 0;
 
     TriangleMesh* tm = new TriangleMesh();
-    vector<Triangle> triangles;
+    vector<Triangle*> triangles;
     vector<Vertex*> sorted_vertex;
 
     while(!fin.eof()){
@@ -49,8 +49,8 @@ TriangleMesh* TVRImporter::import(const char* f_path){
                 this->makeVertex(v_count, inputstr, vt);
 
                 Vertex* pt_v = new Vertex(vt);
-                //Vertex* pt_v = this->findSameVertex(sorted_vertex, check, vt);
-                pt_v->index = v_count;
+                // Vertex* pt_v = this->findSameVertex(sorted_vertex, check, vt);
+                // pt_v->index = v_count;
                 tm->vertices.push_back(pt_v);
 
                 v_count++;
@@ -59,7 +59,7 @@ TriangleMesh* TVRImporter::import(const char* f_path){
                 break;
             }
             case 'g':{
-               if (f_count != 0){
+                if (f_count != 0){
                     tm->triangles.push_back(make_pair(group_name, triangles));
                 }
                 group_name = this->getGroupName(inputstr);
@@ -71,9 +71,9 @@ TriangleMesh* TVRImporter::import(const char* f_path){
                 f_count++;
                 if (f_count % 5000 == 0) cout << "Loaded faces : " << f_count << endl;
 
-                Triangle tri;
-                this->makeTriangle(inputstr, tm->vertices, tri);
+                Triangle* tri = this->makeTriangle(inputstr, tm->vertices);
                 triangles.push_back(tri);
+
                 break;
             }
         }
@@ -114,20 +114,19 @@ string TVRImporter::getGroupName(string& input){
     return x_1;
 }
 
-void TVRImporter::makeTriangle(string& input, vector<Vertex*>& vertex, Triangle& tri){
+Triangle* TVRImporter::makeTriangle(string& input, vector<Vertex*>& vertex){
     std::vector<std::string> x = split(input, ' ');
 
     ll a = stol(x[1]);
     ll b = stol(x[2]);
     ll c = stol(x[3]);
 
-    tri.a = vertex[a];
-    tri.b = vertex[b];
-    tri.c = vertex[c];
-
+    Triangle* newTriangle = new Triangle(vertex[a], vertex[b], vertex[c]);
 
     x.clear();
+    return newTriangle;
 }
+
 
 
 void TVRImporter::makeVertex(int id, string& input, Vertex& vt){
