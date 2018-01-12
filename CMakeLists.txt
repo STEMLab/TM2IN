@@ -5,8 +5,9 @@ set(CMAKE_CXX_STANDARD 11)
 
 include_directories(../TriangleMeshToClearSolid)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-find_package(CGAL QUIET )
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -lCGAL")
+
+find_package(CGAL REQUIRED )
 
 if ( CGAL_FOUND )
     include( ${CGAL_USE_FILE} )
@@ -17,7 +18,6 @@ FIND_PACKAGE( Boost 1.40 COMPONENTS filesystem REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 add_executable(TriangleMeshToClearSolid
-        features/Graph.h
         features/Segment.cpp
         features/Segment.h
         features/Space.cpp
@@ -28,12 +28,12 @@ add_executable(TriangleMeshToClearSolid
         features/SurfaceGraph.h
         features/Triangle.cpp
         features/Triangle.h
-        features/TriangleMesh.cpp
         features/TriangleMesh.h
-        features/TriangleMeshGraph.cpp
         features/TriangleMeshGraph.h
         features/vertex.cpp
         features/vertex.h
+        features/HalfEdge.cpp
+        features/HalfEdge.h
         fileio/3DSImporter.cpp
         fileio/3DSImporter.h
         fileio/GenerationWriter.cpp

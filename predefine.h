@@ -7,15 +7,18 @@
 
 #include <cassert>
 
-class Triangle;
 class Vertex;
 class Surface;
 class SurfaceGraph;
 class Space;
+class OBJCollection;
 class Segment;
 class SurfacesListCalculation;
 class TriangleMesh;
 class TriangleMeshGraph;
+class Triangle;
+class HalfEdge;
+
 
 typedef SurfacesListCalculation SLC;
 

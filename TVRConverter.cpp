@@ -22,9 +22,8 @@ void test(){
 }
 
 int main(int argc, const char * argv[]) {
-    string import_version = "1.0.1.2";
-    string exportVersion = "1.0.1.2";
-    cout << exportVersion << endl;
+    string version = "1.0.1.3";
+    cout << version << endl;
 
     string projectPath = "/home/dongmin/dev/TriMeshToIndoor/";
     string resourcePath = projectPath + "Resource/tvr/";
@@ -33,7 +32,7 @@ int main(int argc, const char * argv[]) {
     cout << "write file name" << endl;
     cin >> fileName;
     const int maxGENperOneCycle = 20;
-    string generationWritePath = resultPath + fileName+"/" + exportVersion + "/";
+    string generationWritePath = resultPath + fileName+"/" + version + "/";
 
 //    TVRImporter::extractMINtvr(string(path) + string(fileName));
 //    return 0;
@@ -56,16 +55,16 @@ int main(int argc, const char * argv[]) {
 
     // create Result directory
     if (boost::filesystem::exists(resultPath + fileName)){
-        if (boost::filesystem::exists(resultPath + fileName + "/" + exportVersion)){
-            removeFilesInDirectory(resultPath + fileName + "/" + exportVersion);
+        if (boost::filesystem::exists(resultPath + fileName + "/" + version)){
+            removeFilesInDirectory(resultPath + fileName + "/" + version);
         }
         else{
-            boost::filesystem::create_directory(resultPath + fileName + "/" + exportVersion);
+            boost::filesystem::create_directory(resultPath + fileName + "/" + version);
         }
     }
     else{
         boost::filesystem::create_directory(resultPath + fileName);
-        boost::filesystem::create_directory(resultPath + fileName + "/" + exportVersion);
+        boost::filesystem::create_directory(resultPath + fileName + "/" + version);
     }
 
     manager->setGenerationWriter(new GenerationWriter(generationWritePath));
@@ -93,7 +92,7 @@ int main(int argc, const char * argv[]) {
         }
         case 2:{
             if (manager->convertTriangleMeshToSpace(0.0)) return 1;
-            string json_file = string(resultPath) + fileName + "/" + exportVersion + "/" + "triangles.json";
+            string json_file = string(resultPath) + fileName + "/" + version + "/" + "triangles.json";
             manager->exportSpaceJSON(json_file);
             return 0;
         }
@@ -113,7 +112,7 @@ int main(int argc, const char * argv[]) {
 
     if (manager->constructSpace(new CombineParameter(maxGENperOneCycle, 1.00, simplifyLine, snapSurface)) == -1) return -1;
 
-    string json_file = string(resultPath) + fileName + "/" + exportVersion + "/" + "surfaces.json";
+    string json_file = string(resultPath) + fileName + "/" + version + "/" + "surfaces.json";
     manager->exportSpaceJSON(json_file);
 //    string export_bin_path = string(result_path) + fileName + "/" + exportVersion + "/surfaces.bin";
 //    manager->exportCombined(export_bin_path);
@@ -122,7 +121,7 @@ int main(int argc, const char * argv[]) {
     char ans_simple; cin >> ans_simple;
     if (ans_simple == 'y'){
         if (manager->makeSimpleSpaces(new OnlyWallSpaceMaker()) == -1) return -1;
-        string simple_file = string(resultPath) + fileName + exportVersion + "_solid.json";
+        string simple_file = string(resultPath) + fileName + version + "_solid.json";
         manager->exportSpaceJSON(simple_file);
     }
 
