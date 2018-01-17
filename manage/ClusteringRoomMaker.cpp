@@ -11,7 +11,7 @@ int ClusteringRoomMaker::constructSpace(int max_gener, double startDegree, bool 
     return 0;
 }
 
-int ClusteringRoomMaker::makeSimpleSpaces(SpaceMaker* sm){
+int ClusteringRoomMaker::finish(){
     return 0;
 }
 

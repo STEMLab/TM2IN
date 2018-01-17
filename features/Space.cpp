@@ -92,8 +92,6 @@ Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count,
 
 int Space::updateNormal(){
     cout << "\n------------updateNormal------------\n" << endl;
-    clock_t time_begin = clock();
-
     for (ull i = 0 ; i < (int)this->surfacesList.size() ; i++)
     {
         Surface* surface = this->surfacesList[i];
@@ -105,10 +103,6 @@ int Space::updateNormal(){
         }
 
     }
-
-    clock_t time_end = clock();
-    double elapsed_secs = double(time_end - time_begin) / CLOCKS_PER_SEC;
-    cout << "update Normal time : " <<elapsed_secs << endl;
     return 0;
 }
 
@@ -276,7 +270,15 @@ int Space::snapSurface(double p_diff){
     return 0;
 }
 
-
+int Space::checkDuplicateVertexInSurfaces() {
+    for (unsigned int s_i = 0 ; s_i < this->surfacesList.size() ;s_i++){
+        if (surfacesList[s_i]->checkDuplicate(this->checker)){
+            cout << "it has duplicate Vertex" << endl;
+            return -1;
+        }
+    }
+    return 0;
+}
 
 /*
 

@@ -1,18 +1,22 @@
 #ifndef ONLYWALLSPACEMAKER_H_INCLUDED
 #define ONLYWALLSPACEMAKER_H_INCLUDED
 
-#include "space_maker/SpaceMaker.h"
 #include "predefine.h"
 #include "logic/SurfacesListCalculation.h"
 
 using namespace std;
 
-class OnlyWallSpaceMaker : public SpaceMaker{
+class OnlyWallSpaceMaker{
 public:
+    Checker* checker;
     OnlyWallSpaceMaker(){};
 
     vector<Surface*> makeSimpleSurfaces(vector<Surface*> surfacesList);
 private:
+
+    static Surface* findFirstSurfaceSimilarWithAxis(vector<Surface*>& surfacesList, int axis);
+    static int findFirstSurfaceIndexSimilarWithAxis(vector<Surface*>& surfacesList, int axis);
+
     int removeSurfacesNotConnectedFC(vector<Surface*>& surfacesList, SurfaceGraph*);
     int removeOppositeSurfaces(vector<Surface*>& surfacesList);
     int makeSurfacesPlanarWithLowest(vector<Surface*>& surfacesList);

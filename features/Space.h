@@ -41,6 +41,7 @@ public:
         checker = ch;
     }
     int convertTrianglesToSurfaces(vector<Triangle*>& triangles);
+    int checkDuplicateVertexInSurfaces();
 
     int combineSurface(double degree);
     int simplifySegment();

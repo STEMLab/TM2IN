@@ -41,74 +41,57 @@ int MergingRoomMaker::constructSpace(CombineParameter* cp){
     bool simplify_mode = cp->simplifyLine;
     bool snap_mode = cp->snapSurface;
 
-    double diff = 0.0001;
-
     if (this->space_list.size() == 0) {
         cout << "there is no space" << endl;
         return -1;
     }
-    int temp_maxGENperOneCycle = maxGENperOneCycle;
+
     for (ull it = 0 ; it < this->space_list.size(); it++)
     {
         Space* space = this->space_list[it];
         this->generation_writer->start(space);
 
-
         // check duplicate coords
-        for (unsigned int s_i = 0 ; s_i < this->space_list[it]->surfacesList.size() ;s_i++){
-            if (space->surfacesList[s_i]->checkDuplicate(this->check)){
-                cout << "it has duplicate Vertex" << endl;
-                return -1;
-            }
-        }
-
+        if (this->space_list[it]->checkDuplicateVertexInSurfaces()) return -1;
 
         double degree = startDegree;
-        double angle = 0.1;
+        double angleInDefect = 0.1;
         int gen = 0;
         this->generation_writer->write();
 
         while (true){
-            ll p_size = space->surfacesList.size();
+            ll sizeBeforeCombine = space->surfacesList.size();
             if (process_generation(space, maxGENperOneCycle, gen, degree)) return -1;
-            if (p_size == (int)space->surfacesList.size()) {
-                cout << "generation " << gen  << " done.. "<< endl;
+            if (sizeBeforeCombine == (int)space->surfacesList.size()) {
+                cout << "generation " << gen << " done.. "<< endl;
                 break;
             }
-            maxGENperOneCycle = temp_maxGENperOneCycle;
+            maxGENperOneCycle = cp->maxGEN;
 
-            if (angle < 1.0) angle += 0.1;
             cout << "simplify and handleDefect" << endl;
 
             if (simplify_mode)
                 if (space->simplifySegment() == -1){ cout << "simplify error" << endl; return -1;}
-            if (space->handleDefect(angle) == -1){ cout << "cannot handle defect" << endl; return -1; }
-            //space->updateNormal();
+
+            if (angleInDefect < 1.0) angleInDefect += 0.1;
+            if (space->handleDefect(angleInDefect) == -1){ cout << "cannot handle defect" << endl; return -1; }
         }
 
         sort(space->surfacesList.begin(), space->surfacesList.end(), Surface::compareArea);
         SLC::tagID(space->surfacesList);
 
         if (snap_mode){
+            double diff = 0.0001;
             if (space->snapSurface(diff) == -1){ cout << "snap Surface" << endl; return -1;}
             if (process_generation(space, maxGENperOneCycle, gen, degree)) return -1;
-            if (space->handleDefect(angle) == -1){ cout << "cannot handle defect" << endl; return -1; }
+            if (space->handleDefect(angleInDefect) == -1){ cout << "cannot handle defect" << endl; return -1; }
         }
     }
     return 0;
 }
 
 
-int MergingRoomMaker::makeSimpleSpaces(SpaceMaker* sm){
-    for (ull s_i = 0 ; s_i < this->space_list.size();s_i++){
-        Space* space = this->space_list[s_i];
-        space->updateNormal();
-        //Space* new_space = new Space(space->name, space->checker);
-        sm->checker = space->checker;
-        space->surfacesList = sm->makeSimpleSurfaces(space->surfacesList);
-        //this->simple_space_list.push_back(new_space);
-    }
-
+int MergingRoomMaker::finish(){
     return 0;
 }
 

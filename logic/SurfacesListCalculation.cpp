@@ -4,32 +4,7 @@
 
 using namespace std;
 
-Surface* SurfacesListCalculation::findFirstSurfaceSimilarWithAxis(vector<Surface*>& surfacesList, int axis){
-    for (ull i = 0 ; i < surfacesList.size() ; i++){
-        Surface* sf = surfacesList[i];
-        if (CGALCalculation::findNormalType6(sf->av_normal) == axis){
-            return sf;
-        }
-    }
-    assert(false);
-}
 
-int SurfacesListCalculation::findFirstSurfaceIndexSimilarWithAxis(vector<Surface*>& surfacesList, int axis){
-    for (ull i = 0 ; i < surfacesList.size() ; i++){
-        Surface* sf = surfacesList[i];
-        if (CGALCalculation::findNormalType6(sf->av_normal) == axis){
-            return i;
-        }
-    }
-    assert(false);
-}
-
-SurfaceGraph* SurfacesListCalculation::makeGraph(vector<Surface*>& surfacesList){
-    sort(surfacesList.begin(), surfacesList.end(), Surface::compareArea);
-    SurfaceGraph* surface_graph = new SurfaceGraph();
-    surface_graph->makeAdjacentGraph(surfacesList);
-    return surface_graph;
-}
 
 void SurfacesListCalculation::tagID(vector<Surface*>& surfacesList){
     for (ull i = 0 ; i < (ull)surfacesList.size() ; i++)

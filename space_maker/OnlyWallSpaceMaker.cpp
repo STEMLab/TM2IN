@@ -13,12 +13,32 @@ vector<Surface*> OnlyWallSpaceMaker::makeSimpleSurfaces(vector<Surface*> _surfac
     return _surfacesList;
 }
 
+Surface* OnlyWallSpaceMaker::findFirstSurfaceSimilarWithAxis(vector<Surface*>& surfacesList, int axis){
+    for (ull i = 0 ; i < surfacesList.size() ; i++){
+        Surface* sf = surfacesList[i];
+        if (CGALCalculation::findNormalType6(sf->av_normal) == axis){
+            return sf;
+        }
+    }
+    assert(false);
+}
+
+int OnlyWallSpaceMaker::findFirstSurfaceIndexSimilarWithAxis(vector<Surface*>& surfacesList, int axis){
+    for (ull i = 0 ; i < surfacesList.size() ; i++){
+        Surface* sf = surfacesList[i];
+        if (CGALCalculation::findNormalType6(sf->av_normal) == axis){
+            return i;
+        }
+    }
+    assert(false);
+}
+
 //Floor And Ceiling
 int OnlyWallSpaceMaker::removeSurfacesNotConnectedFC(vector<Surface*>& surfacesList, SurfaceGraph* surface_graph){
     sort(surfacesList.begin(), surfacesList.end(), Surface::compareArea);
 
-    Surface* roof = SLC::findFirstSurfaceSimilarWithAxis(surfacesList, 5);
-    Surface* floor = SLC::findFirstSurfaceSimilarWithAxis(surfacesList, 2);
+    Surface* roof = OnlyWallSpaceMaker::findFirstSurfaceSimilarWithAxis(surfacesList, 5);
+    Surface* floor = OnlyWallSpaceMaker::findFirstSurfaceSimilarWithAxis(surfacesList, 2);
 
     if (roof == NULL || floor == NULL) return -1;
 

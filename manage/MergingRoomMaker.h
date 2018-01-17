@@ -16,7 +16,7 @@ public:
 
     virtual int pre_process(double degree);
     virtual int constructSpace(CombineParameter* );
-    virtual int makeSimpleSpaces(SpaceMaker* sm);
+    virtual int finish();
     virtual int rotateSurfaces();
 protected:
 

@@ -83,7 +83,7 @@ int main(int argc, const char * argv[]) {
             cout << "do simple?(y or n)" << endl;
             char ans_simple; cin >> ans_simple;
             if (ans_simple == 'y'){
-                if (manager->makeSimpleSpaces(new OnlyWallSpaceMaker()) == -1) return -1;
+                if (manager->finish(new OnlyWallSpaceMaker()) == -1) return -1;
                 string simple_file = string(result_path) + fileName + exportVersion + "_solid.json";
                 manager->exportSpaceJSON(simple_file);
             }
@@ -104,23 +104,21 @@ int main(int argc, const char * argv[]) {
 
     cout << "simplify line?(y or n)" << endl;
     char ans_simple_line; cin >> ans_simple_line;
-    bool simplifyLine = ans_simple_line == 'y';
+    bool simplifyLine = (ans_simple_line == 'y' || ans_simple_line == 'Y');
 
     cout << "snap Surface?(y or n)" << endl;
     char ans_snap_surface; cin >> ans_snap_surface;
-    bool snapSurface = ans_snap_surface == 'y';
+    bool snapSurface = (ans_snap_surface == 'y' || ans_snap_surface == 'Y');
 
     if (manager->constructSpace(new CombineParameter(maxGENperOneCycle, 1.00, simplifyLine, snapSurface)) == -1) return -1;
 
     string json_file = string(resultPath) + fileName + "/" + version + "/" + "surfaces.json";
     manager->exportSpaceJSON(json_file);
-//    string export_bin_path = string(result_path) + fileName + "/" + exportVersion + "/surfaces.bin";
-//    manager->exportCombined(export_bin_path);
 
     cout << "do simple?(y or n)" << endl;
     char ans_simple; cin >> ans_simple;
     if (ans_simple == 'y'){
-        if (manager->makeSimpleSpaces(new OnlyWallSpaceMaker()) == -1) return -1;
+        if (manager->finish() == -1) return -1;
         string simple_file = string(resultPath) + fileName + version + "_solid.json";
         manager->exportSpaceJSON(simple_file);
     }

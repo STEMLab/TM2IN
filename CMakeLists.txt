@@ -59,7 +59,6 @@ add_executable(TriangleMeshToClearSolid
         manage/RoomMaker.h
         space_maker/OnlyWallSpaceMaker.cpp
         space_maker/OnlyWallSpaceMaker.h
-        space_maker/SpaceMaker.h
         predefine.h
         TVRConverter.cpp
         util.cpp

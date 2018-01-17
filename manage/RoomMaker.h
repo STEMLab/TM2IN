@@ -16,7 +16,6 @@ class RoomMaker
         TriangleMesh* mesh;
         vector<Vertex*> vertex;
         vector<Space*> space_list;
-        vector<Space*> simple_space_list;
         GenerationWriter* generation_writer;
 
         RoomMaker(){};
@@ -27,11 +26,10 @@ class RoomMaker
 
         virtual int pre_process(double degree) = 0;
         virtual int constructSpace(CombineParameter* ) = 0;
-        virtual int makeSimpleSpaces(SpaceMaker* sm) = 0;
+        virtual int finish() = 0;
         virtual int rotateSurfaces() = 0;
 
         int exportSpaceJSON(string f_path);
-        int exportSimpleSpaceJSON(string f_path);
         // int exportCombined(string f_path);
         // int importGeneration(string f_path);
 
