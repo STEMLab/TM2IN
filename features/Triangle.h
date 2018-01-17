@@ -31,10 +31,6 @@ public:
     Vertex* operator[](int idx);
     Vertex* vertex(int idx);
 
-
-    bool isAdjacent(Triangle& tri);
-    bool isOpposite(Triangle& tri);
-
     Vector_3 getNormal();
     double getArea();
     std::string toJSON();

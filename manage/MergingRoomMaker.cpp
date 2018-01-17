@@ -53,12 +53,15 @@ int MergingRoomMaker::constructSpace(CombineParameter* cp){
         Space* space = this->space_list[it];
         this->generation_writer->start(space);
 
+
+        // check duplicate coords
         for (unsigned int s_i = 0 ; s_i < this->space_list[it]->surfacesList.size() ;s_i++){
             if (space->surfacesList[s_i]->checkDuplicate(this->check)){
                 cout << "it has duplicate Vertex" << endl;
                 return -1;
             }
         }
+
 
         double degree = startDegree;
         double angle = 0.1;

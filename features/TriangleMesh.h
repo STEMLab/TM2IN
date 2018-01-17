@@ -6,12 +6,11 @@
 #include "predefine.h"
 #include "features/Triangle.h"
 #include "features/TriangleMeshGraph.h"
-
 using namespace std;
 
 class TriangleMesh{
 private:
-
+    FILE* pFile;
 public:
     vector<pair<string, vector<Triangle*>>> triangles;
     vector<Vertex*> vertices;

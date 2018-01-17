@@ -35,7 +35,7 @@ void Surface::setZ(double value){
 }
 
 Surface::Surface(Triangle& pl){
-    Vertex* v[3] = {pl.a, pl.b, pl.c};
+    Vertex* v[3] = {pl[0], pl[1], pl[2]};
 
     for (int i = 0 ; i < 3 ;i++){
         v_list.push_back(v[i]);
@@ -125,12 +125,14 @@ bool Surface::checkDuplicate(Checker* ch){
             cout << "\nSame Index" << endl;
             return true;
         }
+        /*
         if (ch != NULL && ch->isSameVertex(sorted_v_list[i], sorted_v_list[i+1])){
             cout << "\nSame Coords" << endl;
             cout << sorted_v_list[i]->toJSON() << endl;
             cout << sorted_v_list[i+1]->toJSON() <<endl;
             return true;
         }
+         */
     }
     return false;
 }

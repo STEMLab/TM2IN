@@ -40,7 +40,7 @@ public:
     void setChecker(Checker* ch){
         checker = ch;
     }
-    int convertTrianglesToSurfaces(vector<Triangle>& triangles);
+    int convertTrianglesToSurfaces(vector<Triangle*>& triangles);
 
     int combineSurface(double degree);
     int simplifySegment();

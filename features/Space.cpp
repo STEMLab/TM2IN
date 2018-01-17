@@ -23,11 +23,11 @@ Space::~Space()
 }
 
 
-int Space::convertTrianglesToSurfaces(vector<Triangle>& triangles){
+int Space::convertTrianglesToSurfaces(vector<Triangle*>& triangles){
     vector<Surface*> c_list;
     ull size = triangles.size();
     for (ull i = 0 ; i < size; i++){
-        Surface* newcp = new Surface(triangles[i]);
+        Surface* newcp = new Surface(*triangles[i]);
         c_list.push_back(newcp);
     }
 

@@ -8,20 +8,6 @@ bool SurfaceGraph::isNeighbor(ull id1, ull id2){
     return false;
 }
 
-void SurfaceGraph::attachNewTriagle(vector<Triangle>& tri_list){
-    vector<ull> open_list;
-    for (ull i = 0; i < adjList.size() ; i++){
-        if (adjList[i].size() > 3){
-            cout << adjList[i].size() <<endl;
-            assert(false);
-        }
-        if (adjList[i].size() < 3){
-            open_list.push_back(i);
-        }
-    }
-
-}
-
 void SurfaceGraph::makeAdjacentGraph(vector<Surface*>& surface_list){
     adjList.assign(surface_list.size(), vector<ull>());
     for (ull i = 0 ; i < surface_list.size() - 1 ; i++){
@@ -35,18 +21,6 @@ void SurfaceGraph::makeAdjacentGraph(vector<Surface*>& surface_list){
     }
 }
 
-void SurfaceGraph::makeAdjacentGraph(vector<Triangle>& tri_list){
-    adjList.assign(tri_list.size(), vector<ull>());
-    for (ull i = 0 ; i < tri_list.size() - 1 ; i++){
-        printProcess(i, tri_list.size(), "makeGraph");
-        for (ull j = i + 1 ; j < tri_list.size() ; j ++){
-            if (tri_list[i].isAdjacent(tri_list[j])){
-                adjList[i].push_back(j);
-                adjList[j].push_back(i);
-            }
-        }
-    }
-}
 
 bool SurfaceGraph::isClosedTriangleMesh(){
     for (ull i = 0; i < adjList.size() ; i++){

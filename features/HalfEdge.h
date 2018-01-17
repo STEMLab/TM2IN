@@ -13,15 +13,6 @@ public:
     Triangle* parentTriangle = NULL;
     HalfEdge* oppositeEdge = NULL;
 
-    Triangle *getParentTriangle() const;
-
-    void setParentTriangle(Triangle *parentTriangle);
-
-    HalfEdge *getOppositeEdge() const;
-
-    void setOppositeEdge(HalfEdge *oppositeEdge);
-
-
     HalfEdge(){}
     HalfEdge(Vertex* pa, Vertex* pb){
         vertex.push_back(pa);
@@ -32,6 +23,14 @@ public:
         vertex.push_back(pb);
         parentTriangle = pTriangle;
     }
+
+    Triangle *getParentTriangle() const;
+
+    void setParentTriangle(Triangle *parentTriangle);
+
+    HalfEdge *getOppositeEdge() const;
+
+    void setOppositeEdge(HalfEdge *oppositeEdge);
 
     bool isSame(HalfEdge*);
     bool isOpposite(HalfEdge*);

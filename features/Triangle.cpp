@@ -1,11 +1,6 @@
 #include "features/Triangle.h"
 #include "features/HalfEdge.h"
 
-Triangle::Triangle()
-{
-    //ctor
-}
-
 Triangle::Triangle(Vertex* pa, Vertex *pb, Vertex* pc)
 {
     edges.push_back(new HalfEdge(pa, pb, this));
@@ -18,9 +13,9 @@ Vector_3 Triangle::getNormal()
 {
     if (this->normal != CGAL::NULL_VECTOR) return this->normal;
 
-    Vertex* va = this->a;
-    Vertex* vb = this->b;
-    Vertex* vc = this->c;
+    Vertex* va = this->vertex(0);
+    Vertex* vb = this->vertex(1);
+    Vertex* vc = this->vertex(2);
 
     this->normal = CGALCalculation::getUnitNormal(va, vb, vc) * AREA_CONST * this->getArea();
     return this->normal;
@@ -28,9 +23,10 @@ Vector_3 Triangle::getNormal()
 
 double Triangle::getArea(){
     if (this->area > 0.0) return this->area;
-    Vertex* va = this->a;
-    Vertex* vb = this->b;
-    Vertex* vc = this->c;
+
+    Vertex* va = this->vertex(0);
+    Vertex* vb = this->vertex(1);
+    Vertex* vc = this->vertex(2);
 
     this->area = sqrt(CGALCalculation::getSquaredArea(va, vb, vc));
 
@@ -83,18 +79,17 @@ bool Triangle::isOpposite(Triangle* tri){
             while (this->vertex(i) == tri->vertex(j)){
                 i++; j--;
                 if (j < 0) j = 2;
-                if (i == 3) break;
+                if (i == 3) return true;
                 if (this->vertex(i) != tri->vertex(j)){
-                    break;
+                    return false;
                 }
 
             }
         }
     }
-    if (i != 3)
-        return false;
-    else
-        return true;
+
+    return false;
+
 }
 
 Vertex *Triangle::vertex(int idx) {
