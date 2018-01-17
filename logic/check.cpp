@@ -15,15 +15,15 @@ using namespace std;
 
 
 bool Checker::isExistDuplication(vector<Vertex*> vertex){
-//    sort(vertex.begin(), vertex.end(), this->compare_vertex);
-//    for (int i = 0 ; i < vertex.size() - 1 ; i++)
+//    sort(vertices.begin(), vertices.end(), this->compare_vertex);
+//    for (int i = 0 ; i < vertices.size() - 1 ; i++)
 //    {
 //        int j = i + 1;
-//        if (isSameVertex(vertex[i],vertex[j]))
+//        if (isSameVertex(vertices[i],vertices[j]))
 //        {
 //            cout << i << ", " << j << endl;
-//            Printer::printVertex(vertex[i]);
-//            Printer::printVertex(vertex[j]);
+//            Printer::printVertex(vertices[i]);
+//            Printer::printVertex(vertices[j]);
 //            return true;
 //        }
 //    }

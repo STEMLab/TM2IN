@@ -13,19 +13,7 @@
 #include "features/Segment.h"
 #include "predefine.h"
 
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Vector_3.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Plane_3.h>
-#include <CGAL/Kernel/global_functions.h>
-
-
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef Kernel::Point_3 Point_3;
-typedef Kernel::Vector_3 Vector_3;
-typedef Kernel::Plane_3 Plane_3;
-
-
+#include "cgal/Types.h"
 
 class Surface{
 public:
@@ -44,6 +32,7 @@ public:
     Surface(Triangle& pl);
     Surface(Triangle* pl) : Surface(*pl) {}
     Surface(Surface* cp);
+    Surface(std::vector<Vertex*>& pVertices);
 
     ull getLength(){
         return v_list.size();
@@ -59,7 +48,7 @@ public:
 
     void setMBB(Triangle* pl);
     void setMBB(Surface* pl);
-    void setMBB();
+    void updateMBB();
     bool isExistSameVertexInRange(ll si, ll ei, Vertex* add_id);
     int getSegmentsNumber(ll start_index, ll end_index);
 

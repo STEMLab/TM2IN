@@ -115,7 +115,7 @@ int main(int argc, const char * argv[]) {
     string json_file = string(resultPath) + fileName + "/" + version + "/" + "surfaces.json";
     manager->exportSpaceJSON(json_file);
 
-    cout << "do simple?(y or n)" << endl;
+    cout << "make solid?(y or n)" << endl;
     char ans_simple; cin >> ans_simple;
     if (ans_simple == 'y'){
         if (manager->finish() == -1) return -1;

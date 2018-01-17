@@ -1,5 +1,6 @@
 #include "manage/MergingRoomMaker.h"
-#include <logic/SurfacesListCalculation.h>
+#include <compute/SurfacesListComputation.h>
+#include "cgal/SurfaceHoleCover.h"
 
 using namespace std;
 
@@ -86,7 +87,15 @@ int MergingRoomMaker::constructSpace(CombineParameter* cp){
             if (process_generation(space, maxGENperOneCycle, gen, degree)) return -1;
             if (space->handleDefect(angleInDefect) == -1){ cout << "cannot handle defect" << endl; return -1; }
         }
+
     }
+
+    vector<Vertex*> newVertices;
+    for (ull it = 0 ; it < this->space_list.size() ; it++){
+        vector<Vertex*> spaceVertices = SurfaceHoleCover::fillHole(this->vertices, this->space_list[it]->surfacesList);
+        newVertices.insert(newVertices.end(), spaceVertices.begin(), spaceVertices.end());
+    }
+    this->vertices = newVertices;
     return 0;
 }
 

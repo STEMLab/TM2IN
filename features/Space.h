@@ -12,7 +12,7 @@
 #include "features/SurfaceGraph.h"
 #include "features/Triangle.h"
 #include "features/Surface.hpp"
-#include "logic/CleanPolygonMaker.h"
+#include "computation/SurfacePairComputation.h"
 #include "features/Segment.h"
 
 using namespace std;

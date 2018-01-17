@@ -19,6 +19,7 @@ int RoomMaker::convertTriangleMeshToSpace(double degree){
         }
         this->space_list.push_back(space);
     }
+    this->vertices = this->mesh->vertices;
     return 0;
 }
 

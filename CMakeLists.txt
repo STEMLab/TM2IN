@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 include_directories(../TriangleMeshToClearSolid)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -lCGAL")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 find_package(CGAL REQUIRED )
 
@@ -16,6 +16,7 @@ endif()
 
 FIND_PACKAGE( Boost 1.40 COMPONENTS filesystem REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
+INCLUDE_DIRECTORIES ( /usr/local/include/eigen3 )
 
 add_executable(TriangleMeshToClearSolid
         features/Segment.cpp
@@ -47,10 +48,10 @@ add_executable(TriangleMeshToClearSolid
         logic/CGALCalculation.h
         logic/check.cpp
         logic/check.hpp
-        logic/CleanPolygonMaker.cpp
-        logic/CleanPolygonMaker.h
-        logic/SurfacesListCalculation.cpp
-        logic/SurfacesListCalculation.h
+        compute/SurfacePairComputation.cpp
+        compute/SurfacePairComputation.h
+        compute/SurfacesListComputation.cpp
+        compute/SurfacesListComputation.h
         manage/ClusteringRoomMaker.cpp
         manage/ClusteringRoomMaker.h
         manage/MergingRoomMaker.cpp
@@ -62,7 +63,8 @@ add_executable(TriangleMeshToClearSolid
         predefine.h
         TVRConverter.cpp
         util.cpp
-        util.h manage/CombineParameter.h)
+        util.h manage/CombineParameter.h cgal/SurfaceHoleCover.cpp cgal/SurfaceHoleCover.h cgal/Types.h)
 
 
 TARGET_LINK_LIBRARIES( TriangleMeshToClearSolid LINK_PUBLIC ${Boost_LIBRARIES} )
+

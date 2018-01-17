@@ -38,7 +38,7 @@ public:
     Vertex* operator[](int idx){
         if (idx == 0 || idx == 1) return vertex[idx];
         else{
-            std::cerr << "HalfEdge only has two vertex" << std::endl;
+            std::cerr << "HalfEdge only has two vertices" << std::endl;
             exit(-1);
         }
     };

@@ -3,7 +3,6 @@
 
 #include <logic/check.hpp>
 #include <fileio/GenerationWriter.h>
-#include <space_maker/SpaceMaker.h>
 #include "fileio/Importer.h"
 #include "manage/CombineParameter.h"
 #include "util.h"
@@ -14,7 +13,7 @@ class RoomMaker
         Checker* check;
         Importer* di;
         TriangleMesh* mesh;
-        vector<Vertex*> vertex;
+        vector<Vertex*> vertices;
         vector<Space*> space_list;
         GenerationWriter* generation_writer;
 

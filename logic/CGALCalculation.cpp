@@ -257,7 +257,7 @@ bool CGALCalculation::isAngleLowerThan(Vertex* origin, Vertex* v1, Vertex* v2, d
 //        Delaunay::Face_handle face = fit;
 //        std::cout << "Triangle:\t" << triangulation.triangle(face) << std::endl;
 //        std::cout << "Vertex 0:\t" << triangulation.triangle(face)[0] << std::endl;
-//        std::cout << "Vertex 0:\t" << face->vertex(0)->info() << std::endl;
+//        std::cout << "Vertex 0:\t" << face->vertices(0)->info() << std::endl;
 //    }
 //
 //}

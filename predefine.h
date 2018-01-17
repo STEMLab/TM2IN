@@ -13,14 +13,14 @@ class SurfaceGraph;
 class Space;
 class OBJCollection;
 class Segment;
-class SurfacesListCalculation;
+class SurfacesListComputation;
 class TriangleMesh;
 class TriangleMeshGraph;
 class Triangle;
 class HalfEdge;
 
 
-typedef SurfacesListCalculation SLC;
+typedef SurfacesListComputation SLC;
 
 
 

@@ -1,5 +1,5 @@
 #include "features/Space.h"
-#include "logic/SurfacesListCalculation.h"
+#include "compute/SurfacesListComputation.h"
 
 #include <cstdio>
 #include <queue>
@@ -78,7 +78,7 @@ Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count,
         if (!checked[id])
         {
             Surface* sf = this->surfacesList[id];
-            if (CleanPolygonMaker::combine(cp, sf, checker, degree) == 0)
+            if (SurfacePairComputation::combine(cp, sf, checker, degree) == 0)
             {
                 printProcess(id, this->surfacesList.size(), "attachSurfaces");
                 cp->tri_list.insert(cp->tri_list.end(), sf->tri_list.begin(), sf->tri_list.end());
@@ -119,7 +119,7 @@ int Space::simplifySegment(){
         {
             int loop_count = 0;
             bool again = false;
-            while (CleanPolygonMaker::simplifyLineSegment(this->surfacesList[i], this->surfacesList[j], again) == 0)
+            while (SurfacePairComputation::simplifyLineSegment(this->surfacesList[i], this->surfacesList[j], again) == 0)
             {
                 again = true;
                 loop_count++;
@@ -141,7 +141,7 @@ int Space::handleDefect(double angle){
         Surface* surface = this->surfacesList[i];
         surface->removeConsecutiveDuplication(this->checker);
         surface->removeStraight(angle);
-        surface->setMBB();
+        surface->updateMBB();
 
         if (surface->isValid()){
             i++;
@@ -191,7 +191,7 @@ int Space::match00(){
 
 void Space::updateMBB(){
     vector<vector<double> > min_max;
-    SLC::getMBB(this->surfacesList, min_max);
+    min_max = SLC::getMBB(this->surfacesList);
     for (int i = 0 ; i < 3 ; i++){
         this->min_coords[i] = min_max[0][i];
         this->max_coords[i] = min_max[1][i];
@@ -213,7 +213,7 @@ void Space::rotateSpaceByFloorTo00(){
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
     int floor_index = SLC::findFirstSurfaceIndexSimilarWithAxis(this->surfacesList, 2);
     Surface* floor = this->surfacesList[floor_index];
-    floor->setMBB();
+    floor->updateMBB();
     //Plane_3 plane(this->surfacesList[floor_index]->v_list[0]->getCGALPoint(), floor->av_normal);
     //floor->makePlanar(plane);
 

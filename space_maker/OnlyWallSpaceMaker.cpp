@@ -1,8 +1,10 @@
 #include "space_maker/OnlyWallSpaceMaker.h"
 #include "features/SurfaceGraph.h"
+#include "compute/SurfacesListComputation.h"
 
 vector<Surface*> OnlyWallSpaceMaker::makeSimpleSurfaces(vector<Surface*> _surfacesList){
-    SurfaceGraph* sg = SLC::makeGraph(_surfacesList);
+    SurfaceGraph* sg = new SurfaceGraph();
+    sg->makeAdjacentGraph(_surfacesList);
     this->removeSurfacesNotConnectedFC(_surfacesList, sg);
     this->removeOppositeSurfaces(_surfacesList);
     this->makeSurfacesPlanarWithLowest(_surfacesList);
@@ -18,16 +20,6 @@ Surface* OnlyWallSpaceMaker::findFirstSurfaceSimilarWithAxis(vector<Surface*>& s
         Surface* sf = surfacesList[i];
         if (CGALCalculation::findNormalType6(sf->av_normal) == axis){
             return sf;
-        }
-    }
-    assert(false);
-}
-
-int OnlyWallSpaceMaker::findFirstSurfaceIndexSimilarWithAxis(vector<Surface*>& surfacesList, int axis){
-    for (ull i = 0 ; i < surfacesList.size() ; i++){
-        Surface* sf = surfacesList[i];
-        if (CGALCalculation::findNormalType6(sf->av_normal) == axis){
-            return i;
         }
     }
     assert(false);
@@ -142,7 +134,7 @@ int OnlyWallSpaceMaker::makeClosedWall(vector<Surface*>& surfacesList){
 
     double base = 0;
     vector<vector<double>> v_minmax;
-    SLC::getMBB(surfacesList, v_minmax);
+    v_minmax = SLC::getMBB(surfacesList);
     double height = v_minmax[1][2];
 
     this->getWallsAndRemoveInSurfacesList(surfacesList, walls);

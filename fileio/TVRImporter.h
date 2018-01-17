@@ -18,7 +18,7 @@ class TVRImporter : public Importer
         Triangle* makeTriangle(string& input, vector<Vertex*>& vertex);
         string getGroupName(string& input);
         void makeVertex(int id, string& input, Vertex& vt);
-        // Vertex* findSameVertex(vector<Vertex*>& vertex, Checker* check, Vertex& vt);
+        // Vertex* findSameVertex(vector<Vertex*>& vertices, Checker* check, Vertex& vt);
     private:
 };
 

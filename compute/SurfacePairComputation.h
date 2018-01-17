@@ -9,7 +9,7 @@
 #include "util.h"
 
 using namespace std;
-class CleanPolygonMaker{
+class SurfacePairComputation{
 private:
     static bool isNeighbor(Surface* cp1, Surface* cp2);
     static int findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj, ll middle_i, ll middle_j, ll& start_i, ll& end_i, ll& start_j, ll& end_j);

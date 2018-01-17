@@ -5,14 +5,6 @@
 #include "predefine.h"
 #include "logic/CGALCalculation.h"
 
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Vector_3.h>
-#include <CGAL/Kernel/global_functions.h>
-
-
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef Kernel::Vector_3 Vector_3;
-
 class Triangle{
 private:
     Vector_3 normal = CGAL::NULL_VECTOR;

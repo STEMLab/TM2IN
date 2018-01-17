@@ -8,7 +8,7 @@
 
 #include "logic/check.hpp"
 #include "features/Surface.hpp"
-#include "logic/CleanPolygonMaker.h"
+#include "computation/SurfacePairComputation.h"
 
 #include "predefine.h"
 
@@ -28,10 +28,9 @@ Surface::Surface(Surface* cp){
     this->tri_list = cp->tri_list;
 }
 
-void Surface::setZ(double value){
-    for (ull i = 0 ; i < this->v_list.size() ; i++){
-        v_list[i]->setZ(value);
-    }
+Surface::Surface(std::vector<Vertex*>& pVertices){
+    this->v_list = pVertices;
+    this->updateMBB();
 }
 
 Surface::Surface(Triangle& pl){
@@ -43,11 +42,17 @@ Surface::Surface(Triangle& pl){
 
     av_normal = pl.getNormal();
     area = pl.getArea();
-    this->setMBB();
+    this->updateMBB();
     this->tri_list.push_back(&pl);
 }
 
-void Surface::setMBB(){
+void Surface::setZ(double value){
+    for (ull i = 0 ; i < this->v_list.size() ; i++){
+        v_list[i]->setZ(value);
+    }
+}
+
+void Surface::updateMBB(){
     for (int i = 0 ; i < 3 ; i++)
     {
         this->max_coords[i] = -10000000.000;
@@ -296,7 +301,7 @@ bool Surface::isOpposite(Surface* sf){
 
 
 bool Surface::isAdjacent(Surface* sf){
-    return CleanPolygonMaker::isShareVertex(this->v_list, sf->v_list);
+    return SurfacePairComputation::isShareVertex(this->v_list, sf->v_list);
 }
 
 bool Surface::isInMBB(Vertex* vt){

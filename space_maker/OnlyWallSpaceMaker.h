@@ -2,7 +2,7 @@
 #define ONLYWALLSPACEMAKER_H_INCLUDED
 
 #include "predefine.h"
-#include "logic/SurfacesListCalculation.h"
+#include "compute/SurfacesListComputation.h"
 
 using namespace std;
 
@@ -15,7 +15,6 @@ public:
 private:
 
     static Surface* findFirstSurfaceSimilarWithAxis(vector<Surface*>& surfacesList, int axis);
-    static int findFirstSurfaceIndexSimilarWithAxis(vector<Surface*>& surfacesList, int axis);
 
     int removeSurfacesNotConnectedFC(vector<Surface*>& surfacesList, SurfaceGraph*);
     int removeOppositeSurfaces(vector<Surface*>& surfacesList);

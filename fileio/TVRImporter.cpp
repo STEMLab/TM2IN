@@ -54,7 +54,7 @@ TriangleMesh* TVRImporter::import(const char* f_path){
                 tm->vertices.push_back(pt_v);
 
                 v_count++;
-                if (v_count % 5000 == 0) cout << "Loaded vertex : " << v_count << endl;
+                if (v_count % 5000 == 0) cout << "Loaded vertices : " << v_count << endl;
 
                 break;
             }
@@ -68,6 +68,8 @@ TriangleMesh* TVRImporter::import(const char* f_path){
                 break;
             }
             case 'f':{
+                assert(tm->vertices.size() > 0);
+
                 f_count++;
                 if (f_count % 5000 == 0) cout << "Loaded faces : " << f_count << endl;
 
@@ -83,11 +85,11 @@ TriangleMesh* TVRImporter::import(const char* f_path){
 }
 
 /*
-Vertex* TVRImporter::findSameVertex(vector<Vertex*>& vertex, Checker* check, Vertex& vt){
+Vertex* TVRImporter::findSameVertex(vector<Vertex*>& vertices, Checker* check, Vertex& vt){
     vector<Vertex*>::iterator it, low;
-    low = std::lower_bound(vertex.begin(), vertex.end(), vt.x() - check->threshold_vertex * 2, CompareVertexAndX() );
+    low = std::lower_bound(vertices.begin(), vertices.end(), vt.x() - check->threshold_vertex * 2, CompareVertexAndX() );
 
-    for (it = low ; it != vertex.end() ; it++){
+    for (it = low ; it != vertices.end() ; it++){
         double diff = check->compare_vertex( (*it), &vt);
         if (diff > 0){
             break;
@@ -101,7 +103,7 @@ Vertex* TVRImporter::findSameVertex(vector<Vertex*>& vertex, Checker* check, Ver
     }
 
     Vertex* new_vt = new Vertex(vt);
-    vertex.insert(it, new_vt);
+    vertices.insert(it, new_vt);
 
     return new_vt;
 }

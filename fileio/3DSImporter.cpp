@@ -132,7 +132,7 @@ vector<pair<string, TriangleSpace*>> Load3DS (char *p_filename)
 			// Description: Vertices list
 			// Chunk ID: 4110 (hex)
 			// Chunk Lenght: 1 x unsigned short (number of vertices)
-			//             + 3 x float (vertex coordinates) x (number of vertices)
+			//             + 3 x float (vertices coordinates) x (number of vertices)
 			//             + sub chunks
 			//-------------------------------------------
 			case 0x4110:
@@ -145,13 +145,13 @@ vector<pair<string, TriangleSpace*>> Load3DS (char *p_filename)
                 p_object->vertices_qty = l_qty;
 
                 printf("Number of vertices: %d\n",l_qty);
-                p_object->vertex = (Vertex*)malloc(sizeof(Vertex) * l_qty);
+                p_object->vertices = (Vertex*)malloc(sizeof(Vertex) * l_qty);
 
                 for (i=0; i<l_qty; i++)
                 {
-					fread (&p_object->vertex[i].x, sizeof(float), 1, l_file);
-                    fread (&p_object->vertex[i].y, sizeof(float), 1, l_file);
-					fread (&p_object->vertex[i].z, sizeof(float), 1, l_file);
+					fread (&p_object->vertices[i].x, sizeof(float), 1, l_file);
+                    fread (&p_object->vertices[i].y, sizeof(float), 1, l_file);
+					fread (&p_object->vertices[i].z, sizeof(float), 1, l_file);
 				}
 				break;
 

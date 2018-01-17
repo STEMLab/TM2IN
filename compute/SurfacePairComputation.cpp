@@ -1,7 +1,7 @@
-#include "logic/CleanPolygonMaker.h"
+#include "SurfacePairComputation.h"
 #include <stdlib.h>
 
-int CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checker, double degree){
+int SurfacePairComputation::combine(Surface* origin, Surface* piece, Checker* checker, double degree){
      // check Polygon is in near polygon or not
     if (!isNeighbor(origin, piece)) return 1;
 
@@ -76,7 +76,7 @@ int CleanPolygonMaker::combine(Surface* origin, Surface* piece, Checker* checker
     return 0;
 }
 
-bool CleanPolygonMaker::isMakingHole(ll start_i, ll end_i, ll start_j, ll end_j, vector<Vertex*>& piece_v_list, vector<Vertex*>& origin_v_list)
+bool SurfacePairComputation::isMakingHole(ll start_i, ll end_i, ll start_j, ll end_j, vector<Vertex*>& piece_v_list, vector<Vertex*>& origin_v_list)
 {
     ll piece_size = piece_v_list.size();
     ll origin_size = origin_v_list.size();
@@ -105,7 +105,7 @@ bool CleanPolygonMaker::isMakingHole(ll start_i, ll end_i, ll start_j, ll end_j,
     return false;
 }
 
-bool CleanPolygonMaker::isShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj){
+bool SurfacePairComputation::isShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj){
     ll piece_size = vi.size();
     ll origin_size = vj.size();
 
@@ -126,7 +126,7 @@ bool CleanPolygonMaker::isShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj){
 }
 
 
-bool CleanPolygonMaker::findShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj, ll& middle_i, ll& middle_j){
+bool SurfacePairComputation::findShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj, ll& middle_i, ll& middle_j){
     ll piece_size = vi.size();
     ll origin_size = vj.size();
 
@@ -148,7 +148,7 @@ bool CleanPolygonMaker::findShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj
     return false;
 }
 
-int CleanPolygonMaker::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj, ll middle_i, ll middle_j, ll& start_i, ll& end_i, ll& start_j, ll& end_j){
+int SurfacePairComputation::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj, ll middle_i, ll middle_j, ll& start_i, ll& end_i, ll& start_j, ll& end_j){
     ll piece_size = vi.size();
     ll origin_size = vj.size();
 
@@ -200,11 +200,11 @@ int CleanPolygonMaker::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj,
     return 0;
 }
 
-bool CleanPolygonMaker::isNeighbor(Surface* cp1, Surface* cp2){
+bool SurfacePairComputation::isNeighbor(Surface* cp1, Surface* cp2){
     return CGALCalculation::isIntersect_BBOX(cp1, cp2);
 }
 
-int CleanPolygonMaker::simplifyLineSegment(Surface* origin, Surface* piece, bool again){
+int SurfacePairComputation::simplifyLineSegment(Surface* origin, Surface* piece, bool again){
     if (!again && !isNeighbor(origin, piece)) return 1;
 
     ll middle_i = -1, middle_j = -1;

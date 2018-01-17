@@ -3,13 +3,15 @@
 
 #include "predefine.h"
 #include "features/Surface.hpp"
+#include "SurfacesListComputation.h"
 
 using namespace std;
 
-class SurfacesListCalculation{
+class SurfacesListComputation{
 public:
+    static int findFirstSurfaceIndexSimilarWithAxis(vector<Surface*>& surfacesList, int axis);
     static void tagID(vector<Surface*>& surfacesList);
-    static void getMBB(vector<Surface*>& surfacesList, vector<vector<double>>& v);
+    static vector<vector<double>> getMBB(vector<Surface*>& surfacesList);
 };
 
 #endif // SURFACESLISTCALCULATION_H_INCLUDED

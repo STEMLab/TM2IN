@@ -4,31 +4,10 @@
 
 #include "predefine.h"
 
-#include <iostream>
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Vector_3.h>
-#include <CGAL/Origin.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Triangle_3.h>
-#include <CGAL/Line_3.h>
-#include <CGAL/Bbox_3.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/Kernel/global_functions.h>
-#include <CGAL/squared_distance_3.h>
-#include <CGAL/enum.h>
-#include <CGAL/Aff_transformation_3.h>
-#include <CGAL/intersections.h>
+#include "cgal/Types.h"
 
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef CGAL::Aff_transformation_3<Kernel> Transformation;
-typedef Kernel::Point_3 Point_3;
-typedef Kernel::Point_2 Point_2;
-typedef Kernel::Vector_3 Vector_3;
-typedef Kernel::Triangle_3 Triangle_3;
-typedef Kernel::Line_3 Line_3;
-typedef Kernel::Segment_2 Segment_2;
-typedef Kernel::Intersect_2 Intersect_2;
+#include <iostream>
+
 
 class CGALCalculation
 {
