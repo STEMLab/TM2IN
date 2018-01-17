@@ -1,7 +1,7 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
-#include "features/vertex.h"
+#include "features/Vertex.h"
 #include "predefine.h"
 #include "logic/CGALCalculation.h"
 

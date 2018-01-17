@@ -31,8 +31,8 @@ add_executable(TriangleMeshToClearSolid
         features/Triangle.h
         features/TriangleMesh.h
         features/TriangleMeshGraph.h
-        features/vertex.cpp
-        features/vertex.h
+        features/Vertex.cpp
+        features/Vertex.h
         features/HalfEdge.cpp
         features/HalfEdge.h
         fileio/3DSImporter.cpp

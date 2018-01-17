@@ -4,7 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include "features/Space.h"
-#include "features/vertex.h"
+#include "features/Vertex.h"
 
 TVRImporter::TVRImporter()
 {

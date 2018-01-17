@@ -1,6 +1,6 @@
 #include "logic/CGALCalculation.h"
 
-#include "features/vertex.h"
+#include "features/Vertex.h"
 #include "features/Segment.h"
 
 using namespace std;

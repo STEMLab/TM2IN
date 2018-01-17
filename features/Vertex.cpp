@@ -1,6 +1,6 @@
 #include <string>
 
-#include "features/vertex.h"
+#include "features/Vertex.h"
 
 using namespace std;
 

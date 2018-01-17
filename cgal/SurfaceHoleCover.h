@@ -5,7 +5,7 @@
 #ifndef TRIANGLEMESHTOCLEARSOLID_SURFACEHOLECOVER_H
 #define TRIANGLEMESHTOCLEARSOLID_SURFACEHOLECOVER_H
 
-#include <features/vertex.h>
+#include <features/Vertex.h>
 
 using namespace std;
 
