@@ -1,7 +1,8 @@
 #include "logic/CGALCalculation.h"
 
 #include "features/Vertex.h"
-#include "features/Segment.h"
+#include "features/Surface.hpp"
+#include "space_maker/OnlyWallSpaceMaker.h"
 
 using namespace std;
 
@@ -204,17 +205,6 @@ double CGALCalculation::getSquaredArea(Point_3& p1, Point_3& p2, Point_3& p3){
     return tri.squared_area();
 }
 
-bool CGALCalculation::isIntersect2D(Segment* seg1, Segment* seg2){
-    return CGAL::do_intersect(seg1->getCGALSegmentWithoutZ(), seg2->getCGALSegmentWithoutZ());
-}
-
-Point_2 CGALCalculation::getIntersection2D(Segment* seg1, Segment* seg2){
-    Segment_2 seg1_cgal = seg1->getCGALSegmentWithoutZ();
-    Segment_2 seg2_cgal = seg2->getCGALSegmentWithoutZ();
-    CGAL::cpp11::result_of<Intersect_2(Segment_2, Segment_2)>::type result = intersection(seg1_cgal, seg2_cgal);
-    Point_2* p = boost::get<Point_2 >(&*result);
-    return *p;
-}
 
 bool CGALCalculation::isIntersect_BBOX(Surface* s1, Surface* s2){
     CGAL::Bbox_3 b1(s1->min_coords[0],s1->min_coords[1],s1->min_coords[2],s1->max_coords[0],s1->max_coords[1],s1->max_coords[2]);

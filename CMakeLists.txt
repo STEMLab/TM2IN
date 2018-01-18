@@ -19,8 +19,6 @@ INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 INCLUDE_DIRECTORIES ( /usr/local/include/eigen3 )
 
 add_executable(TriangleMeshToClearSolid
-        features/Segment.cpp
-        features/Segment.h
         features/Space.cpp
         features/Space.h
         features/Surface.cpp

@@ -32,6 +32,9 @@ private:
 
     bool isIntersectIn(Segment* segment, vector<Segment*>& lines);
     static bool comparePairSegment(pair<int,Segment*>& a, pair<int,Segment*>& b);
+
+    Segment* makeSegmentLowerZ(Surface* sf, Checker* ch);
+    Segment* makeSegmentUpperZ(Surface* sf, Checker* ch);
 };
 
 #endif // ONLYWALLSPACEMAKER_H_INCLUDED

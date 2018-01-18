@@ -1,6 +1,63 @@
+#include "features/Surface.hpp"
+#include "logic/check.hpp"
 #include "space_maker/OnlyWallSpaceMaker.h"
 #include "features/SurfaceGraph.h"
 #include "compute/SurfacesListComputation.h"
+#include "cgal/Types.h"
+
+class Segment{
+public :
+    Vertex* first;
+    Vertex* second;
+
+    Segment(){}
+    Segment(Vertex* st, Vertex* ed){
+        first = st;
+        second = ed;
+    }
+
+    Vertex* operator[](int idx){
+        if (idx == 0) return first;
+        else if (idx == 1) return second;
+        else assert("idx is 1 0r 0");
+        return nullptr;
+    }
+
+    std::string toJSON(){
+        std::string ret;
+        ret += first->toJSON();
+        ret += " --> ";
+        ret += second->toJSON();
+        return ret;
+    }
+
+    double getSquaredDistance(){
+        return CGALCalculation::getSquaredDistance(this->first, this->second);
+    }
+
+    static double compareDistanceIncreased(Segment* s_i, Segment* s_j){
+        return s_i->getSquaredDistance() < s_j->getSquaredDistance();
+    }
+    Segment_2 getCGALSegmentWithoutZ(){
+        Point_2 p1(this->first->x(), this->first->y());
+        Point_2 p2(this->second->x(), this->second->y());
+
+        return Segment_2(p1, p2);
+    }
+
+    static bool isIntersect2D(Segment* seg1, Segment* seg2){
+        return CGAL::do_intersect(seg1->getCGALSegmentWithoutZ(), seg2->getCGALSegmentWithoutZ());
+    }
+
+    static Point_2 getIntersection2D(Segment* seg1, Segment* seg2){
+        Segment_2 seg1_cgal = seg1->getCGALSegmentWithoutZ();
+        Segment_2 seg2_cgal = seg2->getCGALSegmentWithoutZ();
+        CGAL::cpp11::result_of<Intersect_2(Segment_2, Segment_2)>::type result = CGAL::intersection(seg1_cgal, seg2_cgal);
+        Point_2* p = boost::get<Point_2 >(&*result);
+        return *p;
+    }
+};
+
 
 vector<Surface*> OnlyWallSpaceMaker::makeSimpleSurfaces(vector<Surface*> _surfacesList){
     SurfaceGraph* sg = new SurfaceGraph();
@@ -141,7 +198,7 @@ int OnlyWallSpaceMaker::makeClosedWall(vector<Surface*>& surfacesList){
     this->clippingSurfaces(walls);
 
     for (ull i = 0 ; i < walls.size() ; i++){
-        walls_2d.push_back(walls[i]->makeSegmentUpperZ(this->checker));
+        walls_2d.push_back(makeSegmentUpperZ(walls[i], this->checker));
     }
     this->cutIntersection(walls_2d);
 
@@ -226,7 +283,7 @@ int OnlyWallSpaceMaker::makeFloorAndCeiling(vector<Surface*>& surfacesList){
 
     vector<Segment*> walls_2d;
     for (ull i = 0 ; i < surfacesList.size() ; i++){
-        walls_2d.push_back(surfacesList[i]->makeSegmentUpperZ(this->checker));
+        walls_2d.push_back(makeSegmentUpperZ(surfacesList[i], this->checker));
     }
 
     int line_index = 0;
@@ -261,7 +318,7 @@ int OnlyWallSpaceMaker::makeFloorAndCeiling(vector<Surface*>& surfacesList){
     for (int i = 0 ; i < (int)ordered.size() ; i++){
         int order = ordered[i];
         ceil->v_list.push_back(walls_2d[order]->first);
-        floor->v_list.push_back(surfacesList[order]->makeSegmentLowerZ(this->checker)->first);
+        floor->v_list.push_back(makeSegmentLowerZ(surfacesList[order], this->checker)->first);
     }
 
     reverse(floor->v_list.begin(), floor->v_list.end());
@@ -375,14 +432,14 @@ bool OnlyWallSpaceMaker::connectWall_dfs(int index, vector<vector<int> >& ordere
 vector<Segment*> OnlyWallSpaceMaker::cutIntersection(vector<Segment*>& walls_2d){
     for (ull i = 0 ; i < walls_2d.size() ; i++){
         for (ull j = i + 1 ; j < walls_2d.size() ; j++){
-            if (CGALCalculation::isIntersect2D(walls_2d[i], walls_2d[j])){
+            if (Segment::isIntersect2D(walls_2d[i], walls_2d[j])){
                 //is Clipped?
                 if ((walls_2d[i]->first == walls_2d[j]->second) ||
                     (walls_2d[i]->second == walls_2d[j]->first)){
 
                 }
                 else{ // cut
-                    Point_2 point = CGALCalculation::getIntersection2D(walls_2d[i], walls_2d[j]);
+                    Point_2 point = Segment::getIntersection2D(walls_2d[i], walls_2d[j]);
                     if (checker->isSameDouble(point.x(), walls_2d[i]->second->x())
                         && checker->isSameDouble(point.y(), walls_2d[i]->second->y())){
                         delete walls_2d[j]->first;
@@ -423,7 +480,7 @@ bool OnlyWallSpaceMaker::isIntersectIn(Segment* segment, vector<Segment*>& walls
         else if (segment->second == line_seg->first){
         }
         else{
-            if (CGALCalculation::isIntersect2D(segment, line_seg) ){
+            if (Segment::isIntersect2D(segment, line_seg) ){
                 return true;
             }
         }
@@ -435,3 +492,68 @@ bool OnlyWallSpaceMaker::comparePairSegment(pair<int,Segment*>& a, pair<int,Segm
     return a.second->getSquaredDistance() < b.second->getSquaredDistance();
 }
 
+Segment* OnlyWallSpaceMaker::makeSegmentLowerZ(Surface* sf, Checker* ch){
+    Vertex* ft, *ed;
+
+    //Only For Rectangle
+    if (sf->v_list.size() != 4){
+        assert(sf->v_list.size() == 4);
+    }
+
+    for (ull i = 0 ; i < 2; i++){
+        if (ch -> isSameZ(sf->v_list[i], sf->v_list[i+1])){
+            if (sf->v_list[i+2]->z() > sf->v_list[i+1]->z()){
+                ft = sf->v_list[i];
+                ed = sf->v_list[i+1];
+                break;
+            }
+            else{ // i,i+1 > i+2
+                if (i == 0){
+                    ft = sf->v_list[2];
+                    ed = sf->v_list[3];
+                }
+                else{ //i == 1
+                    ft = sf->v_list[3];
+                    ed = sf->v_list[0];
+                }
+                break;
+            }
+
+        }
+    }
+
+    return new Segment(ft, ed);
+}
+
+Segment* OnlyWallSpaceMaker::makeSegmentUpperZ(Surface* sf, Checker* ch){
+    Vertex* ft, *ed;
+
+    //Only For Rectangle
+    if (sf->v_list.size() != 4){
+        assert(sf->v_list.size() == 4);
+    }
+
+    for (ull i = 0 ; i < 2; i++){
+        if (ch -> isSameZ(sf->v_list[i], sf->v_list[i+1])){
+            if (sf->v_list[i+2]->z() > sf->v_list[i+1]->z()){
+                if (i == 0){
+                    ft = sf->v_list[2];
+                    ed = sf->v_list[3];
+                }
+                else{
+                    ft = sf->v_list[3];
+                    ed = sf->v_list[0];
+                }
+                break;
+            }
+            else{
+                ft = sf->v_list[i];
+                ed = sf->v_list[i+1];
+                break;
+            }
+
+        }
+    }
+
+    return new Segment(ft, ed);
+}

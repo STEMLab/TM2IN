@@ -3,7 +3,6 @@
 
 
 #include "predefine.h"
-
 #include "cgal/Types.h"
 
 #include <iostream>
@@ -21,8 +20,6 @@ public:
 
     static Vector_3 getCrossProduct(Vertex* va, Vertex* vb, Vertex* vc);
 
-    static bool isIntersect2D(Segment* seg1, Segment* seg2);
-    static Point_2 getIntersection2D(Segment* seg1, Segment* seg2);
     static bool isIntersect_BBOX(Surface* , Surface*);
 
     static int findNormalType27(Vector_3& nv);

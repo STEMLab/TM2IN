@@ -10,7 +10,6 @@
 #include "features/Triangle.h"
 #include "logic/check.hpp"
 #include "util.h"
-#include "features/Segment.h"
 #include "predefine.h"
 
 #include "cgal/Types.h"
@@ -78,8 +77,6 @@ public:
     Plane_3 getPlaneWithLowest();
 
     void changeToRectangle();
-    Segment* makeSegmentUpperZ(Checker* ch);
-    Segment* makeSegmentLowerZ(Checker* ch);
 
     void snapping(Surface* p_surface, double p_diff);
     void clipping(Surface* p_surface,Checker* ch);

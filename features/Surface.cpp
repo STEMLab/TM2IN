@@ -11,9 +11,9 @@
 #include "compute/SurfacePairComputation.h"
 
 #include "predefine.h"
+#include "space_maker/OnlyWallSpaceMaker.h"
 
 #include <cstdlib>
-#include <cmath>
 
 using namespace std;
 
@@ -548,72 +548,6 @@ void Surface::changeToRectangle(){
 
     points_2d.clear();
     points_3d.clear();
-}
-
-Segment* Surface::makeSegmentLowerZ(Checker* ch){
-    Vertex* ft, *ed;
-
-    //Only For Rectangle
-    if (this->v_list.size() != 4){
-        assert(v_list.size() == 4);
-    }
-
-    for (ull i = 0 ; i < 2; i++){
-        if (ch -> isSameZ(this->v_list[i], this->v_list[i+1])){
-            if (this->v_list[i+2]->z() > this->v_list[i+1]->z()){
-                ft = this->v_list[i];
-                ed = this->v_list[i+1];
-                break;
-            }
-            else{ // i,i+1 > i+2
-                if (i == 0){
-                    ft = this->v_list[2];
-                    ed = this->v_list[3];
-                }
-                else{ //i == 1
-                    ft = this->v_list[3];
-                    ed = this->v_list[0];
-                }
-                break;
-            }
-
-        }
-    }
-
-    return new Segment(ft, ed);
-}
-
-Segment* Surface::makeSegmentUpperZ(Checker* ch){
-    Vertex* ft, *ed;
-
-    //Only For Rectangle
-    if (this->v_list.size() != 4){
-        assert(v_list.size() == 4);
-    }
-
-    for (ull i = 0 ; i < 2; i++){
-        if (ch -> isSameZ(this->v_list[i], this->v_list[i+1])){
-            if (this->v_list[i+2]->z() > this->v_list[i+1]->z()){
-                if (i == 0){
-                    ft = this->v_list[2];
-                    ed = this->v_list[3];
-                }
-                else{
-                    ft = this->v_list[3];
-                    ed = this->v_list[0];
-                }
-                break;
-            }
-            else{
-                ft = this->v_list[i];
-                ed = this->v_list[i+1];
-                break;
-            }
-
-        }
-    }
-
-    return new Segment(ft, ed);
 }
 
 void Surface::snapping(Surface* p_surface, double p_diff){

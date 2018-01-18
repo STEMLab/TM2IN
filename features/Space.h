@@ -13,7 +13,6 @@
 #include "features/Triangle.h"
 #include "features/Surface.hpp"
 #include "compute/SurfacePairComputation.h"
-#include "features/Segment.h"
 
 using namespace std;
 
