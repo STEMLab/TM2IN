@@ -47,7 +47,7 @@ Surface::Surface(Triangle& pl){
 }
 
 void Surface::setZ(double value){
-    for (ull i = 0 ; i < this->v_list.size() ; i++){
+    for (ull i = 0 ; i < this->sizeOfVertices() ; i++){
         v_list[i]->setZ(value);
     }
 }
@@ -59,7 +59,7 @@ void Surface::updateMBB(){
         this->min_coords[i] = 10000000.00;
     }
 
-    for (unsigned int i = 0 ; i < this->v_list.size() ; i++){
+    for (unsigned int i = 0 ; i < this->sizeOfVertices() ; i++){
         for (int j = 0 ; j < 3 ; j++){
             this->max_coords[j] = max(this->max_coords[j], this->v_list[i]->coords[j]);
             this->min_coords[j] = min(this->min_coords[j], this->v_list[i]->coords[j]);
@@ -93,7 +93,7 @@ void Surface::translate(double diff[]){
 bool Surface::isExistSameVertexInRange(ll si, ll ei, Vertex* add_id){
     for (ll i = si ; i != ei ; i++)
     {
-        if (i == (int)this->v_list.size()){
+        if (i == (int)this->sizeOfVertices()){
             i = -1;
             continue;
         }
@@ -110,13 +110,13 @@ int Surface::getSegmentsNumber(ll si, ll ei){
     int num = 0;
     for (ll i = si ; ;){
         if (i == ei) break;
-        if (num > (int)this->v_list.size()) {
+        if (num > (int)this->sizeOfVertices()) {
             cout << "getSegmentsNumber Error" << endl;
             return -1;
         }
         num++;
         i++;
-        if (i == (int)this->v_list.size()) i = 0;
+        if (i == (int)this->sizeOfVertices()) i = 0;
     }
     return num;
 }
@@ -158,8 +158,8 @@ Point_3 Surface::getCenterPoint(){
 Point_3 Surface::getCenterPointInFartest(){
     double sq_dist = -1;
     int si = 0, sj = 1;
-    for (int i = 0 ; i < (int)this->v_list.size() - 1; i++){
-        for (int j = 1; j < (int)this->v_list.size() ; j++){
+    for (int i = 0 ; i < (int)this->sizeOfVertices() - 1; i++){
+        for (int j = 1; j < (int)this->sizeOfVertices() ; j++){
             double dist = CGALCalculation::getSquaredDistance(this->v_list[i], this->v_list[j]);
             if (dist > sq_dist){
                 sq_dist = dist;
@@ -183,7 +183,7 @@ string Surface::toJSONString(){
     ret.append(to_string(this->av_normal.z()));
     ret.append("], \n");
     ret.append(" \"coord\" : [");
-    for (unsigned int i = 0 ; i < this->v_list.size() ; i++){
+    for (unsigned int i = 0 ; i < this->sizeOfVertices() ; i++){
         if (!this->v_list[i]->used){
             cout << "Wrong in TOJSONSTRING" << endl;
             exit(-1);
@@ -198,8 +198,8 @@ string Surface::toJSONString(){
 
 Vector_3 Surface::getSimpleNormal(){
     Vector_3 normal = Vector_3(0,0,0);
-    for (int i = 0 ; i < (int)this->v_list.size() - 1 ; i += 2){
-        int e_i = i + 2 >= (int)this->v_list.size()? 0 : i+2;
+    for (int i = 0 ; i < (int)this->sizeOfVertices() - 1 ; i += 2){
+        int e_i = i + 2 >= (int)this->sizeOfVertices()? 0 : i+2;
         normal = normal + CGALCalculation::getCrossProduct(v_list[i], v_list[i+1], v_list[e_i]);
     }
     return normal;
@@ -212,7 +212,7 @@ vector<pair<double, double>> Surface::project_to_Plane18(){
         exit(-1);
     }
     Plane_3 plane = Plane_3(this->v_list[0]->getCGALPoint(), CGALCalculation::normal_list18[type]);
-    for (ull i = 0 ; i < this->v_list.size() ; i++){
+    for (ull i = 0 ; i < this->sizeOfVertices() ; i++){
         Point_3 p3 = this->v_list[i]->getCGALPoint();
         Point_2 point2d = plane.to_2d(p3);
         points.push_back(make_pair(point2d.x(), point2d.y()));
@@ -222,7 +222,7 @@ vector<pair<double, double>> Surface::project_to_Plane18(){
 }
 
 bool Surface::updateNormal(Checker* ch){
-    if (this->v_list.size() <= 4){
+    if (this->sizeOfVertices() <= 4){
         this->av_normal = getSimpleNormal();
     }
     this->av_normal = CGALCalculation::normal_list18[CGALCalculation::findNormalType18(this->av_normal)];
@@ -270,22 +270,22 @@ bool Surface::updateNormal(Checker* ch){
 
 void Surface::updateRectArea(){
     this->area = 0.0;
-    for (int i = 0 ; i < (int)this->v_list.size() - 1 ; i += 2){
-        int e_i = i + 2 >= (int)this->v_list.size()? 0 : i+2;
+    for (int i = 0 ; i < (int)this->sizeOfVertices() - 1 ; i += 2){
+        int e_i = i + 2 >= (int)this->sizeOfVertices()? 0 : i+2;
         Triangle tri(this->v_list[i], this->v_list[i+1], this->v_list[e_i]);
         area += tri.getArea();
     }
 }
 
 bool Surface::isOpposite(Surface* sf){
-    for (ll i = 0 ; i < (ll)sf->v_list.size() ; i++){
+    for (ll i = 0 ; i < (ll)sf->sizeOfVertices() ; i++){
         if (this->v_list[0] == sf->v_list[i]){
             ll sf_index = i + 1;
-            if (sf_index == (ll)sf->v_list.size()) sf_index = 0;
+            if (sf_index == (ll)sf->sizeOfVertices()) sf_index = 0;
             ll this_index = v_list.size() - 1;
             while (this->v_list[this_index] == sf->v_list[sf_index]){
                 this_index--; sf_index++;
-                if (sf_index == (ll)sf->v_list.size()) sf_index = 0;
+                if (sf_index == (ll)sf->sizeOfVertices()) sf_index = 0;
                 if (this_index == 0 || sf_index == i) break;
 
             }
@@ -316,7 +316,7 @@ bool Surface::isInMBB(Vertex* vt){
 }
 
 bool Surface::compareLength(Surface* i, Surface* j) {
-     return (i->getLength() > j->getLength());
+     return (i->sizeOfVertices() > j->sizeOfVertices());
 }
 
 bool Surface::compareArea(Surface* i, Surface* j) {
@@ -324,7 +324,7 @@ bool Surface::compareArea(Surface* i, Surface* j) {
 }
 
 void Surface::removeStraight(double degree){
-    if (this->v_list.size() < 3) return;
+    if (this->sizeOfVertices() < 3) return;
 
     vector<Vertex*> new_v_list;// = this->v_list;
 
@@ -335,7 +335,7 @@ void Surface::removeStraight(double degree){
 
     do {
         ll next_index = index + 1;
-        if (next_index == (ll)this->v_list.size()) next_index = 0;
+        if (next_index == (ll)this->sizeOfVertices()) next_index = 0;
         Vertex* end_p = this->v_list[next_index];
         if (CGALCalculation::isAngleLowerThan(start_p, check_p, end_p, degree)){
             removed_count++;
@@ -427,8 +427,8 @@ bool Surface::hasOppositeNormalwith(int axis){
 *  Check that Surface is not valid. Straight Line or Point.
 */
 bool Surface::isValid(){
-    if (this->v_list.size() < 3) {
-        cout << "The number of vertexes is "  << this->v_list.size() <<endl;
+    if (this->sizeOfVertices() < 3) {
+        cout << "The number of vertexes is "  << this->sizeOfVertices() <<endl;
         return false;
     }
     return true;
@@ -436,7 +436,7 @@ bool Surface::isValid(){
     bool isNOTcollinear = false;
     Point_3 start_p = this->v_list[0]->getCGALPoint();
     Point_3 end_p = this->v_list[1]->getCGALPoint();
-    for (ll i = 1 ; i < (ll)this->v_list.size() - 1; i++){
+    for (ll i = 1 ; i < (ll)this->sizeOfVertices() - 1; i++){
         if (this->v_list[i] == nullptr){
             assert(this->v_list[i] != nullptr);
         }
@@ -454,7 +454,7 @@ bool Surface::isValid(){
 }
 
 void Surface::tagVerticesUsed(){
-    for (ull i = 0 ; i < this->v_list.size() ; i++){
+    for (ull i = 0 ; i < this->sizeOfVertices() ; i++){
         this->v_list[i]->used = true;
     }
 }
@@ -464,7 +464,7 @@ Point_3 Surface::findLowestPoint(){
 
     double max_dist = -1.0;
     int max_index = 0;
-    for (ull index= 0 ; index < this->v_list.size() ; index++){
+    for (ull index= 0 ; index < this->sizeOfVertices() ; index++){
         Point_3 p = this->v_list[index]->getCGALPoint();
         if (plane.oriented_side(p) != CGAL::ON_POSITIVE_SIDE){
             double dist = CGAL::squared_distance(plane, p);
@@ -483,7 +483,7 @@ Plane_3 Surface::getPlaneWithLowest(){
 }
 
 void Surface::makePlanar(Plane_3 plane){
-    for (ull index = 0 ; index < this->v_list.size() ; index++ )
+    for (ull index = 0 ; index < this->sizeOfVertices() ; index++ )
     {
         Point_3 point(this->v_list[index]->x(),this->v_list[index]->y(),this->v_list[index]->z());
         Point_3 projected = plane.projection(point);
@@ -497,7 +497,7 @@ void Surface::makePlanar(Plane_3 plane){
 vector<Point_2> Surface::get2DPoints(Plane_3 plane){
     vector<Point_2> points;
 
-    for (ull i = 0 ; i < this->v_list.size() ; i++){
+    for (ull i = 0 ; i < this->sizeOfVertices() ; i++){
         Point_3 p3 = this->v_list[i]->getCGALPoint();
         Point_2 point2d = plane.to_2d(p3);
         points.push_back(point2d);
@@ -553,8 +553,8 @@ void Surface::changeToRectangle(){
 void Surface::snapping(Surface* p_surface, double p_diff){
     vector<pair<ull,ull>> match_list;
     int match_num = 0;
-    for (ull vj = 0 ; vj < p_surface->v_list.size() ; vj++){
-        for (ull vi = 0 ; vi < this->v_list.size() ; vi++){
+    for (ull vj = 0 ; vj < p_surface->sizeOfVertices() ; vj++){
+        for (ull vi = 0 ; vi < this->sizeOfVertices() ; vi++){
             if (this->v_list[vi]->index == p_surface->v_list[vj]->index){
                 match_list.push_back(make_pair(vi, vj));
                 match_num++;
@@ -565,12 +565,12 @@ void Surface::snapping(Surface* p_surface, double p_diff){
     if (match_num == 0) return;
     if (match_list.size() < 3) return;
     for (int i = 0 ; i < match_list.size() - 2; i++){
-        ull should_next_first = match_list[i].first == 0? this->v_list.size() - 1 : match_list[i].first - 1;
+        ull should_next_first = match_list[i].first == 0? this->sizeOfVertices() - 1 : match_list[i].first - 1;
         ull should_next_second = match_list[i].second + 1;
         if (match_list[i+1].second != should_next_second){
             if (match_list[i+1].first != should_next_first){
                 ull should_nn_second = should_next_second+1;
-                ull should_nn_first = should_next_first == 0? this->v_list.size() - 1 : should_next_first - 1;
+                ull should_nn_first = should_next_first == 0? this->sizeOfVertices() - 1 : should_next_first - 1;
                 if (match_list[i+2].second == should_nn_second && match_list[i+2].first == should_nn_first){
                     p_surface->v_list[match_list[i+1].second] = this->v_list[match_list[i+1].first];
                 }
@@ -578,10 +578,10 @@ void Surface::snapping(Surface* p_surface, double p_diff){
 
         }
         /*
-        ull next_first = match_list[i].first == 0? this->v_list.size() - 1 : match_list[i].first - 1;
+        ull next_first = match_list[i].first == 0? this->sizeOfVertices() - 1 : match_list[i].first - 1;
         if (match_list[i].second + 1 != match_list[i+1].second){
             if (next_first != match_list[i+1].first){
-                ull nn_first = next_first == 0 ? this->v_list.size() - 1 : next_first - 1;
+                ull nn_first = next_first == 0 ? this->sizeOfVertices() - 1 : next_first - 1;
                 if (nn_first == match_list[i+1].first){
                     this->v_list[next_first] = p_surface->v_list[match_list[i].second + 1];
                 }
@@ -595,7 +595,7 @@ void Surface::snapping(Surface* p_surface, double p_diff){
         }
         else{
             if (next_first != match_list[i+1].first){
-                ull nn_first = next_first == 0 ? this->v_list.size() - 1 : next_first - 1;
+                ull nn_first = next_first == 0 ? this->sizeOfVertices() - 1 : next_first - 1;
                 if (nn_first == match_list[i+1].first){
                     this->v_list[next_first] = this->v_list[match_list[i].first];
                 }
@@ -610,9 +610,9 @@ void Surface::snapping(Surface* p_surface, double p_diff){
 
 void Surface::clipping(Surface* p_surface, Checker* ch){
     int num = 0;
-    for (ull i = 0 ; i < this->v_list.size() ; i++){
+    for (ull i = 0 ; i < this->sizeOfVertices() ; i++){
         Vertex* vi = this->v_list[i];
-        for (ull j = 0 ; j < p_surface->v_list.size() ; j++){
+        for (ull j = 0 ; j < p_surface->sizeOfVertices() ; j++){
             Vertex* vj = p_surface->v_list[j];
             if (vi != vj && ch->isSameVertex(vi, vj)){
                 num++;

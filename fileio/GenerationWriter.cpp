@@ -17,6 +17,7 @@ void GenerationWriter::start(Space* p_space){
     statout.close();
 
     generation = 0;
+    this->write();
 }
 
 void GenerationWriter::write() {

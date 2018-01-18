@@ -496,8 +496,8 @@ Segment* OnlyWallSpaceMaker::makeSegmentLowerZ(Surface* sf, Checker* ch){
     Vertex* ft, *ed;
 
     //Only For Rectangle
-    if (sf->v_list.size() != 4){
-        assert(sf->v_list.size() == 4);
+    if (sf->sizeOfVertices() != 4){
+        assert(sf->sizeOfVertices() == 4);
     }
 
     for (ull i = 0 ; i < 2; i++){
@@ -529,8 +529,8 @@ Segment* OnlyWallSpaceMaker::makeSegmentUpperZ(Surface* sf, Checker* ch){
     Vertex* ft, *ed;
 
     //Only For Rectangle
-    if (sf->v_list.size() != 4){
-        assert(sf->v_list.size() == 4);
+    if (sf->sizeOfVertices() != 4){
+        assert(sf->sizeOfVertices() == 4);
     }
 
     for (ull i = 0 ; i < 2; i++){

@@ -234,7 +234,7 @@ bool CGALCalculation::isAngleLowerThan(Vertex* origin, Vertex* v1, Vertex* v2, d
 //
 //vector<vector<int>> CGALCalculation::triangulate(CSurface* sf){
 //    vector<pair<Point, unsigned>> points;
-//    for (int i = 0 ; i < (int)sf->v_list.size() ; i++){
+//    for (int i = 0 ; i < (int)sf->sizeOfVertices() ; i++){
 //        points.push_back(make_pair(makeTPoint(sf->v_list[i]),i));
 //    }
 //

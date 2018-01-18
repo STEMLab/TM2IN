@@ -50,7 +50,7 @@ public:
         // add the polyhedron triangles
         for( int i=0; i<(int)surfaces.size(); i++ ){
             B.begin_facet();
-            for (int j = 0 ; j < surfaces[i]->v_list.size() ; j++){
+            for (int j = 0 ; j < surfaces[i]->sizeOfVertices() ; j++){
 
                 B.add_vertex_to_facet( surfaces[i]->v_list[0]->index );
 

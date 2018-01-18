@@ -123,7 +123,7 @@ int Space::simplifySegment(){
             {
                 again = true;
                 loop_count++;
-                if (loop_count > (int)this->surfacesList[j]->v_list.size()){
+                if (loop_count > (int)this->surfacesList[j]->sizeOfVertices()){
                     cout << "Infinite loop in Simplification" << endl;
                     exit(-1);
                 }
@@ -257,12 +257,12 @@ int Space::snapSurface(double p_diff){
         Surface* sfi = this->surfacesList[i];
         for (ull j = i + 1 ; j < this->surfacesList.size() ; j++){
             Surface* sfj = this->surfacesList[j];
-            if (sfj->v_list.size() < 3) continue;
+            if (sfj->sizeOfVertices() < 3) continue;
             //Same Normal and isNeighbor
             if (this->checker->CanbeMerged(sfi->av_normal, sfj->av_normal, 10.0)){
                 sfi->snapping(sfj, p_diff);
             }
-            if (sfj->v_list.size() < 3 || sfi->v_list.size() < 3) cout << "snapping make wrong surface---" << endl;
+            if (sfj->sizeOfVertices() < 3 || sfi->sizeOfVertices() < 3) cout << "snapping make wrong surface---" << endl;
 
         }
 

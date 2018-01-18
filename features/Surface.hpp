@@ -33,9 +33,7 @@ public:
     Surface(Surface* cp);
     Surface(std::vector<Vertex*>& pVertices);
 
-    ull getLength(){
-        return v_list.size();
-    }
+    ull sizeOfVertices(){ return v_list.size(); }
 
     void setZ(double value);
 

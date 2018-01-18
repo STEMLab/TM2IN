@@ -9,8 +9,8 @@ int SurfacePairComputation::combine(Surface* origin, Surface* piece, Checker* ch
     ll start_i = -1, start_j = -1;
     ll middle_i = -1, middle_j = -1;
 
-    ll origin_size = origin->getLength();
-    ll piece_size = piece->getLength();
+    ll origin_size = origin->sizeOfVertices();
+    ll piece_size = piece->sizeOfVertices();
 
     if (!findShareVertex(piece->v_list, origin->v_list, middle_i, middle_j)) return 1;
     if (CGALCalculation::getAngle(origin->av_normal, piece->av_normal) > 179.999999){
@@ -208,8 +208,8 @@ int SurfacePairComputation::simplifyLineSegment(Surface* origin, Surface* piece,
     if (!again && !isNeighbor(origin, piece)) return 1;
 
     ll middle_i = -1, middle_j = -1;
-    ll piece_size = piece->getLength();
-    ll origin_size = origin->getLength();
+    ll piece_size = piece->sizeOfVertices();
+    ll origin_size = origin->sizeOfVertices();
 
     vector<Vertex*>& piece_vertex_list = piece->v_list;
     vector<Vertex*>& origin_vertex_list = origin->v_list;

@@ -27,7 +27,8 @@ private:
     const bool simplifyLine = false;
     const bool snapMode = false;
 
-    int process_generation(Space* space, int& maxGeneration, int& currentGeneration, double& degree);
+    int processGenerations(Space *space, int &currentGeneration, double &degree);
+    int mergeSurfaces();
 };
 
 #endif // RectRoomMaker_H

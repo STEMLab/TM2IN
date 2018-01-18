@@ -1,5 +1,5 @@
-#ifndef TRIANGLESPACE_H
-#define TRIANGLESPACE_H
+#ifndef SPACE_H
+#define SPACE_H
 
 #include <string>
 #include <vector>
@@ -63,4 +63,4 @@ private:
 };
 
 
-#endif // TRIANGLESPACE_H
+#endif // SPACE_H
