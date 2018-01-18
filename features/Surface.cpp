@@ -8,7 +8,7 @@
 
 #include "logic/check.hpp"
 #include "features/Surface.hpp"
-#include "computation/SurfacePairComputation.h"
+#include "compute/SurfacePairComputation.h"
 
 #include "predefine.h"
 

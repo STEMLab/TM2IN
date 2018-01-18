@@ -36,11 +36,11 @@ int MergingRoomMaker::process_generation(Space* space, int& maxGeneration, int& 
     return 0;
 }
 
-int MergingRoomMaker::constructSpace(CombineParameter* cp){
-    int maxGENperOneCycle = cp->maxGEN;
-    double startDegree = cp->startDegree;
-    bool simplify_mode = cp->simplifyLine;
-    bool snap_mode = cp->snapSurface;
+int MergingRoomMaker::constructSpace() {
+    int maxGENperOneCycle = this->maxGeneration;
+    double startDegree = this->startDegree;
+    bool simplify_mode = this->simplifyLine;
+    bool snap_mode = this->snapMode;
 
     if (this->space_list.size() == 0) {
         cout << "there is no space" << endl;
@@ -67,7 +67,7 @@ int MergingRoomMaker::constructSpace(CombineParameter* cp){
                 cout << "generation " << gen << " done.. "<< endl;
                 break;
             }
-            maxGENperOneCycle = cp->maxGEN;
+            maxGENperOneCycle = this->maxGeneration;
 
             cout << "simplify and handleDefect" << endl;
 

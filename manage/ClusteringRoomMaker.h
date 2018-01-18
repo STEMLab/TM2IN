@@ -6,7 +6,7 @@
 class ClusteringRoomMaker : public RoomMaker{
 public:
     int pre_process(double degree);
-    int constructSpace(CombineParameter* );
+    int constructSpace();
     int makeSimpleSpaces();
 
 };

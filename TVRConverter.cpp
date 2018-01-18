@@ -110,7 +110,7 @@ int main(int argc, const char * argv[]) {
     char ans_snap_surface; cin >> ans_snap_surface;
     bool snapSurface = (ans_snap_surface == 'y' || ans_snap_surface == 'Y');
 
-    if (manager->constructSpace(new CombineParameter(maxGENperOneCycle, 1.00, simplifyLine, snapSurface)) == -1) return -1;
+    if (manager->constructSpace() == -1) return -1;
 
     string json_file = string(resultPath) + fileName + "/" + version + "/" + "surfaces.json";
     manager->exportSpaceJSON(json_file);

@@ -7,7 +7,7 @@ int ClusteringRoomMaker::pre_process(double degree){
 }
 
 
-int ClusteringRoomMaker::constructSpace(int max_gener, double startDegree, bool simple_line){
+int ClusteringRoomMaker::constructSpace(){
     return 0;
 }
 

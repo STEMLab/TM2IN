@@ -4,7 +4,6 @@
 #include <logic/check.hpp>
 #include <fileio/GenerationWriter.h>
 #include "fileio/Importer.h"
-#include "manage/CombineParameter.h"
 #include "util.h"
 
 class RoomMaker
@@ -24,7 +23,7 @@ class RoomMaker
         int convertTriangleMeshToSpace(double degree);
 
         virtual int pre_process(double degree) = 0;
-        virtual int constructSpace(CombineParameter* ) = 0;
+        virtual int constructSpace() = 0;
         virtual int finish() = 0;
         virtual int rotateSurfaces() = 0;
 
