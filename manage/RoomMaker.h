@@ -22,7 +22,7 @@ class RoomMaker
         int importMesh(const char*);
         int convertTriangleMeshToSpace(double degree);
 
-        virtual int pre_process(double degree) = 0;
+        virtual int pre_process() = 0;
         virtual int constructSpace() = 0;
         virtual int finish() = 0;
         virtual int rotateSurfaces() = 0;

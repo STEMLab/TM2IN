@@ -5,31 +5,7 @@
 using namespace std;
 
 
-int MergingRoomMaker::pre_process(double degree){
-    return 0;
-}
-
-
-int MergingRoomMaker::processGenerations(Space *space, int &currentGeneration, double &degree){
-    ll p_size = space->surfacesList.size();
-    while (true){
-        cout << "generation " << currentGeneration << ": " << space->surfacesList.size()<< endl;
-        if (space->combineSurface(degree) == -1)
-        {
-            cout << "combine error" << endl;
-            return -1;
-        }
-
-        if (p_size == (int)space->surfacesList.size()) {
-            cout << "generation " << currentGeneration  << " done.. "<< endl;
-            break;
-        }
-        else p_size = (int)space->surfacesList.size();
-
-        currentGeneration++;
-        this->generation_writer->write();
-        if (degree < 15) degree += 0.05;
-    }
+int MergingRoomMaker::pre_process() {
     return 0;
 }
 
@@ -38,12 +14,14 @@ int MergingRoomMaker::constructSpace() {
 
     if (this->mergeSurfaces()) return -1;
 
-    vector<Vertex*> newVertices;
-    for (ull it = 0 ; it < this->space_list.size() ; it++){
-        vector<Vertex*> spaceVertices = SurfaceHoleCover::fillHole(this->vertices, this->space_list[it]->surfacesList);
-        newVertices.insert(newVertices.end(), spaceVertices.begin(), spaceVertices.end());
-    }
-    this->vertices = newVertices;
+    // make Surfaces Planar
+    if (this->makeSurfacesPlanar()) return -1;
+
+    // remove Self-intersection in one Surface.
+
+    // fill Hole
+    if (this->fillHoleWithUsingPolyhedralSurface()) return -1;
+
     return 0;
 }
 
@@ -54,18 +32,6 @@ int MergingRoomMaker::finish(){
 
 
 
-int MergingRoomMaker::rotateSurfaces(){
-    for (ull it = 0 ; it < this->space_list.size(); it++)
-    {
-        Space* space = this->space_list[it];
-        space->rotateSpaceByFloorTo00();
-        if (space->match00() == -1){
-            cout << "match00 error" << endl;
-            return -1;
-        }
-    }
-    return 0;
-}
 
 int MergingRoomMaker::mergeSurfaces() {
     double startDegree = this->startDegree;
@@ -108,6 +74,62 @@ int MergingRoomMaker::mergeSurfaces() {
             if (processGenerations(space, gen, degree)) return -1;
             if (space->handleDefect(angleInDefect) == -1){ cout << "cannot handle defect" << endl; return -1; }
         }
-
     }
+}
+
+int MergingRoomMaker::processGenerations(Space *space, int &currentGeneration, double &degree){
+    ll p_size = space->surfacesList.size();
+    while (true){
+        cout << "generation " << currentGeneration << ": " << space->surfacesList.size()<< endl;
+        if (space->combineSurface(degree) == -1)
+        {
+            cout << "combine error" << endl;
+            return -1;
+        }
+
+        if (p_size == (int)space->surfacesList.size()) {
+            cout << "generation " << currentGeneration  << " done.. "<< endl;
+            break;
+        }
+        else p_size = (int)space->surfacesList.size();
+
+        currentGeneration++;
+        this->generation_writer->write();
+        if (degree < 15) degree += 0.05;
+    }
+    return 0;
+}
+
+
+int MergingRoomMaker::fillHoleWithUsingPolyhedralSurface() {
+    vector<Vertex*> newVertices;
+    for (ull it = 0 ; it < this->space_list.size() ; it++){
+        vector<Vertex*> spaceVertices = SurfaceHoleCover::fillHole(this->vertices, this->space_list[it]->surfacesList);
+        newVertices.insert(newVertices.end(), spaceVertices.begin(), spaceVertices.end());
+    }
+    this->vertices = newVertices;
+    return 0;
+}
+
+
+int MergingRoomMaker::rotateSurfaces(){
+    for (ull it = 0 ; it < this->space_list.size(); it++)
+    {
+        Space* space = this->space_list[it];
+        space->rotateSpaceByFloorTo00();
+        if (space->match00() == -1){
+            cout << "match00 error" << endl;
+            return -1;
+        }
+    }
+    return 0;
+}
+
+int MergingRoomMaker::makeSurfacesPlanar() {
+    vector<Vertex*> newVertices;
+    for (ull it = 0 ; it < this->space_list.size() ; it++){
+        Space* space = this->space_list[it];
+    }
+    this->vertices = newVertices;
+    return 0;
 }

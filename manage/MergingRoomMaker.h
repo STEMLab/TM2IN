@@ -14,7 +14,7 @@ public:
 
     }
 
-    virtual int pre_process(double degree);
+    virtual int pre_process();
     virtual int constructSpace();
     virtual int finish();
     virtual int rotateSurfaces();
@@ -29,6 +29,10 @@ private:
 
     int processGenerations(Space *space, int &currentGeneration, double &degree);
     int mergeSurfaces();
+
+    int fillHoleWithUsingPolyhedralSurface();
+
+    int makeSurfacesPlanar();
 };
 
 #endif // RectRoomMaker_H

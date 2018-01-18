@@ -61,7 +61,7 @@ add_executable(TriangleMeshToClearSolid
         predefine.h
         TVRConverter.cpp
         util.cpp
-        util.h cgal/SurfaceHoleCover.cpp cgal/SurfaceHoleCover.h cgal/Types.h)
+        util.h cgal/SurfaceHoleCover.cpp cgal/SurfaceHoleCover.h cgal/Types.h compute/VertexListComputation.cpp compute/VertexListComputation.h)
 
 
 TARGET_LINK_LIBRARIES( TriangleMeshToClearSolid LINK_PUBLIC ${Boost_LIBRARIES} )

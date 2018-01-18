@@ -13,7 +13,7 @@ public:
     double* coords;
 
     Vertex(double px, double py, double pz){
-        coords = (double*)malloc(sizeof(double) * 3);
+        coords = new double[3];
         coords[0] = px;
         coords[1] = py;
         coords[2] = pz;
@@ -21,14 +21,14 @@ public:
     }
 
     Vertex(){
-        coords = (double*)malloc(sizeof(double) * 3);
+        coords = new double[3];
         coords[0] = 0.0;
         coords[1] = 0.0;
         coords[2] = 0.0;
     }
 
     Vertex(Vertex& vt){
-        coords = (double*)malloc(sizeof(double) * 3);
+        coords = new double[3];
         coords[0] = vt.x();
         coords[1] = vt.y();
         coords[2] = vt.z();
