@@ -21,7 +21,7 @@ int MergingRoomMaker::constructSpace() {
     if (this->resolvePlanarSurfaceProblem()) return -1;
 
     // fill Hole
-    if (this->fillHoleWithUsingPolyhedralSurface()) return -1;
+    // if (this->fillHoleWithUsingPolyhedralSurface()) return -1;
 
     return 0;
 }
@@ -141,7 +141,9 @@ int MergingRoomMaker::resolvePlanarSurfaceProblem() {
     for (ull it = 0 ; it < this->space_list.size(); it++)
     {
         Space* space = this->space_list[it];
-
+        space->resolveIntersectionINTRASurface();
+        space->resolveIntersectionINTERSurface();
     }
     return 0;
 }
+

@@ -20,6 +20,7 @@ public:
     std::vector<Vertex*> v_list;
     std::vector<std::vector<Vertex*> > inner_ring;
     std::vector<Triangle*> tri_list;
+    std::vector<HalfEdge* > boundaryEdges;
     Vector_3 av_normal = CGAL::NULL_VECTOR;
 
     double min_coords[3];
@@ -85,9 +86,9 @@ public:
 
     void setVertices(std::vector<Vertex *> vector);
 
+    std::vector<HalfEdge *> getboundaryEdgesList();
+
 private:
-    Point_3 getCenterPointInFartest();
-    int findNormalTypeForTri();
     std::vector<std::pair<double, double>> project_to_Plane18();
     std::vector<Point_2> get2DPoints(Plane_3 plane);
 };

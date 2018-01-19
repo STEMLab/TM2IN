@@ -1,4 +1,4 @@
-#include "features/Surface.hpp"
+#include "features/Surface.h"
 #include "logic/check.hpp"
 #include "space_maker/OnlyWallSpaceMaker.h"
 #include "features/SurfaceGraph.h"

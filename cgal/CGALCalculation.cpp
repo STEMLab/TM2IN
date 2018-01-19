@@ -2,7 +2,7 @@
 #include "CGALCalculation.h"
 
 #include "features/Vertex.h"
-#include "features/Surface.hpp"
+#include "features/Surface.h"
 #include "space_maker/OnlyWallSpaceMaker.h"
 
 using namespace std;

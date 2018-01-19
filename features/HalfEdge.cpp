@@ -5,8 +5,8 @@
 #include "HalfEdge.h"
 
 bool HalfEdge::isSame(HalfEdge* he){
-    if (this->vertex[0] == he->vertex[0]){
-        if (this->vertex[1] == he->vertex[1])
+    if (this->vertices[0] == he->vertices[0]){
+        if (this->vertices[1] == he->vertices[1])
             return true;
     }
     return false;
@@ -29,8 +29,8 @@ void HalfEdge::setOppositeEdge(HalfEdge *oppositeEdge) {
 }
 
 bool HalfEdge::isOpposite(HalfEdge * he) {
-    if (this->vertex[0] == he->vertex[1]){
-        if (this->vertex[1] == he->vertex[0])
+    if (this->vertices[0] == he->vertices[1]){
+        if (this->vertices[1] == he->vertices[0])
             return true;
     }
     return false;

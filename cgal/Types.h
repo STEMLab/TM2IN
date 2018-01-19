@@ -23,6 +23,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/intersections.h>
+#include <CGAL/linear_least_squares_fitting_3.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point_3;

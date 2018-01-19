@@ -7,7 +7,7 @@
 //
 
 #include "logic/check.hpp"
-#include "features/Surface.hpp"
+#include "features/Surface.h"
 #include "compute/SurfacePairComputation.h"
 #include "compute/VertexComputation.h"
 #include "predefine.h"
@@ -15,6 +15,7 @@
 
 #include <cstdlib>
 #include <compute/SurfaceComputation.h>
+#include <compute/VertexListComputation.h>
 
 
 using namespace std;
@@ -126,12 +127,13 @@ int Surface::getSegmentsNumber(ll si, ll ei){
 bool Surface::checkDuplicate(Checker* ch){
     vector<Vertex*> sorted_v_list(this->v_list);
 
-    sort(sorted_v_list.begin(), sorted_v_list.end(), Vertex::compare);
+    sort(sorted_v_list.begin(), sorted_v_list.end(), VertexComputation::greater);
     for (ull i = 0 ; i < sorted_v_list.size() - 1; i++){
         if (sorted_v_list[i] == sorted_v_list[i+1]){
             cout << "\nSame Index" << endl;
             return true;
         }
+
         /*
         if (ch != NULL && ch->isSameVertex(sorted_v_list[i], sorted_v_list[i+1])){
             cout << "\nSame Coords" << endl;
@@ -592,4 +594,9 @@ Vertex *Surface::vertex(ull i) {
 
 void Surface::setVertices(std::vector<Vertex *> newVertices) {
     this->v_list = newVertices;
+}
+
+std::vector<HalfEdge *> Surface::getboundaryEdgesList() {
+    this->boundaryEdges = VertexListComputation::makeHalfEdgesList(this->getVerticesList());
+    return boundaryEdges;
 }

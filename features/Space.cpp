@@ -8,6 +8,7 @@
 #include <climits>
 #include <algorithm>
 #include <cmath>
+#include <compute/SurfaceComputation.h>
 
 Space::Space(){
 
@@ -283,7 +284,9 @@ int Space::checkDuplicateVertexInSurfaces() {
 }
 
 int Space::makeSurfacesPlanar() {
-    return SurfacesListComputation::flattenSurfaces(this->surfacesList);
+    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
+        SurfaceComputation::flatten(this->surfacesList[i]);
+    }
 }
 
 void Space::sortSurfacesByArea() {
@@ -302,6 +305,16 @@ void Space::putVerticesAndUpdateIndex(vector<Vertex *> &vertices) {
             vertices.push_back(vt[i]);
         }
     }
+}
+
+void Space::resolveIntersectionINTRASurface() {
+    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
+        SurfaceComputation::resolveIntersection(this->surfacesList[sfID]);
+    }
+}
+
+void Space::resolveIntersectionINTERSurface() {
+
 }
 
 /*

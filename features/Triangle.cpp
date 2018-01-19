@@ -93,5 +93,5 @@ bool Triangle::isOpposite(Triangle* tri){
 }
 
 Vertex *Triangle::vertex(int idx) {
-    return this->edges[idx]->vertex[0];
+    return this->edges[idx]->vertices[0];
 }

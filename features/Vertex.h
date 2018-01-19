@@ -58,7 +58,7 @@ public:
     void translateTo(std::vector<double> diff);
 
     std::string toJSON();
-    static bool compare(Vertex*,Vertex*);
+
 };
 
 /** < for Searching upper_bound and lower_bound */

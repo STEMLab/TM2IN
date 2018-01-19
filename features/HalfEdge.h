@@ -9,18 +9,18 @@
 
 class HalfEdge {
 public:
-    std::vector<Vertex*> vertex;
+    std::vector<Vertex*> vertices;
     Triangle* parentTriangle = NULL;
     HalfEdge* oppositeEdge = NULL;
 
     HalfEdge(){}
     HalfEdge(Vertex* pa, Vertex* pb){
-        vertex.push_back(pa);
-        vertex.push_back(pb);
+        vertices.push_back(pa);
+        vertices.push_back(pb);
     }
     HalfEdge(Vertex* pa, Vertex* pb, Triangle* pTriangle){
-        vertex.push_back(pa);
-        vertex.push_back(pb);
+        vertices.push_back(pa);
+        vertices.push_back(pb);
         parentTriangle = pTriangle;
     }
 
@@ -36,7 +36,7 @@ public:
     bool isOpposite(HalfEdge*);
 
     Vertex* operator[](int idx){
-        if (idx == 0 || idx == 1) return vertex[idx];
+        if (idx == 0 || idx == 1) return vertices[idx];
         else{
             std::cerr << "HalfEdge only has two vertices" << std::endl;
             exit(-1);

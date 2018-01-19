@@ -5,7 +5,7 @@
 #include <map>
 
 #include "cgal/CGALCalculation.h"
-#include "features/Surface.hpp"
+#include "features/Surface.h"
 #include "util.h"
 
 using namespace std;

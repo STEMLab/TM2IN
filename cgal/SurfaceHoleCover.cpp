@@ -11,7 +11,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
-#include "features/Surface.hpp"
+#include "features/Surface.h"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel2;
 typedef CGAL::Polyhedron_3<Kernel2>         Polyhedron;

@@ -22,7 +22,7 @@ add_executable(TriangleMeshToClearSolid
         features/Space.cpp
         features/Space.h
         features/Surface.cpp
-        features/Surface.hpp
+        features/Surface.h
         features/SurfaceGraph.cpp
         features/SurfaceGraph.h
         features/Triangle.cpp
@@ -61,7 +61,7 @@ add_executable(TriangleMeshToClearSolid
         predefine.h
         TVRConverter.cpp
         util.cpp
-        util.h cgal/SurfaceHoleCover.cpp cgal/SurfaceHoleCover.h cgal/Types.h compute/VertexListComputation.cpp compute/VertexListComputation.h compute/SurfaceComputation.cpp compute/SurfaceComputation.h compute/VertexComputation.cpp compute/VertexComputation.h)
+        util.h cgal/SurfaceHoleCover.cpp cgal/SurfaceHoleCover.h cgal/Types.h compute/VertexListComputation.cpp compute/VertexListComputation.h compute/SurfaceComputation.cpp compute/SurfaceComputation.h compute/VertexComputation.cpp compute/VertexComputation.h compute/HalfEdgeComputation.cpp compute/HalfEdgeComputation.h)
 
 
 TARGET_LINK_LIBRARIES( TriangleMeshToClearSolid LINK_PUBLIC ${Boost_LIBRARIES} )

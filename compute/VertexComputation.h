@@ -11,6 +11,8 @@
 class VertexComputation {
 public:
     static Point_3 getCGALPoint(Vertex* vt);
+    static int compare(Vertex*,Vertex*);
+    static bool greater(Vertex*, Vertex*);
 };
 
 

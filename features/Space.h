@@ -11,7 +11,7 @@
 
 #include "features/SurfaceGraph.h"
 #include "features/Triangle.h"
-#include "features/Surface.hpp"
+#include "features/Surface.h"
 #include "compute/SurfacePairComputation.h"
 
 using namespace std;
@@ -61,6 +61,10 @@ public:
     void tagID();
 
     void putVerticesAndUpdateIndex(vector<Vertex *> &vector);
+
+    void resolveIntersectionINTRASurface();
+
+    void resolveIntersectionINTERSurface();
 
 protected:
     Surface* attachSurfaces(Surface* cp, ull start, bool* checked, ll& count, double degree);

@@ -22,7 +22,7 @@ void test(){
 }
 
 int main(int argc, const char * argv[]) {
-    string version = "1.0.1.3";
+    string version = "1.0.1.4";
     cout << version << endl;
 
     string projectPath = "/home/dongmin/dev/TriMeshToIndoor/";
@@ -72,7 +72,6 @@ int main(int argc, const char * argv[]) {
     switch(mode){
         case 0:{
             if (manager->convertTriangleMeshToSpace(0.0)) return 1;
-            //if (manager->exportCombined(exported_bin)) return 2;
             break;
         }
         case 1:{
@@ -101,14 +100,6 @@ int main(int argc, const char * argv[]) {
             return 0;
         }
     }
-
-    cout << "simplify line?(y or n)" << endl;
-    char ans_simple_line; cin >> ans_simple_line;
-    bool simplifyLine = (ans_simple_line == 'y' || ans_simple_line == 'Y');
-
-    cout << "snap Surface?(y or n)" << endl;
-    char ans_snap_surface; cin >> ans_snap_surface;
-    bool snapSurface = (ans_snap_surface == 'y' || ans_snap_surface == 'Y');
 
     if (manager->constructSpace() == -1) return -1;
 
