@@ -1,4 +1,5 @@
 #include "SurfacePairComputation.h"
+#include "VertexComputation.h"
 #include <stdlib.h>
 
 int SurfacePairComputation::combine(Surface* origin, Surface* piece, Checker* checker, double degree){
@@ -254,8 +255,8 @@ int SurfacePairComputation::simplifyLineSegment(Surface* origin, Surface* piece,
         exit(-1);
     }
 
-    Point_3 sp = piece_vertex_list[start_i]->getCGALPoint();
-    Point_3 ep = piece_vertex_list[end_i]->getCGALPoint();
+    Point_3 sp = VertexComputation::getCGALPoint(piece_vertex_list[start_i]);
+    Point_3 ep = VertexComputation::getCGALPoint(piece_vertex_list[end_i]);
     Line_3 line(sp, ep);
 
     //Translate to make it straight
@@ -266,7 +267,7 @@ int SurfacePairComputation::simplifyLineSegment(Surface* origin, Surface* piece,
 
         if (i == (ll)piece_vertex_list.size()) i = 0;
         if (i == end_i) break;
-        Point_3 newp = line.projection(piece_vertex_list[i]->getCGALPoint());
+        Point_3 newp = line.projection(VertexComputation::getCGALPoint(piece_vertex_list[i]));
         piece_vertex_list[i]->translateTo({newp.x(), newp.y(), newp.z()});
 
         i++;

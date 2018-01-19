@@ -18,6 +18,7 @@ int MergingRoomMaker::constructSpace() {
     if (this->makeSurfacesPlanar()) return -1;
 
     // remove Self-intersection in one Surface.
+    if (this->resolvePlanarSurfaceProblem()) return -1;
 
     // fill Hole
     if (this->fillHoleWithUsingPolyhedralSurface()) return -1;
@@ -65,8 +66,8 @@ int MergingRoomMaker::mergeSurfaces() {
             if (space->handleDefect(angleInDefect) == -1){ cout << "cannot handle defect" << endl; return -1; }
         }
 
-        sort(space->surfacesList.begin(), space->surfacesList.end(), Surface::compareArea);
-        SLC::tagID(space->surfacesList);
+        space->sortSurfacesByArea();
+        space->tagID();
 
         if (snap_mode){
             double diff = 0.0001;
@@ -129,7 +130,18 @@ int MergingRoomMaker::makeSurfacesPlanar() {
     vector<Vertex*> newVertices;
     for (ull it = 0 ; it < this->space_list.size() ; it++){
         Space* space = this->space_list[it];
+        space->makeSurfacesPlanar();
+        space->putVerticesAndUpdateIndex(newVertices);
     }
     this->vertices = newVertices;
+    return 0;
+}
+
+int MergingRoomMaker::resolvePlanarSurfaceProblem() {
+    for (ull it = 0 ; it < this->space_list.size(); it++)
+    {
+        Space* space = this->space_list[it];
+
+    }
     return 0;
 }

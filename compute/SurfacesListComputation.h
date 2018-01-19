@@ -12,6 +12,8 @@ public:
     static int findFirstSurfaceIndexSimilarWithAxis(vector<Surface*>& surfacesList, int axis);
     static void tagID(vector<Surface*>& surfacesList);
     static vector<vector<double>> getMBB(vector<Surface*>& surfacesList);
+
+    static int flattenSurfaces(vector<Surface *> &vector);
 };
 
 #endif // SURFACESLISTCALCULATION_H_INCLUDED

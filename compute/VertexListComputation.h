@@ -13,6 +13,7 @@ class VertexListComputation {
 public:
     static void deleteVertexList(vector<Vertex*>& vertices);
 
+    static Vertex *getCenter(vector<Vertex *> vector);
 };
 
 

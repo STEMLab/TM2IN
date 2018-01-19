@@ -1,5 +1,7 @@
 #include "features/Space.h"
+
 #include "compute/SurfacesListComputation.h"
+#include "compute/VertexComputation.h"
 
 #include <cstdio>
 #include <queue>
@@ -242,7 +244,7 @@ void Space::rotateSpaceByFloorTo00(){
                             1);
 
     for (ull i = 0 ; i < this->p_vertexList->size() ; i++){
-        Point_3 p = this->p_vertexList->at(i)->getCGALPoint();
+        Point_3 p = VertexComputation::getCGALPoint(this->p_vertexList->at(i));
         p = p.transform(rotateZ);
         this->p_vertexList->at(i)->setCoords(p.x(), p.y(), p.z());
     }
@@ -278,6 +280,28 @@ int Space::checkDuplicateVertexInSurfaces() {
         }
     }
     return 0;
+}
+
+int Space::makeSurfacesPlanar() {
+    return SurfacesListComputation::flattenSurfaces(this->surfacesList);
+}
+
+void Space::sortSurfacesByArea() {
+    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
+}
+
+void Space::tagID() {
+    SurfacesListComputation::tagID(this->surfacesList);
+}
+
+void Space::putVerticesAndUpdateIndex(vector<Vertex *> &vertices) {
+    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++){
+        vector<Vertex*> vt =this->surfacesList[sfID]->getVerticesList();
+        for (unsigned int i = 0 ; i < vt.size() ; i++){
+            vt[i]->index = vertices.size();
+            vertices.push_back(vt[i]);
+        }
+    }
 }
 
 /*

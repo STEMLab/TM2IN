@@ -4,7 +4,7 @@
 #include <vector>
 #include <map>
 
-#include "logic/CGALCalculation.h"
+#include "cgal/CGALCalculation.h"
 #include "features/Surface.hpp"
 #include "util.h"
 

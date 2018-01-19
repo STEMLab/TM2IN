@@ -42,8 +42,8 @@ add_executable(TriangleMeshToClearSolid
         fileio/JSONMaker.h
         fileio/TVRImporter.cpp
         fileio/TVRImporter.h
-        logic/CGALCalculation.cpp
-        logic/CGALCalculation.h
+        cgal/CGALCalculation.cpp
+        cgal/CGALCalculation.h
         logic/check.cpp
         logic/check.hpp
         compute/SurfacePairComputation.cpp
@@ -61,7 +61,7 @@ add_executable(TriangleMeshToClearSolid
         predefine.h
         TVRConverter.cpp
         util.cpp
-        util.h cgal/SurfaceHoleCover.cpp cgal/SurfaceHoleCover.h cgal/Types.h compute/VertexListComputation.cpp compute/VertexListComputation.h)
+        util.h cgal/SurfaceHoleCover.cpp cgal/SurfaceHoleCover.h cgal/Types.h compute/VertexListComputation.cpp compute/VertexListComputation.h compute/SurfaceComputation.cpp compute/SurfaceComputation.h compute/VertexComputation.cpp compute/VertexComputation.h)
 
 
 TARGET_LINK_LIBRARIES( TriangleMeshToClearSolid LINK_PUBLIC ${Boost_LIBRARIES} )

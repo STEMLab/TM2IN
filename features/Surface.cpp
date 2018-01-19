@@ -9,11 +9,13 @@
 #include "logic/check.hpp"
 #include "features/Surface.hpp"
 #include "compute/SurfacePairComputation.h"
-
+#include "compute/VertexComputation.h"
 #include "predefine.h"
 #include "space_maker/OnlyWallSpaceMaker.h"
 
 #include <cstdlib>
+#include <compute/SurfaceComputation.h>
+
 
 using namespace std;
 
@@ -142,36 +144,6 @@ bool Surface::checkDuplicate(Checker* ch){
     return false;
 }
 
-
-Point_3 Surface::getCenterPoint(){
-    double x=0.0,y=0.0,z=0.0;
-    x = this->min_coords[0] + this->max_coords[0];
-    y = this->min_coords[1] + this->max_coords[1];
-    z = this->min_coords[2] + this->max_coords[2];
-    x = x/2;
-    y = y/2;
-    z = z/2;
-    Point_3 p(x,y,z);
-    return p;
-}
-
-Point_3 Surface::getCenterPointInFartest(){
-    double sq_dist = -1;
-    int si = 0, sj = 1;
-    for (int i = 0 ; i < (int)this->sizeOfVertices() - 1; i++){
-        for (int j = 1; j < (int)this->sizeOfVertices() ; j++){
-            double dist = CGALCalculation::getSquaredDistance(this->v_list[i], this->v_list[j]);
-            if (dist > sq_dist){
-                sq_dist = dist;
-                si = i;
-                sj = j;
-            }
-        }
-    }
-
-    return CGAL::midpoint(this->v_list[si]->getCGALPoint(), this->v_list[sj]->getCGALPoint());
-}
-
 string Surface::toJSONString(){
     string ret;
     ret.append("{");
@@ -184,10 +156,6 @@ string Surface::toJSONString(){
     ret.append("], \n");
     ret.append(" \"coord\" : [");
     for (unsigned int i = 0 ; i < this->sizeOfVertices() ; i++){
-        if (!this->v_list[i]->used){
-            cout << "Wrong in TOJSONSTRING" << endl;
-            exit(-1);
-        }
         ret.append(this->v_list[i]->toJSON());
         ret.append(",");
     }
@@ -211,9 +179,9 @@ vector<pair<double, double>> Surface::project_to_Plane18(){
     if (this->av_normal == CGAL::NULL_VECTOR){
         exit(-1);
     }
-    Plane_3 plane = Plane_3(this->v_list[0]->getCGALPoint(), CGALCalculation::normal_list18[type]);
+    Plane_3 plane = Plane_3(VertexComputation::getCGALPoint(this->v_list[0]), CGALCalculation::normal_list18[type]);
     for (ull i = 0 ; i < this->sizeOfVertices() ; i++){
-        Point_3 p3 = this->v_list[i]->getCGALPoint();
+        Point_3 p3 = VertexComputation::getCGALPoint(this->v_list[i]);
         Point_2 point2d = plane.to_2d(p3);
         points.push_back(make_pair(point2d.x(), point2d.y()));
     }
@@ -431,6 +399,7 @@ bool Surface::isValid(){
         cout << "The number of vertexes is "  << this->sizeOfVertices() <<endl;
         return false;
     }
+
     return true;
     /*
     bool isNOTcollinear = false;
@@ -453,19 +422,16 @@ bool Surface::isValid(){
     */
 }
 
-void Surface::tagVerticesUsed(){
-    for (ull i = 0 ; i < this->sizeOfVertices() ; i++){
-        this->v_list[i]->used = true;
-    }
-}
 
 Point_3 Surface::findLowestPoint(){
-    Plane_3 plane(getCenterPoint(), this->av_normal);
+    Vertex* cent = SurfaceComputation::getCenterPoint(this);
+    Plane_3 plane(VertexComputation::getCGALPoint(cent), this->av_normal);
+    delete cent;
 
     double max_dist = -1.0;
     int max_index = 0;
     for (ull index= 0 ; index < this->sizeOfVertices() ; index++){
-        Point_3 p = this->v_list[index]->getCGALPoint();
+        Point_3 p = VertexComputation::getCGALPoint(this->v_list[index]);
         if (plane.oriented_side(p) != CGAL::ON_POSITIVE_SIDE){
             double dist = CGAL::squared_distance(plane, p);
             if (dist > max_dist){
@@ -474,7 +440,7 @@ Point_3 Surface::findLowestPoint(){
             }
         }
     }
-    return this->v_list[max_index]->getCGALPoint();
+    return VertexComputation::getCGALPoint(this->v_list[max_index]);
 }
 
 Plane_3 Surface::getPlaneWithLowest(){
@@ -483,22 +449,14 @@ Plane_3 Surface::getPlaneWithLowest(){
 }
 
 void Surface::makePlanar(Plane_3 plane){
-    for (ull index = 0 ; index < this->sizeOfVertices() ; index++ )
-    {
-        Point_3 point(this->v_list[index]->x(),this->v_list[index]->y(),this->v_list[index]->z());
-        Point_3 projected = plane.projection(point);
 
-        this->v_list[index]->setX(projected.x());
-        this->v_list[index]->setY(projected.y());
-        this->v_list[index]->setZ(projected.z());
-    }
 }
 
 vector<Point_2> Surface::get2DPoints(Plane_3 plane){
     vector<Point_2> points;
 
     for (ull i = 0 ; i < this->sizeOfVertices() ; i++){
-        Point_3 p3 = this->v_list[i]->getCGALPoint();
+        Point_3 p3 = VertexComputation::getCGALPoint(this->v_list[i]);
         Point_2 point2d = plane.to_2d(p3);
         points.push_back(point2d);
     }
@@ -622,4 +580,16 @@ void Surface::clipping(Surface* p_surface, Checker* ch){
             }
         }
     }
+}
+
+vector<Vertex *> Surface::getVerticesList() {
+    return this->v_list;
+}
+
+Vertex *Surface::vertex(ull i) {
+    return v_list[i];
+}
+
+void Surface::setVertices(std::vector<Vertex *> newVertices) {
+    this->v_list = newVertices;
 }

@@ -3,7 +3,7 @@
 
 #include "features/Vertex.h"
 #include "predefine.h"
-#include "logic/CGALCalculation.h"
+#include "cgal/CGALCalculation.h"
 
 class Triangle{
 private:

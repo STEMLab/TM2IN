@@ -78,8 +78,14 @@ public:
 
     void snapping(Surface* p_surface, double p_diff);
     void clipping(Surface* p_surface,Checker* ch);
+
+    std::vector<Vertex *> getVerticesList();
+
+    Vertex *vertex(ull i);
+
+    void setVertices(std::vector<Vertex *> vector);
+
 private:
-    Point_3 getCenterPoint();
     Point_3 getCenterPointInFartest();
     int findNormalTypeForTri();
     std::vector<std::pair<double, double>> project_to_Plane18();

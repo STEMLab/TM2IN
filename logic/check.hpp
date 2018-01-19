@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "features/Vertex.h"
-#include "logic/CGALCalculation.h"
+#include "cgal/CGALCalculation.h"
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Vector_3.h>

@@ -54,11 +54,18 @@ public:
     //TODO : removed
     void test();
 
+    int makeSurfacesPlanar();
+
+    void sortSurfacesByArea();
+
+    void tagID();
+
+    void putVerticesAndUpdateIndex(vector<Vertex *> &vector);
+
 protected:
     Surface* attachSurfaces(Surface* cp, ull start, bool* checked, ll& count, double degree);
     void updateMBB();
     void freeSurfaces();
-private:
 
 };
 

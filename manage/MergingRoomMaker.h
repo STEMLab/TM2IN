@@ -33,6 +33,8 @@ private:
     int fillHoleWithUsingPolyhedralSurface();
 
     int makeSurfacesPlanar();
+
+    int resolvePlanarSurfaceProblem();
 };
 
 #endif // RectRoomMaker_H

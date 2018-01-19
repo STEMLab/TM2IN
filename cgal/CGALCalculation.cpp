@@ -1,4 +1,5 @@
-#include "logic/CGALCalculation.h"
+#include <compute/VertexComputation.h>
+#include "CGALCalculation.h"
 
 #include "features/Vertex.h"
 #include "features/Surface.hpp"
@@ -24,7 +25,7 @@ double CGALCalculation::getAngle(Vector_3& nv1, Vector_3& nv2){
 }
 
 Vector_3 CGALCalculation::getVector(Vertex* va, Vertex* vb){
-    return Vector_3(va->getCGALPoint(),vb->getCGALPoint());
+    return Vector_3(VertexComputation::getCGALPoint(va),VertexComputation::getCGALPoint(vb));
 }
 
 int CGALCalculation::findNormalType27(Vector_3& nv)
@@ -164,7 +165,7 @@ Vector_3 CGALCalculation::normal_list6[6] = {
 
 double CGALCalculation::getSquaredDistance(Vertex* v1, Vertex* v2){
     return CGAL::squared_distance(
-                          v1->getCGALPoint(), v2->getCGALPoint());
+            VertexComputation::getCGALPoint(v1), VertexComputation::getCGALPoint(v2));
 }
 
 Vector_3 CGALCalculation::getUnitNormal(Vertex* va, Vertex* vb, Vertex* vc){

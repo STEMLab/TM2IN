@@ -2,6 +2,7 @@
 #include "SurfacesListComputation.h"
 
 #include "features/SurfaceGraph.h"
+#include "SurfaceComputation.h"
 
 using namespace std;
 
@@ -44,4 +45,11 @@ int SurfacesListComputation::findFirstSurfaceIndexSimilarWithAxis(vector<Surface
         }
     }
     assert(false);
+}
+
+int SurfacesListComputation::flattenSurfaces(vector<Surface *> &surfaces) {
+    for (ull i = 0 ; i < surfaces.size() ; i++){
+        SurfaceComputation::flatten(surfaces[i]);
+    }
+    return 0;
 }
