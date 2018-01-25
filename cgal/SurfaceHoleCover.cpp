@@ -49,11 +49,13 @@ public:
 
         // add the polyhedron triangles
         for( int i=0; i<(int)surfaces.size(); i++ ){
+            cout << "FACET :  " << i << endl;
             B.begin_facet();
             for (int j = 0 ; j < surfaces[i]->sizeOfVertices() ; j++){
-
-                B.add_vertex_to_facet( surfaces[i]->v_list[0]->index );
-
+                std::cout << surfaces[i]->v_list[j]->toJSON() << endl;
+                int index = surfaces[i]->v_list[j]->index;
+                std::cout << coords[index]->coords[0] << ", "<< coords[index] -> coords[1] << endl;
+                B.add_vertex_to_facet( index );
             }
             B.end_facet();
         }

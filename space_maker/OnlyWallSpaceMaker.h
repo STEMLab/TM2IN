@@ -35,6 +35,8 @@ private:
 
     Segment* makeSegmentLowerZ(Surface* sf, Checker* ch);
     Segment* makeSegmentUpperZ(Surface* sf, Checker* ch);
+
+    void updateRectArea(Surface* sf);
 };
 
 #endif // ONLYWALLSPACEMAKER_H_INCLUDED

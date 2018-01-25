@@ -66,6 +66,10 @@ public:
 
     void resolveIntersectionINTERSurface();
 
+    void clearTrianglesListInSurfaces();
+
+    void triangulateSurfaces();
+
 protected:
     Surface* attachSurfaces(Surface* cp, ull start, bool* checked, ll& count, double degree);
     void updateMBB();

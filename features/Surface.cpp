@@ -28,7 +28,7 @@ Surface::Surface(Surface* cp){
         this->min_coords[i] = cp->min_coords[i];
     }
     this->area = cp->area;
-    this->tri_list = cp->tri_list;
+    this->triangles = cp->triangles;
 }
 
 Surface::Surface(std::vector<Vertex*>& pVertices){
@@ -46,7 +46,7 @@ Surface::Surface(Triangle& pl){
     av_normal = pl.getNormal();
     area = pl.getArea();
     this->updateMBB();
-    this->tri_list.push_back(&pl);
+    this->triangles.push_back(&pl);
 }
 
 void Surface::setZ(double value){
@@ -238,15 +238,6 @@ bool Surface::updateNormal(Checker* ch){
 
 }
 
-void Surface::updateRectArea(){
-    this->area = 0.0;
-    for (int i = 0 ; i < (int)this->sizeOfVertices() - 1 ; i += 2){
-        int e_i = i + 2 >= (int)this->sizeOfVertices()? 0 : i+2;
-        Triangle tri(this->v_list[i], this->v_list[i+1], this->v_list[e_i]);
-        area += tri.getArea();
-    }
-}
-
 bool Surface::isOpposite(Surface* sf){
     for (ll i = 0 ; i < (ll)sf->sizeOfVertices() ; i++){
         if (this->v_list[0] == sf->v_list[i]){
@@ -358,33 +349,6 @@ void Surface::removeConsecutiveDuplication(Checker* ch){
     if (removed_count) cout << removed_count << " are removed in duplication" << endl;
 }
 
-void Surface::removeHole(Checker* ch)
-{
-    int removed_count= 0;
-    bool isChagned = false;
-    do
-    {
-        isChagned = false;
-        for (ull i = 0 ; i < v_list.size() - 1 ; i++)
-        {
-            for (ull j = i + 1; j < v_list.size() ; j ++)
-            {
-                if (ch->isSameVertex(v_list[i], v_list[j]))
-                {
-                    v_list.erase(v_list.begin() + i, v_list.begin() + j);
-                    removed_count += j - i;
-                    isChagned = true;
-                    break;
-                }
-            }
-            if (isChagned) break;
-        }
-    }
-    while (isChagned);
-
-    if (removed_count) cout << removed_count << " are removed in removeHole" << endl;
-}
-
 bool Surface::hasSameNormalwith(int axis){
     return CGALCalculation::getAngle(CGALCalculation::normal_list6[axis], this->av_normal) < 0.0001 ;
 }
@@ -450,10 +414,6 @@ Plane_3 Surface::getPlaneWithLowest(){
     return Plane_3(point, this->av_normal);
 }
 
-void Surface::makePlanar(Plane_3 plane){
-
-}
-
 vector<Point_2> Surface::get2DPoints(Plane_3 plane){
     vector<Point_2> points;
 
@@ -465,6 +425,11 @@ vector<Point_2> Surface::get2DPoints(Plane_3 plane){
 
     return points;
 }
+
+void Surface::removeVertexByIndex(int id){
+    this->v_list.erase(this->v_list.begin() + id);
+}
+
 
 void Surface::changeToRectangle(){
     Plane_3 plane = getPlaneWithLowest();
@@ -599,4 +564,8 @@ void Surface::setVertices(std::vector<Vertex *> newVertices) {
 std::vector<HalfEdge *> Surface::getboundaryEdgesList() {
     this->boundaryEdges = VertexListComputation::makeHalfEdgesList(this->getVerticesList());
     return boundaryEdges;
+}
+
+void Surface::clearTriangleList() {
+    this->triangles.clear();
 }

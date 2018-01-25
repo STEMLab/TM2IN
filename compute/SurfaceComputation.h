@@ -10,13 +10,17 @@
 
 class SurfaceComputation {
 public:
+    static int intersectionCount;
+
     static void flatten(Surface *&sf);
 
     static Vertex* getCenterPoint(Surface *pSurface);
 
     static Plane_3 getPlane3(Surface *&pSurface);
 
-    static void resolveIntersection(Surface *&pSurface);
+    static bool resolveIntersection(Surface *&pSurface);
+
+    static void triangulate(Surface *&pSurface);
 };
 
 

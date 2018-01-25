@@ -1,3 +1,4 @@
+#include <compute/SurfaceComputation.h>
 #include "features/Surface.h"
 #include "logic/check.hpp"
 #include "space_maker/OnlyWallSpaceMaker.h"
@@ -72,6 +73,17 @@ vector<Surface*> OnlyWallSpaceMaker::makeSimpleSurfaces(vector<Surface*> _surfac
     return _surfacesList;
 }
 
+
+void OnlyWallSpaceMaker::updateRectArea(Surface* sf){
+    sf->area = 0.0;
+    for (int i = 0 ; i < (int)sf->sizeOfVertices() - 1 ; i += 2){
+        int e_i = i + 2 >= (int)sf->sizeOfVertices()? 0 : i+2;
+        Triangle tri(sf->v_list[i], sf->v_list[i+1], sf->v_list[e_i]);
+        sf->area += tri.getArea();
+    }
+}
+
+
 Surface* OnlyWallSpaceMaker::findFirstSurfaceSimilarWithAxis(vector<Surface*>& surfacesList, int axis){
     for (ull i = 0 ; i < surfacesList.size() ; i++){
         Surface* sf = surfacesList[i];
@@ -137,11 +149,7 @@ int OnlyWallSpaceMaker::makeSurfacesPlanarWithLowest(vector<Surface*>& surfacesL
     for (int axis = 2 ; axis >= 0  ; axis--){
         for (ull i = 0 ; i < surfacesList.size() ; i++){
             Surface* surface = surfacesList[i];
-            if (surface->hasSameNormalwith(axis) || surface->hasOppositeNormalwith(axis))
-            {
-                Plane_3 plane = surface->getPlaneWithLowest();
-                surface->makePlanar(plane);
-            }
+            SurfaceComputation::flatten(surface);
         }
     }
 
@@ -178,7 +186,7 @@ Surface* OnlyWallSpaceMaker::makeNewSurface(Segment* seg, double base, double he
     new_surface->v_list.push_back(vt2);
     new_surface->v_list.push_back(vt1);
 
-    new_surface->updateRectArea();
+    updateRectArea(new_surface);
     new_surface->updateNormal(this->checker);
     return new_surface;
 }

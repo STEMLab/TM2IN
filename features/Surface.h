@@ -19,9 +19,10 @@ public:
     ull sf_id;
     std::vector<Vertex*> v_list;
     std::vector<std::vector<Vertex*> > inner_ring;
-    std::vector<Triangle*> tri_list;
+    std::vector<Triangle*> triangles;
     std::vector<HalfEdge* > boundaryEdges;
     Vector_3 av_normal = CGAL::NULL_VECTOR;
+    Plane_3 planeRef;
 
     double min_coords[3];
     double max_coords[3];
@@ -59,19 +60,15 @@ public:
 
     void removeConsecutiveDuplication(Checker* ch);
     void removeStraight(double degree);
-    void removeHole(Checker* ch);
 
     Vector_3 getSimpleNormal();
     bool updateNormal(Checker* ch);
-    void updateRectArea();
 
     bool isValid();
-    void tagVerticesUsed();
 
     bool hasSameNormalwith(int axis);
     bool hasOppositeNormalwith(int axis);
 
-    void makePlanar(Plane_3 plane);
     Point_3 findLowestPoint();
     Plane_3 getPlaneWithLowest();
 
@@ -87,7 +84,8 @@ public:
     void setVertices(std::vector<Vertex *> vector);
 
     std::vector<HalfEdge *> getboundaryEdgesList();
-
+    void removeVertexByIndex(int id);
+    void clearTriangleList();
 private:
     std::vector<std::pair<double, double>> project_to_Plane18();
     std::vector<Point_2> get2DPoints(Plane_3 plane);

@@ -17,7 +17,7 @@ int RoomMaker::convertTriangleMeshToSpace(double degree){
             cout << "make Surfaces error" << endl;
             return -1;
         }
-        this->space_list.push_back(space);
+        this->spaceList.push_back(space);
     }
     this->vertices = this->mesh->vertices;
     return 0;
@@ -29,7 +29,7 @@ int RoomMaker::exportSpaceJSON(string f_path)
     fout.open(f_path, ios::out|ios::trunc);
 
     if (!fout) return -1;
-    if (JSONMaker::printJSON(fout, this->space_list)) return -1;
+    if (JSONMaker::printJSON(fout, this->spaceList)) return -1;
     fout.close();
     return 0;
 }

@@ -20,10 +20,6 @@
 #include <CGAL/Point_3.h>
 #include <CGAL/Kernel/global_functions.h>
 
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef Kernel::Point_3 Point_3;
-typedef Kernel::Vector_3 Vector_3;
-
 class Checker{
 private:
 

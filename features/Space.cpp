@@ -84,7 +84,7 @@ Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count,
             if (SurfacePairComputation::combine(cp, sf, checker, degree) == 0)
             {
                 printProcess(id, this->surfacesList.size(), "attachSurfaces");
-                cp->tri_list.insert(cp->tri_list.end(), sf->tri_list.begin(), sf->tri_list.end());
+                cp->triangles.insert(cp->triangles.end(), sf->triangles.begin(), sf->triangles.end());
                 checked[id] = true;
                 count++;
             }
@@ -309,12 +309,24 @@ void Space::putVerticesAndUpdateIndex(vector<Vertex *> &vertices) {
 
 void Space::resolveIntersectionINTRASurface() {
     for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
-        SurfaceComputation::resolveIntersection(this->surfacesList[sfID]);
+        SurfaceComputation::resolveIntersection(this->surfacesList[sfID]) ;
     }
 }
 
 void Space::resolveIntersectionINTERSurface() {
 
+}
+
+void Space::clearTrianglesListInSurfaces() {
+    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
+        this->surfacesList[sfID]->clearTriangleList();
+    }
+}
+
+void Space::triangulateSurfaces() {
+    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
+        SurfaceComputation::triangulate(this->surfacesList[sfID]);
+    }
 }
 
 /*
@@ -384,31 +396,31 @@ int Space::mergeTrianglesGreedy(double degree){
     return 0;
 }
 
-vector<Surface*> Space::makeSurfacesInTriangleList(vector<Triangle*>& tri_list, bool* checked, int& combined_count, double degree)
+vector<Surface*> Space::makeSurfacesInTriangleList(vector<Triangle*>& triangles, bool* checked, int& combined_count, double degree)
 {
     vector<Surface*> result_list;
-    ull size = tri_list.size();
+    ull size = triangles.size();
     cout << "\n number : " << size << endl;
 
     for (ull index = 0 ; index < size; index++)
     {
-        printProcess(index, tri_list.size(), "");
+        printProcess(index, triangles.size(), "");
         if (checked[index])
         {
             continue;
         }
         checked[index] = true ;
-        Surface* newcp = new Surface(tri_list[index]);
+        Surface* newcp = new Surface(triangles[index]);
 
         ll count = -1 ;
         while (count != 0)
         {
-            newcp = attachTriangle(tri_list, newcp, checked, count, degree);
+            newcp = attachTriangle(triangles, newcp, checked, count, degree);
             if (newcp == NULL) break;
             if (combined_count % 250 == 1 )
             {
                 cout << "\n------------ " << index << " -----------  size : " << size << endl;
-                printProcess(index, tri_list.size());
+                printProcess(index, triangles.size());
             }
             combined_count += count;
         }
@@ -418,18 +430,18 @@ vector<Surface*> Space::makeSurfacesInTriangleList(vector<Triangle*>& tri_list, 
 }
 
 
-Surface* Space::attachTriangle(vector<Triangle*> tri_list, Surface* cp, bool* checked, ll& count, double degree)
+Surface* Space::attachTriangle(vector<Triangle*> triangles, Surface* cp, bool* checked, ll& count, double degree)
 {
     count = 0;
     if (cp->av_normal == CGAL::NULL_VECTOR) return NULL;
-    for (ull id = 0 ; id < tri_list.size() ; id++)
+    for (ull id = 0 ; id < triangles.size() ; id++)
     {
         if (!checked[id])
         {
-            //if (cp->attachTriangle(tri_list[id], checker))
-            if (TriangleCalculation::attach(cp, tri_list[id], this->checker, degree))
+            //if (cp->attachTriangle(triangles[id], checker))
+            if (TriangleCalculation::attach(cp, triangles[id], this->checker, degree))
             {
-                cp->tri_list.push_back(tri_list[id]);
+                cp->triangles.push_back(triangles[id]);
                 checked[id] = true;
                 count++;
             }

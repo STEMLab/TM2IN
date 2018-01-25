@@ -11,7 +11,8 @@
 
 class HalfEdgeComputation {
 public:
-    static Line_3 getCGALLine(HalfEdge *he);
+    static Line_3 getCGALLine_3(HalfEdge *he);
+    static Segment_3 getCGALSegment_3(HalfEdge *he);
 };
 
 

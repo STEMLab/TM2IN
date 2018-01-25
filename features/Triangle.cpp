@@ -8,7 +8,6 @@ Triangle::Triangle(Vertex* pa, Vertex *pb, Vertex* pc)
     edges.push_back(new HalfEdge(pc, pa, this));
 }
 
-
 Vector_3 Triangle::getNormal()
 {
     if (this->normal != CGAL::NULL_VECTOR) return this->normal;

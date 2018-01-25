@@ -13,7 +13,7 @@ class RoomMaker
         Importer* di;
         TriangleMesh* mesh;
         vector<Vertex*> vertices;
-        vector<Space*> space_list;
+        vector<Space*> spaceList;
         GenerationWriter* generation_writer;
 
         RoomMaker(){};

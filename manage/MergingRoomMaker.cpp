@@ -1,5 +1,6 @@
 #include "manage/MergingRoomMaker.h"
 #include <compute/SurfacesListComputation.h>
+#include "compute/SurfaceComputation.h"
 #include "cgal/SurfaceHoleCover.h"
 
 using namespace std;
@@ -10,7 +11,7 @@ int MergingRoomMaker::pre_process() {
 }
 
 int MergingRoomMaker::constructSpace() {
-    assert (this->space_list.size() != 0);
+    assert (this->spaceList.size() != 0);
 
     if (this->mergeSurfaces()) return -1;
 
@@ -20,9 +21,11 @@ int MergingRoomMaker::constructSpace() {
     // remove Self-intersection in one Surface.
     if (this->resolvePlanarSurfaceProblem()) return -1;
 
-    // fill Hole
-    // if (this->fillHoleWithUsingPolyhedralSurface()) return -1;
+    // Triangulation
+    if (this->triangulateSurfaces()) return -1;
 
+    // fill Hole
+    if (this->fillHoleWithUsingPolyhedralSurface()) return -1;
     return 0;
 }
 
@@ -38,13 +41,13 @@ int MergingRoomMaker::mergeSurfaces() {
     double startDegree = this->startDegree;
     bool simplify_mode = this->simplifyLine;
     bool snap_mode = this->snapMode;
-    for (ull it = 0 ; it < this->space_list.size(); it++)
+    for (ull it = 0 ; it < this->spaceList.size(); it++)
     {
-        Space* space = this->space_list[it];
+        Space* space = this->spaceList[it];
         this->generation_writer->start(space);
 
-        // check duplicate coords
-        if (this->space_list[it]->checkDuplicateVertexInSurfaces()) return -1;
+        // check duplicate coordinates
+        if (this->spaceList[it]->checkDuplicateVertexInSurfaces()) return -1;
 
         // limit degree of same normal vector angle
         double degree = startDegree;
@@ -82,12 +85,10 @@ int MergingRoomMaker::processGenerations(Space *space, int &currentGeneration, d
     ll p_size = space->surfacesList.size();
     while (true){
         cout << "generation " << currentGeneration << ": " << space->surfacesList.size()<< endl;
-        if (space->combineSurface(degree) == -1)
-        {
+        if (space->combineSurface(degree) == -1){
             cout << "combine error" << endl;
             return -1;
         }
-
         if (p_size == (int)space->surfacesList.size()) {
             cout << "generation " << currentGeneration  << " done.. "<< endl;
             break;
@@ -104,8 +105,8 @@ int MergingRoomMaker::processGenerations(Space *space, int &currentGeneration, d
 
 int MergingRoomMaker::fillHoleWithUsingPolyhedralSurface() {
     vector<Vertex*> newVertices;
-    for (ull it = 0 ; it < this->space_list.size() ; it++){
-        vector<Vertex*> spaceVertices = SurfaceHoleCover::fillHole(this->vertices, this->space_list[it]->surfacesList);
+    for (ull it = 0 ; it < this->spaceList.size() ; it++){
+        vector<Vertex*> spaceVertices = SurfaceHoleCover::fillHole(this->vertices, this->spaceList[it]->surfacesList);
         newVertices.insert(newVertices.end(), spaceVertices.begin(), spaceVertices.end());
     }
     this->vertices = newVertices;
@@ -114,9 +115,9 @@ int MergingRoomMaker::fillHoleWithUsingPolyhedralSurface() {
 
 
 int MergingRoomMaker::rotateSurfaces(){
-    for (ull it = 0 ; it < this->space_list.size(); it++)
+    for (ull it = 0 ; it < this->spaceList.size(); it++)
     {
-        Space* space = this->space_list[it];
+        Space* space = this->spaceList[it];
         space->rotateSpaceByFloorTo00();
         if (space->match00() == -1){
             cout << "match00 error" << endl;
@@ -128,8 +129,8 @@ int MergingRoomMaker::rotateSurfaces(){
 
 int MergingRoomMaker::makeSurfacesPlanar() {
     vector<Vertex*> newVertices;
-    for (ull it = 0 ; it < this->space_list.size() ; it++){
-        Space* space = this->space_list[it];
+    for (ull it = 0 ; it < this->spaceList.size() ; it++){
+        Space* space = this->spaceList[it];
         space->makeSurfacesPlanar();
         space->putVerticesAndUpdateIndex(newVertices);
     }
@@ -137,12 +138,23 @@ int MergingRoomMaker::makeSurfacesPlanar() {
     return 0;
 }
 
+
 int MergingRoomMaker::resolvePlanarSurfaceProblem() {
-    for (ull it = 0 ; it < this->space_list.size(); it++)
+    for (ull it = 0 ; it < this->spaceList.size(); it++)
     {
-        Space* space = this->space_list[it];
+        Space* space = this->spaceList[it];
         space->resolveIntersectionINTRASurface();
         space->resolveIntersectionINTERSurface();
+        space->clearTrianglesListInSurfaces();
+    }
+    cout << SurfaceComputation::intersectionCount << endl;
+    return 0;
+}
+
+int MergingRoomMaker::triangulateSurfaces() {
+    for (ull i = 0 ; i < this->spaceList.size() ; i++){
+        Space* space = this->spaceList[i];
+        space->triangulateSurfaces();
     }
     return 0;
 }
