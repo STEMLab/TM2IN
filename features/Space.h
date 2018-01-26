@@ -20,7 +20,7 @@ class Space
 {
 public:
     Space();
-    Space(string pname, Checker* check);
+    Space(string pname);
     virtual ~Space();
 
     std::vector<Surface*> surfacesList;
@@ -28,16 +28,12 @@ public:
 
     double min_coords[3];
     double max_coords[3];
-    Checker* checker;
     string name;
     double whole_area = 0;
     SurfaceGraph* surface_graph;
 
     void setName(string _name){
         name = _name;
-    }
-    void setChecker(Checker* ch){
-        checker = ch;
     }
     int convertTrianglesToSurfaces(vector<Triangle*>& triangles);
     int checkDuplicateVertexInSurfaces();

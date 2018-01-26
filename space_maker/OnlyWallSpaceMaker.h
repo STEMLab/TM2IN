@@ -8,7 +8,6 @@ using namespace std;
 
 class OnlyWallSpaceMaker{
 public:
-    Checker* checker;
     OnlyWallSpaceMaker(){};
 
     vector<Surface*> makeSimpleSurfaces(vector<Surface*> surfacesList);
@@ -33,10 +32,12 @@ private:
     bool isIntersectIn(Segment* segment, vector<Segment*>& lines);
     static bool comparePairSegment(pair<int,Segment*>& a, pair<int,Segment*>& b);
 
-    Segment* makeSegmentLowerZ(Surface* sf, Checker* ch);
-    Segment* makeSegmentUpperZ(Surface* sf, Checker* ch);
+    Segment* makeSegmentLowerZ(Surface* sf);
+    Segment* makeSegmentUpperZ(Surface* sf);
 
     void updateRectArea(Surface* sf);
+
+    void clipping(Surface *pSurface, Surface *&pSurface1);
 };
 
 #endif // ONLYWALLSPACEMAKER_H_INCLUDED

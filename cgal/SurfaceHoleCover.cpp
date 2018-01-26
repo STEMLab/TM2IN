@@ -39,9 +39,12 @@ public:
 
         // create a cgal incremental builder
         CGAL::Polyhedron_incremental_builder_3<HDS> B( hds, true);
-        B.begin_surface( coords.size(), surfaces.size() );
-
-        cout << coords.size() << endl;
+        unsigned int triangleSize = 0;
+        for (int i = 0 ; i < surfaces.size() ; i++){
+            triangleSize += surfaces[i]->triangulation.size();
+        }
+        B.begin_surface( coords.size(), triangleSize);
+        cout << coords.size() << " , " << triangleSize << endl;
         // add the polyhedron vertices
         for( int i=0; i<(int)coords.size(); i++ ){
             B.add_vertex( Point( coords[i]->coords[0], coords[i]->coords[1], coords[i]->coords[2] ) );
@@ -49,15 +52,16 @@ public:
 
         // add the polyhedron triangles
         for( int i=0; i<(int)surfaces.size(); i++ ){
-            cout << "FACET :  " << i << endl;
-            B.begin_facet();
-            for (int j = 0 ; j < surfaces[i]->sizeOfVertices() ; j++){
-                std::cout << surfaces[i]->v_list[j]->toJSON() << endl;
-                int index = surfaces[i]->v_list[j]->index;
-                std::cout << coords[index]->coords[0] << ", "<< coords[index] -> coords[1] << endl;
-                B.add_vertex_to_facet( index );
+            cout << "FACET :  " << i <<  " , " << surfaces[i]->triangulation.size() << endl;
+            for ( int tri = 0 ; tri < (int)surfaces[i]->triangulation.size() ; tri++){
+                B.begin_facet();
+                CGAL_assertion(surfaces[i]->triangulation[tri].size() == 3);
+                for (int vt = 0 ; vt < 3; vt++){
+                    int index = surfaces[i]->triangulation[tri][vt];
+                    B.add_vertex_to_facet(index);
+                }
+                B.end_facet();
             }
-            B.end_facet();
         }
 
         // finish up the surface
@@ -68,7 +72,7 @@ public:
 vector<Vertex *> SurfaceHoleCover::fillHole (vector<Vertex*>& vertices, vector<Surface *>& surfaces) {
     Polyhedron poly;
     polyhedron_builder<HalfedgeDS> polybuilder (vertices, surfaces);
-    poly.delegate(polybuilder);
+   poly.delegate(polybuilder);
     // Incrementally fill the holes
     unsigned int nb_holes = 0;
     BOOST_FOREACH(Halfedge_handle h, halfedges(poly))

@@ -16,7 +16,9 @@ endif()
 
 FIND_PACKAGE( Boost 1.40 COMPONENTS filesystem REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
-INCLUDE_DIRECTORIES ( /usr/local/include/eigen3 )
+find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+
+# INCLUDE_DIRECTORIES ( /usr/local/include/eigen3 )
 
 add_executable(TriangleMeshToClearSolid
         features/Space.cpp
@@ -64,5 +66,4 @@ add_executable(TriangleMeshToClearSolid
         util.h cgal/SurfaceHoleCover.cpp cgal/SurfaceHoleCover.h cgal/Types.h compute/VertexListComputation.cpp compute/VertexListComputation.h compute/SurfaceComputation.cpp compute/SurfaceComputation.h compute/VertexComputation.cpp compute/VertexComputation.h compute/HalfEdgeComputation.cpp compute/HalfEdgeComputation.h)
 
 
-TARGET_LINK_LIBRARIES( TriangleMeshToClearSolid LINK_PUBLIC ${Boost_LIBRARIES} )
-
+TARGET_LINK_LIBRARIES( TriangleMeshToClearSolid LINK_PUBLIC ${Boost_LIBRARIES} Eigen3::Eigen)

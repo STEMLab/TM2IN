@@ -21,11 +21,8 @@ int MergingRoomMaker::constructSpace() {
     // remove Self-intersection in one Surface.
     if (this->resolvePlanarSurfaceProblem()) return -1;
 
-    // Triangulation
-    if (this->triangulateSurfaces()) return -1;
-
     // fill Hole
-    if (this->fillHoleWithUsingPolyhedralSurface()) return -1;
+    // if (this->fillHoleWithUsingPolyhedralSurface()) return -1;
     return 0;
 }
 
@@ -33,8 +30,6 @@ int MergingRoomMaker::constructSpace() {
 int MergingRoomMaker::finish(){
     return 0;
 }
-
-
 
 
 int MergingRoomMaker::mergeSurfaces() {
@@ -102,31 +97,6 @@ int MergingRoomMaker::processGenerations(Space *space, int &currentGeneration, d
     return 0;
 }
 
-
-int MergingRoomMaker::fillHoleWithUsingPolyhedralSurface() {
-    vector<Vertex*> newVertices;
-    for (ull it = 0 ; it < this->spaceList.size() ; it++){
-        vector<Vertex*> spaceVertices = SurfaceHoleCover::fillHole(this->vertices, this->spaceList[it]->surfacesList);
-        newVertices.insert(newVertices.end(), spaceVertices.begin(), spaceVertices.end());
-    }
-    this->vertices = newVertices;
-    return 0;
-}
-
-
-int MergingRoomMaker::rotateSurfaces(){
-    for (ull it = 0 ; it < this->spaceList.size(); it++)
-    {
-        Space* space = this->spaceList[it];
-        space->rotateSpaceByFloorTo00();
-        if (space->match00() == -1){
-            cout << "match00 error" << endl;
-            return -1;
-        }
-    }
-    return 0;
-}
-
 int MergingRoomMaker::makeSurfacesPlanar() {
     vector<Vertex*> newVertices;
     for (ull it = 0 ; it < this->spaceList.size() ; it++){
@@ -151,10 +121,32 @@ int MergingRoomMaker::resolvePlanarSurfaceProblem() {
     return 0;
 }
 
-int MergingRoomMaker::triangulateSurfaces() {
-    for (ull i = 0 ; i < this->spaceList.size() ; i++){
-        Space* space = this->spaceList[i];
+
+int MergingRoomMaker::fillHoleWithUsingPolyhedralSurface() {
+    vector<Vertex*> newVertices;
+    for (ull it = 0 ; it < this->spaceList.size() ; it++){
+        // Triangulation
+        Space* space = this->spaceList[it];
         space->triangulateSurfaces();
+
+        // fill Hole
+        vector<Vertex*> spaceVertices = SurfaceHoleCover::fillHole(this->vertices, this->spaceList[it]->surfacesList);
+        newVertices.insert(newVertices.end(), spaceVertices.begin(), spaceVertices.end());
+    }
+    this->vertices = newVertices;
+    return 0;
+}
+
+
+int MergingRoomMaker::rotateSurfaces(){
+    for (ull it = 0 ; it < this->spaceList.size(); it++)
+    {
+        Space* space = this->spaceList[it];
+        space->rotateSpaceByFloorTo00();
+        if (space->match00() == -1){
+            cout << "match00 error" << endl;
+            return -1;
+        }
     }
     return 0;
 }

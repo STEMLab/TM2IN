@@ -23,6 +23,7 @@ public:
     std::vector<HalfEdge* > boundaryEdges;
     Vector_3 av_normal = CGAL::NULL_VECTOR;
     Plane_3 planeRef;
+    std::vector<std::vector<int>> triangulation;
 
     double min_coords[3];
     double max_coords[3];
@@ -56,13 +57,13 @@ public:
     static bool compareArea(Surface* i, Surface* j);
 
     void translate(double diff[]);
-    bool checkDuplicate(Checker* ch);
+    bool checkDuplicate();
 
-    void removeConsecutiveDuplication(Checker* ch);
+    void removeConsecutiveDuplication();
     void removeStraight(double degree);
 
     Vector_3 getSimpleNormal();
-    bool updateNormal(Checker* ch);
+    bool updateNormal();
 
     bool isValid();
 
@@ -75,7 +76,6 @@ public:
     void changeToRectangle();
 
     void snapping(Surface* p_surface, double p_diff);
-    void clipping(Surface* p_surface,Checker* ch);
 
     std::vector<Vertex *> getVerticesList();
 

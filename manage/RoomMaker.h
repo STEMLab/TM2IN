@@ -9,7 +9,6 @@
 class RoomMaker
 {
     public:
-        Checker* check;
         Importer* di;
         TriangleMesh* mesh;
         vector<Vertex*> vertices;
@@ -32,7 +31,6 @@ class RoomMaker
         // int importGeneration(string f_path);
 
         void setImporter(Importer* p_di){ di = p_di; }
-        void setChecker(Checker* ch){ check = ch; }
         void setGenerationWriter(GenerationWriter * pw){generation_writer = pw;}
 
     protected:

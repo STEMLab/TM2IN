@@ -22,39 +22,35 @@
 
 class Checker{
 private:
+    Checker(){}
 
 public:
-    double threshold_vertex = 0.0;
-    double collinear_degree = 0.1;
-    double degreeOfMerging = 60.0;
+    static double threshold_vertex;
+    static double collinear_degree;
+    static double degreeOfMerging;
 
-    Checker(double vertex){
-        this->threshold_vertex = vertex;
-        this->degreeOfMerging = 60.0;
-    }
+//    Checker(double vertex){
+//        this->threshold_vertex = vertex;
+//        this->degreeOfMerging = 60.0;
+//    }
 
-    void setCollinearDegree(double p){
-        collinear_degree = p;
-    }
+    static bool isSameDouble(double a, double b);
+    static bool isSameX(Vertex* a, Vertex* b);
+    static bool isSameY(Vertex* a, Vertex* b);
+    static bool isSameZ(Vertex* a, Vertex* b);
 
-    bool isExistDuplication(std::vector<Vertex*> vertex);
+    static bool isSameX(Vertex* a, Vertex* b, Vertex* c);
+    static bool isSameY(Vertex* a, Vertex* b, Vertex* c);
+    static bool isSameZ(Vertex* a, Vertex* b, Vertex* c);
 
-    bool isSameDouble(double a, double b);
-    bool isSameX(Vertex* a, Vertex* b);
-    bool isSameY(Vertex* a, Vertex* b);
-    bool isSameZ(Vertex* a, Vertex* b);
+    static bool isSameVertex(Vertex& v1, Vertex& v2);
+    static bool isSameVertex(Vertex* v1, Vertex* v2);
 
-    bool isSameX(Vertex* a, Vertex* b, Vertex* c);
-    bool isSameY(Vertex* a, Vertex* b, Vertex* c);
-    bool isSameZ(Vertex* a, Vertex* b, Vertex* c);
+    static bool CanbeMerged(Vector_3& big, Vector_3& small, double degree);
 
-    bool isSameVertex(Vertex& v1, Vertex& v2);
-    bool isSameVertex(Vertex* v1, Vertex* v2);
+    static bool isCollinear(Vertex* origin, Vertex* v1, Vertex* v2);
 
-    bool CanbeMerged(Vector_3& big, Vector_3& small, double degree);
-
-    bool isCollinear(Vertex* origin, Vertex* v1, Vertex* v2);
-
-    int compare_vertex(Vertex* v1, Vertex* v2);
+    static int compare_vertex(Vertex* v1, Vertex* v2);
 };
+
 #endif /* check_hpp */

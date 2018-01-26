@@ -14,9 +14,8 @@ Space::Space(){
 
 }
 
-Space::Space(string pname, Checker* check)
+Space::Space(string pname)
 {
-    checker = check;
     name = pname;
 }
 
@@ -81,7 +80,7 @@ Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count,
         if (!checked[id])
         {
             Surface* sf = this->surfacesList[id];
-            if (SurfacePairComputation::combine(cp, sf, checker, degree) == 0)
+            if (SurfacePairComputation::combine(cp, sf, degree) == 0)
             {
                 printProcess(id, this->surfacesList.size(), "attachSurfaces");
                 cp->triangles.insert(cp->triangles.end(), sf->triangles.begin(), sf->triangles.end());
@@ -98,7 +97,7 @@ int Space::updateNormal(){
     for (ull i = 0 ; i < (int)this->surfacesList.size() ; i++)
     {
         Surface* surface = this->surfacesList[i];
-        if (!surface->updateNormal(this->checker))
+        if (!surface->updateNormal())
         {
             cout << surface->toJSONString() <<endl;
             cout << "Cannot make Normal" << endl;
@@ -142,7 +141,7 @@ int Space::handleDefect(double angle){
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
     {
         Surface* surface = this->surfacesList[i];
-        surface->removeConsecutiveDuplication(this->checker);
+        surface->removeConsecutiveDuplication();
         surface->removeStraight(angle);
         surface->updateMBB();
 
@@ -262,7 +261,7 @@ int Space::snapSurface(double p_diff){
             Surface* sfj = this->surfacesList[j];
             if (sfj->sizeOfVertices() < 3) continue;
             //Same Normal and isNeighbor
-            if (this->checker->CanbeMerged(sfi->av_normal, sfj->av_normal, 10.0)){
+            if (Checker::CanbeMerged(sfi->av_normal, sfj->av_normal, 10.0)){
                 sfi->snapping(sfj, p_diff);
             }
             if (sfj->sizeOfVertices() < 3 || sfi->sizeOfVertices() < 3) cout << "snapping make wrong surface---" << endl;
@@ -275,7 +274,7 @@ int Space::snapSurface(double p_diff){
 
 int Space::checkDuplicateVertexInSurfaces() {
     for (unsigned int s_i = 0 ; s_i < this->surfacesList.size() ;s_i++){
-        if (surfacesList[s_i]->checkDuplicate(this->checker)){
+        if (surfacesList[s_i]->checkDuplicate()){
             cout << "it has duplicate Vertex" << endl;
             return -1;
         }
@@ -299,7 +298,7 @@ void Space::tagID() {
 
 void Space::putVerticesAndUpdateIndex(vector<Vertex *> &vertices) {
     for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++){
-        vector<Vertex*> vt =this->surfacesList[sfID]->getVerticesList();
+        vector<Vertex*> vt = this->surfacesList[sfID]->getVerticesList();
         for (unsigned int i = 0 ; i < vt.size() ; i++){
             vt[i]->index = vertices.size();
             vertices.push_back(vt[i]);
@@ -308,9 +307,33 @@ void Space::putVerticesAndUpdateIndex(vector<Vertex *> &vertices) {
 }
 
 void Space::resolveIntersectionINTRASurface() {
-    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
-        SurfaceComputation::resolveIntersection(this->surfacesList[sfID]) ;
+    int newSurfaceCount = 0;
+    for (int sfID = 0 ; sfID < this->surfacesList.size(); ) {
+        cout << "ID : " << sfID << endl;
+
+        SurfaceComputation::snapping(this->surfacesList[sfID]);
+        SurfaceComputation::resolveIntersectionByCGAL(this->surfacesList[sfID]) ;
+/*
+        Surface* newSurface = SurfaceComputation::resolveIntersectionAndMakeNewSurface(this->surfacesList[sfID]);
+        if (newSurface != NULL) {
+            newSurfaceCount++;
+            this->surfacesList.push_back(newSurface);
+            continue;
+        }
+        Plane_3 plane = SurfaceComputation::getPlane3(this->surfacesList[sfID]);
+        SurfaceComputation::to2D(this->surfacesList[sfID], plane);
+        break;
+
+*/
+
+        if (!this->surfacesList[sfID]->isValid()){
+            this->surfacesList.erase(this->surfacesList.begin() + sfID);
+        }
+        else{
+            sfID++;
+        }
     }
+    cout << "new Surface : " << newSurfaceCount << endl;
 }
 
 void Space::resolveIntersectionINTERSurface() {
@@ -325,7 +348,7 @@ void Space::clearTrianglesListInSurfaces() {
 
 void Space::triangulateSurfaces() {
     for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
-        SurfaceComputation::triangulate(this->surfacesList[sfID]);
+        this->surfacesList[sfID]->triangulation = (SurfaceComputation::triangulate(this->surfacesList[sfID]));
     }
 }
 

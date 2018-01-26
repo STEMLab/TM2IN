@@ -124,7 +124,7 @@ int Surface::getSegmentsNumber(ll si, ll ei){
     return num;
 }
 
-bool Surface::checkDuplicate(Checker* ch){
+bool Surface::checkDuplicate(){
     vector<Vertex*> sorted_v_list(this->v_list);
 
     sort(sorted_v_list.begin(), sorted_v_list.end(), VertexComputation::greater);
@@ -191,7 +191,7 @@ vector<pair<double, double>> Surface::project_to_Plane18(){
     return points;
 }
 
-bool Surface::updateNormal(Checker* ch){
+bool Surface::updateNormal(){
     if (this->sizeOfVertices() <= 4){
         this->av_normal = getSimpleNormal();
     }
@@ -334,11 +334,11 @@ void Surface::removeStraight(double degree){
     if (removed_count) cout << removed_count << " are removed in straight" << endl;
 }
 
-void Surface::removeConsecutiveDuplication(Checker* ch){
+void Surface::removeConsecutiveDuplication(){
     ull v_size = v_list.size();
     int removed_count = 0;
     for (ull i = 0 ; i < v_size - 1; i++){
-        if (ch->isSameVertex(v_list[i] , v_list[i+1])){
+        if (Checker::isSameVertex(v_list[i] , v_list[i+1])){
             v_list.erase(v_list.begin() + i + 1);
             i--;
             v_size -= 1;
@@ -531,22 +531,6 @@ void Surface::snapping(Surface* p_surface, double p_diff){
         */
     }
 
-}
-
-void Surface::clipping(Surface* p_surface, Checker* ch){
-    int num = 0;
-    for (ull i = 0 ; i < this->sizeOfVertices() ; i++){
-        Vertex* vi = this->v_list[i];
-        for (ull j = 0 ; j < p_surface->sizeOfVertices() ; j++){
-            Vertex* vj = p_surface->v_list[j];
-            if (vi != vj && ch->isSameVertex(vi, vj)){
-                num++;
-                delete vi;
-                this->v_list[i] = p_surface->v_list[j];
-                break;
-            }
-        }
-    }
 }
 
 vector<Vertex *> Surface::getVerticesList() {

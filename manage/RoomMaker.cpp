@@ -12,7 +12,6 @@ int RoomMaker::convertTriangleMeshToSpace(double degree){
     for (int space_id = 0 ; space_id < this->mesh->triangles.size() ; space_id++){
         Space* space = new Space();
         space->setName(this->mesh->triangles[space_id].first);
-        space->setChecker(this->check);
         if (space->convertTrianglesToSurfaces(this->mesh->triangles[space_id].second)){
             cout << "make Surfaces error" << endl;
             return -1;

@@ -2,7 +2,7 @@
 #include "VertexComputation.h"
 #include <stdlib.h>
 
-int SurfacePairComputation::combine(Surface* origin, Surface* piece, Checker* checker, double degree){
+int SurfacePairComputation::combine(Surface* origin, Surface* piece, double degree){
      // check Polygon is in near polygon or not
     if (!isNeighbor(origin, piece)) return 1;
 
@@ -40,7 +40,7 @@ int SurfacePairComputation::combine(Surface* origin, Surface* piece, Checker* ch
 
     }
     else{
-        if (!checker->CanbeMerged(origin->av_normal, piece->av_normal, degree)) {
+        if (!Checker::CanbeMerged(origin->av_normal, piece->av_normal, degree)) {
             return 1;
         }
     }
@@ -70,7 +70,7 @@ int SurfacePairComputation::combine(Surface* origin, Surface* piece, Checker* ch
     origin->area += piece->area;
     origin->setMBB(piece);
 
-    if (origin->checkDuplicate(checker)){
+    if (origin->checkDuplicate()){
         cout << "Duplicate" << endl;
         exit(-1);
     }

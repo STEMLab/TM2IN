@@ -12,17 +12,41 @@
 using namespace std;
 
 void test(){
-    Point_3 p1(-4.167291, 3.42887, -0.936589);
-    Point_3 p2(-4.188357, 3.580666, -0.941703);
-    Point_3 p3(-4.185606, 3.592505, -0.942622);
+    Point_2 p5(7.840458, -3.34409);
+    Point_2 p6(7.997811, -3.248648);
+    Point_2 p7(9.161979, -2.969505);
 
-    Vector_3 vc1(p1,p2);
-    Vector_3 vc2(p1,p3);
-    cout << CGALCalculation::getAngle(vc1, vc2) << endl;
+    Point_2 p42(8.031578, -3.228158);
+    Point_2 p43(8.027593, -3.241511);
+    Point_2 p44(7.812693, -3.293034);
+
+    Segment_2 seg1(p6 ,p7);
+    Segment_2 seg2(p43, p44);
+
+    cout << (Checker::threshold_vertex > CGAL::squared_distance(p43 , seg1)) << endl;
+
+    cout << CGAL::do_intersect(seg1, seg2) << endl;
+    if (CGAL::do_intersect(seg1, seg2)){
+        CGAL::cpp11::result_of<Intersect_2(Segment_2, Segment_2)>::type
+                result = CGAL::intersection(seg1, seg2);
+        if (result){
+            if (const Point_2* p = boost::get<Point_2>(&*result)){
+                std::cout << *p << endl;
+                cout << (*p == p43) << endl;
+            }
+            else{
+                const Segment_2* sg = boost::get<Segment_2>(&*result);
+                cout << sg << endl;
+            }
+        }
+    }
 }
 
 int main(int argc, const char * argv[]) {
-    string version = "1.0.1.4";
+//    test();
+//    return 0;
+
+    string version = "1.0.1.5";
     cout << version << endl;
 
     string projectPath = "/home/dongmin/dev/TriMeshToIndoor/";
@@ -45,7 +69,7 @@ int main(int argc, const char * argv[]) {
 
     RoomMaker* manager = new MergingRoomMaker();
     manager->setImporter(new TVRImporter());
-    manager->setChecker(new Checker(0.0000001));
+    Checker::threshold_vertex = 0.0000001;
 
     cout << "Load TVR File.." << endl;
     if (manager->importMesh( (string(resourcePath) + fileName + ".tvr").c_str()) ){

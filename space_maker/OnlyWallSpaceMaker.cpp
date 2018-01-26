@@ -187,7 +187,7 @@ Surface* OnlyWallSpaceMaker::makeNewSurface(Segment* seg, double base, double he
     new_surface->v_list.push_back(vt1);
 
     updateRectArea(new_surface);
-    new_surface->updateNormal(this->checker);
+    new_surface->updateNormal();
     return new_surface;
 }
 
@@ -206,7 +206,7 @@ int OnlyWallSpaceMaker::makeClosedWall(vector<Surface*>& surfacesList){
     this->clippingSurfaces(walls);
 
     for (ull i = 0 ; i < walls.size() ; i++){
-        walls_2d.push_back(makeSegmentUpperZ(walls[i], this->checker));
+        walls_2d.push_back(makeSegmentUpperZ(walls[i] ));
     }
     this->cutIntersection(walls_2d);
 
@@ -291,7 +291,7 @@ int OnlyWallSpaceMaker::makeFloorAndCeiling(vector<Surface*>& surfacesList){
 
     vector<Segment*> walls_2d;
     for (ull i = 0 ; i < surfacesList.size() ; i++){
-        walls_2d.push_back(makeSegmentUpperZ(surfacesList[i], this->checker));
+        walls_2d.push_back(makeSegmentUpperZ(surfacesList[i]));
     }
 
     int line_index = 0;
@@ -326,7 +326,7 @@ int OnlyWallSpaceMaker::makeFloorAndCeiling(vector<Surface*>& surfacesList){
     for (int i = 0 ; i < (int)ordered.size() ; i++){
         int order = ordered[i];
         ceil->v_list.push_back(walls_2d[order]->first);
-        floor->v_list.push_back(makeSegmentLowerZ(surfacesList[order], this->checker)->first);
+        floor->v_list.push_back(makeSegmentLowerZ(surfacesList[order])->first);
     }
 
     reverse(floor->v_list.begin(), floor->v_list.end());
@@ -365,7 +365,8 @@ vector<Surface*> OnlyWallSpaceMaker::clippingSurfaces(vector<Surface*>& walls){
     for (ull i = 0 ; i < walls.size() - 1; i++){
         Surface* surface = walls[i];
         for (ull j = i + 1 ; j < walls.size(); j++){
-            surface->clipping(walls[j], this->checker);
+            //surface->clipping(walls[j]);
+            clipping(surface, walls[j]);
         }
         assert(surface->isValid());
     }
@@ -448,13 +449,13 @@ vector<Segment*> OnlyWallSpaceMaker::cutIntersection(vector<Segment*>& walls_2d)
                 }
                 else{ // cut
                     Point_2 point = Segment::getIntersection2D(walls_2d[i], walls_2d[j]);
-                    if (checker->isSameDouble(point.x(), walls_2d[i]->second->x())
-                        && checker->isSameDouble(point.y(), walls_2d[i]->second->y())){
+                    if (Checker::isSameDouble(point.x(), walls_2d[i]->second->x())
+                        && Checker::isSameDouble(point.y(), walls_2d[i]->second->y())){
                         delete walls_2d[j]->first;
                         walls_2d[j]->first = walls_2d[i]->second;
                     }
-                    else if (checker->isSameDouble(point.x(), walls_2d[j]->second->x())
-                        && checker->isSameDouble(point.y(), walls_2d[j]->second->y())){
+                    else if (Checker::isSameDouble(point.x(), walls_2d[j]->second->x())
+                        && Checker::isSameDouble(point.y(), walls_2d[j]->second->y())){
                         delete walls_2d[i]->first;
                         walls_2d[i]->first = walls_2d[j]->second;
                     }
@@ -500,7 +501,7 @@ bool OnlyWallSpaceMaker::comparePairSegment(pair<int,Segment*>& a, pair<int,Segm
     return a.second->getSquaredDistance() < b.second->getSquaredDistance();
 }
 
-Segment* OnlyWallSpaceMaker::makeSegmentLowerZ(Surface* sf, Checker* ch){
+Segment* OnlyWallSpaceMaker::makeSegmentLowerZ(Surface* sf){
     Vertex* ft, *ed;
 
     //Only For Rectangle
@@ -509,7 +510,7 @@ Segment* OnlyWallSpaceMaker::makeSegmentLowerZ(Surface* sf, Checker* ch){
     }
 
     for (ull i = 0 ; i < 2; i++){
-        if (ch -> isSameZ(sf->v_list[i], sf->v_list[i+1])){
+        if (Checker:: isSameZ(sf->v_list[i], sf->v_list[i+1])){
             if (sf->v_list[i+2]->z() > sf->v_list[i+1]->z()){
                 ft = sf->v_list[i];
                 ed = sf->v_list[i+1];
@@ -533,7 +534,7 @@ Segment* OnlyWallSpaceMaker::makeSegmentLowerZ(Surface* sf, Checker* ch){
     return new Segment(ft, ed);
 }
 
-Segment* OnlyWallSpaceMaker::makeSegmentUpperZ(Surface* sf, Checker* ch){
+Segment* OnlyWallSpaceMaker::makeSegmentUpperZ(Surface* sf){
     Vertex* ft, *ed;
 
     //Only For Rectangle
@@ -542,7 +543,7 @@ Segment* OnlyWallSpaceMaker::makeSegmentUpperZ(Surface* sf, Checker* ch){
     }
 
     for (ull i = 0 ; i < 2; i++){
-        if (ch -> isSameZ(sf->v_list[i], sf->v_list[i+1])){
+        if (Checker::isSameZ(sf->v_list[i], sf->v_list[i+1])){
             if (sf->v_list[i+2]->z() > sf->v_list[i+1]->z()){
                 if (i == 0){
                     ft = sf->v_list[2];
@@ -564,4 +565,20 @@ Segment* OnlyWallSpaceMaker::makeSegmentUpperZ(Surface* sf, Checker* ch){
     }
 
     return new Segment(ft, ed);
+}
+
+void OnlyWallSpaceMaker::clipping(Surface *pSurface, Surface *&pSurface1) {
+    int num = 0;
+    for (ull i = 0 ; i < pSurface->sizeOfVertices() ; i++){
+        Vertex* vi = pSurface->v_list[i];
+        for (ull j = 0 ; j < pSurface1->sizeOfVertices() ; j++){
+            Vertex* vj = pSurface1->v_list[j];
+            if (vi != vj && Checker::isSameVertex(vi, vj)){
+                num++;
+                delete vi;
+                pSurface->v_list[i] = pSurface1->v_list[j];
+                break;
+            }
+        }
+    }
 }
