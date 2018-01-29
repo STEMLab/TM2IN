@@ -22,6 +22,9 @@ int MergingRoomMaker::constructSpace() {
     if (this->resolvePlanarSurfaceProblem()) return -1;
 
     // fill Hole
+    if (this->triangulation()) return -1;
+    if (this->updateVertexList()) return -1;
+
     // if (this->fillHoleWithUsingPolyhedralSurface()) return -1;
     return 0;
 }
@@ -97,12 +100,21 @@ int MergingRoomMaker::processGenerations(Space *space, int &currentGeneration, d
     return 0;
 }
 
+int MergingRoomMaker::updateVertexList(){
+    vector<Vertex*> newVertices;
+    for (ull it = 0 ; it < this->spaceList.size() ; it++){
+        Space* space = this->spaceList[it];
+        space->putVerticesAndUpdateIndex(newVertices);
+    }
+    this->vertices = newVertices;
+    return 0;
+}
+
 int MergingRoomMaker::makeSurfacesPlanar() {
     vector<Vertex*> newVertices;
     for (ull it = 0 ; it < this->spaceList.size() ; it++){
         Space* space = this->spaceList[it];
         space->makeSurfacesPlanar();
-        space->putVerticesAndUpdateIndex(newVertices);
     }
     this->vertices = newVertices;
     return 0;
@@ -125,12 +137,9 @@ int MergingRoomMaker::resolvePlanarSurfaceProblem() {
 int MergingRoomMaker::fillHoleWithUsingPolyhedralSurface() {
     vector<Vertex*> newVertices;
     for (ull it = 0 ; it < this->spaceList.size() ; it++){
-        // Triangulation
-        Space* space = this->spaceList[it];
-        space->triangulateSurfaces();
-
+        Space *space = this->spaceList[it];
         // fill Hole
-        vector<Vertex*> spaceVertices = SurfaceHoleCover::fillHole(this->vertices, this->spaceList[it]->surfacesList);
+        vector<Vertex*> spaceVertices = SurfaceHoleCover::fillHole(this->vertices, space->surfacesList);
         newVertices.insert(newVertices.end(), spaceVertices.begin(), spaceVertices.end());
     }
     this->vertices = newVertices;
@@ -147,6 +156,15 @@ int MergingRoomMaker::rotateSurfaces(){
             cout << "match00 error" << endl;
             return -1;
         }
+    }
+    return 0;
+}
+
+int MergingRoomMaker::triangulation() {
+    for (ull it = 0 ; it < this->spaceList.size() ; it++) {
+        Space *space = this->spaceList[it];
+        // Triangulation
+        space->triangulateSurfaces();
     }
     return 0;
 }

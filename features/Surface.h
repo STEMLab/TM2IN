@@ -24,7 +24,7 @@ public:
     Plane_3 planeRef;
 
     std::vector<Triangle*> triangles;
-    std::vector<std::vector<int>> IndicesOfTriangulation;
+    std::vector<std::vector<int>> globalIndicesOfTriangulation;
 
     double min_coords[3];
     double max_coords[3];

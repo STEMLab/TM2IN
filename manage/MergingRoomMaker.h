@@ -35,6 +35,10 @@ private:
     int makeSurfacesPlanar();
 
     int resolvePlanarSurfaceProblem();
+
+    int updateVertexList();
+
+    int triangulation();
 };
 
 #endif // RectRoomMaker_H

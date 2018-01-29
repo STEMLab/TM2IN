@@ -121,7 +121,7 @@ int main(int argc, const char * argv[]) {
     string surfaceJSON = string(resultPath) + fileName + "/" + version + "/" + "surfaces.json";
     manager->exportSpaceJSON(surfaceJSON);
 
-    string triangulationJSON = string(resultPath) + fileName + "/" + version + "/" + "IndicesOfTriangulation.json";
+    string triangulationJSON = string(resultPath) + fileName + "/" + version + "/" + "globalIndicesOfTriangulation.json";
     manager->exportTriangulationJSON(triangulationJSON);
 
     cout << "make solid?(y or n)" << endl;

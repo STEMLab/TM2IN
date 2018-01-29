@@ -20,7 +20,7 @@ public:
 
     static void resolveIntersectionByCGAL(Surface *&pSurface);
 
-    static std::vector<std::vector<int>> triangulate(Surface *&pSurface);
+    static void triangulate(Surface *&pSurface);
 
     static Surface* resolveIntersectionAndMakeNewSurface(Surface *&pSurface);
 

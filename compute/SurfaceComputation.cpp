@@ -75,35 +75,6 @@ void SurfaceComputation::resolveIntersectionByCGAL(Surface *&pSurface) {
     return;
 }
 
-vector<vector<int>> SurfaceComputation::triangulate(Surface *&pSurface) {
-    std::vector<Vertex*> vertexList = pSurface->getVerticesList();
-    vector<pair<D_Point, unsigned int>> points;
-    for (int i = 0 ; i < vertexList.size() ; i++){
-        Plane_3 pl = pSurface->planeRef;
-        Point_2 point2d = pl.to_2d(VertexComputation::getCGALPoint(vertexList[i]));
-        points.push_back(make_pair(D_Point(point2d.x(), point2d.y()), vertexList[i]->index));
-    }
-
-    Delaunay T;
-    T.insert(points.begin(),points.end());
-    CGAL_assertion(T.number_of_vertices() == vertexList.size());
-
-    vector<vector<int>> result;
-    for(Delaunay::Finite_faces_iterator fit = T.finite_faces_begin();
-        fit != T.finite_faces_end(); ++fit)
-    {
-        vector<int> temp;
-        Delaunay::Face_handle face = fit;
-
-        for (int i = 0 ; i < 3 ; i++){
-            temp.push_back(face->vertex(i)->info());
-        }
-
-        result.push_back(temp);
-    }
-    return result;
-}
-
 Surface * SurfaceComputation::resolveIntersectionAndMakeNewSurface(Surface *&pSurface) {
     bool hasIntersect = true;
     while (hasIntersect){
@@ -172,15 +143,6 @@ Surface * SurfaceComputation::resolveIntersectionAndMakeNewSurface(Surface *&pSu
     return NULL;
 }
 
-std::vector<Point_2> SurfaceComputation::to2D(Surface *&pSurface, Plane_3 plane) {
-    std::vector<Vertex*> vertexList = pSurface->getVerticesList();
-    std::vector<Point_2> pointList;
-    for (int i = 0 ; i < vertexList.size() ; i++){
-        Point_2 point2d = plane.to_2d(VertexComputation::getCGALPoint(vertexList[i]));
-        pointList.push_back(point2d);
-    }
-    return pointList;
-}
 
 void SurfaceComputation::snapping(Surface *&pSurface) {
     std::vector<Vertex*> vertexList = pSurface->getVerticesList();
@@ -205,4 +167,48 @@ void SurfaceComputation::snapping(Surface *&pSurface) {
         }
 
     }
+}
+
+
+std::vector<Point_2> SurfaceComputation::to2D(Surface *&pSurface, Plane_3 plane) {
+    std::vector<Vertex*> vertexList = pSurface->getVerticesList();
+    std::vector<Point_2> pointList;
+    for (int i = 0 ; i < vertexList.size() ; i++){
+        Point_2 point2d = plane.to_2d(VertexComputation::getCGALPoint(vertexList[i]));
+        pointList.push_back(point2d);
+    }
+    return pointList;
+}
+
+
+void SurfaceComputation::triangulate(Surface *&pSurface) {
+    std::vector<Vertex*> vertexList = pSurface->getVerticesList();
+    vector<pair<D_Point, int > > points;
+    for (int i = 0 ; i < vertexList.size() ; i++){
+        Plane_3 pl = pSurface->planeRef;
+        Point_2 point2d = pl.to_2d(VertexComputation::getCGALPoint(vertexList[i]));
+        points.push_back(make_pair(D_Point(point2d.x(), point2d.y()), i));
+    }
+
+    Delaunay T;
+    T.insert(points.begin(),points.end());
+    CGAL_assertion(T.number_of_vertices() == vertexList.size());
+
+    vector<Triangle* > triangles;
+    for(Delaunay::Finite_faces_iterator fit = T.finite_faces_begin();
+        fit != T.finite_faces_end(); ++fit)
+    {
+        vector<Vertex*> localTemp;
+        Delaunay::Face_handle face = fit;
+
+        for (int i = 0 ; i < 3 ; i++){
+            localTemp.push_back(vertexList[face->vertex(i)->info()]);
+        }
+
+        triangles.push_back(new Triangle(localTemp));
+    }
+
+    pSurface->triangles = triangles;
+
+    return;
 }
