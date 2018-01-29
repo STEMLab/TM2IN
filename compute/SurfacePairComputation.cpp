@@ -14,14 +14,14 @@ int SurfacePairComputation::combine(Surface* origin, Surface* piece, double degr
     ll piece_size = piece->sizeOfVertices();
 
     if (!findShareVertex(piece->v_list, origin->v_list, middle_i, middle_j)) return 1;
-    if (CGALCalculation::getAngle(origin->av_normal, piece->av_normal) > 179.999999){
+    if (CGALCalculation::getAngle(origin->normal, piece->normal) > 179.999999){
         return 1;
     }
     /**< [start_i, end_i], [end_j, start_j] */
     if (findStartAndEnd(piece->v_list, origin->v_list, middle_i, middle_j, start_i, end_i, start_j, end_j)){
         cout << "\n" << origin->toJSONString() << endl;
         cout << "\n" << piece->toJSONString() <<endl;
-        cout << CGALCalculation::getAngle(origin->av_normal, piece->av_normal)  << endl;
+        cout << CGALCalculation::getAngle(origin->normal, piece->normal)  << endl;
         return 1;
     }
 
@@ -40,7 +40,7 @@ int SurfacePairComputation::combine(Surface* origin, Surface* piece, double degr
 
     }
     else{
-        if (!Checker::CanbeMerged(origin->av_normal, piece->av_normal, degree)) {
+        if (!Checker::CanbeMerged(origin->normal, piece->normal, degree)) {
             return 1;
         }
     }
@@ -66,7 +66,7 @@ int SurfacePairComputation::combine(Surface* origin, Surface* piece, double degr
 
     origin->v_list.clear();
     origin->v_list = new_v_list;
-    origin->av_normal = origin->av_normal + piece->av_normal;
+    origin->normal = origin->normal + piece->normal;
     origin->area += piece->area;
     origin->setMBB(piece);
 
@@ -239,7 +239,7 @@ int SurfacePairComputation::simplifyLineSegment(Surface* origin, Surface* piece,
     }
 
     if (!hasTwoShareLine) return 1;
-    if (CGALCalculation::getAngle(origin->av_normal, piece->av_normal) > 179.999999){
+    if (CGALCalculation::getAngle(origin->normal, piece->normal) > 179.999999){
         return 1;
     }
 

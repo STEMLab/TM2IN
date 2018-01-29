@@ -87,7 +87,7 @@ void OnlyWallSpaceMaker::updateRectArea(Surface* sf){
 Surface* OnlyWallSpaceMaker::findFirstSurfaceSimilarWithAxis(vector<Surface*>& surfacesList, int axis){
     for (ull i = 0 ; i < surfacesList.size() ; i++){
         Surface* sf = surfacesList[i];
-        if (CGALCalculation::findNormalType6(sf->av_normal) == axis){
+        if (CGALCalculation::findNormalType6(sf->normal) == axis){
             return sf;
         }
     }
@@ -130,7 +130,7 @@ int OnlyWallSpaceMaker::removeOppositeSurfaces(vector<Surface*>& surfacesList){
             Surface* isf = surfacesList[i];
             for (ull j = i + 1; j < surfacesList.size() ; j++){
                 Surface* jsf = surfacesList[j];
-                if ( CGALCalculation::getAngle(isf->av_normal, jsf->av_normal) > 179.99){
+                if ( CGALCalculation::getAngle(isf->normal, jsf->normal) > 179.99){
                     if ( isf->isAdjacent(jsf) ){
                         surfacesList.erase(surfacesList.begin() + j);
                         surfacesList.erase(surfacesList.begin() + i);
@@ -163,8 +163,8 @@ int OnlyWallSpaceMaker::makeWallRectangle(vector<Surface*>& surfacesList){
     for (int axis = 1 ; axis >= 0  ; axis--){
         for (ull i = 0 ; i < surfacesList.size() ; i++){
             Surface* surface = surfacesList[i];
-            if (CGALCalculation::getAngle(CGALCalculation::normal_list6[axis], surface->av_normal) < 0.0001 ||
-                    CGALCalculation::getAngle(CGALCalculation::normal_list6[axis + 3], surface->av_normal) < 0.0001)
+            if (CGALCalculation::getAngle(CGALCalculation::normal_list6[axis], surface->normal) < 0.0001 ||
+                    CGALCalculation::getAngle(CGALCalculation::normal_list6[axis + 3], surface->normal) < 0.0001)
             {
                 updateRectArea(surface);
             }
@@ -287,8 +287,8 @@ int OnlyWallSpaceMaker::makeFloorAndCeiling(vector<Surface*>& surfacesList){
     cout << "--------make Floor and Ceiling -------" << endl;
     Surface* ceil = new Surface();
     Surface* floor = new Surface();
-    ceil->av_normal = CGALCalculation::normal_list6[5];
-    floor->av_normal = CGALCalculation::normal_list6[2];
+    ceil->normal = CGALCalculation::normal_list6[5];
+    floor->normal = CGALCalculation::normal_list6[2];
 
     vector<Segment*> walls_2d;
     for (ull i = 0 ; i < surfacesList.size() ; i++){
@@ -345,8 +345,8 @@ int OnlyWallSpaceMaker::removeFloorAndCeiling(vector<Surface*>& surfacesList){
     int remain_count = 0;
     for (ull i = 0 ; i < surfacesList.size() ; ){
         Surface* sf = surfacesList[i];
-        if (CGALCalculation::getAngle(CGALCalculation::normal_list6[axis], sf->av_normal) < 0.0001 ||
-           CGALCalculation::getAngle(CGALCalculation::normal_list6[axis + 3], sf->av_normal) < 0.0001){
+        if (CGALCalculation::getAngle(CGALCalculation::normal_list6[axis], sf->normal) < 0.0001 ||
+           CGALCalculation::getAngle(CGALCalculation::normal_list6[axis + 3], sf->normal) < 0.0001){
             delete sf;
             surfacesList.erase(surfacesList.begin() + i);
             remove_count++;
@@ -379,8 +379,8 @@ vector<Surface*> OnlyWallSpaceMaker::getWallsAndRemoveInSurfacesList(vector<Surf
     int axis = 2;
     for (ull i = 0 ; i < surfacesList.size() ; ){
         Surface* surface = surfacesList[i];
-        if (CGALCalculation::getAngle(CGALCalculation::normal_list6[axis], surface->av_normal) < 0.0001 ||
-                CGALCalculation::getAngle(CGALCalculation::normal_list6[axis + 3], surface->av_normal) < 0.0001)
+        if (CGALCalculation::getAngle(CGALCalculation::normal_list6[axis], surface->normal) < 0.0001 ||
+                CGALCalculation::getAngle(CGALCalculation::normal_list6[axis + 3], surface->normal) < 0.0001)
         {
             delete surface;
             surfacesList.erase(surfacesList.begin() + i);

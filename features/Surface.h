@@ -20,7 +20,7 @@ public:
     std::vector<Vertex*> v_list;
     std::vector<std::vector<Vertex*> > inner_ring;
     std::vector<HalfEdge* > boundaryEdges;
-    Vector_3 av_normal = CGAL::NULL_VECTOR;
+    Vector_3 normal = CGAL::NULL_VECTOR;
     Plane_3 planeRef;
 
     std::vector<Triangle*> triangles;

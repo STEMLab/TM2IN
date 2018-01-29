@@ -74,7 +74,7 @@ int Space::combineSurface(double degree){
 Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count, double degree)
 {
     count = 0;
-    if (cp->av_normal == CGAL::NULL_VECTOR) return NULL;
+    if (cp->normal == CGAL::NULL_VECTOR) return NULL;
     for (ull id = start ; id < this->surfacesList.size() ; id++)
     {
         if (!checked[id])
@@ -220,13 +220,13 @@ void Space::rotateSpaceByFloorTo00(){
     //floor->makePlanar(plane);
 
     Vector_3 vector_z(0,0,1);
-    double angle = -CGALCalculation::getAngle(floor->av_normal, vector_z);
+    double angle = -CGALCalculation::getAngle(floor->normal, vector_z);
     if (angle == 0.0){
         cout << "angle is 0.0" << endl;
         return;
     }
 
-    Vector_3 unit_vector = CGAL::cross_product(vector_z, floor->av_normal);
+    Vector_3 unit_vector = CGAL::cross_product(vector_z, floor->normal);
     unit_vector = unit_vector / sqrt(unit_vector.squared_length());
     cout << "rotate " << angle << ", " << unit_vector.squared_length()<< endl;
     assert(unit_vector.squared_length() < 1.000001 && unit_vector.squared_length() > 0.99999);
@@ -261,7 +261,7 @@ int Space::snapSurface(double p_diff){
             Surface* sfj = this->surfacesList[j];
             if (sfj->sizeOfVertices() < 3) continue;
             //Same Normal and isNeighbor
-            if (Checker::CanbeMerged(sfi->av_normal, sfj->av_normal, 10.0)){
+            if (Checker::CanbeMerged(sfi->normal, sfj->normal, 10.0)){
                 // sfi->snapping(sfj, p_diff);
             }
             if (sfj->sizeOfVertices() < 3 || sfi->sizeOfVertices() < 3) cout << "snapping make wrong surface---" << endl;

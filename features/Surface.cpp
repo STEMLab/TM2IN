@@ -22,7 +22,7 @@ using namespace std;
 
 Surface::Surface(Surface* cp){
     this->v_list = cp->v_list;
-    this->av_normal = cp->av_normal;
+    this->normal = cp->normal;
     for (int i = 0 ; i < 3 ; i++){
         this->max_coords[i] = cp->max_coords[i];
         this->min_coords[i] = cp->min_coords[i];
@@ -43,7 +43,7 @@ Surface::Surface(Triangle& pl){
         v_list.push_back(v[i]);
     }
 
-    av_normal = pl.getNormal();
+    normal = pl.getNormal();
     area = pl.getArea();
     this->updateMBB();
     this->triangles.push_back(&pl);
@@ -133,9 +133,9 @@ string Surface::toJSONString(){
     ret.append(" \n \"area\" : " + to_string(area) );
     ret.append(" \n, \"id\" : " + to_string(sf_id) );
     ret.append(" \n, \"normal\" : [");
-    ret.append(to_string(this->av_normal.x()) + ", ");
-    ret.append(to_string(this->av_normal.y()) + ", ");
-    ret.append(to_string(this->av_normal.z()));
+    ret.append(to_string(this->normal.x()) + ", ");
+    ret.append(to_string(this->normal.y()) + ", ");
+    ret.append(to_string(this->normal.z()));
     ret.append("], \n");
     ret.append(" \"coord\" : [");
     for (unsigned int i = 0 ; i < this->sizeOfVertices() ; i++){
@@ -179,8 +179,8 @@ Vector_3 Surface::getSimpleNormal(){
 
 vector<pair<double, double>> Surface::project_to_Plane18(){
     vector<pair<double, double>> points;
-    int type = CGALCalculation::findNormalType18(this->av_normal);
-    if (this->av_normal == CGAL::NULL_VECTOR){
+    int type = CGALCalculation::findNormalType18(this->normal);
+    if (this->normal == CGAL::NULL_VECTOR){
         exit(-1);
     }
     Plane_3 plane = Plane_3(VertexComputation::getCGALPoint(this->v_list[0]), CGALCalculation::normal_list18[type]);
@@ -195,11 +195,11 @@ vector<pair<double, double>> Surface::project_to_Plane18(){
 
 bool Surface::updateNormal(){
     if (this->sizeOfVertices() <= 4){
-        this->av_normal = getSimpleNormal();
+        this->normal = getSimpleNormal();
     }
-    this->av_normal = CGALCalculation::normal_list18[CGALCalculation::findNormalType18(this->av_normal)];
-    this->av_normal = this->av_normal / sqrt(this->av_normal.squared_length());
-    this->av_normal = this->av_normal * this->area * AREA_CONST;
+    this->normal = CGALCalculation::normal_list18[CGALCalculation::findNormalType18(this->normal)];
+    this->normal = this->normal / sqrt(this->normal.squared_length());
+    this->normal = this->normal * this->area * AREA_CONST;
 //
 //    else{
 //        vector<pair<double, double>> pointsInPlane = to2DPoints();
@@ -231,9 +231,9 @@ bool Surface::updateNormal(){
 //
 //    }
 
-    if (this->av_normal == CGAL::NULL_VECTOR){
+    if (this->normal == CGAL::NULL_VECTOR){
         cout << "NULLVECTOR" << endl;
-        assert(this->av_normal != CGAL::NULL_VECTOR);
+        assert(this->normal != CGAL::NULL_VECTOR);
     }
 
     return true;
@@ -367,7 +367,7 @@ bool Surface::isValid(){
 
 Point_3 Surface::findLowestPoint(){
     Vertex* cent = SurfaceComputation::getCenterPoint(this);
-    Plane_3 plane(VertexComputation::getCGALPoint(cent), this->av_normal);
+    Plane_3 plane(VertexComputation::getCGALPoint(cent), this->normal);
     delete cent;
 
     double max_dist = -1.0;
@@ -387,7 +387,7 @@ Point_3 Surface::findLowestPoint(){
 
 Plane_3 Surface::getPlaneWithLowest(){
     Point_3 point = findLowestPoint();
-    return Plane_3(point, this->av_normal);
+    return Plane_3(point, this->normal);
 }
 
 vector<Point_2> Surface::get2DPoints(Plane_3 plane){

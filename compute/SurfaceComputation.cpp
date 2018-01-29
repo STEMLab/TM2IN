@@ -6,6 +6,7 @@
 #include "VertexComputation.h"
 #include "compute/VertexListComputation.h"
 #include "HalfEdgeComputation.h"
+#include "cgal/PolygonComputation.h"
 
 
 void SurfaceComputation::flatten(Surface *&sf) {
@@ -24,7 +25,7 @@ void SurfaceComputation::flatten(Surface *&sf) {
     assert(newVertices.size() == sf->sizeOfVertices());
     sf->setVertices(newVertices);
     sf->planeRef = plane;
-    sf->av_normal = plane.orthogonal_vector();
+    sf->normal = plane.orthogonal_vector();
 }
 
 Vertex* SurfaceComputation::getCenterPoint(Surface *pSurface) {
@@ -33,7 +34,15 @@ Vertex* SurfaceComputation::getCenterPoint(Surface *pSurface) {
 }
 
 Plane_3 SurfaceComputation::getPlane3(Surface *&pSurface) {
-    return VertexListComputation::getPlane3WithPCA(pSurface->getVerticesList());
+    Plane_3 plane = VertexListComputation::getPlane3WithPCA(pSurface->getVerticesList());
+    Vector_3 normal = pSurface->normal;
+    Vector_3 planeVector = plane.orthogonal_vector();
+    if (pSurface->normal == CGAL::NULL_VECTOR) return plane;
+    if (CGALCalculation::getAngle(planeVector, normal) > 90){
+        return plane.opposite();
+    }
+    else
+        return plane;
 }
 
 int SurfaceComputation::intersectionCount = 0;
@@ -182,10 +191,33 @@ std::vector<Point_2> SurfaceComputation::to2D(Surface *&pSurface, Plane_3 plane)
 
 void SurfaceComputation::triangulate(Surface *&pSurface) {
     std::vector<Vertex*> vertexList = pSurface->getVerticesList();
+
+    // convert 3D point to 2D
+    cout << "\n\n ===== to 2D ======" << endl;
+    vector<Point_2> point2dList = to2D(pSurface, pSurface->planeRef);
+
+    // partition Surface to convex 2D polygons.
+    cout << "\n\n make Polygon" << endl;
+    Polygon_2 polygon = PolygonComputation::makePolygon(point2dList);
+    cout << "\n\n partition Surface to convex polygons" << endl;
+    vector<Polygon_2> polygonList = PolygonComputation::convexPartition(polygon);
+
+    cout << "\n\n triangulate Polygons" << endl;
+    for (int i = 0 ; i < polygonList.size() ; i++){
+        cout << polygonList[i] << endl;
+        CGAL_assertion(polygonList[i].is_simple() && polygonList[i].is_convex());
+
+        Polygon_2 p = polygonList[i];
+        for (Polygon_2::Vertex_iterator vi = p.vertices_begin(); vi != p.vertices_end(); ++vi){
+            std::cout << "vertex " << " = " << vi->x() << std::endl;
+        }
+    }
+
+    return;
+
     vector<pair<D_Point, int > > points;
     for (int i = 0 ; i < vertexList.size() ; i++){
-        Plane_3 pl = pSurface->planeRef;
-        Point_2 point2d = pl.to_2d(VertexComputation::getCGALPoint(vertexList[i]));
+        Point_2 point2d = point2dList[i];
         points.push_back(make_pair(D_Point(point2d.x(), point2d.y()), i));
     }
 
@@ -198,10 +230,10 @@ void SurfaceComputation::triangulate(Surface *&pSurface) {
         fit != T.finite_faces_end(); ++fit)
     {
         vector<Vertex*> localTemp;
-        Delaunay::Face_handle face = fit;
+        Delaunay::Face_handle facet = fit;
 
         for (int i = 0 ; i < 3 ; i++){
-            localTemp.push_back(vertexList[face->vertex(i)->info()]);
+            localTemp.push_back(vertexList[facet->vertex(i)->info()]);
         }
 
         triangles.push_back(new Triangle(localTemp));

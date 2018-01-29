@@ -30,6 +30,9 @@
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Partition_traits_2.h>
+#include <CGAL/partition_2.h>
+#include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
@@ -51,4 +54,8 @@ typedef CGAL::Triangulation_vertex_base_with_info_2<double, Kernel2>    Vb;
 typedef CGAL::Triangulation_data_structure_2<Vb>                    Tds;
 typedef CGAL::Delaunay_triangulation_2<Kernel2, Tds>                      Delaunay;
 typedef Delaunay::Point                                             D_Point;
+
+typedef CGAL::Partition_traits_2<Kernel2>                         Traits;
+typedef Traits::Polygon_2                                   Polygon_2;
+
 #endif //TRIANGLEMESHTOCLEARSOLID_CGALTYPES_H
