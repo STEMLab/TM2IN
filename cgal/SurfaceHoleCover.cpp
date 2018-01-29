@@ -5,15 +5,9 @@
 #include "SurfaceHoleCover.h"
 #include <algorithm>
 #include <iostream>
-
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polyhedron_incremental_builder_3.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
-
 #include "features/Surface.h"
+#include "cgal/Types.h"
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel2;
 typedef CGAL::Polyhedron_3<Kernel2>         Polyhedron;
 
 typedef Polyhedron::Halfedge_handle    Halfedge_handle;

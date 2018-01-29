@@ -28,6 +28,9 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
+#include <CGAL/Polyhedron_incremental_builder_3.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 //typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
@@ -43,9 +46,9 @@ typedef Kernel::Segment_3 Segment_3;
 typedef Kernel::Intersect_2 Intersect_2;
 typedef Kernel::Intersect_3 Intersect_3;
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
-typedef CGAL::Triangulation_vertex_base_with_info_2<double, K>    Vb;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel2;
+typedef CGAL::Triangulation_vertex_base_with_info_2<double, Kernel2>    Vb;
 typedef CGAL::Triangulation_data_structure_2<Vb>                    Tds;
-typedef CGAL::Delaunay_triangulation_2<K, Tds>                      Delaunay;
+typedef CGAL::Delaunay_triangulation_2<Kernel2, Tds>                      Delaunay;
 typedef Delaunay::Point                                             D_Point;
 #endif //TRIANGLEMESHTOCLEARSOLID_CGALTYPES_H
