@@ -90,38 +90,19 @@ void Surface::translate(double diff[]){
         this->min_coords[j] += diff[j];
     }
 }
-/**
- * if this Vertex(add_id) try to make hole, return true.
- */
-bool Surface::isExistSameVertexInRange(ll si, ll ei, Vertex* add_id){
-    for (ll i = si ; i != ei ; i++)
-    {
-        if (i == (int)this->sizeOfVertices()){
-            i = -1;
-            continue;
-        }
-        if (v_list[i] == add_id)
-        {
-            return true;
-        }
-    }
-    return false;
-}
 
-
-int Surface::getSegmentsNumber(ll si, ll ei){
-    int num = 0;
-    for (ll i = si ; ;){
-        if (i == ei) break;
-        if (num > (int)this->sizeOfVertices()) {
-            cout << "getSegmentsNumber Error" << endl;
-            return -1;
-        }
-        num++;
-        i++;
-        if (i == (int)this->sizeOfVertices()) i = 0;
+int Surface::getSegmentsNumber(ll si, ll ei) {
+    if (si >= this->sizeOfVertices() || ei >= sizeOfVertices()){
+        cerr << "getSegmentsNumber Error" << endl;
+        return -1;
     }
-    return num;
+
+    if (ei >= si){
+        return ei - si;
+    }
+    else{
+        return this->sizeOfVertices() - si + ei;
+    }
 }
 
 bool Surface::checkDuplicate(){
@@ -165,6 +146,22 @@ string Surface::toJSONString(){
     ret.append("] }");
     return ret;
 }
+
+std::string Surface::toJSONWithTriangles() {
+    string ret;
+    ret += "{";
+    ret.append(" \n \"area\" : " + to_string(area) );
+    ret.append(" \n, \"id\" : " + to_string(sf_id) );
+    ret.append( "\n, \"triangles\" : [\n");
+    for (int i = 0 ; i < (int)this->triangles.size() ; i++){
+        ret += this->triangles[i]->toJSON();
+    }
+    ret.append( "]\n");
+    ret.append( "}");
+
+    return ret;
+}
+
 
 Vector_3 Surface::getSimpleNormal(){
     Vector_3 normal = Vector_3(0,0,0);
@@ -349,13 +346,6 @@ void Surface::removeConsecutiveDuplication(){
     if (removed_count) cout << removed_count << " are removed in duplication" << endl;
 }
 
-bool Surface::hasSameNormalwith(int axis){
-    return CGALCalculation::getAngle(CGALCalculation::normal_list6[axis], this->av_normal) < 0.0001 ;
-}
-
-bool Surface::hasOppositeNormalwith(int axis){
-    return CGALCalculation::getAngle(CGALCalculation::normal_list6[axis + 3], this->av_normal) < 0.0001 ;
-}
 
 /**
 *  Check that Surface is not valid. Straight Line or Point.
@@ -367,25 +357,6 @@ bool Surface::isValid(){
     }
 
     return true;
-    /*
-    bool isNOTcollinear = false;
-    Point_3 start_p = this->v_list[0]->getCGALPoint();
-    Point_3 end_p = this->v_list[1]->getCGALPoint();
-    for (ll i = 1 ; i < (ll)this->sizeOfVertices() - 1; i++){
-        if (this->v_list[i] == nullptr){
-            assert(this->v_list[i] != nullptr);
-        }
-        Point_3 mid_p(end_p.x(), end_p.y(), end_p.z());
-        end_p = this->v_list[i+1]->getCGALPoint();
-        if (CGAL::collinear(start_p, mid_p, end_p)){
-            continue;
-        }
-        else{
-            isNOTcollinear = true;
-        }
-    }
-    return isNOTcollinear;
-    */
 }
 
 
@@ -428,109 +399,6 @@ vector<Point_2> Surface::get2DPoints(Plane_3 plane){
 
 void Surface::removeVertexByIndex(int id){
     this->v_list.erase(this->v_list.begin() + id);
-}
-
-
-void Surface::changeToRectangle(){
-    Plane_3 plane = getPlaneWithLowest();
-    vector<Point_2> points_2d = get2DPoints(plane);
-    double max_x = INT_MIN, max_y = INT_MIN;
-    double min_x = INT_MAX, min_y = INT_MAX;
-
-    // MBR
-    for (ull i = 0 ; i < points_2d.size() ; i++){
-        double x = points_2d[i].x();
-        double y = points_2d[i].y();
-        if (max_y < y){
-            max_y = y;
-        }
-        if (min_y > y){
-            min_y = y;
-        }
-        if (max_x < x){
-            max_x = x;
-        }
-        if (min_x > x){
-            min_x = x;
-        }
-    }
-
-    Point_2 min_point(min_x,min_y);
-    Point_2 center_1(max_x, min_y);
-    Point_2 max_point(max_x,max_y);
-    Point_2 center_2(min_x, max_y);
-
-    vector<Point_3> points_3d;
-    points_3d.push_back(plane.to_3d(min_point));
-    points_3d.push_back(plane.to_3d(center_1));
-    points_3d.push_back(plane.to_3d(max_point));
-    points_3d.push_back(plane.to_3d(center_2));
-
-    this->v_list.clear();
-    for (ull i = 0 ; i < points_3d.size() ; i++){
-        this->v_list.push_back(new Vertex(points_3d[i].x(),points_3d[i].y(),points_3d[i].z()));
-    }
-
-    points_2d.clear();
-    points_3d.clear();
-}
-
-void Surface::snapping(Surface* p_surface, double p_diff){
-    vector<pair<ull,ull>> match_list;
-    int match_num = 0;
-    for (ull vj = 0 ; vj < p_surface->sizeOfVertices() ; vj++){
-        for (ull vi = 0 ; vi < this->sizeOfVertices() ; vi++){
-            if (this->v_list[vi]->index == p_surface->v_list[vj]->index){
-                match_list.push_back(make_pair(vi, vj));
-                match_num++;
-                break;
-            }
-        }
-    }
-    if (match_num == 0) return;
-    if (match_list.size() < 3) return;
-    for (int i = 0 ; i < match_list.size() - 2; i++){
-        ull should_next_first = match_list[i].first == 0? this->sizeOfVertices() - 1 : match_list[i].first - 1;
-        ull should_next_second = match_list[i].second + 1;
-        if (match_list[i+1].second != should_next_second){
-            if (match_list[i+1].first != should_next_first){
-                ull should_nn_second = should_next_second+1;
-                ull should_nn_first = should_next_first == 0? this->sizeOfVertices() - 1 : should_next_first - 1;
-                if (match_list[i+2].second == should_nn_second && match_list[i+2].first == should_nn_first){
-                    p_surface->v_list[match_list[i+1].second] = this->v_list[match_list[i+1].first];
-                }
-            }
-
-        }
-        /*
-        ull next_first = match_list[i].first == 0? this->sizeOfVertices() - 1 : match_list[i].first - 1;
-        if (match_list[i].second + 1 != match_list[i+1].second){
-            if (next_first != match_list[i+1].first){
-                ull nn_first = next_first == 0 ? this->sizeOfVertices() - 1 : next_first - 1;
-                if (nn_first == match_list[i+1].first){
-                    this->v_list[next_first] = p_surface->v_list[match_list[i].second + 1];
-                }
-                else{
-                    p_surface->v_list[match_list[i].second + 1] = p_surface->v_list[match_list[i].second];
-                }
-            }
-            else{
-                p_surface->v_list[match_list[i].second + 1] = p_surface->v_list[match_list[i].second];
-            }
-        }
-        else{
-            if (next_first != match_list[i+1].first){
-                ull nn_first = next_first == 0 ? this->sizeOfVertices() - 1 : next_first - 1;
-                if (nn_first == match_list[i+1].first){
-                    this->v_list[next_first] = this->v_list[match_list[i].first];
-                }
-            }
-            else{
-            }
-        }
-        */
-    }
-
 }
 
 vector<Vertex *> Surface::getVerticesList() {

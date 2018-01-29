@@ -35,7 +35,7 @@ public:
         CGAL::Polyhedron_incremental_builder_3<HDS> B( hds, true);
         unsigned int triangleSize = 0;
         for (int i = 0 ; i < surfaces.size() ; i++){
-            triangleSize += surfaces[i]->triangulation.size();
+            triangleSize += surfaces[i]->IndicesOfTriangulation.size();
         }
         B.begin_surface( coords.size(), triangleSize);
         cout << coords.size() << " , " << triangleSize << endl;
@@ -46,12 +46,12 @@ public:
 
         // add the polyhedron triangles
         for( int i=0; i<(int)surfaces.size(); i++ ){
-            cout << "FACET :  " << i <<  " , " << surfaces[i]->triangulation.size() << endl;
-            for ( int tri = 0 ; tri < (int)surfaces[i]->triangulation.size() ; tri++){
+            cout << "FACET :  " << i <<  " , " << surfaces[i]->IndicesOfTriangulation.size() << endl;
+            for ( int tri = 0 ; tri < (int)surfaces[i]->IndicesOfTriangulation.size() ; tri++){
                 B.begin_facet();
-                CGAL_assertion(surfaces[i]->triangulation[tri].size() == 3);
+                CGAL_assertion(surfaces[i]->IndicesOfTriangulation[tri].size() == 3);
                 for (int vt = 0 ; vt < 3; vt++){
-                    int index = surfaces[i]->triangulation[tri][vt];
+                    int index = surfaces[i]->IndicesOfTriangulation[tri][vt];
                     B.add_vertex_to_facet(index);
                 }
                 B.end_facet();

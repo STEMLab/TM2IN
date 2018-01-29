@@ -27,15 +27,14 @@ class RoomMaker
         virtual int rotateSurfaces() = 0;
 
         int exportSpaceJSON(string f_path);
-        // int exportCombined(string f_path);
-        // int importGeneration(string f_path);
 
         void setImporter(Importer* p_di){ di = p_di; }
         void setGenerationWriter(GenerationWriter * pw){generation_writer = pw;}
 
-    protected:
+        int exportTriangulationJSON(string basic_string);
 
-    private:
+protected:
+
 };
 
 #endif // MANAGER_H

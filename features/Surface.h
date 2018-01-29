@@ -19,11 +19,12 @@ public:
     ull sf_id;
     std::vector<Vertex*> v_list;
     std::vector<std::vector<Vertex*> > inner_ring;
-    std::vector<Triangle*> triangles;
     std::vector<HalfEdge* > boundaryEdges;
     Vector_3 av_normal = CGAL::NULL_VECTOR;
     Plane_3 planeRef;
-    std::vector<std::vector<int>> triangulation;
+
+    std::vector<Triangle*> triangles;
+    std::vector<std::vector<int>> IndicesOfTriangulation;
 
     double min_coords[3];
     double max_coords[3];
@@ -41,6 +42,7 @@ public:
     void setZ(double value);
 
     std::string toJSONString();
+    std::string toJSONWithTriangles();
 
     bool isInMBB(Vertex* vt);
     bool isAdjacent(Surface* sf);
@@ -49,7 +51,6 @@ public:
     void setMBB(Triangle* pl);
     void setMBB(Surface* pl);
     void updateMBB();
-    bool isExistSameVertexInRange(ll si, ll ei, Vertex* add_id);
     int getSegmentsNumber(ll start_index, ll end_index);
 
     //compare vector size
@@ -64,18 +65,10 @@ public:
 
     Vector_3 getSimpleNormal();
     bool updateNormal();
-
     bool isValid();
-
-    bool hasSameNormalwith(int axis);
-    bool hasOppositeNormalwith(int axis);
 
     Point_3 findLowestPoint();
     Plane_3 getPlaneWithLowest();
-
-    void changeToRectangle();
-
-    void snapping(Surface* p_surface, double p_diff);
 
     std::vector<Vertex *> getVerticesList();
 

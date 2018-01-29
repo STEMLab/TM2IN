@@ -33,6 +33,16 @@ int RoomMaker::exportSpaceJSON(string f_path)
     return 0;
 }
 
+int RoomMaker::exportTriangulationJSON(string f_path) {
+    ofstream fout;
+    fout.open(f_path, ios::out|ios::trunc);
+
+    if (!fout) return -1;
+    if (JSONMaker::printTriangleJSON(fout, this->spaceList)) return -1;
+    fout.close();
+    return 0;
+}
+
 
 /*
 int RoomMaker::exportCombined(string f_path)

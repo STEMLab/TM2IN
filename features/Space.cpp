@@ -262,7 +262,7 @@ int Space::snapSurface(double p_diff){
             if (sfj->sizeOfVertices() < 3) continue;
             //Same Normal and isNeighbor
             if (Checker::CanbeMerged(sfi->av_normal, sfj->av_normal, 10.0)){
-                sfi->snapping(sfj, p_diff);
+                // sfi->snapping(sfj, p_diff);
             }
             if (sfj->sizeOfVertices() < 3 || sfi->sizeOfVertices() < 3) cout << "snapping make wrong surface---" << endl;
 
@@ -348,7 +348,7 @@ void Space::clearTrianglesListInSurfaces() {
 
 void Space::triangulateSurfaces() {
     for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
-        this->surfacesList[sfID]->triangulation = (SurfaceComputation::triangulate(this->surfacesList[sfID]));
+        this->surfacesList[sfID]->IndicesOfTriangulation = (SurfaceComputation::triangulate(this->surfacesList[sfID]));
     }
 }
 

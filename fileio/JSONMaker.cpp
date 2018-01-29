@@ -47,3 +47,50 @@ int JSONMaker::printJSON(ofstream& fout, vector<Surface*>& cp){
     fout << "] \n";
     return 0;
 }
+
+int JSONMaker::printTriangleJSON(ofstream& fout, vector<Space *>& spaces) {
+    fout << "{ \n";
+    fout << " \"spaces\" : [ \n";
+    for (unsigned int index = 0 ; index < spaces.size(); index++){
+        if (JSONMaker::printTriangleJSON(fout, spaces[index])){
+            cout << "This space doesn't have IndicesOfTriangulation" << endl;
+        }
+        else{
+            if (index != spaces.size() - 1 ) fout << ", \n";
+            else fout <<"\n";
+        }
+    }
+    fout << "]" << endl;
+    fout << "}" << endl;
+    return 0;
+}
+
+
+int JSONMaker::printTriangleJSON(ofstream &fout, Space *space) {
+    if (!space->hasTriangulation) return 1;
+    fout << "{\n";
+    fout<< " \"name\" : \"" << space->name << "\", \n" ;
+    JSONMaker::printTriangleJSON(fout, space->surfacesList);
+    fout <<"}";
+    return 0;
+}
+
+int JSONMaker::printTriangleJSON(ofstream &fout, std::vector<Surface *> &surfacesList) {
+    fout << " \"Surfaces\" : [ \n";
+    for (unsigned int id = 0 ; id < surfacesList.size() ; id++)
+    {
+        string triangles = surfacesList[id]->toJSONWithTriangles();
+        fout << triangles;
+
+        if (id != surfacesList.size() - 1)
+        {
+            fout << ", \n";
+        }
+        else
+        {
+            fout <<" \n";
+        }
+    }
+    fout << "] \n";
+    return 0;
+}

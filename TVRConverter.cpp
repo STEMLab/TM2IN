@@ -9,6 +9,8 @@
 #include "logic/check.hpp"
 #include "space_maker/OnlyWallSpaceMaker.h"
 
+void createAndRemoveDir(const string &version, const string &resultPath, const string &fileName);
+
 using namespace std;
 
 void test(){
@@ -78,18 +80,7 @@ int main(int argc, const char * argv[]) {
     }
 
     // create Result directory
-    if (boost::filesystem::exists(resultPath + fileName)){
-        if (boost::filesystem::exists(resultPath + fileName + "/" + version)){
-            removeFilesInDirectory(resultPath + fileName + "/" + version);
-        }
-        else{
-            boost::filesystem::create_directory(resultPath + fileName + "/" + version);
-        }
-    }
-    else{
-        boost::filesystem::create_directory(resultPath + fileName);
-        boost::filesystem::create_directory(resultPath + fileName + "/" + version);
-    }
+    createAndRemoveDir(version, resultPath, fileName);
 
     manager->setGenerationWriter(new GenerationWriter(generationWritePath));
 
@@ -127,8 +118,11 @@ int main(int argc, const char * argv[]) {
 
     if (manager->constructSpace() == -1) return -1;
 
-    string json_file = string(resultPath) + fileName + "/" + version + "/" + "surfaces.json";
-    manager->exportSpaceJSON(json_file);
+    string surfaceJSON = string(resultPath) + fileName + "/" + version + "/" + "surfaces.json";
+    manager->exportSpaceJSON(surfaceJSON);
+
+    string triangulationJSON = string(resultPath) + fileName + "/" + version + "/" + "IndicesOfTriangulation.json";
+    manager->exportTriangulationJSON(triangulationJSON);
 
     cout << "make solid?(y or n)" << endl;
     char ans_simple; cin >> ans_simple;
@@ -141,4 +135,23 @@ int main(int argc, const char * argv[]) {
 
     std::cout << "End!\n";
     return 0;
+}
+
+void createAndRemoveDir(const string &version, const string &resultPath, const string &fileName) {
+    if (boost::filesystem::exists(resultPath + fileName)){
+        if (boost::filesystem::exists(resultPath + fileName + "/" + version)){
+            char ans;
+            cout << "This version " << version << " folder exist. Remove Files in directory?" << endl;
+            cin >> ans;
+            if (ans == 'y' || ans == 'Y')
+                removeFilesInDirectory(resultPath + fileName + "/" + version);
+        }
+        else{
+            boost::filesystem::create_directory(resultPath + fileName + "/" + version);
+        }
+    }
+    else{
+        boost::filesystem::create_directory(resultPath + fileName);
+        boost::filesystem::create_directory(resultPath + fileName + "/" + version);
+    }
 }

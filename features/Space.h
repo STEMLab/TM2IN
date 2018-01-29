@@ -30,7 +30,7 @@ public:
     double max_coords[3];
     string name;
     double whole_area = 0;
-    SurfaceGraph* surface_graph;
+    bool hasTriangulation = false;
 
     void setName(string _name){
         name = _name;

@@ -292,4 +292,8 @@ int SurfacePairComputation::simplifyLineSegment(Surface* origin, Surface* piece,
     return 0;
 }
 
+bool SurfacePairComputation::doIntersect(Surface *sp1, Surface *sp2) {
+    return false;
+}
+
 

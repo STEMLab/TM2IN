@@ -94,3 +94,17 @@ bool Triangle::isOpposite(Triangle* tri){
 Vertex *Triangle::vertex(int idx) {
     return this->edges[idx]->vertices[0];
 }
+
+std::string Triangle::toJSON() {
+    std::__cxx11::string ret;
+    ret += "[";
+    for (int i = 0 ; i < 3 ; i++){
+        ret += this->vertex(0)->toJSON();
+        if (i != 2)
+            ret += ",";
+        ret += "\n";
+    }
+    ret += "]";
+
+    return ret;
+}

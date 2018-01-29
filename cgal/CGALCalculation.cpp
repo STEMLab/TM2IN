@@ -239,15 +239,15 @@ bool CGALCalculation::isAngleLowerThan(Vertex* origin, Vertex* v1, Vertex* v2, d
 //        points.push_back(make_pair(makeTPoint(sf->v_list[i]),i));
 //    }
 //
-//    Delaunay triangulation;
-//    triangulation.insert(points.begin(), points.end());
+//    Delaunay IndicesOfTriangulation;
+//    IndicesOfTriangulation.insert(points.begin(), points.end());
 //
-//    for(Delaunay::Finite_faces_iterator fit = triangulation.finite_faces_begin();
-//    fit != triangulation.finite_faces_end(); ++fit)
+//    for(Delaunay::Finite_faces_iterator fit = IndicesOfTriangulation.finite_faces_begin();
+//    fit != IndicesOfTriangulation.finite_faces_end(); ++fit)
 //    {
 //        Delaunay::Face_handle face = fit;
-//        std::cout << "Triangle:\t" << triangulation.triangle(face) << std::endl;
-//        std::cout << "Vertex 0:\t" << triangulation.triangle(face)[0] << std::endl;
+//        std::cout << "Triangle:\t" << IndicesOfTriangulation.triangle(face) << std::endl;
+//        std::cout << "Vertex 0:\t" << IndicesOfTriangulation.triangle(face)[0] << std::endl;
 //        std::cout << "Vertex 0:\t" << face->vertices(0)->info() << std::endl;
 //    }
 //
