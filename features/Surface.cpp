@@ -148,13 +148,18 @@ string Surface::toJSONString(){
 }
 
 std::string Surface::toJSONWithTriangles() {
+    string indent("\t");
+
     string ret;
     ret += "{";
     ret.append(" \n \"area\" : " + to_string(area) );
     ret.append(" \n, \"id\" : " + to_string(sf_id) );
     ret.append( "\n, \"triangles\" : [\n");
     for (int i = 0 ; i < (int)this->triangles.size() ; i++){
-        ret += this->triangles[i]->toJSON();
+        ret += this->triangles[i]->toJSON(indent);
+        if (i != this->triangles.size() - 1)
+            ret += ",";
+        ret += "\n";
     }
     ret.append( "]\n");
     ret.append( "}");

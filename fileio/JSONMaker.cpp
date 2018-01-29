@@ -53,7 +53,7 @@ int JSONMaker::printTriangleJSON(ofstream& fout, vector<Space *>& spaces) {
     fout << " \"spaces\" : [ \n";
     for (unsigned int index = 0 ; index < spaces.size(); index++){
         if (JSONMaker::printTriangleJSON(fout, spaces[index])){
-            cout << "This space doesn't have globalIndicesOfTriangulation" << endl;
+            cout << "This space doesn't have Triangulation" << endl;
         }
         else{
             if (index != spaces.size() - 1 ) fout << ", \n";

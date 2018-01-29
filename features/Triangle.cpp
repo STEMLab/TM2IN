@@ -95,16 +95,26 @@ Vertex *Triangle::vertex(int idx) {
     return this->edges[idx]->vertices[0];
 }
 
-std::string Triangle::toJSON() {
+std::string Triangle::toJSON(std::string &indent) {
     std::__cxx11::string ret;
-    ret += "[";
+    ret += indent + "{\n";
+
+    //normal
+    ret += indent + "\"normal\" : [";
+    Vector_3 normal = getNormal();
+    ret += indent + std::to_string(normal.x()) + ", " + std::to_string(normal.y()) + ", " + std::to_string(normal.z());
+    ret += indent + "],\n";
+
+    //coordinates
+    ret += indent + "\"coords\" : [\n";
     for (int i = 0 ; i < 3 ; i++){
-        ret += this->vertex(0)->toJSON();
+        ret += indent + "\t";
+        ret += this->vertex(i)->toJSON();
         if (i != 2)
             ret += ",";
         ret += "\n";
     }
-    ret += "]";
+    ret += indent + "]}";
 
     return ret;
 }

@@ -91,17 +91,6 @@ int main(int argc, const char * argv[]) {
         }
         case 1:{
             // TODO
-            /*
-            string import_path = string(result_path) + fileName + "/" + exportVersion + "/surfaces.bin";
-            if (manager->importGeneration(import_path)) return 3;
-            cout << "do simple?(y or n)" << endl;
-            char ans_simple; cin >> ans_simple;
-            if (ans_simple == 'y'){
-                if (manager->finish(new OnlyWallSpaceMaker()) == -1) return -1;
-                string simple_file = string(result_path) + fileName + exportVersion + "_solid.json";
-                manager->exportSpaceJSON(simple_file);
-            }
-            */
             return 0;
         }
         case 2:{
@@ -121,7 +110,7 @@ int main(int argc, const char * argv[]) {
     string surfaceJSON = string(resultPath) + fileName + "/" + version + "/" + "surfaces.json";
     manager->exportSpaceJSON(surfaceJSON);
 
-    string triangulationJSON = string(resultPath) + fileName + "/" + version + "/" + "globalIndicesOfTriangulation.json";
+    string triangulationJSON = string(resultPath) + fileName + "/" + version + "/" + "triangles.json";
     manager->exportTriangulationJSON(triangulationJSON);
 
     cout << "make solid?(y or n)" << endl;
@@ -141,7 +130,7 @@ void createAndRemoveDir(const string &version, const string &resultPath, const s
     if (boost::filesystem::exists(resultPath + fileName)){
         if (boost::filesystem::exists(resultPath + fileName + "/" + version)){
             char ans;
-            cout << "This version " << version << " folder exist. Remove Files in directory?" << endl;
+            cout << "\n\nThis version " << version << " folder exist. Remove Files in directory? (y/n)" << endl;
             cin >> ans;
             if (ans == 'y' || ans == 'Y')
                 removeFilesInDirectory(resultPath + fileName + "/" + version);

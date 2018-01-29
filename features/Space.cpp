@@ -347,6 +347,7 @@ void Space::clearTrianglesListInSurfaces() {
 }
 
 void Space::triangulateSurfaces() {
+    this->hasTriangulation = true;
     for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
         Surface* pSurface = this->surfacesList[sfID];
         SurfaceComputation::triangulate(pSurface);

@@ -70,7 +70,6 @@ void SurfaceComputation::resolveIntersectionByCGAL(Surface *&pSurface) {
                 }
             }
         }
-        //if (hasIntersection) return true;
     }
     return;
 }
