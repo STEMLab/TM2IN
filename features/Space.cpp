@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cmath>
 #include <compute/SurfaceComputation.h>
+#include "cgal/SurfaceIntersection.h"
 
 Space::Space(){
 
@@ -125,7 +126,7 @@ int Space::simplifySegment(){
             {
                 again = true;
                 loop_count++;
-                if (loop_count > (int)this->surfacesList[j]->sizeOfVertices()){
+                if (loop_count > (int) this->surfacesList[j]->getVerticesSize()){
                     cout << "Infinite loop in Simplification" << endl;
                     exit(-1);
                 }
@@ -136,13 +137,13 @@ int Space::simplifySegment(){
     return 0;
 }
 
-int Space::handleDefect(double angle){
+int Space::handleDefect() {
     cout << "\n------------- handle Defect --------------\n" << endl;
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
     {
         Surface* surface = this->surfacesList[i];
         surface->removeConsecutiveDuplication();
-        surface->removeStraight(angle);
+        SurfaceComputation::removeStraight(surface);
         surface->updateMBB();
 
         if (surface->isValid()){
@@ -259,12 +260,12 @@ int Space::snapSurface(double p_diff){
         Surface* sfi = this->surfacesList[i];
         for (ull j = i + 1 ; j < this->surfacesList.size() ; j++){
             Surface* sfj = this->surfacesList[j];
-            if (sfj->sizeOfVertices() < 3) continue;
+            if (sfj->getVerticesSize() < 3) continue;
             //Same Normal and isNeighbor
             if (Checker::CanbeMerged(sfi->normal, sfj->normal, 10.0)){
                 // sfi->snapping(sfj, p_diff);
             }
-            if (sfj->sizeOfVertices() < 3 || sfi->sizeOfVertices() < 3) cout << "snapping make wrong surface---" << endl;
+            if (sfj->getVerticesSize() < 3 || sfi->getVerticesSize() < 3) cout << "snapping make wrong surface---" << endl;
 
         }
 
@@ -309,30 +310,16 @@ void Space::putVerticesAndUpdateIndex(vector<Vertex *> &vertices) {
 void Space::resolveIntersectionINTRASurface() {
     int newSurfaceCount = 0;
     for (int sfID = 0 ; sfID < this->surfacesList.size(); ) {
-        cout << "ID : " << sfID << endl;
-
-        SurfaceComputation::snapping(this->surfacesList[sfID]);
-        SurfaceComputation::resolveIntersectionByCGAL(this->surfacesList[sfID]) ;
-/*
-        Surface* newSurface = SurfaceComputation::resolveIntersectionAndMakeNewSurface(this->surfacesList[sfID]);
-        if (newSurface != NULL) {
-            newSurfaceCount++;
-            this->surfacesList.push_back(newSurface);
-            continue;
-        }
-        Plane_3 plane = SurfaceComputation::getPlane3(this->surfacesList[sfID]);
-        SurfaceComputation::to2D(this->surfacesList[sfID], plane);
-        break;
-
-*/
-
-        if (!this->surfacesList[sfID]->isValid()){
+        vector<Surface*> newSurfaces = SurfaceIntersection::resolveSelfIntersection(this->surfacesList[sfID]);
+        if (newSurfaces.size() != 0){
+            //this->surfacesList.insert(this->surfacesList.end(), newSurfaces.begin(), newSurfaces.end());
+            //newSurfaceCount += newSurfaces.size();
+            sfID++;
+        } else{
             this->surfacesList.erase(this->surfacesList.begin() + sfID);
         }
-        else{
-            sfID++;
-        }
     }
+    cout << "Intersect Surfaces : " << this->surfacesList.size() << endl;
     cout << "new Surface : " << newSurfaceCount << endl;
 }
 

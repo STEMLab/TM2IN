@@ -30,7 +30,7 @@ int JSONMaker::printJSON(ofstream& fout, vector<Surface*>& cp){
     fout << " \"Surfaces\" : [ \n";
     for (unsigned int id = 0 ; id < cp.size() ; id++)
     {
-        //if (cp[id]->sizeOfVertices() == 1) cout << "1 tri" << endl;
+        //if (cp[id]->getVerticesSize() == 1) cout << "1 tri" << endl;
 
         string cp_coords = cp[id]->toJSONString();
         fout << cp_coords;

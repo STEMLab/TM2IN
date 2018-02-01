@@ -76,8 +76,8 @@ vector<Surface*> OnlyWallSpaceMaker::makeSimpleSurfaces(vector<Surface*> _surfac
 
 void OnlyWallSpaceMaker::updateRectArea(Surface* sf){
     sf->area = 0.0;
-    for (int i = 0 ; i < (int)sf->sizeOfVertices() - 1 ; i += 2){
-        int e_i = i + 2 >= (int)sf->sizeOfVertices()? 0 : i+2;
+    for (int i = 0 ; i < (int) sf->getVerticesSize() - 1 ; i += 2){
+        int e_i = i + 2 >= (int) sf->getVerticesSize()? 0 : i+2;
         Triangle tri(sf->v_list[i], sf->v_list[i+1], sf->v_list[e_i]);
         sf->area += tri.getArea();
     }
@@ -508,8 +508,8 @@ Segment* OnlyWallSpaceMaker::makeSegmentLowerZ(Surface* sf){
     Vertex* ft, *ed;
 
     //Only For Rectangle
-    if (sf->sizeOfVertices() != 4){
-        assert(sf->sizeOfVertices() == 4);
+    if (sf->getVerticesSize() != 4){
+        assert(sf->getVerticesSize() == 4);
     }
 
     for (ull i = 0 ; i < 2; i++){
@@ -541,8 +541,8 @@ Segment* OnlyWallSpaceMaker::makeSegmentUpperZ(Surface* sf){
     Vertex* ft, *ed;
 
     //Only For Rectangle
-    if (sf->sizeOfVertices() != 4){
-        assert(sf->sizeOfVertices() == 4);
+    if (sf->getVerticesSize() != 4){
+        assert(sf->getVerticesSize() == 4);
     }
 
     for (ull i = 0 ; i < 2; i++){
@@ -572,9 +572,9 @@ Segment* OnlyWallSpaceMaker::makeSegmentUpperZ(Surface* sf){
 
 void OnlyWallSpaceMaker::clipping(Surface *pSurface, Surface *&pSurface1) {
     int num = 0;
-    for (ull i = 0 ; i < pSurface->sizeOfVertices() ; i++){
+    for (ull i = 0 ; i < pSurface->getVerticesSize() ; i++){
         Vertex* vi = pSurface->v_list[i];
-        for (ull j = 0 ; j < pSurface1->sizeOfVertices() ; j++){
+        for (ull j = 0 ; j < pSurface1->getVerticesSize() ; j++){
             Vertex* vj = pSurface1->v_list[j];
             if (vi != vj && Checker::isSameVertex(vi, vj)){
                 num++;

@@ -34,7 +34,7 @@ private:
 
     int makeSurfacesPlanar();
 
-    int resolvePlanarSurfaceProblem();
+    int resolveIntersection();
 
     int updateVertexList();
 

@@ -14,8 +14,9 @@
 using namespace std;
 
 double Checker::threshold_vertex = 0.0;
-double Checker::collinear_degree = 0.0;
+double Checker::squaredDistanceOfSamePoint2D = 0.0;
 double Checker::degreeOfMerging = 60.0;
+double Checker::degreeOfStraight = 0.01;
 
 
 bool Checker::isSameDouble(double a, double b){

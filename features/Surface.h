@@ -37,7 +37,7 @@ public:
     Surface(Surface* cp);
     Surface(std::vector<Vertex*>& pVertices);
 
-    ull sizeOfVertices(){ return v_list.size(); }
+    ull getVerticesSize(){ return v_list.size(); }
 
     void setZ(double value);
 
@@ -61,7 +61,6 @@ public:
     bool checkDuplicate();
 
     void removeConsecutiveDuplication();
-    void removeStraight(double degree);
 
     Vector_3 getSimpleNormal();
     bool updateNormal();
@@ -79,9 +78,10 @@ public:
     std::vector<HalfEdge *> getboundaryEdgesList();
     void removeVertexByIndex(int id);
     void clearTriangleList();
+
+    void removeVertexByIndex(int startIndex, int endIndex);
 private:
     std::vector<std::pair<double, double>> project_to_Plane18();
-    std::vector<Point_2> get2DPoints(Plane_3 plane);
 };
 
 

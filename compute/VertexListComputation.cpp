@@ -43,3 +43,14 @@ vector<HalfEdge *> VertexListComputation::makeHalfEdgesList(vector<Vertex *> ver
     edges.push_back(new HalfEdge(vertices[vertices.size() - 1], vertices[0]));
     return edges;
 }
+
+vector<Segment_2> VertexListComputation::makeSegment2List(vector<Point_2> &pointsList) {
+    vector<Segment_2> segmentsList;
+    for (int i = 0 ; i < pointsList.size() - 1 ; i++){
+        Segment_2 seg(pointsList[i], pointsList[i+1]);
+        segmentsList.push_back(seg);
+    }
+    Segment_2 last_seg(pointsList[pointsList.size() - 1], pointsList[0]);
+    segmentsList.push_back(last_seg);
+    return segmentsList;
+}

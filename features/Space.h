@@ -41,7 +41,7 @@ public:
     int combineSurface(double degree);
     int simplifySegment();
     int match00();
-    int handleDefect(double angle);
+    int handleDefect();
     int updateNormal();
 
     int snapSurface(double);

@@ -19,11 +19,11 @@ int MergingRoomMaker::constructSpace() {
     if (this->makeSurfacesPlanar()) return -1;
 
     // remove Self-intersection in one Surface.
-    if (this->resolvePlanarSurfaceProblem()) return -1;
+    if (this->resolveIntersection()) return -1;
 
     // fill Hole
-    if (this->triangulation()) return -1;
-    if (this->updateVertexList()) return -1;
+//    if (this->triangulation()) return -1;
+//    if (this->updateVertexList()) return -1;
 
     // if (this->fillHoleWithUsingPolyhedralSurface()) return -1;
     return 0;
@@ -50,7 +50,6 @@ int MergingRoomMaker::mergeSurfaces() {
         // limit degree of same normal vector angle
         double degree = startDegree;
         int gen = 0;
-        double angleInDefect = 0.1;
         ll sizeBeforeCombine = space->surfacesList.size();
         while (true){
             if (processGenerations(space, gen, degree)) return -1;
@@ -63,8 +62,7 @@ int MergingRoomMaker::mergeSurfaces() {
 
             if (simplify_mode)
                 if (space->simplifySegment() == -1){ cout << "simplify error" << endl; return -1;}
-            if (angleInDefect < 1.0) angleInDefect += 0.1;
-            if (space->handleDefect(angleInDefect) == -1){ cout << "cannot handle defect" << endl; return -1; }
+            if (space->handleDefect() == -1){ cout << "cannot handle defect" << endl; return -1; }
         }
 
         space->sortSurfacesByArea();
@@ -74,7 +72,7 @@ int MergingRoomMaker::mergeSurfaces() {
             double diff = 0.0001;
             if (space->snapSurface(diff) == -1){ cout << "snap Surface" << endl; return -1;}
             if (processGenerations(space, gen, degree)) return -1;
-            if (space->handleDefect(angleInDefect) == -1){ cout << "cannot handle defect" << endl; return -1; }
+            if (space->handleDefect() == -1){ cout << "cannot handle defect" << endl; return -1; }
         }
     }
 }
@@ -121,7 +119,7 @@ int MergingRoomMaker::makeSurfacesPlanar() {
 }
 
 
-int MergingRoomMaker::resolvePlanarSurfaceProblem() {
+int MergingRoomMaker::resolveIntersection() {
     for (ull it = 0 ; it < this->spaceList.size(); it++)
     {
         Space* space = this->spaceList[it];
@@ -129,7 +127,6 @@ int MergingRoomMaker::resolvePlanarSurfaceProblem() {
         space->resolveIntersectionINTERSurface();
         space->clearTrianglesListInSurfaces();
     }
-    cout << SurfaceComputation::intersectionCount << endl;
     return 0;
 }
 

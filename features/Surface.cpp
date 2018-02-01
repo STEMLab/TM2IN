@@ -50,7 +50,7 @@ Surface::Surface(Triangle& pl){
 }
 
 void Surface::setZ(double value){
-    for (ull i = 0 ; i < this->sizeOfVertices() ; i++){
+    for (ull i = 0 ; i < this->getVerticesSize() ; i++){
         v_list[i]->setZ(value);
     }
 }
@@ -62,7 +62,7 @@ void Surface::updateMBB(){
         this->min_coords[i] = 10000000.00;
     }
 
-    for (unsigned int i = 0 ; i < this->sizeOfVertices() ; i++){
+    for (unsigned int i = 0 ; i < this->getVerticesSize() ; i++){
         for (int j = 0 ; j < 3 ; j++){
             this->max_coords[j] = max(this->max_coords[j], this->v_list[i]->coords[j]);
             this->min_coords[j] = min(this->min_coords[j], this->v_list[i]->coords[j]);
@@ -92,7 +92,7 @@ void Surface::translate(double diff[]){
 }
 
 int Surface::getSegmentsNumber(ll si, ll ei) {
-    if (si >= this->sizeOfVertices() || ei >= sizeOfVertices()){
+    if (si >= this->getVerticesSize() || ei >= getVerticesSize()){
         cerr << "getSegmentsNumber Error" << endl;
         return -1;
     }
@@ -101,7 +101,7 @@ int Surface::getSegmentsNumber(ll si, ll ei) {
         return ei - si;
     }
     else{
-        return this->sizeOfVertices() - si + ei;
+        return this->getVerticesSize() - si + ei;
     }
 }
 
@@ -138,7 +138,7 @@ string Surface::toJSONString(){
     ret.append(to_string(this->normal.z()));
     ret.append("], \n");
     ret.append(" \"coord\" : [");
-    for (unsigned int i = 0 ; i < this->sizeOfVertices() ; i++){
+    for (unsigned int i = 0 ; i < this->getVerticesSize() ; i++){
         ret.append(this->v_list[i]->toJSON());
         ret.append(",");
     }
@@ -170,8 +170,8 @@ std::string Surface::toJSONWithTriangles() {
 
 Vector_3 Surface::getSimpleNormal(){
     Vector_3 normal = Vector_3(0,0,0);
-    for (int i = 0 ; i < (int)this->sizeOfVertices() - 1 ; i += 2){
-        int e_i = i + 2 >= (int)this->sizeOfVertices()? 0 : i+2;
+    for (int i = 0 ; i < (int) this->getVerticesSize() - 1 ; i += 2){
+        int e_i = i + 2 >= (int) this->getVerticesSize()? 0 : i+2;
         normal = normal + CGALCalculation::getCrossProduct(v_list[i], v_list[i+1], v_list[e_i]);
     }
     return normal;
@@ -184,7 +184,7 @@ vector<pair<double, double>> Surface::project_to_Plane18(){
         exit(-1);
     }
     Plane_3 plane = Plane_3(VertexComputation::getCGALPoint(this->v_list[0]), CGALCalculation::normal_list18[type]);
-    for (ull i = 0 ; i < this->sizeOfVertices() ; i++){
+    for (ull i = 0 ; i < this->getVerticesSize() ; i++){
         Point_3 p3 = VertexComputation::getCGALPoint(this->v_list[i]);
         Point_2 point2d = plane.to_2d(p3);
         points.push_back(make_pair(point2d.x(), point2d.y()));
@@ -194,7 +194,7 @@ vector<pair<double, double>> Surface::project_to_Plane18(){
 }
 
 bool Surface::updateNormal(){
-    if (this->sizeOfVertices() <= 4){
+    if (this->getVerticesSize() <= 4){
         this->normal = getSimpleNormal();
     }
     this->normal = CGALCalculation::normal_list18[CGALCalculation::findNormalType18(this->normal)];
@@ -241,14 +241,14 @@ bool Surface::updateNormal(){
 }
 
 bool Surface::isOpposite(Surface* sf){
-    for (ll i = 0 ; i < (ll)sf->sizeOfVertices() ; i++){
+    for (ll i = 0 ; i < (ll) sf->getVerticesSize() ; i++){
         if (this->v_list[0] == sf->v_list[i]){
             ll sf_index = i + 1;
-            if (sf_index == (ll)sf->sizeOfVertices()) sf_index = 0;
+            if (sf_index == (ll) sf->getVerticesSize()) sf_index = 0;
             ll this_index = v_list.size() - 1;
             while (this->v_list[this_index] == sf->v_list[sf_index]){
                 this_index--; sf_index++;
-                if (sf_index == (ll)sf->sizeOfVertices()) sf_index = 0;
+                if (sf_index == (ll) sf->getVerticesSize()) sf_index = 0;
                 if (this_index == 0 || sf_index == i) break;
 
             }
@@ -279,62 +279,13 @@ bool Surface::isInMBB(Vertex* vt){
 }
 
 bool Surface::compareLength(Surface* i, Surface* j) {
-     return (i->sizeOfVertices() > j->sizeOfVertices());
+     return (i->getVerticesSize() > j->getVerticesSize());
 }
 
 bool Surface::compareArea(Surface* i, Surface* j) {
      return (i->area > j->area);
 }
 
-void Surface::removeStraight(double degree){
-    if (this->sizeOfVertices() < 3) return;
-
-    vector<Vertex*> new_v_list;// = this->v_list;
-
-    ll index = 1;
-    Vertex* start_p = this->v_list[0];
-    Vertex* check_p = this->v_list[index];
-    int removed_count = 0;
-
-    do {
-        ll next_index = index + 1;
-        if (next_index == (ll)this->sizeOfVertices()) next_index = 0;
-        Vertex* end_p = this->v_list[next_index];
-        if (CGALCalculation::isAngleLowerThan(start_p, check_p, end_p, degree)){
-            removed_count++;
-        }
-        else{
-            new_v_list.push_back(this->v_list[index]);
-            start_p = this->v_list[index];
-        }
-        index = next_index;
-        check_p = this->v_list[index];
-    } while (index != 1);
-
-    for (ull i = 1 ; i < new_v_list.size() - 1; ){
-        Vertex* start_p = new_v_list[i-1];
-        ull second = i;
-        Vertex* check_p = new_v_list[second];
-        ull third = i+1;
-        Vertex* end_p = new_v_list[third];
-        if (CGALCalculation::isAngleLowerThan(start_p, check_p, end_p, degree)
-           || CGALCalculation::isAngleLowerThan(end_p, check_p, start_p, degree) ){
-            new_v_list.erase(new_v_list.begin() + i);
-        }
-        else if(CGALCalculation::isAngleLowerThan(start_p, check_p, end_p, -degree)
-           || CGALCalculation::isAngleLowerThan(end_p, check_p, start_p, -degree) ){
-            new_v_list.erase(new_v_list.begin() + i);
-        }
-        else{
-            i++;
-        }
-    }
-
-    this->v_list.clear();
-    this->v_list = new_v_list;
-
-    if (removed_count) cout << removed_count << " are removed in straight" << endl;
-}
 
 void Surface::removeConsecutiveDuplication(){
     ull v_size = v_list.size();
@@ -356,8 +307,8 @@ void Surface::removeConsecutiveDuplication(){
 *  Check that Surface is not valid. Straight Line or Point.
 */
 bool Surface::isValid(){
-    if (this->sizeOfVertices() < 3) {
-        cout << "The number of vertexes is "  << this->sizeOfVertices() <<endl;
+    if (this->getVerticesSize() < 3) {
+        cout << "The number of vertexes is "  << this->getVerticesSize() <<endl;
         return false;
     }
 
@@ -372,7 +323,7 @@ Point_3 Surface::findLowestPoint(){
 
     double max_dist = -1.0;
     int max_index = 0;
-    for (ull index= 0 ; index < this->sizeOfVertices() ; index++){
+    for (ull index= 0 ; index < this->getVerticesSize() ; index++){
         Point_3 p = VertexComputation::getCGALPoint(this->v_list[index]);
         if (plane.oriented_side(p) != CGAL::ON_POSITIVE_SIDE){
             double dist = CGAL::squared_distance(plane, p);
@@ -388,18 +339,6 @@ Point_3 Surface::findLowestPoint(){
 Plane_3 Surface::getPlaneWithLowest(){
     Point_3 point = findLowestPoint();
     return Plane_3(point, this->normal);
-}
-
-vector<Point_2> Surface::get2DPoints(Plane_3 plane){
-    vector<Point_2> points;
-
-    for (ull i = 0 ; i < this->sizeOfVertices() ; i++){
-        Point_3 p3 = VertexComputation::getCGALPoint(this->v_list[i]);
-        Point_2 point2d = plane.to_2d(p3);
-        points.push_back(point2d);
-    }
-
-    return points;
 }
 
 void Surface::removeVertexByIndex(int id){
@@ -425,4 +364,13 @@ std::vector<HalfEdge *> Surface::getboundaryEdgesList() {
 
 void Surface::clearTriangleList() {
     this->triangles.clear();
+}
+
+/**
+ * remove [startIndex, endIndex) in Vertex List.
+ * @param startIndex
+ * @param endIndex
+ */
+void Surface::removeVertexByIndex(int startIndex, int endIndex) {
+    this->v_list.erase(this->v_list.begin() + startIndex, this->v_list.begin() + endIndex);
 }

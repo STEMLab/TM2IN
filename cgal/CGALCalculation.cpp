@@ -216,8 +216,12 @@ bool CGALCalculation::isIntersect_BBOX(Surface* s1, Surface* s2){
 
 bool CGALCalculation::isAngleLowerThan(Vector_3& nv1, Vector_3& nv2, double degree){
     double angle = CGALCalculation::getAngle(nv1, nv2);
+    if (angle < 0) cerr << "angle is minus ?" << endl;
+        /*
     if (degree < 0) return (angle >= 180 + degree);
-    else return (angle <= degree) ;
+    else
+         */
+        return (angle <= degree) ;
 }
 
 
@@ -235,7 +239,7 @@ bool CGALCalculation::isAngleLowerThan(Vertex* origin, Vertex* v1, Vertex* v2, d
 //
 //vector<vector<int>> CGALCalculation::triangulate(CSurface* sf){
 //    vector<pair<Point, unsigned>> points;
-//    for (int i = 0 ; i < (int)sf->sizeOfVertices() ; i++){
+//    for (int i = 0 ; i < (int)sf->getVerticesSize() ; i++){
 //        points.push_back(make_pair(makeTPoint(sf->v_list[i]),i));
 //    }
 //

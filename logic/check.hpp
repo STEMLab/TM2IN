@@ -25,9 +25,10 @@ private:
     Checker(){}
 
 public:
+    static double squaredDistanceOfSamePoint2D;
     static double threshold_vertex;
-    static double collinear_degree;
     static double degreeOfMerging;
+    static double degreeOfStraight;
 
 //    Checker(double vertex){
 //        this->threshold_vertex = vertex;

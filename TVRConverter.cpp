@@ -72,6 +72,7 @@ int main(int argc, const char * argv[]) {
     RoomMaker* manager = new MergingRoomMaker();
     manager->setImporter(new TVRImporter());
     Checker::threshold_vertex = 0.0000001;
+    Checker::squaredDistanceOfSamePoint2D = 0.000001;
 
     cout << "Load TVR File.." << endl;
     if (manager->importMesh( (string(resourcePath) + fileName + ".tvr").c_str()) ){
