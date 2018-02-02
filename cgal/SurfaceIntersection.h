@@ -13,6 +13,8 @@ public:
     static std::vector<Surface *> resolveSelfIntersection(Surface *&pSurface);
 
     static void resolveEasySelfIntersection(Surface *&pSurface);
+
+    static bool makeNewIntersectionVertex(Surface *&pSurface);
 };
 
 

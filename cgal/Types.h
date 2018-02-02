@@ -41,6 +41,7 @@ typedef CGAL::Aff_transformation_3<Kernel> Transformation;
 typedef Kernel::Point_2 Point_2;
 typedef Kernel::Point_3 Point_3;
 typedef Kernel::Vector_3 Vector_3;
+typedef Kernel::Vector_2 Vector_2;
 typedef Kernel::Plane_3 Plane_3;
 typedef Kernel::Triangle_3 Triangle_3;
 typedef Kernel::Line_3 Line_3;

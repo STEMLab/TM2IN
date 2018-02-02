@@ -13,6 +13,8 @@ class CGALCalculation
 public:
     static Vector_3 getUnitNormal(Vertex* va, Vertex* vb, Vertex* vc);
     static double getAngle(Vector_3& v1, Vector_3& v2);
+    static double getAngle(Vector_2& v1, Vector_2& v2);
+
     static Vector_3 getVector(Vertex* va, Vertex* vb);
 
     static double getSquaredArea(Point_3& p1, Point_3& p2, Point_3& p3);
@@ -22,14 +24,7 @@ public:
 
     static bool isIntersect_BBOX(Surface* , Surface*);
 
-    static int findNormalType27(Vector_3& nv);
-    static int findNormalType18(Vector_3& nv);
-    static int findNormalType10(Vector_3& nv);
-    static int findNormalType6(Vector_3& nv);
-    static Vector_3 normal_list27[27];
-    static Vector_3 normal_list18[18];
-    static Vector_3 normal_list11[11];
-    static Vector_3 normal_list6[6];
+
 
     static bool isAngleLowerThan(Vector_3& nv1, Vector_3& nv2, double);
     static bool isAngleLowerThan(Vertex* origin, Vertex* v1, Vertex* v2, double);
