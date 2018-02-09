@@ -11,13 +11,14 @@
 using namespace std;
 
 std::vector<Surface *> SurfaceIntersection::resolveSelfIntersection(Surface * &pSurface) {
-    SurfaceIntersection::resolveEasySelfIntersection(pSurface);
     int rec = 0;
     vector<Surface*> newSurfaceList;
 
     int number = pSurface->getVerticesSize();
 
     while (true){
+        SurfaceIntersection::resolveEasySelfIntersection(pSurface);
+        SurfaceComputation::removeStraight(pSurface);
         int result = makeNewIntersectionVertex(pSurface);
         if (result == 1) {
             break;
@@ -260,7 +261,6 @@ void SurfaceIntersection::resolveEasySelfIntersection(Surface *&pSurface) {
         }
     }
 
-    SurfaceComputation::removeStraight(pSurface);
 }
 
 
