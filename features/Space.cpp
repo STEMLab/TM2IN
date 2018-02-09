@@ -312,9 +312,12 @@ void Space::resolveIntersectionINTRASurface() {
     for (int sfID = 0 ; sfID < this->surfacesList.size(); ) {
         vector<Surface*> newSurfaces = SurfaceIntersection::resolveSelfIntersection(this->surfacesList[sfID]);
         if (newSurfaces.size() != 0){
+            cout << "Surface : " << sfID << endl;
+            cout << "---------------------------------" << endl;
             //this->surfacesList.insert(this->surfacesList.end(), newSurfaces.begin(), newSurfaces.end());
             //newSurfaceCount += newSurfaces.size();
             sfID++;
+
         } else{
             this->surfacesList.erase(this->surfacesList.begin() + sfID);
         }

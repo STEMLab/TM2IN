@@ -40,7 +40,7 @@ vector<vector<double>> SurfacesListComputation::getMBB(vector<Surface*>& surface
 int SurfacesListComputation::findFirstSurfaceIndexSimilarWithAxis(vector<Surface*>& surfacesList, int axis){
     for (ull i = 0 ; i < surfacesList.size() ; i++){
         Surface* sf = surfacesList[i];
-        if (CGALCalculation::findNormalType6(sf->normal) == axis){
+        if (OnlyWallSpaceMaker::findNormalType6(sf->normal) == axis){
             return i;
         }
     }
