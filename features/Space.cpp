@@ -287,6 +287,7 @@ int Space::makeSurfacesPlanar() {
     for (ull i = 0 ; i < this->surfacesList.size() ; i++){
         SurfaceComputation::flatten(this->surfacesList[i]);
     }
+    return 0;
 }
 
 void Space::sortSurfacesByArea() {

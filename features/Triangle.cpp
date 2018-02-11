@@ -39,6 +39,7 @@ int Triangle::findShareSameHalfEdge(Triangle *pTriangle){
             if (this->edges[i]->isSame(pTriangle->edges[j])){
                 if (result == -1) result = i;
                 else {
+                    std::cerr << "already share same edges" << std::endl;
                     exit(-1);
                 }
             }
@@ -96,7 +97,7 @@ Vertex *Triangle::vertex(int idx) {
 }
 
 std::string Triangle::toJSON(std::string &indent) {
-    std::__cxx11::string ret;
+    std::string ret;
     ret += indent + "{\n";
 
     //normal

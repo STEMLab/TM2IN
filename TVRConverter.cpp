@@ -51,7 +51,7 @@ int main(int argc, const char * argv[]) {
     string version = "1.0.1.5";
     cout << version << endl;
 
-    string projectPath = "/home/dongmin/dev/TriMeshToIndoor/";
+    string projectPath = "/Users/dong/Documents/dev/TriagnleToSolid/"; //"/home/dongmin/dev/TriMeshToIndoor/";
     string resourcePath = projectPath + "Resource/tvr/";
     string resultPath = projectPath + "Result/";
     string fileName;

@@ -75,6 +75,7 @@ int MergingRoomMaker::mergeSurfaces() {
             if (space->handleDefect() == -1){ cout << "cannot handle defect" << endl; return -1; }
         }
     }
+    return 0;
 }
 
 int MergingRoomMaker::processGenerations(Space *space, int &currentGeneration, double &degree){
