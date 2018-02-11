@@ -65,6 +65,7 @@ int MergingRoomMaker::mergeSurfaces() {
             if (space->handleDefect() == -1){ cout << "cannot handle defect" << endl; return -1; }
         }
 
+        if (space->handleDefect() == -1){ cout << "cannot handle defect" << endl; return -1; }
         space->sortSurfacesByArea();
         space->tagID();
 
