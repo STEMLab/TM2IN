@@ -19,13 +19,13 @@ int MergingRoomMaker::constructSpace() {
     if (this->makeSurfacesPlanar()) return -1;
 
     // remove Self-intersection in one Surface.
-    if (this->resolveIntersection()) return -1;
+    // if (this->resolveIntersection()) return -1;
 
     // fill Hole
-//    if (this->triangulation()) return -1;
-//    if (this->updateVertexList()) return -1;
+    if (this->triangulation()) return -1;
+    if (this->updateVertexList()) return -1;
 
-    // if (this->fillHoleWithUsingPolyhedralSurface()) return -1;
+    if (this->fillHoleWithUsingPolyhedralSurface()) return -1;
     return 0;
 }
 

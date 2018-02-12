@@ -39,8 +39,16 @@ std::vector<Surface *> SurfaceIntersection::resolveSelfIntersection(Surface * &p
         }
 
         SurfaceIntersection::resolveEasySelfIntersection(pSurface);
-        //SurfaceComputation::removeConsecutiveDuplicationIndex(pSurface);
+        SurfaceComputation::removeConsecutiveDuplicationIndex(pSurface);
     }
+    SurfaceIntersection::resolveEasySelfIntersection(pSurface);
+/*
+    while (true){
+        SurfaceIntersection::resolveSelfIntersectionBySameVertex(pSurface);
+
+    }
+*/
+
 
     return newSurfaceList;
 }
@@ -61,13 +69,28 @@ int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
     // Intersection Point
     for (int i = 0 ; i < segmentList.size() - 2; i++){
         for (int j = i + 2 ; j < segmentList.size() ; j++){
-            if (i == 0 && j == segmentList.size() - 1) continue;
             CGAL::cpp11::result_of<Intersect_2(Segment_2, Segment_2)>::type
                     result = CGAL::intersection(segmentList[i], segmentList[j]);
             if (result){
                 if (const Point_2* p = boost::get<Point_2>(&*result)){
-                    //cout << "point Intersect" << endl;
-
+                    if (i == 0 && j == segmentList.size() - 1){
+                        int pj = 0;
+                        for (;pj < 2 ; pj++){
+                            double distJ = CGAL::squared_distance(*p, segmentList[j][pj]);
+                            if (distJ < Checker::squaredDistanceOfSamePoint2D){
+                                break;
+                            }
+                        }
+                        if (pj == 2){
+                            Point_3 point3 = pSurface->planeRef.to_3d(*p);
+                            Vertex* vt = new Vertex(point3.x(), point3.y(), point3.z());
+                            pSurface->setVertex(0, vt);
+                            int insertIndex = j + 1;
+                            pSurface->insertVertex(insertIndex, vt);
+                            return 0;
+                        } else
+                            continue;
+                    }
                     int pi = 0;
                     Point_3 point3 = pSurface->planeRef.to_3d(*p);
                     Vertex* vt = new Vertex(point3.x(), point3.y(), point3.z());
@@ -115,15 +138,21 @@ int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
 
                 }
                 else if (const Segment_2* seg = boost::get<Segment_2>(&*result)){
-                    Vector_2 iVector = segmentList[i].to_vector();
-                    Vector_2 jVector = segmentList[j].to_vector();
+                    cout << "i : " << i << " , j : " << j << endl;
+                    cout << *seg << endl;
+//                    Vector_2 iVector = segmentList[i].to_vector();
+//                    Vector_2 jVector = segmentList[j].to_vector();
+//
+//                    int angle = (int)CGALCalculation::getAngle(jVector, iVector);
+//                    if (angle == 0) {
+//                        printf ("0 degree : %d %d\n", i, j);
+//                        return 2;
+//                    }
 
-                    int angle = (int)CGALCalculation::getAngle(jVector, iVector);
-                    if (angle == 0) {
-                        printf ("0 degree : %d %d\n", i, j);
-                        return 2;
-                    }
+                    pSurface->removeVertexByIndex(i);
+                    return 0;
 
+                    /*
                     Vector_2 segVector = seg->to_vector();
                     angle = (int)CGALCalculation::getAngle(iVector, segVector);
                     CGAL_assertion(angle == 180 || angle == 0);
@@ -135,8 +164,8 @@ int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
                     Vector_2 segVector2 = seg->to_vector();
                     angle = (int)CGALCalculation::getAngle(iVector, segVector2);
                     CGAL_assertion(angle == 0);
+                    */
 
-                    //cout << "line Intersect" << endl;
                     Point_3 source = pSurface->planeRef.to_3d(seg->source());
                     Point_3 target = pSurface->planeRef.to_3d(seg->target());
 
@@ -232,6 +261,7 @@ int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
                         }
                         return 0;
                     }
+
                 }
             }
         }
@@ -266,138 +296,6 @@ void SurfaceIntersection::resolveEasySelfIntersection(Surface *&pSurface) {
 
 }
 
-
-
-/*
-int SurfaceComputation::intersectionCount = 0;
-
-void SurfaceComputation::resolveIntersectionByCGAL(Surface *&pSurface) {
-    bool hasIntersection = true;
-    while (hasIntersection){
-        hasIntersection = false;
-        vector<HalfEdge* > edges = pSurface->getboundaryEdgesList();
-        vector<Segment_3> segments;
-        for (int i = 0 ; i < edges.size() ; i++){
-            segments.push_back(HalfEdgeComputation::getCGALSegment_3(edges[i]));
-            delete edges[i];
-        }
-
-        for (int i = 0 ; i < segments.size() - 2; i++){
-            for (int j = i + 2 ; j < segments.size() ; j++){
-                if (i == 0 && j == segments.size() - 1) continue;
-                if (CGAL::do_intersect(segments[i], segments[j])){
-                    CGAL::cpp11::result_of<Intersect_3(Segment_3, Segment_3)>::type
-                            result = CGAL::intersection(segments[i], segments[j]);
-//                    if (result){
-//                        if (const Point_3* p = boost::get<Point_3>(&*result)){
-//                            std::cout << *p << endl;
-//                        }
-//                    }
-                    intersectionCount++;
-                    hasIntersection = true;
-
-                    // remove Vertex.
-                    pSurface->removeVertexByIndex(i + 1);
-                    i = segments.size();
-                    break;
-                }
-            }
-        }
-    }
-    return;
+int SurfaceIntersection::resolveSelfIntersectionBySameVertex(Surface *&pSurface) {
+    return 0;
 }
-
-Surface * SurfaceComputation::resolveIntersectionAndMakeNewSurface(Surface *&pSurface) {
-    bool hasIntersect = true;
-    while (hasIntersect){
-        vector<Vertex*> vertexList = pSurface->getVerticesList();
-        hasIntersect = false;
-        for (int i = 0 ; i < vertexList.size() - 2 ; i++){
-            for (int j = i + 1; j < vertexList.size() ; j++){
-                if (vertexList[i] == vertexList[j]){
-                    if ( j - i == 1){
-                        //erase j
-                        pSurface->removeVertexByIndex(j);
-                    }
-                    else if (j - i == 2){
-                        //erase i + 1, j
-                        pSurface->removeVertexByIndex(j);
-                        pSurface->removeVertexByIndex(i+1);
-                    }
-                    else if (j - i > 2){
-                        vector<Vertex*> newVertices;
-                        for (int id = j ; id > i; id--){
-                            newVertices.push_back(vertexList[id]);
-                            pSurface->removeVertexByIndex(id);
-                        }
-                        Surface* newSurface = new Surface(newVertices);
-                        return newSurface;
-                    }
-                    else{
-                        exit(-1);
-                    }
-                    hasIntersect = true;
-                    j = vertexList.size();
-                    i = j;
-                }
-                else if (Checker::isSameVertex(vertexList[i], vertexList[j])){
-                    cout << i <<" " <<  j << endl;
-                    cout << vertexList[i]->toJSON() << endl;
-                    cout << vertexList[j]->toJSON() << endl;
-                    if ( j - i == 1){
-                        //erase j
-                        pSurface->removeVertexByIndex(j);
-                    }
-                    else if (j - i == 2){
-                        //erase i + 1, j
-                        pSurface->removeVertexByIndex(j);
-                        pSurface->removeVertexByIndex(i+1);
-                    }
-                    else if (j - i > 2){
-                        vector<Vertex*> newVertices;
-                        for (int id = j ; id > i; id--){
-                            newVertices.push_back(vertexList[id]);
-                            pSurface->removeVertexByIndex(id);
-                        }
-                        Surface* newSurface = new Surface(newVertices);
-                        return newSurface;
-                    }
-                    else{
-                        exit(-1);
-                    }
-                    hasIntersect = true;
-                    j = vertexList.size();
-                    i = j;
-                }
-            }
-        }
-    }
-    return NULL;
-}
-
-
-void SurfaceComputation::snapping(Surface *&pSurface) {
-    std::vector<Vertex*> vertexList = pSurface->getVerticesList();
-    vector<HalfEdge* > edges = pSurface->getboundaryEdgesList();
-    vector<Segment_3> segments;
-    for (int i = 0 ; i < edges.size() ; i++){
-        segments.push_back(HalfEdgeComputation::getCGALSegment_3(edges[i]));
-        delete edges[i];
-    }
-
-    for (int i = 0 ; i < vertexList.size() ; i++){
-        int frontEdgeIndex = i - 1 >= 0? i-1: vertexList.size() - 1;
-        int nextEdgeIndex = i;
-        for (int ed = 0 ; ed < segments.size() ; ed++){
-            if (ed == frontEdgeIndex || ed == nextEdgeIndex) continue;
-            Point_3 point3 = VertexComputation::getCGALPoint(vertexList[i]);
-            if (CGAL::squared_distance(point3, segments[ed]) < pow(Checker::threshold_vertex, 2)){
-                Point_3 projected = segments[ed].supporting_line().projection(point3);
-                vertexList[i]->setCoords(projected.x(), projected.y(), projected.z());
-                break;
-            }
-        }
-
-    }
-}
- */

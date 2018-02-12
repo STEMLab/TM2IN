@@ -312,17 +312,18 @@ void Space::putVerticesAndUpdateIndex(vector<Vertex *> &vertices) {
 void Space::resolveIntersectionINTRASurface() {
     int newSurfaceCount = 0;
     for (int sfID = 0 ; sfID < this->surfacesList.size(); ) {
+
         vector<Surface*> newSurfaces = SurfaceIntersection::resolveSelfIntersection(this->surfacesList[sfID]);
+        /*
         if (newSurfaces.size() != 0){
             cout << "Surface : " << sfID << endl;
             cout << "---------------------------------" << endl;
-            //this->surfacesList.insert(this->surfacesList.end(), newSurfaces.begin(), newSurfaces.end());
-            //newSurfaceCount += newSurfaces.size();
             sfID++;
 
         } else{
             this->surfacesList.erase(this->surfacesList.begin() + sfID);
         }
+        */
     }
     cout << "Intersect Surfaces : " << this->surfacesList.size() << endl;
     cout << "new Surface : " << newSurfaceCount << endl;
@@ -340,9 +341,14 @@ void Space::clearTrianglesListInSurfaces() {
 
 void Space::triangulateSurfaces() {
     this->hasTriangulation = true;
-    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
+    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); ) {
         Surface* pSurface = this->surfacesList[sfID];
-        SurfaceComputation::triangulate(pSurface);
+        if (SurfaceComputation::triangulate(pSurface)){
+            this->surfacesList.erase(this->surfacesList.begin() + sfID);
+        }
+        else {
+            sfID++;
+        }
     }
 }
 

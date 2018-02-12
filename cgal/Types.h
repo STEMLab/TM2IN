@@ -35,8 +35,8 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
-typedef CGAL::Simple_cartesian<double> Kernel;
-//typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
+//typedef CGAL::Simple_cartesian<double> Kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Aff_transformation_3<Kernel> Transformation;
 typedef Kernel::Point_2 Point_2;
 typedef Kernel::Point_3 Point_3;
@@ -50,13 +50,12 @@ typedef Kernel::Segment_3 Segment_3;
 typedef Kernel::Intersect_2 Intersect_2;
 typedef Kernel::Intersect_3 Intersect_3;
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel2;
-typedef CGAL::Triangulation_vertex_base_with_info_2<double, Kernel2> Vb;
+typedef CGAL::Triangulation_vertex_base_with_info_2<double, Kernel> Vb;
 typedef CGAL::Triangulation_data_structure_2<Vb> Tds;
-typedef CGAL::Delaunay_triangulation_2<Kernel2, Tds> Delaunay;
+typedef CGAL::Delaunay_triangulation_2<Kernel, Tds> Delaunay;
 typedef Delaunay::Point D_Point;
 
-typedef CGAL::Partition_traits_2<Kernel2> Traits;
+typedef CGAL::Partition_traits_2<Kernel> Traits;
 typedef Traits::Polygon_2 Polygon_2;
 typedef Traits::Point_2 Polygon_Point_2;
 

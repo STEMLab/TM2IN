@@ -8,7 +8,7 @@
 #include "features/Surface.h"
 #include "cgal/Types.h"
 
-typedef CGAL::Polyhedron_3<Kernel2>         Polyhedron;
+typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
 
 typedef Polyhedron::Halfedge_handle    Halfedge_handle;
 typedef Polyhedron::Facet_handle       Facet_handle;
@@ -40,6 +40,7 @@ public:
         B.begin_surface( coords.size(), triangleSize);
 
         cout << coords.size() << " , " << triangleSize << endl;
+
         // add the polyhedron vertices
         for( int i=0; i<(int)coords.size(); i++ ){
             B.add_vertex( Point( coords[i]->coords[0], coords[i]->coords[1], coords[i]->coords[2] ) );
@@ -47,12 +48,11 @@ public:
 
         // add the polyhedron triangles
         for( int i=0; i<(int)surfaces.size(); i++ ){
-            cout << "FACET :  " << i <<  " , " << surfaces[i]->globalIndicesOfTriangulation.size() << endl;
-            for ( int tri = 0 ; tri < (int)surfaces[i]->globalIndicesOfTriangulation.size() ; tri++){
+            cout << "FACET :  " << i <<  " , " << surfaces[i]->triangles.size() << endl;
+            for ( int tri = 0 ; tri < (int)surfaces[i]->triangles.size() ; tri++){
                 B.begin_facet();
-                CGAL_assertion(surfaces[i]->globalIndicesOfTriangulation[tri].size() == 3);
                 for (int vt = 0 ; vt < 3; vt++){
-                    int index = surfaces[i]->globalIndicesOfTriangulation[tri][vt];
+                    int index = surfaces[i]->triangles[tri]->vertex(vt)->index;
                     B.add_vertex_to_facet(index);
                 }
                 B.end_facet();
@@ -67,7 +67,7 @@ public:
 vector<Vertex *> SurfaceHoleCover::fillHole (vector<Vertex*>& vertices, vector<Surface *>& surfaces) {
     Polyhedron poly;
     polyhedron_builder<HalfedgeDS> polybuilder (vertices, surfaces);
-   poly.delegate(polybuilder);
+    poly.delegate(polybuilder);
     // Incrementally fill the holes
     unsigned int nb_holes = 0;
     BOOST_FOREACH(Halfedge_handle h, halfedges(poly))
@@ -83,7 +83,7 @@ vector<Vertex *> SurfaceHoleCover::fillHole (vector<Vertex*>& vertices, vector<S
                                         std::back_inserter(patch_facets),
                                         std::back_inserter(patch_vertices),
                                         CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, poly)).
-                                                geom_traits(Kernel2())) );
+                                                geom_traits(Kernel())) );
                         std::cout << " Number of facets in constructed patch: " << patch_facets.size() << std::endl;
                         std::cout << " Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;
                         std::cout << " Fairing : " << (success ? "succeeded" : "failed") << std::endl;
