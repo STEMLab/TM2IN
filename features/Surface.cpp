@@ -242,22 +242,6 @@ bool Surface::compareArea(Surface* i, Surface* j) {
 }
 
 
-void Surface::removeConsecutiveDuplication(){
-    ull v_size = v_list.size();
-    int removed_count = 0;
-    for (ull i = 0 ; i < v_size - 1; i++){
-        if (Checker::isSameVertex(v_list[i] , v_list[i+1])){
-            v_list.erase(v_list.begin() + i + 1);
-            i--;
-            v_size -= 1;
-            removed_count += 1;
-        }
-    }
-
-    if (removed_count) cout << removed_count << " are removed in duplication" << endl;
-}
-
-
 /**
 *  Check that Surface is not valid. Straight Line or Point.
 */

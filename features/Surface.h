@@ -67,8 +67,6 @@ public:
     void translate(double diff[]);
     bool checkDuplicate();
 
-    void removeConsecutiveDuplication();
-
     Vector_3 getSimpleNormal();
     bool updateNormal();
     bool isValid();

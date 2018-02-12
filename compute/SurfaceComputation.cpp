@@ -10,6 +10,44 @@
 
 using namespace std;
 
+void SurfaceComputation::removeConsecutiveDuplication(Surface *&pSurface){
+    ull v_size = pSurface->v_list.size();
+    int removed_count = 0;
+    for (ull i = 0 ; i < v_size - 1; i++){
+        if (Checker::isSameVertex(pSurface->v_list[i] , pSurface->v_list[i+1])){
+            pSurface->v_list.erase(pSurface->v_list.begin() + i + 1);
+            i--;
+            v_size -= 1;
+            removed_count += 1;
+        }
+    }
+
+    if (removed_count) cout << removed_count << " are removed in duplication" << endl;
+}
+
+void SurfaceComputation::removeConsecutiveDuplicationIndex(Surface *&pSurface){
+    ull v_size = pSurface->v_list.size();
+    int removed_count = 0;
+    for (ull i = 0 ; i < v_size - 1; i++){
+        /*
+        if (Checker::isSameVertex(v_list[i] , v_list[i+1])){
+            v_list.erase(v_list.begin() + i + 1);
+            i--;
+            v_size -= 1;
+            removed_count += 1;
+        }
+        */
+        if (pSurface->v_list[i] == pSurface->v_list[i+1]){
+            pSurface->v_list.erase(pSurface->v_list.begin() + i + 1);
+            i--;
+            v_size -= 1;
+            removed_count += 1;
+        }
+    }
+
+    if (removed_count) cout << removed_count << " are removed in duplication" << endl;
+}
+
 void SurfaceComputation::flatten(Surface *&sf) {
     Plane_3 plane = getPlane3(sf);
 

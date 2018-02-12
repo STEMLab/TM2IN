@@ -15,10 +15,10 @@ std::vector<Surface *> SurfaceIntersection::resolveSelfIntersection(Surface * &p
     vector<Surface*> newSurfaceList;
 
     int number = pSurface->getVerticesSize();
+    SurfaceIntersection::resolveEasySelfIntersection(pSurface);
+    SurfaceComputation::removeStraight(pSurface);
 
     while (true){
-        SurfaceIntersection::resolveEasySelfIntersection(pSurface);
-        SurfaceComputation::removeStraight(pSurface);
         int result = makeNewIntersectionVertex(pSurface);
         if (result == 1) {
             break;
@@ -37,6 +37,9 @@ std::vector<Surface *> SurfaceIntersection::resolveSelfIntersection(Surface * &p
             cout << "Too much recursive? " << endl;
             break;
         }
+
+        SurfaceIntersection::resolveEasySelfIntersection(pSurface);
+        //SurfaceComputation::removeConsecutiveDuplicationIndex(pSurface);
     }
 
     return newSurfaceList;

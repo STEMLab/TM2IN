@@ -27,7 +27,6 @@ int SurfacePairComputation::combine(Surface* origin, Surface* piece, double degr
 
     int seg_num = piece->getSegmentsNumber(end_i, start_i);
 
-
     if (seg_num == -1)
     {
         cerr << "segment Number is -1" << endl;

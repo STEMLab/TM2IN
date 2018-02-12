@@ -142,7 +142,8 @@ int Space::handleDefect() {
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
     {
         Surface* surface = this->surfacesList[i];
-        surface->removeConsecutiveDuplication();
+        SurfaceComputation::removeConsecutiveDuplicationIndex(surface);
+        SurfaceComputation::removeConsecutiveDuplication(surface);
         SurfaceComputation::removeStraight(surface);
         surface->updateMBB();
 
