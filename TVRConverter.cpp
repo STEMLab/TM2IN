@@ -14,40 +14,22 @@ void createAndRemoveDir(const string &version, const string &resultPath, const s
 using namespace std;
 
 void test(){
-    Point_2 p5(7.840458, -3.34409);
-    Point_2 p6(7.997811, -3.248648);
-    Point_2 p7(9.161979, -2.969505);
+    Point_3 p51(-373.2655, 360.9103, 49.3925);
+    Point_3 p52(-372.7594, 373.1839, 25.1797);
+    Point_3 p0(-373.2519, 361.2404, 48.7411);
+    Point_3 p1(-374.2917, 359.6632, 42.686);
 
-    Point_2 p42(8.031578, -3.228158);
-    Point_2 p43(8.027593, -3.241511);
-    Point_2 p44(7.812693, -3.293034);
+    Segment_3 seg1(p51 ,p52);
+    Segment_3 seg2(p0, p1);
 
-    Segment_2 seg1(p6 ,p7);
-    Segment_2 seg2(p43, p44);
-
-    cout << (Checker::threshold_vertex > CGAL::squared_distance(p43 , seg1)) << endl;
-
+    cout << CGAL::squared_distance(seg1, p0) << endl;
     cout << CGAL::do_intersect(seg1, seg2) << endl;
-    if (CGAL::do_intersect(seg1, seg2)){
-        CGAL::cpp11::result_of<Intersect_2(Segment_2, Segment_2)>::type
-                result = CGAL::intersection(seg1, seg2);
-        if (result){
-            if (const Point_2* p = boost::get<Point_2>(&*result)){
-                std::cout << *p << endl;
-                cout << (*p == p43) << endl;
-            }
-            else{
-                const Segment_2* sg = boost::get<Segment_2>(&*result);
-                cout << sg << endl;
-            }
-        }
-    }
+
 }
 
 int main(int argc, const char * argv[]) {
 //    test();
 //    return 0;
-
     string version = "1.0.1.5";
     cout << version << endl;
 

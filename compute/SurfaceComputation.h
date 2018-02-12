@@ -16,11 +16,15 @@ public:
 
     static Plane_3 getPlane3(Surface *&pSurface);
 
-    static void triangulate(Surface *&pSurface);
+    static int triangulate(Surface *&pSurface);
 
     static std::vector<Point_2> to2D(Surface *&pSurface, Plane_3 plane);
 
     static void removeStraight(Surface *&pSurface);
+
+    static void removeConsecutiveDuplicationIndex(Surface *&pSurface);
+
+    static void removeConsecutiveDuplication(Surface *&pSurface);
 };
 
 

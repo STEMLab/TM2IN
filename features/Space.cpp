@@ -142,7 +142,8 @@ int Space::handleDefect() {
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
     {
         Surface* surface = this->surfacesList[i];
-        surface->removeConsecutiveDuplication();
+        SurfaceComputation::removeConsecutiveDuplicationIndex(surface);
+        SurfaceComputation::removeConsecutiveDuplication(surface);
         SurfaceComputation::removeStraight(surface);
         surface->updateMBB();
 
@@ -287,6 +288,7 @@ int Space::makeSurfacesPlanar() {
     for (ull i = 0 ; i < this->surfacesList.size() ; i++){
         SurfaceComputation::flatten(this->surfacesList[i]);
     }
+    return 0;
 }
 
 void Space::sortSurfacesByArea() {
@@ -310,14 +312,18 @@ void Space::putVerticesAndUpdateIndex(vector<Vertex *> &vertices) {
 void Space::resolveIntersectionINTRASurface() {
     int newSurfaceCount = 0;
     for (int sfID = 0 ; sfID < this->surfacesList.size(); ) {
+
         vector<Surface*> newSurfaces = SurfaceIntersection::resolveSelfIntersection(this->surfacesList[sfID]);
+        /*
         if (newSurfaces.size() != 0){
-            //this->surfacesList.insert(this->surfacesList.end(), newSurfaces.begin(), newSurfaces.end());
-            //newSurfaceCount += newSurfaces.size();
+            cout << "Surface : " << sfID << endl;
+            cout << "---------------------------------" << endl;
             sfID++;
+
         } else{
             this->surfacesList.erase(this->surfacesList.begin() + sfID);
         }
+        */
     }
     cout << "Intersect Surfaces : " << this->surfacesList.size() << endl;
     cout << "new Surface : " << newSurfaceCount << endl;
@@ -335,9 +341,14 @@ void Space::clearTrianglesListInSurfaces() {
 
 void Space::triangulateSurfaces() {
     this->hasTriangulation = true;
-    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
+    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); ) {
         Surface* pSurface = this->surfacesList[sfID];
-        SurfaceComputation::triangulate(pSurface);
+        if (SurfaceComputation::triangulate(pSurface)){
+            this->surfacesList.erase(this->surfacesList.begin() + sfID);
+        }
+        else {
+            sfID++;
+        }
     }
 }
 

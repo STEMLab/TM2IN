@@ -41,6 +41,13 @@ public:
 
     void setZ(double value);
 
+    void setVertex(int index, Vertex* vt);
+    Vertex* getVertex(int index){
+        return v_list[index];
+    }
+
+    void insertVertex(int index, Vertex* vt);
+
     std::string toJSONString();
     std::string toJSONWithTriangles();
 
@@ -59,8 +66,6 @@ public:
 
     void translate(double diff[]);
     bool checkDuplicate();
-
-    void removeConsecutiveDuplication();
 
     Vector_3 getSimpleNormal();
     bool updateNormal();
@@ -81,7 +86,6 @@ public:
 
     void removeVertexByIndex(int startIndex, int endIndex);
 private:
-    std::vector<std::pair<double, double>> project_to_Plane18();
 };
 
 

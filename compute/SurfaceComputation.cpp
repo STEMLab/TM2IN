@@ -10,6 +10,44 @@
 
 using namespace std;
 
+void SurfaceComputation::removeConsecutiveDuplication(Surface *&pSurface){
+    ull v_size = pSurface->v_list.size();
+    int removed_count = 0;
+    for (ull i = 0 ; i < v_size - 1; i++){
+        if (Checker::isSameVertex(pSurface->v_list[i] , pSurface->v_list[i+1])){
+            pSurface->v_list.erase(pSurface->v_list.begin() + i + 1);
+            i--;
+            v_size -= 1;
+            removed_count += 1;
+        }
+    }
+
+    if (removed_count) cout << removed_count << " are removed in duplication" << endl;
+}
+
+void SurfaceComputation::removeConsecutiveDuplicationIndex(Surface *&pSurface){
+    ull v_size = pSurface->v_list.size();
+    int removed_count = 0;
+    for (ull i = 0 ; i < v_size - 1; i++){
+        /*
+        if (Checker::isSameVertex(v_list[i] , v_list[i+1])){
+            v_list.erase(v_list.begin() + i + 1);
+            i--;
+            v_size -= 1;
+            removed_count += 1;
+        }
+        */
+        if (pSurface->v_list[i] == pSurface->v_list[i+1]){
+            pSurface->v_list.erase(pSurface->v_list.begin() + i + 1);
+            i--;
+            v_size -= 1;
+            removed_count += 1;
+        }
+    }
+
+    if (removed_count) cout << removed_count << " are removed in duplication" << endl;
+}
+
 void SurfaceComputation::flatten(Surface *&sf) {
     Plane_3 plane = getPlane3(sf);
 
@@ -82,55 +120,12 @@ void SurfaceComputation::removeStraight(Surface*& pSurface){
     }
 
     pSurface->setVertices(vertexList);
-/*
-    vector<Vertex*> new_v_list;// = this->v_list;
 
-    ll index = 1;
-    Vertex* start_p = this->v_list[0];
-    Vertex* check_p = this->v_list[index];
-
-    do {
-        ll next_index = index + 1;
-        if (next_index == (ll) this->getVerticesSize()) next_index = 0;
-        Vertex* end_p = this->v_list[next_index];
-        if (CGALCalculation::isAngleLowerThan(start_p, check_p, end_p, degree)){
-            removed_count++;
-        }
-        else{
-            new_v_list.push_back(this->v_list[index]);
-            start_p = this->v_list[index];
-        }
-        index = next_index;
-        check_p = this->v_list[index];
-    } while (index != 1);
-
-    for (ull i = 1 ; i < new_v_list.size() - 1; ){
-        Vertex* start_p = new_v_list[i-1];
-        ull second = i;
-        Vertex* check_p = new_v_list[second];
-        ull third = i+1;
-        Vertex* end_p = new_v_list[third];
-        if (CGALCalculation::isAngleLowerThan(start_p, check_p, end_p, degree)
-           || CGALCalculation::isAngleLowerThan(end_p, check_p, start_p, degree) ){
-            new_v_list.erase(new_v_list.begin() + i);
-        }
-        else if(CGALCalculation::isAngleLowerThan(start_p, check_p, end_p, -degree)
-           || CGALCalculation::isAngleLowerThan(end_p, check_p, start_p, -degree) ){
-            new_v_list.erase(new_v_list.begin() + i);
-        }
-        else{
-            i++;
-        }
-    }
-
-    this->v_list.clear();
-    this->v_list = new_v_list;
-*/
     if (removed_count) cout << removed_count << " are removed in straight" << endl;
 }
 
 
-void SurfaceComputation::triangulate(Surface *&pSurface) {
+int SurfaceComputation::triangulate(Surface *&pSurface) {
     std::vector<Vertex*> vertexList = pSurface->getVerticesList();
 
     // convert 3D point to 2D
@@ -140,47 +135,52 @@ void SurfaceComputation::triangulate(Surface *&pSurface) {
     // partition Surface to convex 2D polygons.
     cout << "\n\n make Polygon" << endl;
     Polygon_2 polygon = PolygonComputation::makePolygon(point2dList);
+    if (!polygon.is_simple()) return 1;
+
     cout << "\n\n partition Surface to convex polygons" << endl;
     vector<Polygon_2> polygonList = PolygonComputation::convexPartition(polygon);
 
     cout << "\n\n triangulate Polygons" << endl;
+    vector<Triangle* > triangles;
     for (int i = 0 ; i < polygonList.size() ; i++){
         cout << polygonList[i] << endl;
         CGAL_assertion(polygonList[i].is_simple() && polygonList[i].is_convex());
 
         Polygon_2 p = polygonList[i];
+        vector<Point_2> points;
         for (Polygon_2::Vertex_iterator vi = p.vertices_begin(); vi != p.vertices_end(); ++vi){
-            std::cout << "vertex " << " = " << vi->x() << std::endl;
-        }
-    }
-
-    return;
-
-    vector<pair<D_Point, int > > points;
-    for (int i = 0 ; i < vertexList.size() ; i++){
-        Point_2 point2d = point2dList[i];
-        points.push_back(make_pair(D_Point(point2d.x(), point2d.y()), i));
-    }
-
-    Delaunay T;
-    T.insert(points.begin(),points.end());
-    CGAL_assertion(T.number_of_vertices() == vertexList.size());
-
-    vector<Triangle* > triangles;
-    for(Delaunay::Finite_faces_iterator fit = T.finite_faces_begin();
-        fit != T.finite_faces_end(); ++fit)
-    {
-        vector<Vertex*> localTemp;
-        Delaunay::Face_handle facet = fit;
-
-        for (int i = 0 ; i < 3 ; i++){
-            localTemp.push_back(vertexList[facet->vertex(i)->info()]);
+            Point_2 point2d(vi->x(), vi->y());
+            points.push_back(point2d);
         }
 
-        triangles.push_back(new Triangle(localTemp));
+        Delaunay T;
+        T.insert(points.begin(),points.end());
+
+        cout << "Triangles  : " << T.number_of_faces() << endl;
+        for(Delaunay::Finite_faces_iterator fit = T.finite_faces_begin();
+            fit != T.finite_faces_end(); ++fit)
+        {
+            vector<Vertex*> localTemp;
+            Delaunay::Face_handle facet = fit;
+
+            for (int j = 0 ; j < 3 ; j++){
+                Point_2 point2d = facet->vertex(j)->point();
+                int k;
+                for (k = 0 ; k < point2dList.size() ; k++){
+                    if (point2d == point2dList[k]) break;
+                }
+                if (k == point2dList.size()){
+                    cerr << "new Point" << endl;
+                    exit(-1);
+                }
+                localTemp.push_back(vertexList[k]);
+            }
+
+            triangles.push_back(new Triangle(localTemp));
+        }
     }
 
     pSurface->triangles = triangles;
 
-    return;
+    return 0;
 }

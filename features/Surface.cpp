@@ -177,59 +177,14 @@ Vector_3 Surface::getSimpleNormal(){
     return normal;
 }
 
-vector<pair<double, double>> Surface::project_to_Plane18(){
-    vector<pair<double, double>> points;
-    int type = CGALCalculation::findNormalType18(this->normal);
-    if (this->normal == CGAL::NULL_VECTOR){
-        exit(-1);
-    }
-    Plane_3 plane = Plane_3(VertexComputation::getCGALPoint(this->v_list[0]), CGALCalculation::normal_list18[type]);
-    for (ull i = 0 ; i < this->getVerticesSize() ; i++){
-        Point_3 p3 = VertexComputation::getCGALPoint(this->v_list[i]);
-        Point_2 point2d = plane.to_2d(p3);
-        points.push_back(make_pair(point2d.x(), point2d.y()));
-    }
-
-    return points;
-}
 
 bool Surface::updateNormal(){
     if (this->getVerticesSize() <= 4){
         this->normal = getSimpleNormal();
     }
-    this->normal = CGALCalculation::normal_list18[CGALCalculation::findNormalType18(this->normal)];
+
     this->normal = this->normal / sqrt(this->normal.squared_length());
     this->normal = this->normal * this->area * AREA_CONST;
-//
-//    else{
-//        vector<pair<double, double>> pointsInPlane = to2DPoints();
-//        vector<vector<int>> indexes = Triangulator::triangulate2D(pointsInPlane, true);
-//
-//        if (indexes.size() == 0)
-//        {
-//            int randomType = rand() % 26 + 1;
-//            cout << "Can not Triangulation " << randomType << endl;
-//            this->av_normal = CGALCalculation::normal_list27[randomType];
-//            return updateNormal(ch);
-//        }
-//
-//        Vector_3 normal = Vector_3(0,0,0);
-//        for (int i = 0 ; i < (int)indexes.size() ; i++)
-//        {
-//            Vector_3 new_normal = CGALCalculation::getUnitNormal(v_list[indexes[i][0]], v_list[indexes[i][1]], v_list[indexes[i][2]]);
-//            normal = normal + new_normal;
-//            cout << indexes[i][0] << " " << indexes[i][1] << " " << indexes[i][2] << endl;
-//        }
-//        cout << toJSONString() << endl;
-//
-//        indexes.clear();
-//        pointsInPlane.clear();
-//
-//        int type = CGALCalculation::findNormalType27(normal);
-//        this->av_normal = CGALCalculation::normal_list27[type];
-//        this->av_normal = this->av_normal * this->sq_area * AREA_CONST;
-//
-//    }
 
     if (this->normal == CGAL::NULL_VECTOR){
         cout << "NULLVECTOR" << endl;
@@ -284,22 +239,6 @@ bool Surface::compareLength(Surface* i, Surface* j) {
 
 bool Surface::compareArea(Surface* i, Surface* j) {
      return (i->area > j->area);
-}
-
-
-void Surface::removeConsecutiveDuplication(){
-    ull v_size = v_list.size();
-    int removed_count = 0;
-    for (ull i = 0 ; i < v_size - 1; i++){
-        if (Checker::isSameVertex(v_list[i] , v_list[i+1])){
-            v_list.erase(v_list.begin() + i + 1);
-            i--;
-            v_size -= 1;
-            removed_count += 1;
-        }
-    }
-
-    if (removed_count) cout << removed_count << " are removed in duplication" << endl;
 }
 
 
@@ -373,4 +312,12 @@ void Surface::clearTriangleList() {
  */
 void Surface::removeVertexByIndex(int startIndex, int endIndex) {
     this->v_list.erase(this->v_list.begin() + startIndex, this->v_list.begin() + endIndex);
+}
+
+void Surface::setVertex(int index, Vertex *vt) {
+    this->v_list[index] = vt;
+}
+
+void Surface::insertVertex(int index, Vertex *vt) {
+    this->v_list.insert(this->v_list.begin() + index, vt);
 }

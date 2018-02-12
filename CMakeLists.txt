@@ -14,7 +14,7 @@ if ( CGAL_FOUND )
     include( CGAL_CreateSingleSourceCGALProgram )
 endif()
 
-FIND_PACKAGE( Boost 1.40 COMPONENTS filesystem REQUIRED )
+FIND_PACKAGE( Boost 1.40 REQUIRED COMPONENTS filesystem REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 

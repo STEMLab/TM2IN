@@ -19,13 +19,13 @@ int MergingRoomMaker::constructSpace() {
     if (this->makeSurfacesPlanar()) return -1;
 
     // remove Self-intersection in one Surface.
-    if (this->resolveIntersection()) return -1;
+    // if (this->resolveIntersection()) return -1;
 
     // fill Hole
-//    if (this->triangulation()) return -1;
-//    if (this->updateVertexList()) return -1;
+    if (this->triangulation()) return -1;
+    if (this->updateVertexList()) return -1;
 
-    // if (this->fillHoleWithUsingPolyhedralSurface()) return -1;
+    if (this->fillHoleWithUsingPolyhedralSurface()) return -1;
     return 0;
 }
 
@@ -65,6 +65,7 @@ int MergingRoomMaker::mergeSurfaces() {
             if (space->handleDefect() == -1){ cout << "cannot handle defect" << endl; return -1; }
         }
 
+        if (space->handleDefect() == -1){ cout << "cannot handle defect" << endl; return -1; }
         space->sortSurfacesByArea();
         space->tagID();
 
@@ -75,6 +76,7 @@ int MergingRoomMaker::mergeSurfaces() {
             if (space->handleDefect() == -1){ cout << "cannot handle defect" << endl; return -1; }
         }
     }
+    return 0;
 }
 
 int MergingRoomMaker::processGenerations(Space *space, int &currentGeneration, double &degree){
