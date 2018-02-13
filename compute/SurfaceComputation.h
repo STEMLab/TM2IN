@@ -14,7 +14,7 @@ public:
 
     static Vertex* getCenterPoint(Surface *pSurface);
 
-    static Plane_3 getPlane3(Surface *&pSurface);
+    static Plane_3 makePlane3(Surface *&pSurface);
 
     static int triangulate(Surface *&pSurface);
 

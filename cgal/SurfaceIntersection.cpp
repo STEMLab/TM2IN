@@ -64,7 +64,7 @@ std::vector<Surface *> SurfaceIntersection::resolveSelfIntersection(Surface * &p
  */
 
 int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
-    vector<Point_2> pointsList = SurfaceComputation::to2D(pSurface, pSurface->planeRef);
+    vector<Point_2> pointsList = SurfaceComputation::to2D(pSurface, pSurface->getPlaneRef());
     vector<Segment_2> segmentList = VertexListComputation::makeSegment2List(pointsList);
     // Intersection Point
     for (int i = 0 ; i < segmentList.size() - 2; i++){
@@ -82,7 +82,7 @@ int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
                             }
                         }
                         if (pj == 2){
-                            Point_3 point3 = pSurface->planeRef.to_3d(*p);
+                            Point_3 point3 = pSurface->getPlaneRef().to_3d(*p);
                             Vertex* vt = new Vertex(point3.x(), point3.y(), point3.z());
                             pSurface->setVertex(0, vt);
                             int insertIndex = j + 1;
@@ -92,7 +92,7 @@ int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
                             continue;
                     }
                     int pi = 0;
-                    Point_3 point3 = pSurface->planeRef.to_3d(*p);
+                    Point_3 point3 = pSurface->getPlaneRef().to_3d(*p);
                     Vertex* vt = new Vertex(point3.x(), point3.y(), point3.z());
                     for (;pi < 2 ; pi++){
                         double distI = CGAL::squared_distance(*p, segmentList[i][pi]);
@@ -166,8 +166,8 @@ int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
                     CGAL_assertion(angle == 0);
                     */
 
-                    Point_3 source = pSurface->planeRef.to_3d(seg->source());
-                    Point_3 target = pSurface->planeRef.to_3d(seg->target());
+                    Point_3 source = pSurface->getPlaneRef().to_3d(seg->source());
+                    Point_3 target = pSurface->getPlaneRef().to_3d(seg->target());
 
                     // j
                     int sourceJ = 0, targetJ = 0;
@@ -272,7 +272,7 @@ int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
 #define GAP_FOR_SNAP 3
 
 void SurfaceIntersection::resolveEasySelfIntersection(Surface *&pSurface) {
-    vector<Point_2> pointsList = SurfaceComputation::to2D(pSurface, pSurface->planeRef);
+    vector<Point_2> pointsList = SurfaceComputation::to2D(pSurface, pSurface->getPlaneRef());
     for (int i = 0 ; i < pointsList.size() - 1; i++){
         for (int j = 2 ; j <= GAP_FOR_SNAP ; j++){
             int nextIndex = i + j >= pointsList.size() ? i + j - pointsList.size() : i + j;

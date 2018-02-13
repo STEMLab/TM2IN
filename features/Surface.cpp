@@ -321,3 +321,7 @@ void Surface::setVertex(int index, Vertex *vt) {
 void Surface::insertVertex(int index, Vertex *vt) {
     this->v_list.insert(this->v_list.begin() + index, vt);
 }
+
+void Surface::setPlaneRef(Plane_3 pl) {
+    this->planeRef = pl;
+}

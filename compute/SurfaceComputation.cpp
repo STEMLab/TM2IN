@@ -49,7 +49,7 @@ void SurfaceComputation::removeConsecutiveDuplicationIndex(Surface *&pSurface){
 }
 
 void SurfaceComputation::flatten(Surface *&sf) {
-    Plane_3 plane = getPlane3(sf);
+    Plane_3 plane = makePlane3(sf);
 
     vector<Vertex*> newVertices;
     for (ull index = 0 ; index < sf->getVerticesSize() ; index++ )
@@ -63,7 +63,7 @@ void SurfaceComputation::flatten(Surface *&sf) {
 
     assert(newVertices.size() == sf->getVerticesSize());
     sf->setVertices(newVertices);
-    sf->planeRef = plane;
+    sf->setPlaneRef(plane);
     sf->normal = plane.orthogonal_vector();
 }
 
@@ -72,7 +72,7 @@ Vertex* SurfaceComputation::getCenterPoint(Surface *pSurface) {
     return center;
 }
 
-Plane_3 SurfaceComputation::getPlane3(Surface *&pSurface) {
+Plane_3 SurfaceComputation::makePlane3(Surface *&pSurface) {
     Plane_3 plane = VertexListComputation::getPlane3WithPCA(pSurface->getVerticesList());
     Vector_3 normal = pSurface->normal;
     Vector_3 planeVector = plane.orthogonal_vector();
@@ -130,7 +130,9 @@ int SurfaceComputation::triangulate(Surface *&pSurface) {
 
     // convert 3D point to 2D
     cout << "\n\n ===== to 2D ======" << endl;
-    vector<Point_2> point2dList = to2D(pSurface, pSurface->planeRef);
+    Plane_3 planeRef = SurfaceComputation::makePlane3(pSurface);
+    pSurface->setPlaneRef(planeRef);
+    vector<Point_2> point2dList = to2D(pSurface, planeRef);
 
     // partition Surface to convex 2D polygons.
     cout << "\n\n make Polygon" << endl;
