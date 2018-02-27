@@ -20,7 +20,7 @@ public:
 
     void makeGraph();
     void saveAsTVR(const char *);
-    bool checkValid();
+    bool checkClosedSurface();
 };
 
 #endif // TRIANGLEMESH_H_INCLUDED

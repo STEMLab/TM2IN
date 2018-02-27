@@ -58,8 +58,7 @@ std::vector<Surface *> SurfaceIntersection::resolveSelfIntersection(Surface * &p
  */
 
 int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
-    vector<Point_2> pointsList = SurfaceComputation::to2D(pSurface, pSurface->getPlaneRef());
-    vector<Segment_2> segmentList = VertexListComputation::makeSegment2List(pointsList);
+    vector<Segment_2> segmentList = SurfaceComputation::makeSegment2List(pSurface, pSurface->getPlaneRef());
     // Intersection Point
     for (int i = 0 ; i < segmentList.size() - 2; i++){
         for (int j = i + 2 ; j < segmentList.size() ; j++){

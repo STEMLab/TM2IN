@@ -345,15 +345,14 @@ void Space::triangulateSurfaces() {
 }
 
 int Space::checkSelfIntersection() {
-    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); ) {
+    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
         Surface* pSurface = this->surfacesList[sfID];
         if (SurfaceIntersection::checkSelfIntersection(pSurface)){
             cerr << "Self Intersection in Surface " << sfID << endl;
-            sfID++;
-            // cout << pSurface->toJSONString() << endl;
+            cout << pSurface->toJSONString() << endl;
         }
         else {
-            this->surfacesList.erase(this->surfacesList.begin() + sfID);
+            // this->surfacesList.erase(this->surfacesList.begin() + sfID);
         }
     }
     return 0;

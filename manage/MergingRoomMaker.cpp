@@ -6,7 +6,6 @@
 using namespace std;
 
 /**
- *
  * @param a
  * @param b lower case. the answer what I expect.
  * @return
@@ -27,12 +26,17 @@ int MergingRoomMaker::pre_process() {
         if (this->checkClosedSurface()) return -1;
     }
 
+    char doRemainStructure;
+    cout << "Remain only Indoor Structure?" << endl;
+    cin >> doRemainStructure;
+
+    if (this->convertTriangleMeshToSpace()) return -1;
+
+
     return 0;
 }
 
 int MergingRoomMaker::constructSpace() {
-    if (this->convertTriangleMeshToSpace()) return -1;
-
     assert (this->spaceList.size() != 0);
 
     char doNotMerge, doCheckSelfIntersection;
@@ -219,6 +223,13 @@ int MergingRoomMaker::checkSelfIntersection() {
 
 int MergingRoomMaker::checkClosedSurface() {
     cerr << "TODO" << endl;
+
+    this->mesh->makeGraph();
+    if (!this->mesh->checkClosedSurface()){
+        cerr << "it is not composed of closed surface"<< endl;
+        return -1;
+    }
+
     return 0;
 }
 
