@@ -128,6 +128,10 @@ bool Surface::checkDuplicate(){
 }
 
 string Surface::toJSONString(){
+    if (this->getVerticesSize() == 0){
+        cerr << "Vertex Length is 0" << endl;
+        return "";
+    }
     string ret;
     ret.append("{");
     ret.append(" \n \"area\" : " + to_string(area) );
@@ -296,9 +300,13 @@ void Surface::setVertices(std::vector<Vertex *> newVertices) {
     this->v_list = newVertices;
 }
 
-std::vector<HalfEdge *> Surface::getboundaryEdgesList() {
-    this->boundaryEdges = VertexListComputation::makeHalfEdgesList(this->getVerticesList());
+std::vector<HalfEdge *> Surface::getBoundaryEdgesList() {
+    if (boundaryEdges.size() == 0) cerr << "no boundary" << endl;
     return boundaryEdges;
+}
+
+void Surface::setBoundaryEdgesList(std::vector<HalfEdge*> edges){
+    this->boundaryEdges = edges;
 }
 
 void Surface::clearTriangleList() {

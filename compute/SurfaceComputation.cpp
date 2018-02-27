@@ -186,3 +186,26 @@ int SurfaceComputation::triangulate(Surface *&pSurface) {
 
     return 0;
 }
+
+std::vector<Segment_3> SurfaceComputation::makeSegment3List(Surface *&pSurface) {
+    vector<Segment_3> result;
+    vector<HalfEdge*> edges = SurfaceComputation::makeHalfEdgesList(pSurface);
+
+    for (int i = 0 ; i < edges.size() ; i++){
+        Segment_3  seg = HalfEdgeComputation::getCGALSegment_3(edges[i]);
+        result.push_back(seg);
+    }
+
+    return result;
+}
+
+std::vector<HalfEdge *> SurfaceComputation::makeHalfEdgesList(Surface *&pSurface) {
+    vector<HalfEdge*> edges;
+    vector<Vertex*> vertices = pSurface->getVerticesList();
+    for (int i = 0 ; i < vertices.size() - 1 ; i++){
+        HalfEdge* he = new HalfEdge(vertices[i], vertices[i+1]);
+        edges.push_back(he);
+    }
+    edges.push_back(new HalfEdge(vertices[vertices.size() - 1], vertices[0]));
+    return edges;
+}

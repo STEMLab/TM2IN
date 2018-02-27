@@ -5,28 +5,63 @@
 
 using namespace std;
 
+/**
+ *
+ * @param a
+ * @param b lower case. the answer what I expect.
+ * @return
+ */
+bool checkAnswer(char a, char b){
+    if (a == b || a == b + 32){
+        return true;
+    }
+    return false;
+}
 
 int MergingRoomMaker::pre_process() {
+    char doCheckClosedSurface;
+    cout << "check whether mesh is composed of only closed surfaces?" << endl;
+    cin >> doCheckClosedSurface;
+
+    if (checkAnswer(doCheckClosedSurface, 'y')){
+        if (this->checkClosedSurface()) return -1;
+    }
+
     return 0;
 }
 
 int MergingRoomMaker::constructSpace() {
+    if (this->convertTriangleMeshToSpace()) return -1;
+
     assert (this->spaceList.size() != 0);
 
+    char doNotMerge, doCheckSelfIntersection;
+    cout << "keep Triangle without merging? (y/n)" << endl;
+    cin >> doNotMerge;
+    if (checkAnswer(doNotMerge, 'y')){
+        return 0;
+    }
     if (this->mergeSurfaces()) return -1;
+
+    cout << "check Self Intersection? (y/n)" << endl;
+    cin >> doCheckSelfIntersection;
+    if (checkAnswer(doCheckSelfIntersection, 'y'))
+        if (this->checkSelfIntersection()) return -1;
 
     // make Surfaces Planar
     // if (this->makeSurfacesPlanar()) return -1;
 
     // remove Self-intersection in one Surface.
-    // if (this->resolveIntersection()) return -1;
+    //cout << "resolve Intersection" << endl;
+    //if (this->resolveIntersection()) return -1;
 
     // fill Hole
-
+    /*
     if (this->triangulation()) return -1;
     if (this->updateVertexList()) return -1;
     if (this->fillHoleWithUsingPolyhedralSurface()) return -1;
     if (this->mergeSurfaces()) return -1;
+   */
 
     return 0;
 }
@@ -95,6 +130,10 @@ int MergingRoomMaker::processGenerations(Space *space, int &currentGeneration, d
         }
         else p_size = (int)space->surfacesList.size();
 
+        if (p_size == 0){
+            cerr << "Something wrong... surface number is 0.";
+            exit(123);
+        }
         currentGeneration++;
         this->generation_writer->write();
         if (degree < 15) degree += 0.05;
@@ -167,6 +206,19 @@ int MergingRoomMaker::triangulation() {
         // Triangulation
         space->triangulateSurfaces();
     }
+    return 0;
+}
+
+int MergingRoomMaker::checkSelfIntersection() {
+    for (ull it = 0 ; it < this->spaceList.size() ; it++) {
+        Space *space = this->spaceList[it];
+        space->checkSelfIntersection();
+    }
+    return 0;
+}
+
+int MergingRoomMaker::checkClosedSurface() {
+    cerr << "TODO" << endl;
     return 0;
 }
 

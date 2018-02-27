@@ -109,7 +109,8 @@ vector<Vertex *> SurfaceHoleCover::fillHole (vector<Vertex*>& vertices, vector<S
             ull vtIndex = std::distance(poly.vertices_begin(), j->vertex());
             oneSurfaceCoords.push_back(newVertices[vtIndex]);
         } while ( ++j != i->facet_begin());
-        Surface* sf = new Surface(oneSurfaceCoords);
+        Triangle* triangle = new Triangle(oneSurfaceCoords);
+        Surface* sf = new Surface(triangle);
         newSurface.push_back(sf);
     }
 

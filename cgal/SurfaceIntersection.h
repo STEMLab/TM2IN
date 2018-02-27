@@ -17,6 +17,8 @@ public:
     static int makeNewIntersectionVertex(Surface *&pSurface);
 
     static int resolveSelfIntersectionBySameVertex(Surface *&pSurface);
+
+    static bool checkSelfIntersection(Surface *&pSurface);
 };
 
 

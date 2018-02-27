@@ -8,7 +8,7 @@ int RoomMaker::importMesh(const char* file_path){
     else return 0;
 }
 
-int RoomMaker::convertTriangleMeshToSpace(double degree){
+int RoomMaker::convertTriangleMeshToSpace() {
     for (int space_id = 0 ; space_id < this->mesh->triangles.size() ; space_id++){
         Space* space = new Space();
         space->setName(this->mesh->triangles[space_id].first);

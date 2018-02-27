@@ -80,7 +80,9 @@ public:
 
     void setVertices(std::vector<Vertex *> vector);
 
-    std::vector<HalfEdge *> getboundaryEdgesList();
+    std::vector<HalfEdge *> getBoundaryEdgesList();
+    void setBoundaryEdgesList(std::vector<HalfEdge*> edges);
+
     void removeVertexByIndex(int id);
     void clearTriangleList();
 

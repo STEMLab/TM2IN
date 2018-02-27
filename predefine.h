@@ -25,5 +25,4 @@ typedef SurfacesListComputation SLC;
 
 
 
-
 #endif // PREDEFINE_H_INCLUDED

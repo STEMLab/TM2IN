@@ -34,16 +34,6 @@ Plane_3 VertexListComputation::getPlane3WithPCA(vector<Vertex *> vertices) {
     return plane;
 }
 
-vector<HalfEdge *> VertexListComputation::makeHalfEdgesList(vector<Vertex *> vertices) {
-    vector<HalfEdge*> edges;
-    for (int i = 0 ; i < vertices.size() - 1 ; i++){
-        HalfEdge* he = new HalfEdge(vertices[i], vertices[i+1]);
-        edges.push_back(he);
-    }
-    edges.push_back(new HalfEdge(vertices[vertices.size() - 1], vertices[0]));
-    return edges;
-}
-
 vector<Segment_2> VertexListComputation::makeSegment2List(vector<Point_2> &pointsList) {
     vector<Segment_2> segmentsList;
     for (int i = 0 ; i < pointsList.size() - 1 ; i++){

@@ -25,6 +25,10 @@ public:
     static void removeConsecutiveDuplicationIndex(Surface *&pSurface);
 
     static void removeConsecutiveDuplication(Surface *&pSurface);
+
+    static std::vector<Segment_3> makeSegment3List(Surface *&pSurface);
+
+    static std::vector<HalfEdge*> makeHalfEdgesList(Surface *&pSurface);
 };
 
 

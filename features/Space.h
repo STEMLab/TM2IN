@@ -66,6 +66,8 @@ public:
 
     void triangulateSurfaces();
 
+    int checkSelfIntersection();
+
 protected:
     Surface* attachSurfaces(Surface* cp, ull start, bool* checked, ll& count, double degree);
     void updateMBB();

@@ -71,9 +71,10 @@ int SurfacePairComputation::combine(Surface* origin, Surface* piece, double degr
     origin->setMBB(piece);
 
     if (origin->checkDuplicate()){
-        cout << "Duplicate" << endl;
+        cerr << "Duplicate" << endl;
         exit(-1);
     }
+
     return 0;
 }
 

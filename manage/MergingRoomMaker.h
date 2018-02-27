@@ -27,6 +27,8 @@ private:
     const bool simplifyLine = false;
     const bool snapMode = false;
 
+    int checkClosedSurface();
+
     int processGenerations(Space *space, int &currentGeneration, double &degree);
     int mergeSurfaces();
 
@@ -39,6 +41,8 @@ private:
     int updateVertexList();
 
     int triangulation();
+
+    int checkSelfIntersection();
 };
 
 #endif // RectRoomMaker_H

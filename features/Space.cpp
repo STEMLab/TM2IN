@@ -75,7 +75,10 @@ int Space::combineSurface(double degree){
 Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count, double degree)
 {
     count = 0;
-    if (cp->normal == CGAL::NULL_VECTOR) return NULL;
+    if (cp->normal == CGAL::NULL_VECTOR) {
+        cerr << "Normal Vector is NULL in attach Surfaces" << endl;
+        exit(-1);
+    }
     for (ull id = start ; id < this->surfacesList.size() ; id++)
     {
         if (!checked[id])
@@ -83,7 +86,8 @@ Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count,
             Surface* sf = this->surfacesList[id];
             if (SurfacePairComputation::combine(cp, sf, degree) == 0)
             {
-                printProcess(id, this->surfacesList.size(), "attachSurfaces");
+                // printProcess(id, this->surfacesList.size(), "attachSurfaces");
+                cout << ".";
                 cp->triangles.insert(cp->triangles.end(), sf->triangles.begin(), sf->triangles.end());
                 checked[id] = true;
                 count++;
@@ -312,21 +316,9 @@ void Space::putVerticesAndUpdateIndex(vector<Vertex *> &vertices) {
 void Space::resolveIntersectionINTRASurface() {
     int newSurfaceCount = 0;
     for (int sfID = 0 ; sfID < this->surfacesList.size(); ) {
-
         vector<Surface*> newSurfaces = SurfaceIntersection::resolveSelfIntersection(this->surfacesList[sfID]);
-        /*
-        if (newSurfaces.size() != 0){
-            cout << "Surface : " << sfID << endl;
-            cout << "---------------------------------" << endl;
-            sfID++;
-
-        } else{
-            this->surfacesList.erase(this->surfacesList.begin() + sfID);
-        }
-        */
     }
     cout << "Intersect Surfaces : " << this->surfacesList.size() << endl;
-    cout << "new Surface : " << newSurfaceCount << endl;
 }
 
 void Space::resolveIntersectionINTERSurface() {
@@ -350,5 +342,20 @@ void Space::triangulateSurfaces() {
             sfID++;
         }
     }
+}
+
+int Space::checkSelfIntersection() {
+    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); ) {
+        Surface* pSurface = this->surfacesList[sfID];
+        if (SurfaceIntersection::checkSelfIntersection(pSurface)){
+            cerr << "Self Intersection in Surface " << sfID << endl;
+            sfID++;
+            // cout << pSurface->toJSONString() << endl;
+        }
+        else {
+            this->surfacesList.erase(this->surfacesList.begin() + sfID);
+        }
+    }
+    return 0;
 }
 

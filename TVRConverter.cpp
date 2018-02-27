@@ -45,12 +45,6 @@ int main(int argc, const char * argv[]) {
 //    TVRImporter::extractMINtvr(string(path) + string(fileName));
 //    return 0;
 
-    cout << "select mode" << endl;
-    cout << "0 : make new Surfaces" << endl;
-    cout << "1 : import Surfaces Generation" <<endl;
-    cout << "2 : import and onlyJoin" <<endl;
-    int mode; cin >> mode;
-
     RoomMaker* manager = new MergingRoomMaker();
     manager->setImporter(new TVRImporter());
     Checker::threshold_vertex = 0.0000001;
@@ -64,30 +58,9 @@ int main(int argc, const char * argv[]) {
 
     // create Result directory
     createAndRemoveDir(version, resultPath, fileName);
-
     manager->setGenerationWriter(new GenerationWriter(generationWritePath));
 
-    switch(mode){
-        case 0:{
-            if (manager->convertTriangleMeshToSpace(0.0)) return 1;
-            break;
-        }
-        case 1:{
-            // TODO
-            return 0;
-        }
-        case 2:{
-            if (manager->convertTriangleMeshToSpace(0.0)) return 1;
-            string json_file = string(resultPath) + fileName + "/" + version + "/" + "triangles.json";
-            manager->exportSpaceJSON(json_file);
-            return 0;
-        }
-        default:{
-            cout << "no Mode" << endl;
-            return 0;
-        }
-    }
-
+    if (manager->pre_process() == -1) return -1;
     if (manager->constructSpace() == -1) return -1;
 
     string surfaceJSON = string(resultPath) + fileName + "/" + version + "/" + "surfaces.json";
@@ -96,6 +69,7 @@ int main(int argc, const char * argv[]) {
     string triangulationJSON = string(resultPath) + fileName + "/" + version + "/" + "triangles.json";
     manager->exportTriangulationJSON(triangulationJSON);
 
+    /*
     cout << "make solid?(y or n)" << endl;
     char ans_simple; cin >> ans_simple;
     if (ans_simple == 'y'){
@@ -104,7 +78,7 @@ int main(int argc, const char * argv[]) {
         manager->exportSpaceJSON(simple_file);
     }
 
-
+*/
     std::cout << "End!\n";
     return 0;
 }

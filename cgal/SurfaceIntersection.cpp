@@ -15,8 +15,8 @@ std::vector<Surface *> SurfaceIntersection::resolveSelfIntersection(Surface * &p
     vector<Surface*> newSurfaceList;
 
     int number = pSurface->getVerticesSize();
-    SurfaceIntersection::resolveEasySelfIntersection(pSurface);
-    SurfaceComputation::removeStraight(pSurface);
+    // SurfaceIntersection::resolveEasySelfIntersection(pSurface);
+    // SurfaceComputation::removeStraight(pSurface);
 
     while (true){
         int result = makeNewIntersectionVertex(pSurface);
@@ -25,6 +25,7 @@ std::vector<Surface *> SurfaceIntersection::resolveSelfIntersection(Surface * &p
         }
         if (newSurfaceList.size() == 0){
             newSurfaceList.push_back(pSurface);
+            break;
         }
 
         if (result == 2){
@@ -42,13 +43,6 @@ std::vector<Surface *> SurfaceIntersection::resolveSelfIntersection(Surface * &p
         SurfaceComputation::removeConsecutiveDuplicationIndex(pSurface);
     }
     SurfaceIntersection::resolveEasySelfIntersection(pSurface);
-/*
-    while (true){
-        SurfaceIntersection::resolveSelfIntersectionBySameVertex(pSurface);
-
-    }
-*/
-
 
     return newSurfaceList;
 }
@@ -298,4 +292,35 @@ void SurfaceIntersection::resolveEasySelfIntersection(Surface *&pSurface) {
 
 int SurfaceIntersection::resolveSelfIntersectionBySameVertex(Surface *&pSurface) {
     return 0;
+}
+
+bool SurfaceIntersection::checkSelfIntersection(Surface *&pSurface) {
+
+    vector<Segment_3> segmentList = SurfaceComputation::makeSegment3List(pSurface);
+    for (int i = 0 ; i < segmentList.size() - 2; i++) {
+        for (int j = i + 2; j < segmentList.size(); j++) {
+            if (i == 0 && j == segmentList.size() - 1) continue;
+            if (CGAL::do_intersect(segmentList[i], segmentList[j])){
+                cerr << i << " and " << j << " intersect." << endl;
+                return true;
+            }
+        }
+    }
+
+    /* check in 2D
+    pSurface->setPlaneRef(SurfaceComputation::makePlane3(pSurface));
+    vector<Point_2> pointsList = SurfaceComputation::to2D(pSurface, pSurface->getPlaneRef());
+    vector<Segment_2> segmentList = VertexListComputation::makeSegment2List(pointsList);
+    // Intersection Point
+    for (int i = 0 ; i < segmentList.size() - 2; i++) {
+        for (int j = i + 2; j < segmentList.size(); j++) {
+            if (i == 0 && j == segmentList.size() - 1) continue;
+            if (CGAL::do_intersect(segmentList[i], segmentList[j])){
+                cerr << i << " and " << j << " intersect." << endl;
+                return true;
+            }
+        }
+    }
+     */
+    return pSurface->checkDuplicate();
 }
