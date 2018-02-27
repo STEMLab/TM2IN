@@ -16,7 +16,6 @@ public:
 
     static Vertex *getCenter(vector<Vertex *> vector);
     static Plane_3 getPlane3WithPCA(std::vector<Vertex *> vector);
-    static vector<Segment_2> makeSegment2List(vector<Point_2>& pointsList);
 };
 
 

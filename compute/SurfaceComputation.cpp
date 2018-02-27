@@ -199,6 +199,18 @@ std::vector<Segment_3> SurfaceComputation::makeSegment3List(Surface *&pSurface) 
     return result;
 }
 
+std::vector<Segment_2> SurfaceComputation::makeSegment2List(Surface *&pSurface, Plane_3 plane3) {
+    vector<Point_2> pointsList = SurfaceComputation::to2D(pSurface, plane3);
+    vector<Segment_2> segmentsList;
+    for (int i = 0 ; i < pointsList.size() - 1 ; i++){
+        Segment_2 seg(pointsList[i], pointsList[i+1]);
+        segmentsList.push_back(seg);
+    }
+    Segment_2 last_seg(pointsList[pointsList.size() - 1], pointsList[0]);
+    segmentsList.push_back(last_seg);
+    return segmentsList;
+}
+
 std::vector<HalfEdge *> SurfaceComputation::makeHalfEdgesList(Surface *&pSurface) {
     vector<HalfEdge*> edges;
     vector<Vertex*> vertices = pSurface->getVerticesList();
