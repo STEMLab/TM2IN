@@ -24,11 +24,13 @@ int MergingRoomMaker::pre_process() {
 
     if (checkAnswer(doCheckClosedSurface, 'y')){
         if (this->checkClosedSurface()) return -1;
-    }
+        char doRemainStructure;
+        cout << "Remain only Indoor Structure?" << endl;
+        cin >> doRemainStructure;
+        if (checkAnswer(doRemainStructure, 'y'))
+            if (this->remainStructure()) return -1;
 
-    char doRemainStructure;
-    cout << "Remain only Indoor Structure?" << endl;
-    cin >> doRemainStructure;
+    }
 
     if (this->convertTriangleMeshToSpace()) return -1;
 
@@ -222,14 +224,18 @@ int MergingRoomMaker::checkSelfIntersection() {
 }
 
 int MergingRoomMaker::checkClosedSurface() {
-    cerr << "TODO" << endl;
-
     this->mesh->makeGraph();
     if (!this->mesh->checkClosedSurface()){
         cerr << "it is not composed of closed surface"<< endl;
         return -1;
     }
 
+    return 0;
+}
+
+int MergingRoomMaker::remainStructure() {
+    cerr << "TODO" << endl;
+    this->mesh->groupByClosedSurface();
     return 0;
 }
 

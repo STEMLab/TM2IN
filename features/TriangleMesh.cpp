@@ -62,3 +62,25 @@ bool TriangleMesh::checkClosedSurface() {
     }
     return true;
 }
+
+int TriangleMesh::groupByClosedSurface() {
+    vector<pair<string, vector<Triangle*> > > newTriangles;
+    int index = 0;
+    for (int groupI = 0 ; groupI < this->graphs.size() ; groupI++){
+        vector<vector<ull>> cc = this->graphs[groupI]->getConnectedComponent();
+        if (cc.size() == 1) continue;
+
+        // Descending Order
+        sort(cc.begin(), cc.end(), [](const std::vector< ull >& a, const std::vector< ull >& b){ return a.size() > b.size(); } );
+        for (int i = 0 ; i < cc.size() ; i++){
+            string name = "new" + std::to_string(index++);
+            vector<Triangle*> triangles;
+            for (int j = 0 ; j < cc[i].size() ; j++){
+                triangles.push_back(this->triangles[groupI].second[cc[i][j]]);
+            }
+            newTriangles.push_back(make_pair(name, triangles));
+        }
+    }
+    this->triangles = newTriangles;
+    return 0;
+}

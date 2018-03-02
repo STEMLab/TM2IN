@@ -43,6 +43,8 @@ private:
     int triangulation();
 
     int checkSelfIntersection();
+
+    int remainStructure();
 };
 
 #endif // RectRoomMaker_H

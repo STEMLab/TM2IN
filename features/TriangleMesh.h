@@ -21,6 +21,8 @@ public:
     void makeGraph();
     void saveAsTVR(const char *);
     bool checkClosedSurface();
+
+    int groupByClosedSurface();
 };
 
 #endif // TRIANGLEMESH_H_INCLUDED

@@ -28,7 +28,7 @@ void TriangleMeshGraph::makeAdjacentGraph(vector<Triangle*>& tri_list){
                     }
                 }
                 else{
-
+                    cerr << "Opposite Triangle" << endl;
                 }
             }
         }
@@ -71,7 +71,6 @@ vector<vector<ull>> TriangleMeshGraph::getConnectedComponent() {
     vector<bool> checked(this->sizeOfTriangles, false);
 
     for (ull i = 0 ; i < this->sizeOfTriangles; i++){
-        cout << "bfs " << i << endl;
         if (!checked[i]){
             checked[i] = true;
             vector<ull> oneComponent;
@@ -96,27 +95,3 @@ bool TriangleMeshGraph::canBeNeighbor(Triangle* t1, Triangle* t2){
     }
     return false;
 }
-
-/*
-bool TriangleMeshGraph::setNeighbor(ull i, ull j, Triangle* t1, Triangle* t2) {
-    bool isSet = false;
-    for (int v1 = 0 ; v1 < 3 ; v1++){
-        for (int v2 = 0 ; v2 < 3 ;v2++){
-            int next_v1 = v1 == 2? 0:v1+1;
-            int next_v2 = v2 == 0? 2:v2-1;
-            if (t1v1] == t2[v2] && t1[next_v1] == t2[next_v2]){
-                if (!isSet){
-                    isSet = true;
-                    this->neighborIndices[i][v1] = j;
-                    this->neighborIndices[j][next_v2] = i;
-                }
-                else{
-                    std::cerr << "Two Triangles should have only one shared line" << endl;
-                    exit(-1);
-                }
-            }
-        }
-    }
-    return isSet;
-}
-*/
