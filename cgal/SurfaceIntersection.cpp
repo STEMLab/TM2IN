@@ -4,6 +4,7 @@
 
 #include <compute/SurfaceComputation.h>
 #include <compute/VertexListComputation.h>
+
 #include "SurfaceIntersection.h"
 #include "PolygonComputation.h"
 #include <bitset>
@@ -289,18 +290,23 @@ void SurfaceIntersection::resolveEasySelfIntersection(Surface *&pSurface) {
 
 }
 
-int SurfaceIntersection::resolveSelfIntersectionBySameVertex(Surface *&pSurface) {
-    return 0;
+bool SurfaceIntersection::checkSelfIntersection(Surface *&pSurface) {
+    int a,b;
+    if (SurfaceIntersection::checkSelfIntersection(pSurface, a, b)) return true;
+
+    return pSurface->checkDuplicate();
 }
 
-bool SurfaceIntersection::checkSelfIntersection(Surface *&pSurface) {
 
+bool SurfaceIntersection::checkSelfIntersection(Surface *&pSurface, int& a, int& b) {
     vector<Segment_3> segmentList = SurfaceComputation::makeSegment3List(pSurface);
     for (int i = 0 ; i < segmentList.size() - 2; i++) {
         for (int j = i + 2; j < segmentList.size(); j++) {
             if (i == 0 && j == segmentList.size() - 1) continue;
             if (CGAL::do_intersect(segmentList[i], segmentList[j])){
-                cerr << i << " and " << j << " intersect." << endl;
+                std::cerr << i << " and " << j << " intersect." << std::endl;
+                a = i;
+                b = j;
                 return true;
             }
         }

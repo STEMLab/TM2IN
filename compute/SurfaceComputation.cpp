@@ -2,6 +2,7 @@
 // Created by dongmin on 18. 1. 18.
 //
 
+#include <cgal/SurfaceIntersection.h>
 #include "SurfaceComputation.h"
 #include "VertexComputation.h"
 #include "compute/VertexListComputation.h"
@@ -129,23 +130,27 @@ int SurfaceComputation::triangulate(Surface *&pSurface) {
     std::vector<Vertex*> vertexList = pSurface->getVerticesList();
 
     // convert 3D point to 2D
-    cout << "\n\n ===== to 2D ======" << endl;
     Plane_3 planeRef = SurfaceComputation::makePlane3(pSurface);
     pSurface->setPlaneRef(planeRef);
     vector<Point_2> point2dList = to2D(pSurface, planeRef);
 
     // partition Surface to convex 2D polygons.
-    cout << "\n\n make Polygon" << endl;
     Polygon_2 polygon = PolygonComputation::makePolygon(point2dList);
-    if (!polygon.is_simple()) return 1;
+    if (!polygon.is_simple())
+    {
+        cerr << "TODO" << endl;
+        // return 1;
 
-    cout << "\n\n partition Surface to convex polygons" << endl;
+        int i = 0, j = 0;
+        SurfaceIntersection::checkSelfIntersection(pSurface, i, j);
+        if (i == 0 && j == 0) return 1;
+
+        
+    }
     vector<Polygon_2> polygonList = PolygonComputation::convexPartition(polygon);
 
-    cout << "\n\n triangulate Polygons" << endl;
     vector<Triangle* > triangles;
     for (int i = 0 ; i < polygonList.size() ; i++){
-        cout << polygonList[i] << endl;
         CGAL_assertion(polygonList[i].is_simple() && polygonList[i].is_convex());
 
         Polygon_2 p = polygonList[i];
@@ -157,8 +162,6 @@ int SurfaceComputation::triangulate(Surface *&pSurface) {
 
         Delaunay T;
         T.insert(points.begin(),points.end());
-
-        cout << "Triangles  : " << T.number_of_faces() << endl;
         for(Delaunay::Finite_faces_iterator fit = T.finite_faces_begin();
             fit != T.finite_faces_end(); ++fit)
         {

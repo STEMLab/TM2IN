@@ -107,7 +107,7 @@ std::string Triangle::toJSON(std::string &indent) {
     ret += indent + "],\n";
 
     //coordinates
-    ret += indent + "\"coords\" : [\n";
+    ret += indent + "\"coord\" : [\n";
     for (int i = 0 ; i < 3 ; i++){
         ret += indent + "\t";
         ret += this->vertex(i)->toJSON();

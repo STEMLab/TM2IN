@@ -54,6 +54,8 @@ int MergingRoomMaker::constructSpace() {
     if (checkAnswer(doCheckSelfIntersection, 'y'))
         if (this->checkSelfIntersection()) return -1;
 
+    if (this->triangulation()) return -1;
+
     // make Surfaces Planar
     // if (this->makeSurfacesPlanar()) return -1;
 
