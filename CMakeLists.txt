@@ -37,15 +37,15 @@ add_executable(TriangleMeshToClearSolid
         features/Vertex.h
         features/HalfEdge.cpp
         features/HalfEdge.h
-        fileio/3DSImporter.cpp
-        fileio/3DSImporter.h
+        fileio/import/ThreeDSImporter.cpp
+        fileio/import/ThreeDSImporter.h
         fileio/GenerationWriter.cpp
         fileio/GenerationWriter.h
-        fileio/Importer.h
+        fileio/import/Importer.h
         fileio/JSONMaker.cpp
         fileio/JSONMaker.h
-        fileio/TVRImporter.cpp
-        fileio/TVRImporter.h
+        fileio/import/TVRImporter.cpp
+        fileio/import/TVRImporter.h
         cgal/CGALCalculation.cpp
         cgal/CGALCalculation.h
         logic/check.cpp
@@ -63,9 +63,29 @@ add_executable(TriangleMeshToClearSolid
         space_maker/OnlyWallSpaceMaker.cpp
         space_maker/OnlyWallSpaceMaker.h
         predefine.h
-        TVRConverter.cpp
+        Converter.cpp
         util.cpp
-        util.h cgal/SurfaceHoleCover.cpp cgal/SurfaceHoleCover.h cgal/Types.h compute/VertexListComputation.cpp compute/VertexListComputation.h compute/SurfaceComputation.cpp compute/SurfaceComputation.h compute/VertexComputation.cpp compute/VertexComputation.h compute/HalfEdgeComputation.cpp compute/HalfEdgeComputation.h cgal/PolygonComputation.cpp cgal/PolygonComputation.h cgal/SurfaceIntersection.cpp cgal/SurfaceIntersection.h)
+        util.h
+        cgal/SurfaceHoleCover.cpp
+        cgal/SurfaceHoleCover.h
+        cgal/Types.h
+        compute/VertexListComputation.cpp
+        compute/VertexListComputation.h
+        compute/SurfaceComputation.cpp
+        compute/SurfaceComputation.h
+        compute/VertexComputation.cpp
+        compute/VertexComputation.h
+        compute/HalfEdgeComputation.cpp
+        compute/HalfEdgeComputation.h
+        cgal/PolygonComputation.cpp
+        cgal/PolygonComputation.h
+        cgal/SurfaceIntersection.cpp
+        cgal/SurfaceIntersection.h
+        fileio/export/Exporter.h
+        fileio/export/JSONSurfaceExporter.cpp
+        fileio/export/JSONSurfaceExporter.h
+        fileio/export/ThreeDSExporter.cpp
+        fileio/export/ThreeDSExporter.h)
 
 
 TARGET_LINK_LIBRARIES( TriangleMeshToClearSolid LINK_PUBLIC ${Boost_LIBRARIES} Eigen3::Eigen)
