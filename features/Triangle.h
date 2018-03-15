@@ -25,14 +25,9 @@ public:
     Vertex* operator[](int idx);
     Vertex* vertex(int idx);
 
-    void setNormal(Vector_3 vec);
     Vector_3 getNormal();
-
-    void setArea(double _area);
     double getArea();
     std::string toJSON(std::string &indent);
-
-    void init();
 };
 
 

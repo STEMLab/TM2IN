@@ -146,6 +146,7 @@ void SurfaceComputation::removeStraight(Surface*& pSurface){
 
     vector<Vertex*> vertexList = pSurface->getVerticesList();
     for (ll i = 0 ; i < vertexList.size(); ){
+        if (vertexList.size() < 3) return;
         ll firstIndex = i == 0? vertexList.size() - 1: i-1;
         Vertex* start_p = vertexList[firstIndex];
         ll secondIndex = i;

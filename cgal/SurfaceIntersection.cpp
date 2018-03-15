@@ -134,31 +134,8 @@ int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
                 else if (const Segment_2* seg = boost::get<Segment_2>(&*result)){
                     cout << "i : " << i << " , j : " << j << endl;
                     cout << *seg << endl;
-//                    Vector_2 iVector = segmentList[i].to_vector();
-//                    Vector_2 jVector = segmentList[j].to_vector();
-//
-//                    int angle = (int)CGALCalculation::getAngle(jVector, iVector);
-//                    if (angle == 0) {
-//                        printf ("0 degree : %d %d\n", i, j);
-//                        return 2;
-//                    }
-
                     pSurface->removeVertexByIndex(i);
                     return 0;
-
-                    /*
-                    Vector_2 segVector = seg->to_vector();
-                    angle = (int)CGALCalculation::getAngle(iVector, segVector);
-                    CGAL_assertion(angle == 180 || angle == 0);
-                    if (angle == 180){
-                        Segment_2 newSeg = seg->opposite();
-                        seg = &newSeg;
-                    }
-
-                    Vector_2 segVector2 = seg->to_vector();
-                    angle = (int)CGALCalculation::getAngle(iVector, segVector2);
-                    CGAL_assertion(angle == 0);
-                    */
 
                     Point_3 source = pSurface->getPlaneRef().to_3d(seg->source());
                     Point_3 target = pSurface->getPlaneRef().to_3d(seg->target());

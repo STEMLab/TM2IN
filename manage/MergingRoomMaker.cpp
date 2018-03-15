@@ -36,7 +36,6 @@ int MergingRoomMaker::pre_process() {
 
     if (this->convertTriangleMeshToSpace()) return -1;
 
-
     return 0;
 }
 
@@ -59,13 +58,6 @@ int MergingRoomMaker::constructSpace() {
     cout << "re-triangulation" << endl;
     if (this->triangulation()) return -1;
 
-    // make Surfaces Planar
-    // if (this->makeSurfacesPlanar()) return -1;
-
-    // remove Self-intersection in one Surface.
-    //cout << "resolve Intersection" << endl;
-    //if (this->resolveIntersection()) return -1;
-
     // fill Hole
     /*
     if (this->triangulation()) return -1;
@@ -82,6 +74,19 @@ int MergingRoomMaker::finish(){
     return 0;
 }
 
+int MergingRoomMaker::remainStructure() {
+    cerr << "TODO" << endl;
+    this->mesh->groupByClosedSurface();
+    return 0;
+}
+
+bool MergingRoomMaker::resolveWrongTriangle() {
+    int count = 0;
+    while (this->mesh->resolveWrongTriangle()){
+        cout << count++ << ", ";
+    }
+    return false;
+}
 
 int MergingRoomMaker::mergeSurfaces() {
     double startDegree = this->startDegree;
@@ -162,42 +167,6 @@ int MergingRoomMaker::updateVertexList(){
     return 0;
 }
 
-int MergingRoomMaker::makeSurfacesPlanar() {
-    vector<Vertex*> newVertices;
-    for (ull it = 0 ; it < this->spaceList.size() ; it++){
-        Space* space = this->spaceList[it];
-        space->makeSurfacesPlanar();
-    }
-    this->vertices = newVertices;
-    return 0;
-}
-
-
-int MergingRoomMaker::resolveIntersection() {
-    for (ull it = 0 ; it < this->spaceList.size(); it++)
-    {
-        Space* space = this->spaceList[it];
-        space->resolveIntersectionINTRASurface();
-        space->resolveIntersectionINTERSurface();
-        space->clearTrianglesListInSurfaces();
-    }
-    return 0;
-}
-
-
-int MergingRoomMaker::fillHoleWithUsingPolyhedralSurface() {
-    vector<Vertex*> newVertices;
-    for (ull it = 0 ; it < this->spaceList.size() ; it++){
-        Space *space = this->spaceList[it];
-        // fill Hole
-        vector<Vertex*> spaceVertices = SurfaceHoleCover::fillHole(this->vertices, space->surfacesList);
-        newVertices.insert(newVertices.end(), spaceVertices.begin(), spaceVertices.end());
-    }
-    this->vertices = newVertices;
-    return 0;
-}
-
-
 int MergingRoomMaker::rotateSurfaces(){
     for (ull it = 0 ; it < this->spaceList.size(); it++)
     {
@@ -239,17 +208,4 @@ int MergingRoomMaker::checkClosedSurface() {
     return 0;
 }
 
-int MergingRoomMaker::remainStructure() {
-    cerr << "TODO" << endl;
-    this->mesh->groupByClosedSurface();
-    return 0;
-}
-
-bool MergingRoomMaker::resolveWrongTriangle() {
-    int count = 0;
-    while (this->mesh->resolveWrongTriangle()){
-        cout << count++ << ", ";
-    }
-    return false;
-}
 

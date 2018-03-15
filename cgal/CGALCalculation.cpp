@@ -101,12 +101,10 @@ bool CGALCalculation::isIntersect_BBOX(Surface* s1, Surface* s2){
 
 bool CGALCalculation::isAngleLowerThan(Vector_3& nv1, Vector_3& nv2, double degree){
     double angle = CGALCalculation::getAngle(nv1, nv2);
-    if (angle < 0) cerr << "angle is minus ?" << endl;
-        /*
-    if (degree < 0) return (angle >= 180 + degree);
-    else
-         */
-        return (angle <= degree) ;
+    //cout << nv1 << "          " << nv2 << endl;
+    //cout << angle << endl;
+    assert(angle >= 0);
+    return (angle <= degree) ;
 }
 
 
@@ -131,22 +129,6 @@ Vector_3 CGALCalculation::normal_list6[6] = {
         Vector_3(0,0,-1)
 };
 
-Vector_3 CGALCalculation::normalVector(Triangle &pl) {
-    Vertex* va = pl.vertex(0);
-    Vertex* vb = pl.vertex(1);
-    Vertex* vc = pl.vertex(2);
-
-    return CGALCalculation::getUnitNormal(va, vb, vc) * AREA_CONST * pl.getArea();
-}
-
-Vector_3 CGALCalculation::unitNormalVector(Triangle &pl){
-    Vertex* va = pl.vertex(0);
-    Vertex* vb = pl.vertex(1);
-    Vertex* vc = pl.vertex(2);
-
-    return CGALCalculation::getUnitNormal(va, vb, vc);
-}
-
 int CGALCalculation::findNormalType6(Vector_3& nv)
 {
     int type = 0;
@@ -160,17 +142,4 @@ int CGALCalculation::findNormalType6(Vector_3& nv)
     }
     return type;
 }
-
-double CGALCalculation::getAreaOfTriangle(Triangle &tr) {
-    Vertex* va = tr.vertex(0);
-    Vertex* vb = tr.vertex(1);
-    Vertex* vc = tr.vertex(2);
-
-    double area = sqrt(CGALCalculation::getSquaredArea(va, vb, vc));
-    return area;
-}
-
-//T_Point CGALCalculation::makeTPoint(Vertex* vt){
-//    return T_Point(vt->x(), vt->y(), vt->z());
-//}
 

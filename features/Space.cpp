@@ -322,9 +322,6 @@ void Space::resolveIntersectionINTRASurface() {
     cout << "Intersect Surfaces : " << this->surfacesList.size() << endl;
 }
 
-void Space::resolveIntersectionINTERSurface() {
-
-}
 
 void Space::clearTrianglesListInSurfaces() {
     for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {

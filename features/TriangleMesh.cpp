@@ -37,7 +37,6 @@ void TriangleMesh::saveAsTVR(const char *path) {
     }
 
     for (int group_i = 0 ; group_i < this->triangles.size() ; group_i++){
-        //fout << "g "<< this->triangles[group_i].first<<endl;
         fprintf(pFile, "g %s\n", this->triangles[group_i].first.c_str());
         for (int tri_i = 0 ; tri_i < this->triangles[group_i].second.size(); tri_i++){
             Triangle* triangle = this->triangles[group_i].second[tri_i];
@@ -91,7 +90,7 @@ bool TriangleMesh::resolveWrongTriangle() {
         for (int j = 0 ; j < this->triangles[i].second.size() ; j++){
             Triangle* triangle = this->triangles[i].second[j];
 
-            Vector_3 triangleNormal = CGALCalculation::unitNormalVector(*triangle);
+            Vector_3 triangleNormal = triangle->getNormal();
 
             if (triangleNormal == CGAL::NULL_VECTOR){
                 for (int k = 0 ; k < 2; k ++){
@@ -109,9 +108,9 @@ bool TriangleMesh::resolveWrongTriangle() {
                     this->triangles[i].second.erase(this->triangles[i].second.begin() + j);
                     return true;
                 }
+                cerr << "Why you are here"<< endl;
+                assert(triangleNormal != CGAL::NULL_VECTOR);
             }
-
-            triangle->init();
         }
     }
     return false;

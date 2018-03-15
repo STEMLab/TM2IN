@@ -47,9 +47,6 @@ public:
     int snapSurface(double);
     void rotateSpaceByFloorTo00();
 
-    //TODO : removed
-    void test();
-
     int makeSurfacesPlanar();
 
     void sortSurfacesByArea();
@@ -59,8 +56,6 @@ public:
     void putVerticesAndUpdateIndex(vector<Vertex *> &vector);
 
     void resolveIntersectionINTRASurface();
-
-    void resolveIntersectionINTERSurface();
 
     void clearTrianglesListInSurfaces();
 
