@@ -1,82 +1,62 @@
-/*
- * ---------------- www.spacesimulator.net --------------
- *   ---- Space simulators and 3d engine tutorials ----
- *
- * Author: Damiano Vitulli
- *
- * This program is released under the BSD licence
- * By using this program you agree to licence terms on spacesimulator.net copyright page
- *
- *
- * Tutorial 4: 3d engine - 3ds models loader
- *
- * Include File: 3dsloader.cpp
- *
- */
 
-/*
-Linux port by Panteleakis Ioannis
-mail: pioann@csd.auth.gr
-
-just run: make and you are done.
-of course you may need to change the makefile
-*/
-
-/*
 #include <stdio.h>
 #include <stdlib.h>
 #include <cstring>
 #include <iostream>
 #include <algorithm>
-
-#include "Object_Type.hpp"
-#include "3dsloader.h"
-
 #include <sys/stat.h>
+
+#include "ThreeDSImporter.h"
 
 using namespace std;
 
-
-ll filelength(int f)
+ThreeDSImporter::ThreeDSImporter()
 {
-    struct stat buf;
-
-    fstat(f, &buf);
-
-    return(buf.st_size);
+    //ctor
 }
 
-vector<pair<string, TriangleSpace*>> Load3DS (char *p_filename)
+ThreeDSImporter::~ThreeDSImporter()
 {
-    vector<pair<string, TriangleSpace*>> obj_list;
-    TriangleSpace *p_object = NULL;
+    //dtor
+}
 
+long ThreeDSImporter::filelength(int f)
+{
+	struct stat buf;
+
+	fstat(f, &buf);
+
+	return(buf.st_size);
+}
+
+TriangleMesh* ThreeDSImporter::import(const char *p_filename)
+{
 	int i; //Index variable
-
-    int temp_vertex[3] = {0,0,0};
-
 	FILE *l_file; //File pointer
-    char name[20];
+    char name[BUFSIZ];
 
 	unsigned short l_chunk_id; //Chunk identifier
-	unsigned int l_chunk_lenght; //Chunk lenght
+	unsigned int l_chunk_length; //Chunk lenght
 
 	unsigned char l_char; //Char variable
 	unsigned short l_qty; //Number of elements in each chunk
 
 	unsigned short l_face_flags; //Flag that stores some face information
 
-    if ( (l_file=fopen (p_filename, "rb") ) == NULL) return obj_list;
+    if ( (l_file=fopen (p_filename, "rb") ) == NULL) return NULL;
 
-	while (ftell (l_file) < filelength (fileno (l_file))) //Loop to scan the whole file
-	//while(!EOF)
+    TriangleMesh* triangleMesh = new TriangleMesh();
+    vector<Triangle*> triangles;
+
+    string group_name;
+    int f_count =0, v_count = 0;
+    int groupVertexInit = 0;
+
+    while (ftell (l_file) < this->filelength (fileno (l_file))) //Loop to scan the whole file
 	{
 		//getch(); //Insert this command for debug (to wait for keypress for each chuck reading)
-
 		fread (&l_chunk_id, 2, 1, l_file); //Read the chunk header
-		//printf("ChunkID: %x\n",l_chunk_id);
-		fread (&l_chunk_lenght, 4, 1, l_file); //Read the lenght of the chunk
-		//printf("ChunkLenght: %x\n",l_chunk_lenght);
+		fread (&l_chunk_length, 4, 1, l_file); //Read the lenght of the chunk
 
 		switch (l_chunk_id)
         {
@@ -102,19 +82,24 @@ vector<pair<string, TriangleSpace*>> Load3DS (char *p_filename)
 			// Chunk Lenght: len(object name) + sub chunks
 			//-------------------------------------------
 			case 0x4000:
+                if (f_count != 0){
+                    triangleMesh->triangles.push_back(make_pair(group_name, triangles));
+                    triangles.clear();
+                    f_count = 0;
+                    groupVertexInit = v_count;
+                }
 				i=0;
-				p_object = new TriangleSpace();
 				do
 				{
 					fread (&l_char, 1, 1, l_file);
                     name[i] = l_char;
                     i++;
                 }while(l_char != '\0' && i<20);
-                cout<< name << endl;
+                group_name = name;
 
                 if (strstr(name, "FC")){
                     cout << "skip furniture" << endl;
-                    fseek(l_file, l_chunk_lenght -i -6, SEEK_CUR);
+                    fseek(l_file, l_chunk_length -i -6, SEEK_CUR);
                     break;
                 }
 			break;
@@ -136,24 +121,24 @@ vector<pair<string, TriangleSpace*>> Load3DS (char *p_filename)
 			//             + sub chunks
 			//-------------------------------------------
 			case 0x4110:
-                if (p_object == NULL) {
-                    cout << "4110 error" << endl;
-                    exit(1);
-                }
-
-				fread (&l_qty, sizeof (unsigned short), 1, l_file);
-                p_object->vertices_qty = l_qty;
-
+                fread (&l_qty, sizeof (unsigned short), 1, l_file);
                 printf("Number of vertices: %d\n",l_qty);
-                p_object->vertices = (Vertex*)malloc(sizeof(Vertex) * l_qty);
 
                 for (i=0; i<l_qty; i++)
                 {
-					fread (&p_object->vertices[i].x, sizeof(float), 1, l_file);
-                    fread (&p_object->vertices[i].y, sizeof(float), 1, l_file);
-					fread (&p_object->vertices[i].z, sizeof(float), 1, l_file);
-				}
-				break;
+                    Vertex* vt = new Vertex();
+                    float temp;
+                    fread (&temp, sizeof(float), 1, l_file);
+                    vt->setX(temp);
+                    fread (&temp, sizeof(float), 1, l_file);
+                    vt->setY(temp);
+                    fread (&temp, sizeof(float), 1, l_file);
+                    vt->setZ(temp);
+                    vt->index = i + v_count;
+                    triangleMesh->vertices.push_back(vt);
+                }
+                v_count += l_qty;
+                break;
 
 			//--------------- TRI_FACEL1 ----------------
 			// Description: Polygons (faces) list
@@ -164,32 +149,22 @@ vector<pair<string, TriangleSpace*>> Load3DS (char *p_filename)
 			//-------------------------------------------
 
 			case 0x4120:
-                if (p_object == NULL) {
-                    cout << "4120 error" << endl;
-                    exit(1);
-                }
-
-				fread (&l_qty, sizeof (unsigned short), 1, l_file);
-                p_object->polygons_qty = l_qty;
-                printf("Number of polygons: %d\n",l_qty);
-                p_object->polygon = (Triangle*)malloc(sizeof(Triangle) * l_qty);
-                for (i=0; i<l_qty; i++)
+                fread (&l_qty, sizeof (unsigned short), 1, l_file);
+                printf("Number of triangles: %d\n",l_qty);
+                f_count = l_qty;
+                for (i=0; i < l_qty; i++)
                 {
-
-					fread (&temp_vertex[0], sizeof (unsigned short), 1, l_file);
-					fread (&temp_vertex[1], sizeof (unsigned short), 1, l_file);
-					fread (&temp_vertex[2], sizeof (unsigned short), 1, l_file);
-                    sort(temp_vertex, temp_vertex+3);
-
-                    p_object->polygon[i].a = temp_vertex[0];
-                    p_object->polygon[i].b = temp_vertex[1];
-                    p_object->polygon[i].c = temp_vertex[2];
-
-					//printf("Polygon point c: %d\n",p_object->polygon[i].c);
-					fread (&l_face_flags, sizeof (unsigned short), 1, l_file);
-					//printf("Face flags: %x\n",l_face_flags);
-				}
-				obj_list.push_back(make_pair(string(name), p_object));
+                    unsigned short a,b,c;
+                    fread (&a, sizeof (unsigned short), 1, l_file);
+                    fread (&b, sizeof (unsigned short), 1, l_file);
+                    fread (&c, sizeof (unsigned short), 1, l_file);
+                    fread (&l_face_flags, sizeof (unsigned short), 1, l_file);
+                    Vertex* va = triangleMesh->vertices[a + groupVertexInit];
+                    Vertex* vb = triangleMesh->vertices[b + groupVertexInit];
+                    Vertex* vc = triangleMesh->vertices[c + groupVertexInit];
+                    Triangle* tri = new Triangle(va, vb, vc);
+                    triangles.push_back(tri);
+                }
                 break;
 
 			//------------- TRI_MAPPINGCOORS ------------
@@ -199,16 +174,16 @@ vector<pair<string, TriangleSpace*>> Load3DS (char *p_filename)
 			//             + 2 x float (mapping coordinates) x (number of mapping points)
 			//             + sub chunks
 			//-------------------------------------------
-//			case 0x4140:
-//				fread (&l_qty, sizeof (unsigned short), 1, l_file);
-//				for (i=0; i<l_qty; i++)
-//				{
-//					fread (&p_object->mapcoord[i].u, sizeof (float), 1, l_file);
-//					printf("Mapping list u: %f\n",p_object->mapcoord[i].u);
-//                    fread (&p_object->mapcoord[i].v, sizeof (float), 1, l_file);
-//					printf("Mapping list v: %f\n",p_object->mapcoord[i].v);
-//				}
-//                break;
+			case 0x4140:
+                fread (&l_qty, sizeof (unsigned short), 1, l_file);
+                cout << "mappingcoords : " << l_qty << endl;
+                for (i=0; i<l_qty; i++)
+                {
+                    float temp3;
+                    fread (&temp3, sizeof (float), 1, l_file);
+                    fread (&temp3, sizeof (float), 1, l_file);
+                }
+                break;
 
 			//----------- Skip unknow chunks ------------
 			//We need to skip all the chunks that currently we don't use
@@ -216,10 +191,9 @@ vector<pair<string, TriangleSpace*>> Load3DS (char *p_filename)
 			//to the same level next chunk
 			//-------------------------------------------
 			default:
-				 fseek(l_file, l_chunk_lenght-6, SEEK_CUR);
+				 fseek(l_file, l_chunk_length-6, SEEK_CUR);
         }
 	}
 	fclose (l_file); // Closes the file stream
-    return obj_list;
+    return triangleMesh;
 }
-*/

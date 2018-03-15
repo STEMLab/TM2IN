@@ -266,7 +266,7 @@ int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
 #define GAP_FOR_SNAP 3
 
 void SurfaceIntersection::resolveEasySelfIntersection(Surface *&pSurface) {
-    vector<Point_2> pointsList = SurfaceComputation::to2D(pSurface, pSurface->getPlaneRef());
+    vector<Point_2> pointsList = SurfaceComputation::projectTo3DPlane(pSurface, pSurface->getPlaneRef());
     for (int i = 0 ; i < pointsList.size() - 1; i++){
         for (int j = 2 ; j <= GAP_FOR_SNAP ; j++){
             int nextIndex = i + j >= pointsList.size() ? i + j - pointsList.size() : i + j;
@@ -314,7 +314,7 @@ bool SurfaceIntersection::checkSelfIntersection(Surface *&pSurface, int& a, int&
 
     /* check in 2D
     pSurface->setPlaneRef(SurfaceComputation::makePlane3(pSurface));
-    vector<Point_2> pointsList = SurfaceComputation::to2D(pSurface, pSurface->getPlaneRef());
+    vector<Point_2> pointsList = SurfaceComputation::projectTo3DPlane(pSurface, pSurface->getPlaneRef());
     vector<Segment_2> segmentList = VertexListComputation::makeSegment2List(pointsList);
     // Intersection Point
     for (int i = 0 ; i < segmentList.size() - 2; i++) {

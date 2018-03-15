@@ -23,6 +23,8 @@ public:
     bool checkClosedSurface();
 
     int groupByClosedSurface();
+
+    bool resolveWrongTriangle();
 };
 
 #endif // TRIANGLEMESH_H_INCLUDED

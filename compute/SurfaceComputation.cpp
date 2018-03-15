@@ -50,7 +50,7 @@ void SurfaceComputation::removeConsecutiveDuplicationIndex(Surface *&pSurface){
 }
 
 void SurfaceComputation::flatten(Surface *&sf) {
-    Plane_3 plane = makePlane3(sf);
+    Plane_3 plane = getPlane3WithPCA(sf);
 
     vector<Vertex*> newVertices;
     for (ull index = 0 ; index < sf->getVerticesSize() ; index++ )
@@ -73,7 +73,51 @@ Vertex* SurfaceComputation::getCenterPoint(Surface *pSurface) {
     return center;
 }
 
-Plane_3 SurfaceComputation::makePlane3(Surface *&pSurface) {
+Plane_3 SurfaceComputation::getPlane3WithMBB(Surface *&pSurface){
+    pSurface->updateMBB();
+    double mindist = 100000000;
+    int minaxis = 0;
+    for (int i = 0 ; i < 3 ; i ++){
+        double dist = pSurface->max_coords[i] - pSurface->min_coords[i];
+        if (dist < mindist){
+            minaxis = i;
+            mindist = dist;
+        }
+    }
+    Vector_3 newNormal;
+    assert(pSurface->normal[minaxis] != 0);
+    switch (minaxis){
+        case 0:
+            newNormal = Vector_3(pSurface->normal[0],0,0);
+            break;
+        case 1:
+            newNormal = Vector_3(0,pSurface->normal[1],0);
+            break;
+        case 2:
+            newNormal = Vector_3(0,0,pSurface->normal[2]);
+            break;
+    }
+    if (newNormal[minaxis] > 0){
+        Point_3 point3(pSurface->min_coords[0], pSurface->min_coords[1], pSurface->min_coords[2]);
+        Plane_3 plane3(point3, newNormal);
+        return plane3;
+    }
+    else{
+        Point_3 point3(pSurface->max_coords[0], pSurface->max_coords[1], pSurface->max_coords[2]);
+        Plane_3 plane3(point3, newNormal);
+        return plane3;
+    }
+
+}
+
+Plane_3 SurfaceComputation::getPlane3WithCenter(Surface *&pSurface){
+    Vertex* centerV = VertexListComputation::getCenter(pSurface->getVerticesList());
+    Point_3 centerPoint = VertexComputation::getCGALPoint(centerV);
+    Plane_3 plane(centerPoint, pSurface->normal);
+    return plane;
+}
+
+Plane_3 SurfaceComputation::getPlane3WithPCA(Surface *&pSurface) {
     Plane_3 plane = VertexListComputation::getPlane3WithPCA(pSurface->getVerticesList());
     Vector_3 normal = pSurface->normal;
     Vector_3 planeVector = plane.orthogonal_vector();
@@ -85,7 +129,7 @@ Plane_3 SurfaceComputation::makePlane3(Surface *&pSurface) {
         return plane;
 }
 
-std::vector<Point_2> SurfaceComputation::to2D(Surface *&pSurface, Plane_3 plane) {
+std::vector<Point_2> SurfaceComputation::projectTo3DPlane(Surface *&pSurface, Plane_3 plane) {
     std::vector<Vertex*> vertexList = pSurface->getVerticesList();
     std::vector<Point_2> pointList;
     for (int i = 0 ; i < vertexList.size() ; i++){
@@ -108,10 +152,7 @@ void SurfaceComputation::removeStraight(Surface*& pSurface){
         Vertex* check_p = vertexList[secondIndex];
         ll thirdIndex = i + 1 == vertexList.size()? 0 : i+1;
         Vertex* end_p = vertexList[thirdIndex];
-        if (CGALCalculation::isAngleLowerThan(start_p, check_p, end_p, Checker::degreeOfStraight)
-            || CGALCalculation::isAngleLowerThan(end_p, check_p, start_p, Checker::degreeOfStraight)
-            || CGALCalculation::isAngleLowerThan(check_p, end_p, start_p, Checker::degreeOfStraight)
-                ){
+        if (Checker::isCollinear(start_p, check_p, end_p)){
             vertexList.erase(vertexList.begin() + i);
             removed_count++;
         }
@@ -130,22 +171,19 @@ int SurfaceComputation::triangulate(Surface *&pSurface) {
     std::vector<Vertex*> vertexList = pSurface->getVerticesList();
 
     // convert 3D point to 2D
-    Plane_3 planeRef = SurfaceComputation::makePlane3(pSurface);
-    pSurface->setPlaneRef(planeRef);
-    vector<Point_2> point2dList = to2D(pSurface, planeRef);
+    Plane_3 planeRef = SurfaceComputation::getSimplePlane3WithNormal(pSurface);
+    vector<Point_2> point2dList = projectTo3DPlane(pSurface, planeRef);
 
     // partition Surface to convex 2D polygons.
     Polygon_2 polygon = PolygonComputation::makePolygon(point2dList);
     if (!polygon.is_simple())
     {
-        cerr << "TODO" << endl;
-        // return 1;
-
+        cerr << "polygon is not simple" << endl;
+        cout << pSurface->toJSONString() << endl;
+        cout << polygon << endl;
+        return 1;
         int i = 0, j = 0;
         SurfaceIntersection::checkSelfIntersection(pSurface, i, j);
-        if (i == 0 && j == 0) return 1;
-
-        
     }
     vector<Polygon_2> polygonList = PolygonComputation::convexPartition(polygon);
 
@@ -203,7 +241,7 @@ std::vector<Segment_3> SurfaceComputation::makeSegment3List(Surface *&pSurface) 
 }
 
 std::vector<Segment_2> SurfaceComputation::makeSegment2List(Surface *&pSurface, Plane_3 plane3) {
-    vector<Point_2> pointsList = SurfaceComputation::to2D(pSurface, plane3);
+    vector<Point_2> pointsList = SurfaceComputation::projectTo3DPlane(pSurface, plane3);
     vector<Segment_2> segmentsList;
     for (int i = 0 ; i < pointsList.size() - 1 ; i++){
         Segment_2 seg(pointsList[i], pointsList[i+1]);
@@ -224,3 +262,12 @@ std::vector<HalfEdge *> SurfaceComputation::makeHalfEdgesList(Surface *&pSurface
     edges.push_back(new HalfEdge(vertices[vertices.size() - 1], vertices[0]));
     return edges;
 }
+
+Plane_3 SurfaceComputation::getSimplePlane3WithNormal(Surface *&pSurface) {
+    int type = CGALCalculation::findNormalType6(pSurface->normal);
+    Vector_3 normal = CGALCalculation::normal_list6[type];
+    Point_3 origin(0,0,0);
+    Plane_3 plane3(origin, normal);
+    return plane3;
+}
+

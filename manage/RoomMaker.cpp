@@ -22,27 +22,10 @@ int RoomMaker::convertTriangleMeshToSpace() {
     return 0;
 }
 
-int RoomMaker::exportSpaceJSON(string f_path)
-{
-    ofstream fout;
-    fout.open(f_path, ios::out|ios::trunc);
-
-    if (!fout) return -1;
-    if (JSONMaker::printJSON(fout, this->spaceList)) return -1;
-    fout.close();
+int RoomMaker::exportSpace(const char* fileName) {
+    if (de->exportSpace(this->spaceList, fileName)) return 1;
     return 0;
 }
-
-int RoomMaker::exportTriangulationJSON(string f_path) {
-    ofstream fout;
-    fout.open(f_path, ios::out|ios::trunc);
-
-    if (!fout) return -1;
-    if (JSONMaker::printTriangleJSON(fout, this->spaceList)) return -1;
-    fout.close();
-    return 0;
-}
-
 
 /*
 int RoomMaker::exportCombined(string f_path)

@@ -15,11 +15,9 @@ public:
     static int findNormalType27(Vector_3& nv);
     static int findNormalType18(Vector_3& nv);
     static int findNormalType10(Vector_3& nv);
-    static int findNormalType6(Vector_3& nv);
     static Vector_3 normal_list27[27];
     static Vector_3 normal_list18[18];
     static Vector_3 normal_list11[11];
-    static Vector_3 normal_list6[6];
 private:
 
     static Surface* findFirstSurfaceSimilarWithAxis(vector<Surface*>& surfacesList, int axis);

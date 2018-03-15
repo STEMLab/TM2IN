@@ -77,6 +77,7 @@ Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count,
     count = 0;
     if (cp->normal == CGAL::NULL_VECTOR) {
         cerr << "Normal Vector is NULL in attach Surfaces" << endl;
+        cerr << cp->toJSONString() << endl;
         exit(-1);
     }
     for (ull id = start ; id < this->surfacesList.size() ; id++)
@@ -335,6 +336,7 @@ void Space::triangulateSurfaces() {
     this->hasTriangulation = true;
     for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); ) {
         Surface* pSurface = this->surfacesList[sfID];
+        ///*
         if (SurfaceComputation::triangulate(pSurface)){
             cerr << "Triangulation Error" << endl;
             this->surfacesList.erase(this->surfacesList.begin() + sfID);
@@ -342,20 +344,34 @@ void Space::triangulateSurfaces() {
         else {
             sfID++;
         }
+        //*/
+
+        /*
+        // for testing. remove Right one
+        if (SurfaceComputation::triangulate(pSurface)){
+            cerr << "Triangulation Error" << endl;
+            sfID++;
+        }
+        else {
+            this->surfacesList.erase(this->surfacesList.begin() + sfID);
+        }
+        */
     }
 }
 
 int Space::checkSelfIntersection() {
+    int count = 0;
     for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
         Surface* pSurface = this->surfacesList[sfID];
         if (SurfaceIntersection::checkSelfIntersection(pSurface)){
             cerr << "Self Intersection in Surface " << sfID << endl;
             cerr << pSurface->toJSONString() << endl;
+            count++;
         }
         else {
-            // this->surfacesList.erase(this->surfacesList.begin() + sfID);
         }
     }
+    cout << this->name << " Self Intersection Count : " << count << endl;
     return 0;
 }
 

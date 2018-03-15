@@ -3,13 +3,15 @@
 
 #include <logic/check.hpp>
 #include <fileio/GenerationWriter.h>
-#include "fileio/Importer.h"
+#include <fileio/export/Exporter.h>
+#include "fileio/import/Importer.h"
 #include "util.h"
 
 class RoomMaker
 {
     public:
         Importer* di;
+        Exporter* de;
         TriangleMesh* mesh;
         vector<Vertex*> vertices;
         vector<Space*> spaceList;
@@ -26,12 +28,11 @@ class RoomMaker
         virtual int finish() = 0;
         virtual int rotateSurfaces() = 0;
 
-        int exportSpaceJSON(string f_path);
-
         void setImporter(Importer* p_di){ di = p_di; }
         void setGenerationWriter(GenerationWriter * pw){generation_writer = pw;}
 
-        int exportTriangulationJSON(string basic_string);
+        int setExporter(Exporter* _de){ de = _de;}
+        int exportSpace(const char*);
 
 protected:
 

@@ -1,7 +1,7 @@
 #ifndef TVRIMPORTER_H
 #define TVRIMPORTER_H
 
-#include "fileio/Importer.h"
+#include "Importer.h"
 #include "util.h"
 
 using namespace std;

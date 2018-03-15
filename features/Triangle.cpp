@@ -8,27 +8,24 @@ Triangle::Triangle(Vertex* pa, Vertex *pb, Vertex* pc)
     edges.push_back(new HalfEdge(pc, pa, this));
 }
 
+void Triangle::setNormal(Vector_3 vec){
+    this->normal = vec;
+    CGAL_assertion(this->normal != CGAL::NULL_VECTOR);
+}
+
 Vector_3 Triangle::getNormal()
 {
-    if (this->normal != CGAL::NULL_VECTOR) return this->normal;
-
-    Vertex* va = this->vertex(0);
-    Vertex* vb = this->vertex(1);
-    Vertex* vc = this->vertex(2);
-
-    this->normal = CGALCalculation::getUnitNormal(va, vb, vc) * AREA_CONST * this->getArea();
+    CGAL_assertion(this->normal != CGAL::NULL_VECTOR);
     return this->normal;
 }
 
+void Triangle::setArea(double _area){
+    this->area = _area;
+    CGAL_assertion(this->area != 0.0);
+};
+
 double Triangle::getArea(){
-    if (this->area > 0.0) return this->area;
-
-    Vertex* va = this->vertex(0);
-    Vertex* vb = this->vertex(1);
-    Vertex* vc = this->vertex(2);
-
-    this->area = sqrt(CGALCalculation::getSquaredArea(va, vb, vc));
-
+    CGAL_assertion(this->area != 0.0);
     return this->area;
 }
 
@@ -118,4 +115,12 @@ std::string Triangle::toJSON(std::string &indent) {
     ret += indent + "]}";
 
     return ret;
+}
+
+void Triangle::init() {
+    double triangleArea = CGALCalculation::getAreaOfTriangle(*this);
+    this->setArea(triangleArea);
+
+    Vector_3 triangleNormal = CGALCalculation::normalVector(*this);
+    this->setNormal(triangleNormal);
 }

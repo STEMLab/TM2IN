@@ -14,11 +14,14 @@ public:
 
     static Vertex* getCenterPoint(Surface *pSurface);
 
-    static Plane_3 makePlane3(Surface *&pSurface);
+    static Plane_3 getPlane3WithPCA(Surface *&pSurface);
+    static Plane_3 getPlane3WithCenter(Surface *&pSurface);
+    static Plane_3 getPlane3WithMBB(Surface *&pSurface);
+    static Plane_3 getSimplePlane3WithNormal(Surface *&pSurface);
 
     static int triangulate(Surface *&pSurface);
 
-    static std::vector<Point_2> to2D(Surface *&pSurface, Plane_3 plane);
+    static std::vector<Point_2> projectTo3DPlane(Surface *&pSurface, Plane_3 plane);
 
     static void removeStraight(Surface *&pSurface);
 
@@ -30,6 +33,7 @@ public:
     static std::vector<Segment_2> makeSegment2List(Surface *&pSurface, Plane_3 plane3);
 
     static std::vector<HalfEdge*> makeHalfEdgesList(Surface *&pSurface);
+
 };
 
 

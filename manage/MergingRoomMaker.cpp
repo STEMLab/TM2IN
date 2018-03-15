@@ -18,6 +18,8 @@ bool checkAnswer(char a, char b){
 }
 
 int MergingRoomMaker::pre_process() {
+    if (this->resolveWrongTriangle()) return -1;
+
     char doCheckClosedSurface;
     cout << "check whether mesh is composed of only closed surfaces?" << endl;
     cin >> doCheckClosedSurface;
@@ -54,6 +56,7 @@ int MergingRoomMaker::constructSpace() {
     if (checkAnswer(doCheckSelfIntersection, 'y'))
         if (this->checkSelfIntersection()) return -1;
 
+    cout << "re-triangulation" << endl;
     if (this->triangulation()) return -1;
 
     // make Surfaces Planar
@@ -210,6 +213,7 @@ int MergingRoomMaker::rotateSurfaces(){
 
 int MergingRoomMaker::triangulation() {
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
+        cout << "space : " << it << endl;
         Space *space = this->spaceList[it];
         // Triangulation
         space->triangulateSurfaces();
@@ -239,5 +243,13 @@ int MergingRoomMaker::remainStructure() {
     cerr << "TODO" << endl;
     this->mesh->groupByClosedSurface();
     return 0;
+}
+
+bool MergingRoomMaker::resolveWrongTriangle() {
+    int count = 0;
+    while (this->mesh->resolveWrongTriangle()){
+        cout << count++ << ", ";
+    }
+    return false;
 }
 

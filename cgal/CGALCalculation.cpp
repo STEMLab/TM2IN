@@ -1,3 +1,4 @@
+#include <compute/SurfaceComputation.h>
 #include <compute/VertexComputation.h>
 #include "CGALCalculation.h"
 
@@ -120,26 +121,54 @@ bool CGALCalculation::isAngleLowerThan(Vertex* origin, Vertex* v1, Vertex* v2, d
     return CGALCalculation::isAngleLowerThan(vec1, vec2, degree);
 }
 
-//
-//vector<vector<int>> CGALCalculation::triangulate(CSurface* sf){
-//    vector<pair<Point, unsigned>> points;
-//    for (int i = 0 ; i < (int)sf->getVerticesSize() ; i++){
-//        points.push_back(make_pair(makeTPoint(sf->v_list[i]),i));
-//    }
-//
-//    Delaunay globalIndicesOfTriangulation;
-//    globalIndicesOfTriangulation.insert(points.begin(), points.end());
-//
-//    for(Delaunay::Finite_faces_iterator fit = globalIndicesOfTriangulation.finite_faces_begin();
-//    fit != globalIndicesOfTriangulation.finite_faces_end(); ++fit)
-//    {
-//        Delaunay::Face_handle face = fit;
-//        std::cout << "Triangle:\t" << globalIndicesOfTriangulation.triangle(face) << std::endl;
-//        std::cout << "Vertex 0:\t" << globalIndicesOfTriangulation.triangle(face)[0] << std::endl;
-//        std::cout << "Vertex 0:\t" << face->vertices(0)->info() << std::endl;
-//    }
-//
-//}
+
+Vector_3 CGALCalculation::normal_list6[6] = {
+        Vector_3(1,0,0), //0, 3
+        Vector_3(0,1,0),
+        Vector_3(0,0,1),
+        Vector_3(-1,0,0),
+        Vector_3(0,-1,0),
+        Vector_3(0,0,-1)
+};
+
+Vector_3 CGALCalculation::normalVector(Triangle &pl) {
+    Vertex* va = pl.vertex(0);
+    Vertex* vb = pl.vertex(1);
+    Vertex* vc = pl.vertex(2);
+
+    return CGALCalculation::getUnitNormal(va, vb, vc) * AREA_CONST * pl.getArea();
+}
+
+Vector_3 CGALCalculation::unitNormalVector(Triangle &pl){
+    Vertex* va = pl.vertex(0);
+    Vertex* vb = pl.vertex(1);
+    Vertex* vc = pl.vertex(2);
+
+    return CGALCalculation::getUnitNormal(va, vb, vc);
+}
+
+int CGALCalculation::findNormalType6(Vector_3& nv)
+{
+    int type = 0;
+    double diff = 90.0;
+    for (int i = 0 ; i < 6 ; i++){
+        double temp_diff = CGALCalculation::getAngle(CGALCalculation::normal_list6[i], nv);
+        if (temp_diff < diff){
+            diff = temp_diff;
+            type = i;
+        }
+    }
+    return type;
+}
+
+double CGALCalculation::getAreaOfTriangle(Triangle &tr) {
+    Vertex* va = tr.vertex(0);
+    Vertex* vb = tr.vertex(1);
+    Vertex* vc = tr.vertex(2);
+
+    double area = sqrt(CGALCalculation::getSquaredArea(va, vb, vc));
+    return area;
+}
 
 //T_Point CGALCalculation::makeTPoint(Vertex* vt){
 //    return T_Point(vt->x(), vt->y(), vt->z());

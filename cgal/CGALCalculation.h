@@ -17,22 +17,23 @@ public:
 
     static Vector_3 getVector(Vertex* va, Vertex* vb);
 
+    static double getAreaOfTriangle(Triangle& tr);
     static double getSquaredArea(Point_3& p1, Point_3& p2, Point_3& p3);
     static double getSquaredArea(Vertex* va, Vertex* vb, Vertex* vc);
 
+    static Vector_3 normalVector(Triangle& pl);
+    static Vector_3 unitNormalVector(Triangle &pl);
     static Vector_3 getCrossProduct(Vertex* va, Vertex* vb, Vertex* vc);
 
     static bool isIntersect_BBOX(Surface* , Surface*);
-
-
-
     static bool isAngleLowerThan(Vector_3& nv1, Vector_3& nv2, double);
     static bool isAngleLowerThan(Vertex* origin, Vertex* v1, Vertex* v2, double);
 
     static double getSquaredDistance(Vertex* v1, Vertex* v2);
-    CGALCalculation(){
+    CGALCalculation(){}
 
-    }
+    static int findNormalType6(Vector_3& nv);
+    static Vector_3 normal_list6[6];
 protected:
 
 private:

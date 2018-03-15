@@ -30,11 +30,6 @@ public:
     static double degreeOfMerging;
     static double degreeOfStraight;
 
-//    Checker(double vertex){
-//        this->threshold_vertex = vertex;
-//        this->degreeOfMerging = 60.0;
-//    }
-
     static bool isSameDouble(double a, double b);
     static bool isSameX(Vertex* a, Vertex* b);
     static bool isSameY(Vertex* a, Vertex* b);
@@ -48,8 +43,7 @@ public:
     static bool isSameVertex(Vertex* v1, Vertex* v2);
 
     static bool CanbeMerged(Vector_3& big, Vector_3& small, double degree);
-
-    static bool isCollinear(Vertex* origin, Vertex* v1, Vertex* v2);
+    static bool isCollinear(Vertex *start_p, Vertex *check_p, Vertex *end_p);
 
     static int compare_vertex(Vertex* v1, Vertex* v2);
 };

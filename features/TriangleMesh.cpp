@@ -8,6 +8,7 @@
 #include <functional>
 #include <fstream>
 #include <iostream>
+#include <logic/check.hpp>
 
 void TriangleMesh::makeGraph(){
     for (int i = 0 ; i < this->triangles.size() ; i++){
@@ -83,4 +84,35 @@ int TriangleMesh::groupByClosedSurface() {
     }
     this->triangles = newTriangles;
     return 0;
+}
+
+bool TriangleMesh::resolveWrongTriangle() {
+    for (int i = 0 ; i < this->triangles.size() ; i++){
+        for (int j = 0 ; j < this->triangles[i].second.size() ; j++){
+            Triangle* triangle = this->triangles[i].second[j];
+
+            Vector_3 triangleNormal = CGALCalculation::unitNormalVector(*triangle);
+
+            if (triangleNormal == CGAL::NULL_VECTOR){
+                for (int k = 0 ; k < 2; k ++){
+                    for (int w = k + 1; w < 3 ; w ++){
+                        if (Checker::isSameVertex(triangle->vertex(k), triangle->vertex(w))){
+                            this->vertices[triangle->vertex(k)->index] = triangle->vertex(w);
+                            this->triangles[i].second.erase(this->triangles[i].second.begin() + j);
+                            cerr << "Same Vertex In One Triangle" << endl;
+                            return true;
+                        }
+                    }
+                }
+                if (Checker::isCollinear(triangle->vertex(0), triangle->vertex(1), triangle->vertex(2))) {
+                    cerr << "Collinear Vertices in Triangle" << endl;
+                    this->triangles[i].second.erase(this->triangles[i].second.begin() + j);
+                    return true;
+                }
+            }
+
+            triangle->init();
+        }
+    }
+    return false;
 }

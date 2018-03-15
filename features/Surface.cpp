@@ -43,8 +43,9 @@ Surface::Surface(Triangle& pl){
         v_list.push_back(v[i]);
     }
 
-    normal = pl.getNormal();
     area = pl.getArea();
+    normal = pl.getNormal();
+
     this->updateMBB();
     this->triangles.push_back(&pl);
 }

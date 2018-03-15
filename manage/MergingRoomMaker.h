@@ -45,6 +45,8 @@ private:
     int checkSelfIntersection();
 
     int remainStructure();
+
+    bool resolveWrongTriangle();
 };
 
 #endif // RectRoomMaker_H

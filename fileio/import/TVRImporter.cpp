@@ -61,6 +61,8 @@ TriangleMesh* TVRImporter::import(const char* f_path){
             case 'g':{
                 if (f_count != 0){
                     tm->triangles.push_back(make_pair(group_name, triangles));
+                    triangles.clear();
+                    f_count = 0;
                 }
                 group_name = this->getGroupName(inputstr);
                 if (group_name.find('\r') != string::npos) group_name.erase(group_name.find('\r'));
