@@ -28,9 +28,9 @@ void test(){
 
 int main(int argc, const char * argv[]) {
     string version = "0.3.1";
+    string fileName;
+    const int maxGENperOneCycle = 20;
     cout << version << endl;
-
-    RoomMaker* manager = new MergingRoomMaker();
 
     cout << "choose Data type to import" << endl;
     cout << "1. TVR\n2. 3DS\n3. COLLADA\n";
@@ -38,37 +38,32 @@ int main(int argc, const char * argv[]) {
 
     map<string, string> paths = getPaths(dataType);
 
-    string fileName;
     cout << "write file name" << endl; cin >> fileName;
+    paths["filename"] = fileName;
+    paths["version"] = version;
+    string generationWritePath = paths["result"] + paths["filename"]+"/" + paths["version"] + "/";
 
-    const int maxGENperOneCycle = 20;
-    string generationWritePath = paths["result"] + fileName+"/" + version + "/";
-
+    RoomMaker* manager = new MergingRoomMaker();
     manager->setImporter(new ThreeDSImporter());
+    manager->setGenerationWriter(new GenerationWriter(generationWritePath));
+    manager->setExporter(new JSONSurfaceExporter());
+
     Checker::threshold_vertex = 0.0000001;
     Checker::squaredDistanceOfSamePoint2D = 0.000001;
 
     cout << "Load TVR File.." << endl;
-    if (manager->importMesh( (string(paths["resource"]) + fileName + "." + paths["filetype"]).c_str()) ){
+    if (manager->importMesh()){
         cout << "Load File Error";
         return -1;
     }
 
     // create Result directory
     createAndRemoveDir(version, paths["result"], fileName);
-    manager->setGenerationWriter(new GenerationWriter(generationWritePath));
 
     if (manager->pre_process() == -1) return -1;
     if (manager->constructSpace() == -1) return -1;
-
-    manager->setExporter(new JSONSurfaceExporter());
-    manager->exportSpace( (string(paths["result"]) + fileName + "/" + version + "/surfaces.json").c_str());
-
-//    string surfaceJSON = string(paths["result"]) + fileName + "/" + version + "/" + "surfaces.json";
-//    manager->exportSpaceJSON(surfaceJSON);
-//
-//    string triangulationJSON = string(resultPath) + fileName + "/" + version + "/" + "triangles.json";
-//    manager->exportTriangulationJSON(triangulationJSON);
+    // if (manager->finish(paths) == -1) return -1;
+    manager->exportSpace( (string(paths["result"]) + paths[""] + "/" + version + "/surfaces.json").c_str());
 
     std::cout << "End!\n";
     return 0;

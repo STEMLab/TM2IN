@@ -54,8 +54,6 @@ add_executable(TriangleMeshToClearSolid
         compute/SurfacePairComputation.h
         compute/SurfacesListComputation.cpp
         compute/SurfacesListComputation.h
-        manage/ClusteringRoomMaker.cpp
-        manage/ClusteringRoomMaker.h
         manage/MergingRoomMaker.cpp
         manage/MergingRoomMaker.h
         manage/RoomMaker.cpp
@@ -84,8 +82,7 @@ add_executable(TriangleMeshToClearSolid
         fileio/export/Exporter.h
         fileio/export/JSONSurfaceExporter.cpp
         fileio/export/JSONSurfaceExporter.h
-        fileio/export/ThreeDSExporter.cpp
-        fileio/export/ThreeDSExporter.h)
+        )
 
 
 TARGET_LINK_LIBRARIES( TriangleMeshToClearSolid LINK_PUBLIC ${Boost_LIBRARIES} Eigen3::Eigen)

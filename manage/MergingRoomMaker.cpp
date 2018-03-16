@@ -58,19 +58,13 @@ int MergingRoomMaker::constructSpace() {
     cout << "re-triangulation" << endl;
     if (this->triangulation()) return -1;
 
-    // fill Hole
-    /*
-    if (this->triangulation()) return -1;
-    if (this->updateVertexList()) return -1;
-    if (this->fillHoleWithUsingPolyhedralSurface()) return -1;
-    if (this->mergeSurfaces()) return -1;
-   */
-
     return 0;
 }
 
 
-int MergingRoomMaker::finish(){
+int MergingRoomMaker::finish() {
+
+
     return 0;
 }
 

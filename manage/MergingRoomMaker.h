@@ -32,12 +32,6 @@ private:
     int processGenerations(Space *space, int &currentGeneration, double &degree);
     int mergeSurfaces();
 
-    int fillHoleWithUsingPolyhedralSurface();
-
-    int makeSurfacesPlanar();
-
-    int resolveIntersection();
-
     int updateVertexList();
 
     int triangulation();

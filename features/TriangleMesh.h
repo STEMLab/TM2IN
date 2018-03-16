@@ -19,7 +19,8 @@ public:
     TriangleMesh(){}
 
     void makeGraph();
-    void saveAsTVR(const char *);
+    void exportTVR(const char *);
+    void export3DS(const char* filePath);
     bool checkClosedSurface();
 
     int groupByClosedSurface();

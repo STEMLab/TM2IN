@@ -2,8 +2,9 @@
 #include "manage/RoomMaker.h"
 
 
-int RoomMaker::importMesh(const char* file_path){
-    this->mesh = di->import(file_path);
+int RoomMaker::importMesh() {
+    string filePath = paths["resource"] + paths["filename"] + "." + paths["filetype"];
+    this->mesh = di->import(filePath.c_str());
     if (this->mesh == NULL) return -1;
     else return 0;
 }
@@ -22,35 +23,11 @@ int RoomMaker::convertTriangleMeshToSpace() {
     return 0;
 }
 
+int RoomMaker::convertSpaceToTriangleMesh(){
+
+}
+
 int RoomMaker::exportSpace(const char* fileName) {
     if (de->exportSpace(this->spaceList, fileName)) return 1;
     return 0;
 }
-
-/*
-int RoomMaker::exportCombined(string f_path)
-{
-    ofstream fout;
-    fout.open(f_path, ios::out|ios::trunc|ios::binary);
-    if (!fout) return -1;
-    if (CombinedIO::exportBinary(fout, this->objcl->space_list))
-    {
-        return -1;
-    }
-    fout.close();
-    return 0;
-}
-
-int RoomMaker::importGeneration(string f_path)
-{
-    ifstream fin;
-    fin.open(f_path, ios::in|ios::binary);
-    if (!fin){
-        cout << "No file" << endl;
-        return -1;
-    }
-    if (CombinedIO::importBinary(fin, this->objcl)) return 1;
-    fin.close();
-    return 0;
-}
-*/

@@ -19,7 +19,7 @@ void TriangleMesh::makeGraph(){
 
 }
 
-void TriangleMesh::saveAsTVR(const char *path) {
+void TriangleMesh::exportTVR(const char *path) {
     std::cout << "save As TVR" << endl;
     cout << path;
     pFile = fopen(path, "w");
