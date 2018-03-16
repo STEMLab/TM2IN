@@ -36,7 +36,7 @@ public:
     int setExporter(Exporter* _de){ de = _de;}
     int exportSpace();
 
-protected:
+    void setPaths(map<string, string> _paths);
 
 };
 

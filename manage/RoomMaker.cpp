@@ -32,3 +32,7 @@ int RoomMaker::exportSpace() {
     if (de->exportSpace(this->spaceList, filePath.c_str())) return 1;
     return 0;
 }
+
+void RoomMaker::setPaths(map<string, string> _paths) {
+    this->paths = _paths;
+}

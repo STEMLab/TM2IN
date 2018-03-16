@@ -27,10 +27,10 @@ void test(){
 }
 
 int main(int argc, const char * argv[]) {
-    string version = "0.3.1";
-    string fileName;
-    const int maxGENperOneCycle = 20;
-    cout << version << endl;
+    Checker::threshold_vertex = 0.0000001;
+    Checker::squaredDistanceOfSamePoint2D = 0.000001;
+    Checker::degreeOfMerging = 10.0;
+    Checker::degreeOfStraight = 0.001;
 
     cout << "choose Data type to import" << endl;
     cout << "1. TVR\n2. 3DS\n3. COLLADA\n";
@@ -38,19 +38,18 @@ int main(int argc, const char * argv[]) {
 
     map<string, string> paths = getPaths(dataType);
 
-    cout << "write file name" << endl; cin >> fileName;
+    cout << "write file name" << endl; string fileName; cin >> fileName;
     paths["filename"] = fileName;
+
+    string version = "0.3.1"; cout << version << endl;
     paths["version"] = version;
     paths["versionDir"] = paths["resultDir"] + paths["filename"] + "/" + paths["version"] + "/";
-    string generationWritePath = paths["resultDir"] + paths["filename"]+"/" + paths["version"] + "/";
 
     RoomMaker* manager = new MergingRoomMaker();
     manager->setImporter(new ThreeDSImporter());
-    manager->setGenerationWriter(new GenerationWriter(generationWritePath));
+    manager->setGenerationWriter(new GenerationWriter(paths["versionDir"]));
     manager->setExporter(new JSONSurfaceExporter());
-
-    Checker::threshold_vertex = 0.0000001;
-    Checker::squaredDistanceOfSamePoint2D = 0.000001;
+    manager->setPaths(paths);
 
     cout << "Load TVR File.." << endl;
     if (manager->importMesh()){
@@ -63,8 +62,8 @@ int main(int argc, const char * argv[]) {
 
     if (manager->pre_process() == -1) return -1;
     if (manager->constructSpace() == -1) return -1;
-    // if (manager->finish(paths) == -1) return -1;
-    manager->exportSpace( );
+    if (manager->finish() == -1) return -1;
+
 
     std::cout << "End!\n";
     return 0;
