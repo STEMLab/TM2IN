@@ -41,7 +41,8 @@ int main(int argc, const char * argv[]) {
     cout << "write file name" << endl; cin >> fileName;
     paths["filename"] = fileName;
     paths["version"] = version;
-    string generationWritePath = paths["result"] + paths["filename"]+"/" + paths["version"] + "/";
+    paths["versionDir"] = paths["resultDir"] + paths["filename"] + "/" + paths["version"] + "/";
+    string generationWritePath = paths["resultDir"] + paths["filename"]+"/" + paths["version"] + "/";
 
     RoomMaker* manager = new MergingRoomMaker();
     manager->setImporter(new ThreeDSImporter());
@@ -58,12 +59,12 @@ int main(int argc, const char * argv[]) {
     }
 
     // create Result directory
-    createAndRemoveDir(version, paths["result"], fileName);
+    createAndRemoveDir(version, paths["resultDir"], fileName);
 
     if (manager->pre_process() == -1) return -1;
     if (manager->constructSpace() == -1) return -1;
     // if (manager->finish(paths) == -1) return -1;
-    manager->exportSpace( (string(paths["result"]) + paths[""] + "/" + version + "/surfaces.json").c_str());
+    manager->exportSpace( );
 
     std::cout << "End!\n";
     return 0;
@@ -74,15 +75,15 @@ map<string, string> getPaths(int type){
 
     switch(type){
         case 1: //TVR
-            paths["project"] = "/home/dongmin/dev/TriMeshToIndoor/";
-            paths["resource"] = paths["project"] + "Resource/tvr/";
-            paths["result"] = paths["project"] + "Result/";
+            paths["projectDir"] = "/home/dongmin/dev/TriMeshToIndoor/";
+            paths["resourceDir"] = paths["project"] + "Resource/tvr/";
+            paths["resultDir"] = paths["project"] + "Result/";
             paths["filetype"] = "tvr";
             break;
         case 2: //3DS
-            paths["project"] = "/home/dongmin/dev/TriMeshToIndoor/";
-            paths["resource"] = paths["project"] + "Resource/3DS/";
-            paths["result"] = paths["project"] + "Result/";
+            paths["projectDir"] = "/home/dongmin/dev/TriMeshToIndoor/";
+            paths["resourceDir"] = paths["project"] + "Resource/3DS/";
+            paths["resultDir"] = paths["project"] + "Result/";
             paths["filetype"] = "3DS";
             break;
         case 3: //COLLADA
@@ -90,6 +91,7 @@ map<string, string> getPaths(int type){
         default:
             exit(-1);
     }
+
     return paths;
 }
 

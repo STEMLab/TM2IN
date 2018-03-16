@@ -9,7 +9,7 @@
 
 class Exporter{
 public:
-    virtual int exportSpace(vector<Space*> spaceList, const char* name) =0;
+    virtual int exportSpace(vector<Space *> spaceList, const char *filePath) =0;
 };
 
 

@@ -3,7 +3,7 @@
 
 
 int RoomMaker::importMesh() {
-    string filePath = paths["resource"] + paths["filename"] + "." + paths["filetype"];
+    string filePath = paths["resourceDir"] + paths["filename"] + "." + paths["filetype"];
     this->mesh = di->import(filePath.c_str());
     if (this->mesh == NULL) return -1;
     else return 0;
@@ -27,7 +27,8 @@ int RoomMaker::convertSpaceToTriangleMesh(){
 
 }
 
-int RoomMaker::exportSpace(const char* fileName) {
-    if (de->exportSpace(this->spaceList, fileName)) return 1;
+int RoomMaker::exportSpace() {
+    string filePath = paths["versionDir"] + "surfaces.json";
+    if (de->exportSpace(this->spaceList, filePath.c_str())) return 1;
     return 0;
 }

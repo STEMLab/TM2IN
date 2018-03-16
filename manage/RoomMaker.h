@@ -34,7 +34,7 @@ public:
     void setGenerationWriter(GenerationWriter * pw){generation_writer = pw;}
 
     int setExporter(Exporter* _de){ de = _de;}
-    int exportSpace(const char*);
+    int exportSpace();
 
 protected:
 
