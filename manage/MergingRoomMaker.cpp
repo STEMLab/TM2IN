@@ -64,7 +64,6 @@ int MergingRoomMaker::constructSpace() {
 
 int MergingRoomMaker::finish() {
     char doExport3DS;
-
     this->exportSpace();
 
     cout <<"Export 3DS?" << endl; cin >>doExport3DS;

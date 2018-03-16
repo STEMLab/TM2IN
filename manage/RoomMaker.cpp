@@ -24,7 +24,15 @@ int RoomMaker::convertTriangleMeshToSpace() {
 }
 
 int RoomMaker::convertSpaceToTriangleMesh(){
-
+    this->mesh->triangles.clear();
+    this->mesh->vertices.clear();
+    for (int spaceID = 0 ; spaceID < this->spaceList.size() ; spaceID++){
+        Space* space = this->spaceList[spaceID];
+        vector<Triangle*> triangleList = space->getTriangleList();
+        this->mesh->triangles.push_back(make_pair(space->name, triangleList));
+    }
+    this->mesh->vertices = this->vertices;
+    return 0;
 }
 
 int RoomMaker::exportSpace() {

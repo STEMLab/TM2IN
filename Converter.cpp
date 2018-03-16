@@ -41,7 +41,7 @@ int main(int argc, const char * argv[]) {
     cout << "write file name" << endl; string fileName; cin >> fileName;
     paths["filename"] = fileName;
 
-    string version = "0.3.1"; cout << version << endl;
+    string version = "0.3.2"; cout << version << endl;
     paths["version"] = version;
     paths["versionDir"] = paths["resultDir"] + paths["filename"] + "/" + paths["version"] + "/";
 
@@ -75,14 +75,14 @@ map<string, string> getPaths(int type){
     switch(type){
         case 1: //TVR
             paths["projectDir"] = "/home/dongmin/dev/TriMeshToIndoor/";
-            paths["resourceDir"] = paths["project"] + "Resource/tvr/";
-            paths["resultDir"] = paths["project"] + "Result/";
+            paths["resourceDir"] = paths["projectDir"] + "Resource/tvr/";
+            paths["resultDir"] = paths["projectDir"] + "Result/";
             paths["filetype"] = "tvr";
             break;
         case 2: //3DS
             paths["projectDir"] = "/home/dongmin/dev/TriMeshToIndoor/";
-            paths["resourceDir"] = paths["project"] + "Resource/3DS/";
-            paths["resultDir"] = paths["project"] + "Result/";
+            paths["resourceDir"] = paths["projectDir"] + "Resource/3DS/";
+            paths["resultDir"] = paths["projectDir"] + "Result/";
             paths["filetype"] = "3DS";
             break;
         case 3: //COLLADA

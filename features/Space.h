@@ -63,6 +63,8 @@ public:
 
     int checkSelfIntersection();
 
+    vector<Triangle *> getTriangleList();
+
 protected:
     Surface* attachSurfaces(Surface* cp, ull start, bool* checked, ll& count, double degree);
     void updateMBB();

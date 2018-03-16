@@ -11,6 +11,7 @@
 #include <logic/check.hpp>
 
 void TriangleMesh::makeGraph(){
+    this->graphs.clear();
     for (int i = 0 ; i < this->triangles.size() ; i++){
         TriangleMeshGraph* graph = new TriangleMeshGraph();
         graph->makeAdjacentGraph(this->triangles[i].second);
@@ -114,4 +115,8 @@ bool TriangleMesh::resolveWrongTriangle() {
         }
     }
     return false;
+}
+
+void TriangleMesh::export3DS(const char *filePath) {
+    return;
 }

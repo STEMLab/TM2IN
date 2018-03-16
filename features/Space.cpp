@@ -372,3 +372,12 @@ int Space::checkSelfIntersection() {
     return 0;
 }
 
+vector<Triangle *> Space::getTriangleList() {
+    vector<Triangle *> triangles;
+    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
+        Surface* pSurface = this->surfacesList[sfID];
+        triangles.insert(triangles.end(),pSurface->triangles.begin(),pSurface->triangles.end());
+    }
+    return triangles;
+}
+
