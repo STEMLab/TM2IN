@@ -69,7 +69,7 @@ int MergingRoomMaker::finish() {
     cout <<"Export 3DS?" << endl; cin >>doExport3DS;
     if (checkAnswer(doExport3DS, 'y')){
         if (this->convertSpaceToTriangleMesh()) return -1;
-        this->mesh->export3DS((paths["versionDir"] + "triangle.3DS").c_str());
+        this->mesh->export3DS((paths["versionDir"] + paths["filename"] + ".3DS").c_str());
     }
 
     return 0;

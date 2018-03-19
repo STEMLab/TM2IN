@@ -26,7 +26,9 @@ void test(){
 
 }
 
-int main(int argc, const char * argv[]) {
+int main(int argc, const char * argv[]) {short id = 0x4d4d;
+    cout << id << endl;
+
     Checker::threshold_vertex = 0.0000001;
     Checker::squaredDistanceOfSamePoint2D = 0.000001;
     Checker::degreeOfMerging = 10.0;

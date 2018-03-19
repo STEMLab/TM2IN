@@ -56,7 +56,7 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
 	{
 		//getch(); //Insert this command for debug (to wait for keypress for each chuck reading)
 		fread (&l_chunk_id, 2, 1, l_file); //Read the chunk header
-		fread (&l_chunk_length, 4, 1, l_file); //Read the lenght of the chunk
+		fread (&l_chunk_length, 4, 1, l_file); //Read the length of the chunk
 
 		switch (l_chunk_id)
         {
@@ -66,6 +66,7 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
 			// Chunk Lenght: 0 + sub chunks
 			//-------------------------------------------
 			case 0x4d4d:
+                cout << "0x4D4D : " << l_chunk_length << endl;
 			break;
 
 			//----------------- EDIT3DS -----------------
@@ -74,6 +75,7 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
 			// Chunk Lenght: 0 + sub chunks
 			//-------------------------------------------
 			case 0x3d3d:
+                cout << "\t0x3D3D : " << l_chunk_length << endl;
 			break;
 
 			//--------------- EDIT_OBJECT ---------------
@@ -82,6 +84,7 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
 			// Chunk Lenght: len(object name) + sub chunks
 			//-------------------------------------------
 			case 0x4000:
+                cout << "\t\t0x4000 : " << l_chunk_length << endl;
                 if (f_count != 0){
                     triangleMesh->triangles.push_back(make_pair(group_name, triangles));
                     triangles.clear();
@@ -110,7 +113,7 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
 			// Chunk Lenght: 0 + sub chunks
 			//-------------------------------------------
 			case 0x4100:
-                printf("TRIMESH\n");
+                cout << "\t\t\t0x4100 : " << l_chunk_length << endl;
                 break;
 
 			//--------------- TRI_VERTEXL ---------------
@@ -191,9 +194,14 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
 			//to the same level next chunk
 			//-------------------------------------------
 			default:
-				 fseek(l_file, l_chunk_length-6, SEEK_CUR);
+                cout << "\tNo id" << endl;
+                fseek(l_file, l_chunk_length-6, SEEK_CUR);
         }
 	}
+    if (f_count != 0){
+        triangleMesh->triangles.push_back(make_pair(group_name, triangles));
+        triangles.clear();
+    }
 	fclose (l_file); // Closes the file stream
     return triangleMesh;
 }
