@@ -29,7 +29,7 @@ int RoomMaker::convertSpaceToTriangleMesh(){
     this->mesh->vertices.clear();
     for (int spaceID = 0 ; spaceID < this->spaceList.size() ; spaceID++){
         Space* space = this->spaceList[spaceID];
-        vector<Triangle*> triangleList = space->getTriangleList();
+        vector<Triangle*> triangleList = space->getTriangleListOfAllSurfaces();
         this->mesh->triangles.push_back(make_pair(space->name, triangleList));
     }
     this->mesh->vertices = this->vertices;

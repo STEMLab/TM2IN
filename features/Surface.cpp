@@ -112,18 +112,9 @@ bool Surface::checkDuplicate(){
     sort(sorted_v_list.begin(), sorted_v_list.end(), VertexComputation::greater);
     for (ull i = 0 ; i < sorted_v_list.size() - 1; i++){
         if (sorted_v_list[i] == sorted_v_list[i+1]){
-            cout << "\nSame Index" << endl;
+            cout << "\nSame Vertex" << endl;
             return true;
         }
-
-        /*
-        if (ch != NULL && ch->isSameVertex(sorted_v_list[i], sorted_v_list[i+1])){
-            cout << "\nSame Coords" << endl;
-            cout << sorted_v_list[i]->toJSON() << endl;
-            cout << sorted_v_list[i+1]->toJSON() <<endl;
-            return true;
-        }
-         */
     }
     return false;
 }
@@ -255,7 +246,7 @@ bool Surface::isValid(){
         cout << "The number of vertexes is "  << this->getVerticesSize() <<endl;
         return false;
     }
-
+    if (this->checkDuplicate()) return false;
     return true;
 }
 

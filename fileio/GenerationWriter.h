@@ -11,7 +11,6 @@ class GenerationWriter{
 public:
     string process_path;
     Space* space;
-    int generation = 0;
 
     GenerationWriter(string pp){
         process_path = pp;

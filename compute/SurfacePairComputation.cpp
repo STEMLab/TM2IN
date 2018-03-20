@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 int SurfacePairComputation::combine(Surface* origin, Surface* piece, double degree){
-     // check Polygon is in near polygon or not
+    // check Polygon is in near polygon or not
     if (!isNeighbor(origin, piece)) return 1;
 
     ll end_i = -1, end_j = -1;
@@ -33,7 +33,6 @@ int SurfacePairComputation::combine(Surface* origin, Surface* piece, double degr
         exit(-1);
     }
     else if (seg_num == 0){
-        /**< Only One Vertex Same*/
         return 1;
     }
     else if (seg_num == 1){
@@ -132,7 +131,6 @@ bool SurfacePairComputation::findShareVertex(vector<Vertex*>& vi, vector<Vertex*
     ll piece_size = vi.size();
     ll origin_size = vj.size();
 
-
     for (ll i = 0 ; i < piece_size ;i++){
         for (ll j = origin_size - 1 ; j >= 0 ; j--){
             if (vi[i] == vj[j]){
@@ -151,28 +149,25 @@ bool SurfacePairComputation::findShareVertex(vector<Vertex*>& vi, vector<Vertex*
 }
 
 int SurfacePairComputation::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj, ll middle_i, ll middle_j, ll& start_i, ll& end_i, ll& start_j, ll& end_j){
-    ll piece_size = vi.size();
-    ll origin_size = vj.size();
+    ll piece_size = (ll)vi.size();
+    ll origin_size = (ll)vj.size();
 
     ll i = middle_i, j = middle_j;
 
     ll next_i = i + 1 == piece_size? 0 : i+1;
     ll next_j = j-1 == -1? origin_size-1 : j-1;
 
-    ll num = 0;
     while (vi[next_i] == vj[next_j])
     {
+        if (next_i == middle_i || next_j == middle_j){
+            return 1;
+        }
+
         i = next_i;
         j = next_j;
 
-        next_i = i + 1 == piece_size? 0 : i+1;
-        next_j = j-1 == -1? origin_size-1 : j-1;
-
-        num++;
-        if ((num > vi.size() + 1) &&(num > vj.size() + 1)){ //maybe same surface but opposite
-            cout << "infinite loop in find Start And End" << endl;
-            return 1;
-        }
+        next_i = i + 1 == piece_size? 0 : i + 1;
+        next_j = j - 1 == -1? origin_size-1 : j - 1;
     }
     end_i = i;
     end_j = j;
@@ -180,22 +175,20 @@ int SurfacePairComputation::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>
     i = middle_i;
     j = middle_j;
 
-    next_i = i - 1 == -1? vi.size() -1 : i - 1;
+    next_i = i - 1 == -1? piece_size -1 : i - 1;
     next_j = j + 1 == origin_size? 0 : j + 1;
 
-    num = 0;
     while (vi[next_i] == vj[next_j])
     {
+        if (next_i == middle_i || next_j == middle_j){
+            return 1;
+        }
+
         i = next_i;
         j = next_j;
 
-        next_i = i - 1 == -1? vi.size() -1 : i - 1;
+        next_i = i - 1 == -1? piece_size -1 : i - 1;
         next_j = j + 1 == origin_size? 0 : j + 1;
-        num++;
-        if ((num > vi.size() + 1) && (num > vj.size() + 1)){//maybe same surface but opposite
-            cout << "infinite loop in find Start And End" << endl;
-            return 1;
-        }
     }
     start_i = i;
     start_j = j;
@@ -206,9 +199,7 @@ bool SurfacePairComputation::isNeighbor(Surface* cp1, Surface* cp2){
     return CGALCalculation::isIntersect_BBOX(cp1, cp2);
 }
 
-int SurfacePairComputation::simplifyLineSegment(Surface* origin, Surface* piece, bool again){
-    if (!again && !isNeighbor(origin, piece)) return 1;
-
+int SurfacePairComputation::simplifyLineSegment(Surface *origin, Surface *piece) {
     ll middle_i = -1, middle_j = -1;
     ll piece_size = piece->getVerticesSize();
     ll origin_size = origin->getVerticesSize();
@@ -216,11 +207,10 @@ int SurfacePairComputation::simplifyLineSegment(Surface* origin, Surface* piece,
     vector<Vertex*>& piece_vertex_list = piece->v_list;
     vector<Vertex*>& origin_vertex_list = origin->v_list;
 
-    bool hasTwoShareLine = false;
     ll infinite_check = 0;
     for (ll i = 0 ; i < piece_size ;i++){
         for (ll j = origin_size - 1 ; j >= 0 ; j--){
-                if (piece_vertex_list[i] == origin_vertex_list[j]){
+            if (piece_vertex_list[i] == origin_vertex_list[j]){
                 ll next_i = i + 1 == piece_size? 0 : i+1;
                 ll next_j = j-1 == -1? origin_size-1 : j-1;
 
@@ -231,48 +221,42 @@ int SurfacePairComputation::simplifyLineSegment(Surface* origin, Surface* piece,
                     && piece_vertex_list[pre_i] == origin_vertex_list[pre_j]){
                     middle_i = i;
                     middle_j = j;
-                    hasTwoShareLine = true;
                     break;
                 }
             }
         }
-        if (hasTwoShareLine) break;
+        if (middle_i != -1) break;
     }
 
-    if (!hasTwoShareLine) return 1;
-    if (CGALCalculation::getAngle(origin->normal, piece->normal) > 179.999999){
-        return 1;
-    }
+    if (middle_i == -1) return 1;
+    // if (CGALCalculation::getAngle(origin->normal, piece->normal) > 179.999999) return 1;
 
     ll end_i = -1, end_j = -1;
     ll start_i = -1, start_j = -1;
-    if (findStartAndEnd(piece_vertex_list, origin->v_list, middle_i, middle_j, start_i, end_i, start_j, end_j)){
-        return 1;
-    }
+    if (findStartAndEnd(piece_vertex_list, origin_vertex_list, middle_i, middle_j, start_i, end_i, start_j, end_j)) return 1;
 
-    int seg_num = piece->getSegmentsNumber(start_i, end_i);
-    if (seg_num <= 1) {
-        cout << "simplifyLineSegment Errrrrror" << endl;
-        exit(-1);
-    }
+    assert (piece->getSegmentsNumber(start_i, end_i) > 1);
+    // assert (piece->getSegmentsNumber(end_i, start_i) > 1);
 
-    Point_3 sp = VertexComputation::getCGALPoint(piece_vertex_list[start_i]);
-    Point_3 ep = VertexComputation::getCGALPoint(piece_vertex_list[end_i]);
-    Line_3 line(sp, ep);
+    /*
+      //Translate to make it straight
+      Point_3 sp = VertexComputation::getCGALPoint(piece_vertex_list[start_i]);
+      Point_3 ep = VertexComputation::getCGALPoint(piece_vertex_list[end_i]);
+      Line_3 line(sp, ep);
 
-    //Translate to make it straight
-    for (ll i = start_i + 1;;)
-    {
-        infinite_check++;
-        assert (infinite_check < piece_size + 100) ;
+      for (ll i = start_i + 1;;)
+      {
+          infinite_check++;
+          assert (infinite_check < piece_size + 100) ;
 
-        if (i == (ll)piece_vertex_list.size()) i = 0;
-        if (i == end_i) break;
-        Point_3 newp = line.projection(VertexComputation::getCGALPoint(piece_vertex_list[i]));
-        piece_vertex_list[i]->translateTo({newp.x(), newp.y(), newp.z()});
+          if (i == (ll)piece_vertex_list.size()) i = 0;
+          if (i == end_i) break;
+          Point_3 newp = line.projection(VertexComputation::getCGALPoint(piece_vertex_list[i]));
+          piece_vertex_list[i]->translateTo({newp.x(), newp.y(), newp.z()});
 
-        i++;
-    }
+          i++;
+      }
+    */
 
     if ( end_i > start_i ){
         piece_vertex_list.erase(piece_vertex_list.begin() + start_i + 1, piece_vertex_list.begin() + end_i);

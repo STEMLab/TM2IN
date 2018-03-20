@@ -30,6 +30,7 @@ public:
     double max_coords[3];
     string name;
     double whole_area = 0;
+    int generation;
     bool hasTriangulation = false;
 
     void setName(string _name){
@@ -63,12 +64,14 @@ public:
 
     int checkSelfIntersection();
 
-    vector<Triangle *> getTriangleList();
+    vector<Triangle *> getTriangleListOfAllSurfaces();
 
+    int removeStraight();
 protected:
     Surface* attachSurfaces(Surface* cp, ull start, bool* checked, ll& count, double degree);
     void updateMBB();
     void freeSurfaces();
+
 
 };
 

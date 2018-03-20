@@ -22,11 +22,11 @@ protected:
 
 
 private:
-    const double startDegree = 1.0;
+    double startDegree = 1.0;
 
     int checkClosedSurface();
 
-    int processGenerations(Space *space, int &currentGeneration, double &degree);
+    int processGenerations(Space *space, double &degree);
     int mergeSurfaces();
 
     int updateVertexList();

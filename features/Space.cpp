@@ -12,12 +12,13 @@
 #include "cgal/SurfaceIntersection.h"
 
 Space::Space(){
-
+    generation = 0;
 }
 
 Space::Space(string pname)
 {
     name = pname;
+    generation = 0;
 }
 
 Space::~Space()
@@ -118,24 +119,42 @@ int Space::updateNormal(){
 int Space::simplifySegment(){
     cout << "\n------------simplifySegment------------\n" << endl;
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareLength);
-    ull p_size = this->surfacesList.size();
+    ull sizeOfSurfaces = this->surfacesList.size();
 
-    for (ull i = 0 ; i < p_size - 1; i++)
+    for (ull i = 0 ; i < sizeOfSurfaces; i++){
+        assert((int) this->surfacesList[i]->getVerticesSize() >= 3);
+    }
+
+    for (ull i = 0 ; i < sizeOfSurfaces - 1; i++)
     {
-        printProcess(i, p_size, "");
-        for (ull j = i + 1; j < p_size ; j++)
+        printProcess(i, sizeOfSurfaces, "");
+        for (ull j = i + 1; j < sizeOfSurfaces ; j++)
         {
             int loop_count = 0;
-            bool again = false;
-            while (SurfacePairComputation::simplifyLineSegment(this->surfacesList[i], this->surfacesList[j], again) == 0)
+            int j_sizeOfVertices = (int) this->surfacesList[j]->getVerticesSize();
+            int i_sizeOfVertices = (int) this->surfacesList[i]->getVerticesSize();
+            if (!SurfacePairComputation::isNeighbor(this->surfacesList[i], this->surfacesList[j])) continue;
+            if (i_sizeOfVertices == 3) break;
+            if (j_sizeOfVertices == 3) continue;
+            assert (i_sizeOfVertices > 3 && j_sizeOfVertices > 3);
+            while (SurfacePairComputation::simplifyLineSegment(this->surfacesList[i], this->surfacesList[j]) == 0)
             {
-                again = true;
-                loop_count++;
-                if (loop_count > (int) this->surfacesList[j]->getVerticesSize()){
-                    cout << "Infinite loop in Simplification" << endl;
-                    exit(-1);
+                if (!this->surfacesList[j]->isValid()){
+                    delete this->surfacesList[j];
+                    this->surfacesList.erase(this->surfacesList.begin() + j);
+                    cout << "Erase unvalid surface" << endl;
+                    return simplifySegment();
                 }
-                //loop
+                if (!this->surfacesList[i]->isValid()){
+                    delete this->surfacesList[i];
+                    this->surfacesList.erase(this->surfacesList.begin() + i);
+                    cout << "Erase unvalid surface" << endl;
+                    return simplifySegment();
+                }
+
+                loop_count++;
+                assert(loop_count <= j_sizeOfVertices);
+                j_sizeOfVertices = (int) this->surfacesList[j]->getVerticesSize();
             }
         }
     }
@@ -167,6 +186,23 @@ int Space::checkSurfaceValid() {
         }
     }
     return 0;
+}
+
+
+int Space::removeStraight(){
+    cout << "\n------------- removeStraight --------------\n" << endl;
+    for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); ){
+        Surface* surface = this->surfacesList[i];
+        SurfaceComputation::removeStraight(surface);
+        if (surface->isValid()){
+            i++;
+        }
+        else{
+            delete surface;
+            this->surfacesList.erase(this->surfacesList.begin() + i);
+            cout << "Erase unvalid surface" << endl;
+        }
+    }
 }
 
 
@@ -250,28 +286,6 @@ void Space::rotateSpaceByFloorTo00(){
         p = p.transform(rotateZ);
         this->p_vertexList->at(i)->setCoords(p.x(), p.y(), p.z());
     }
-}
-
-
-
-int Space::snapSurface(double p_diff){
-    cout << "snap Surface " << endl;
-    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareLength);
-    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
-        Surface* sfi = this->surfacesList[i];
-        for (ull j = i + 1 ; j < this->surfacesList.size() ; j++){
-            Surface* sfj = this->surfacesList[j];
-            if (sfj->getVerticesSize() < 3) continue;
-            //Same Normal and isNeighbor
-            if (Checker::CanbeMerged(sfi->normal, sfj->normal, 10.0)){
-                // sfi->snapping(sfj, p_diff);
-            }
-            if (sfj->getVerticesSize() < 3 || sfi->getVerticesSize() < 3) cout << "snapping make wrong surface---" << endl;
-
-        }
-
-    }
-    return 0;
 }
 
 int Space::checkDuplicateVertexInSurfaces() {
@@ -367,7 +381,7 @@ int Space::checkSelfIntersection() {
     return 0;
 }
 
-vector<Triangle *> Space::getTriangleList() {
+vector<Triangle *> Space::getTriangleListOfAllSurfaces() {
     vector<Triangle *> triangles;
     for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
         Surface* pSurface = this->surfacesList[sfID];

@@ -81,9 +81,8 @@ bool MergingRoomMaker::resolveWrongTriangle() {
 }
 
 int MergingRoomMaker::mergeSurfaces() {
-    double startDegree;
     cout << "Enter Start Degree of merging(Default : 1.0)" << endl;
-    cin >> startDegree;
+    cin >> this->startDegree;
 
     for (ull it = 0 ; it < this->spaceList.size(); it++)
     {
@@ -95,18 +94,7 @@ int MergingRoomMaker::mergeSurfaces() {
 
         // limit degree of same normal vector angle
         double degree = startDegree;
-        int gen = 0;
-        ll sizeBeforeCombine = space->surfacesList.size();
-        while (true){
-            if (processGenerations(space, gen, degree)) return -1;
-
-            // loop is done when nothing can be merged.
-            if (sizeBeforeCombine == (int)space->surfacesList.size()) {
-                break;
-            } else
-                sizeBeforeCombine = (int)space->surfacesList.size();
-            if (space->checkSurfaceValid() == -1){ cout << "Surface is not valid" << endl; return -1; }
-        }
+        if (processGenerations(space, degree)) return -1;
 
         if (space->checkSurfaceValid() == -1){ cout << "Surface is not valid" << endl; return -1; }
         space->sortSurfacesByArea();
@@ -124,27 +112,31 @@ int MergingRoomMaker::mergeSurfaces() {
     return 0;
 }
 
-int MergingRoomMaker::processGenerations(Space *space, int &currentGeneration, double &degree){
+int MergingRoomMaker::processGenerations(Space *space, double &degree) {
     ll p_size = space->surfacesList.size();
     while (true){
-        cout << "generation " << currentGeneration << ": " << space->surfacesList.size()<< endl;
+        assert(p_size > 0);
+        cout << "generation " << space->generation << ": " << space->surfacesList.size()<< endl;
         if (space->combineSurface(degree) == -1){
-            cout << "combine error" << endl;
+            cerr << "combine error" << endl;
             return -1;
         }
+
+        if (space->checkSurfaceValid() == -1){
+            cerr << "Surface is not valid" << endl;
+            return -1;
+        }
+
         if (p_size == (int)space->surfacesList.size()) {
-            cout << "generation " << currentGeneration  << " done.. "<< endl;
+            cout << "generation " << space->generation  << " done..\n\n\n"<< endl;
             break;
         }
         else p_size = (int)space->surfacesList.size();
 
-        if (p_size == 0){
-            cerr << "Something wrong... surface number is 0.";
-            exit(123);
-        }
-        currentGeneration++;
         this->generation_writer->write();
         if (degree < 15) degree += 0.05;
+
+        space->generation++;
     }
     return 0;
 }
@@ -212,9 +204,13 @@ int MergingRoomMaker::checkClosedSurface() {
 }
 
 int MergingRoomMaker::simplifyShareEdge() {
+    //construct Surface Graph
+
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
         Space *space = this->spaceList[it];
+        cout << "simplify space " << space->name << endl;
         space->simplifySegment();
+        space->removeStraight();
     }
     return 0;
 }
