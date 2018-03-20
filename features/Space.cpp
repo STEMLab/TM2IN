@@ -142,23 +142,28 @@ int Space::simplifySegment(){
     return 0;
 }
 
-int Space::handleDefect() {
-    cout << "\n------------- handle Defect --------------\n" << endl;
+int Space::checkSurfaceValid() {
+    cout << "\n------------- check whether surface is valid --------------\n" << endl;
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
     {
         Surface* surface = this->surfacesList[i];
+        /*
         SurfaceComputation::removeConsecutiveDuplicationIndex(surface);
         SurfaceComputation::removeConsecutiveDuplication(surface);
         SurfaceComputation::removeStraight(surface);
+        */
         surface->updateMBB();
 
         if (surface->isValid()){
             i++;
         }
         else{
+            /*
             delete surface;
             this->surfacesList.erase(this->surfacesList.begin() + i);
             cout << "Erase unvalid surface" << endl;
+            */
+            return -1;
         }
     }
     return 0;
@@ -167,8 +172,8 @@ int Space::handleDefect() {
 
 
 
-int Space::match00(){
-    cout << "\n------------- match00 --------------\n" << endl;
+int Space::translateSpaceToOrigin(){
+    cout << "\n------------- translateSpaceToOrigin --------------\n" << endl;
 
     updateMBB();
     double diff[3];
@@ -179,16 +184,6 @@ int Space::match00(){
     for (ull i = 0 ; i < this->surfacesList.size() ; i++)
     {
         this->surfacesList[i]->translate(diff);
-//        if (this->surfacesList[i]->isValid())
-//        {
-//            this->surfacesList[i]->translate(diff);
-//        }
-//        else{
-//            //this->polygon_list.erase(this->polygon_list.begin() + i);
-//            cout << this->surfacesList[i]->toJSONString() <<endl;
-//            cout << "un-valid surface in match00" << endl;
-//            exit(-1);
-//        }
     }
 
     for (ull i = 0 ; i < this->p_vertexList->size() ; i++){
@@ -333,7 +328,7 @@ void Space::triangulateSurfaces() {
     this->hasTriangulation = true;
     for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); ) {
         Surface* pSurface = this->surfacesList[sfID];
-        ///*
+
         if (SurfaceComputation::triangulate(pSurface)){
             cerr << "Triangulation Error" << endl;
             this->surfacesList.erase(this->surfacesList.begin() + sfID);
@@ -341,10 +336,10 @@ void Space::triangulateSurfaces() {
         else {
             sfID++;
         }
-        //*/
+
 
         /*
-        // for testing. remove Right one
+        // for testing. remain only wrong surface
         if (SurfaceComputation::triangulate(pSurface)){
             cerr << "Triangulation Error" << endl;
             sfID++;

@@ -20,19 +20,7 @@ bool checkAnswer(char a, char b){
 int MergingRoomMaker::pre_process() {
     if (this->resolveWrongTriangle()) return -1;
 
-    char doCheckClosedSurface;
-    cout << "check whether mesh is composed of only closed surfaces?" << endl;
-    cin >> doCheckClosedSurface;
-
-    if (checkAnswer(doCheckClosedSurface, 'y')){
-        if (this->checkClosedSurface()) return -1;
-        char doRemainStructure;
-        cout << "Remain only Indoor Structure?" << endl;
-        cin >> doRemainStructure;
-        if (checkAnswer(doRemainStructure, 'y'))
-            if (this->remainStructure()) return -1;
-
-    }
+    if (this->checkClosedSurface()) return -1;
 
     if (this->convertTriangleMeshToSpace()) return -1;
 
@@ -49,6 +37,8 @@ int MergingRoomMaker::constructSpace() {
         return 0;
     }
     if (this->mergeSurfaces()) return -1;
+
+    if (this->simplifyShareEdge()) return -1;
 
     cout << "check Self Intersection? (y/n)" << endl;
     cin >> doCheckSelfIntersection;
@@ -69,6 +59,7 @@ int MergingRoomMaker::finish() {
     cout <<"Export 3DS?" << endl; cin >>doExport3DS;
     if (checkAnswer(doExport3DS, 'y')){
         if (this->convertSpaceToTriangleMesh()) return -1;
+        if (this->checkClosedSurface()) return -1;
         this->mesh->export3DS((paths["versionDir"] + paths["filename"] + ".3DS").c_str());
     }
 
@@ -90,9 +81,10 @@ bool MergingRoomMaker::resolveWrongTriangle() {
 }
 
 int MergingRoomMaker::mergeSurfaces() {
-    double startDegree = this->startDegree;
-    bool simplify_mode = this->simplifyLine;
-    bool snap_mode = this->snapMode;
+    double startDegree;
+    cout << "Enter Start Degree of merging(Default : 1.0)" << endl;
+    cin >> startDegree;
+
     for (ull it = 0 ; it < this->spaceList.size(); it++)
     {
         Space* space = this->spaceList[it];
@@ -113,22 +105,21 @@ int MergingRoomMaker::mergeSurfaces() {
                 break;
             } else
                 sizeBeforeCombine = (int)space->surfacesList.size();
-
-            if (simplify_mode)
-                if (space->simplifySegment() == -1){ cout << "simplify error" << endl; return -1;}
-            if (space->handleDefect() == -1){ cout << "cannot handle defect" << endl; return -1; }
+            if (space->checkSurfaceValid() == -1){ cout << "Surface is not valid" << endl; return -1; }
         }
 
-        if (space->handleDefect() == -1){ cout << "cannot handle defect" << endl; return -1; }
+        if (space->checkSurfaceValid() == -1){ cout << "Surface is not valid" << endl; return -1; }
         space->sortSurfacesByArea();
         space->tagID();
 
+        /*
         if (snap_mode){
             double diff = 0.0001;
             if (space->snapSurface(diff) == -1){ cout << "snap Surface" << endl; return -1;}
             if (processGenerations(space, gen, degree)) return -1;
-            if (space->handleDefect() == -1){ cout << "cannot handle defect" << endl; return -1; }
+            if (space->checkSurfaceValid() == -1){ cout << "cannot handle defect" << endl; return -1; }
         }
+        */
     }
     return 0;
 }
@@ -173,8 +164,8 @@ int MergingRoomMaker::rotateSurfaces(){
     {
         Space* space = this->spaceList[it];
         space->rotateSpaceByFloorTo00();
-        if (space->match00() == -1){
-            cout << "match00 error" << endl;
+        if (space->translateSpaceToOrigin() == -1){
+            cout << "translateSpaceToOrigin error" << endl;
             return -1;
         }
     }
@@ -200,12 +191,31 @@ int MergingRoomMaker::checkSelfIntersection() {
 }
 
 int MergingRoomMaker::checkClosedSurface() {
-    this->mesh->makeGraph();
-    if (!this->mesh->checkClosedSurface()){
-        cerr << "it is not composed of closed surface"<< endl;
-        return -1;
+    char doCheckClosedSurface;
+    cout << "check whether mesh is composed of only closed surfaces?" << endl;
+    cin >> doCheckClosedSurface;
+
+    if (checkAnswer(doCheckClosedSurface, 'y')){
+        this->mesh->makeGraph();
+        if (!this->mesh->checkClosedSurface()){
+            cerr << "it is not composed of closed surface"<< endl;
+            return -1;
+        }
+        char doRemainStructure;
+        cout << "Remain only Indoor Structure?" << endl;
+        cin >> doRemainStructure;
+        if (checkAnswer(doRemainStructure, 'y'))
+            if (this->remainStructure()) return -1;
     }
 
+    return 0;
+}
+
+int MergingRoomMaker::simplifyShareEdge() {
+    for (ull it = 0 ; it < this->spaceList.size() ; it++) {
+        Space *space = this->spaceList[it];
+        space->simplifySegment();
+    }
     return 0;
 }
 

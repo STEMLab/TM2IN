@@ -45,6 +45,7 @@ int TriangleMesh::groupByClosedSurface() {
                 triangles.push_back(this->triangles[groupI].second[cc[i][j]]);
             }
             newTriangles.push_back(make_pair(name, triangles));
+            break; //TODO : for TEST
         }
     }
     this->triangles = newTriangles;

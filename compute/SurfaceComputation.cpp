@@ -170,6 +170,7 @@ void SurfaceComputation::removeStraight(Surface*& pSurface){
 
 int SurfaceComputation::triangulate(Surface *&pSurface) {
     std::vector<Vertex*> vertexList = pSurface->getVerticesList();
+    if (vertexList.size() == 3) return 0;
 
     // convert 3D point to 2D
     Plane_3 planeRef = SurfaceComputation::getSimplePlane3WithNormal(pSurface);
@@ -182,9 +183,9 @@ int SurfaceComputation::triangulate(Surface *&pSurface) {
         cerr << "polygon is not simple" << endl;
         cout << pSurface->toJSONString() << endl;
         cout << polygon << endl;
-        return 1;
-        int i = 0, j = 0;
-        SurfaceIntersection::checkSelfIntersection(pSurface, i, j);
+        return 0;
+//        int i = 0, j = 0;
+//        SurfaceIntersection::checkSelfIntersection(pSurface, i, j);
     }
     vector<Polygon_2> polygonList = PolygonComputation::convexPartition(polygon);
 

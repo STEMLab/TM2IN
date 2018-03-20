@@ -40,8 +40,8 @@ public:
 
     int combineSurface(double degree);
     int simplifySegment();
-    int match00();
-    int handleDefect();
+    int translateSpaceToOrigin();
+    int checkSurfaceValid();
     int updateNormal();
 
     int snapSurface(double);

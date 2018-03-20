@@ -23,9 +23,6 @@ protected:
 
 private:
     const double startDegree = 1.0;
-    const int maxGeneration = 20;
-    const bool simplifyLine = false;
-    const bool snapMode = false;
 
     int checkClosedSurface();
 
@@ -41,6 +38,8 @@ private:
     int remainStructure();
 
     bool resolveWrongTriangle();
+
+    int simplifyShareEdge();
 };
 
 #endif // RectRoomMaker_H

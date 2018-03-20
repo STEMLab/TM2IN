@@ -89,7 +89,7 @@ TriangleMesh* TVRImporter::import(const char* f_path){
 /*
 Vertex* TVRImporter::findSameVertex(vector<Vertex*>& vertices, Checker* check, Vertex& vt){
     vector<Vertex*>::iterator it, low;
-    low = std::lower_bound(vertices.begin(), vertices.end(), vt.x() - check->threshold_vertex * 2, CompareVertexAndX() );
+    low = std::lower_bound(vertices.begin(), vertices.end(), vt.x() - check->thresholdVertex * 2, CompareVertexAndX() );
 
     for (it = low ; it != vertices.end() ; it++){
         double diff = check->compare_vertex( (*it), &vt);

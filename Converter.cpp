@@ -26,12 +26,10 @@ void test(){
 
 }
 
-int main(int argc, const char * argv[]) {short id = 0x4d4d;
-    cout << id << endl;
-
-    Checker::threshold_vertex = 0.0000001;
+int main(int argc, const char * argv[]) {
+    Checker::thresholdVertex = 0.0000001;
     Checker::squaredDistanceOfSamePoint2D = 0.000001;
-    Checker::degreeOfMerging = 10.0;
+    Checker::degreeOfMerging = 1.0;
     Checker::degreeOfStraight = 0.001;
 
     cout << "choose Data type to import" << endl;
@@ -43,17 +41,23 @@ int main(int argc, const char * argv[]) {short id = 0x4d4d;
     cout << "write file name" << endl; string fileName; cin >> fileName;
     paths["filename"] = fileName;
 
-    string version = "0.3.3"; cout << version << endl;
+    string version = "0.3.4"; cout << version << endl;
     paths["version"] = version;
     paths["versionDir"] = paths["resultDir"] + paths["filename"] + "/" + paths["version"] + "/";
 
     RoomMaker* manager = new MergingRoomMaker();
-    manager->setImporter(new ThreeDSImporter());
+    if (dataType == 1)  manager->setImporter(new TVRImporter());
+    else if (dataType == 2) manager->setImporter(new ThreeDSImporter());
+    else if (dataType == 3) {
+        cerr << "TODO" << endl;
+        return 0;
+    }
+
     manager->setGenerationWriter(new GenerationWriter(paths["versionDir"]));
     manager->setExporter(new JSONSurfaceExporter());
     manager->setPaths(paths);
 
-    cout << "Load TVR File.." << endl;
+    cout << "Load TM File.." << endl;
     if (manager->importMesh()){
         cout << "Load File Error";
         return -1;

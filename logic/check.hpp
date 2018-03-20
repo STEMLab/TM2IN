@@ -26,7 +26,7 @@ private:
 
 public:
     static double squaredDistanceOfSamePoint2D;
-    static double threshold_vertex;
+    static double thresholdVertex;
     static double degreeOfMerging;
     static double degreeOfStraight;
 

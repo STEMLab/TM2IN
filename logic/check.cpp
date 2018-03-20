@@ -13,7 +13,7 @@
 
 using namespace std;
 
-double Checker::threshold_vertex = 0.0;
+double Checker::thresholdVertex = 0.0;
 double Checker::squaredDistanceOfSamePoint2D = 0.0;
 double Checker::degreeOfMerging = 10.0;
 double Checker::degreeOfStraight = 0.001;
@@ -25,16 +25,16 @@ bool Checker::isCollinear(Vertex *start_p, Vertex *check_p, Vertex *end_p){
 }
 
 bool Checker::isSameDouble(double a, double b){
-    return (fabs(a-b) < threshold_vertex);
+    return (fabs(a-b) < thresholdVertex);
 }
 
 bool Checker::isSameVertex(Vertex* v1, Vertex* v2){
-    double thres = Checker::threshold_vertex;
+    double thres = Checker::thresholdVertex;
     return (fabs(v1->z() - v2->z()) < thres && fabs(v1->x() - v2->x()) < thres && fabs(v1->y() - v2->y()) < thres);
 }
 
 bool Checker::isSameVertex(Vertex& v1, Vertex& v2){
-    double thres = Checker::threshold_vertex;
+    double thres = Checker::thresholdVertex;
     return (fabs(v1.z() - v2.z()) < thres && fabs(v1.x() - v2.x()) < thres && fabs(v1.y() - v2.y()) < thres);
 }
 
@@ -50,21 +50,21 @@ bool Checker::CanbeMerged(Vector_3& big, Vector_3& small, double degree){
 int Checker::compare_vertex(Vertex* a, Vertex* b)
 {
     double x = a->x() - b->x();
-    if (fabs(x) > threshold_vertex)
+    if (fabs(x) > thresholdVertex)
     {
         return x > 0.0 ? 1 : -1;
     }
     else
     {
         double y = a->y() - b->y();
-        if (fabs(y) > threshold_vertex)
+        if (fabs(y) > thresholdVertex)
         {
             return y > 0.0 ? 1 : -1;
         }
         else
         {
             double z = a->z() - b->z();
-            if (fabs(z) > threshold_vertex)
+            if (fabs(z) > thresholdVertex)
             {
                 return z > 0.0 ? 1 : -1;
             }
@@ -76,7 +76,7 @@ int Checker::compare_vertex(Vertex* a, Vertex* b)
 
 
 bool Checker::isSameX(Vertex* v1, Vertex* v2){
-    double thres = Checker::threshold_vertex;
+    double thres = Checker::thresholdVertex;
     if (fabs(v1->x() - v2->x()) < thres){
         return true;
     }
@@ -85,7 +85,7 @@ bool Checker::isSameX(Vertex* v1, Vertex* v2){
 }
 
 bool Checker::isSameY(Vertex* v1, Vertex* v2){
-    double thres = Checker::threshold_vertex;
+    double thres = Checker::thresholdVertex;
     if (fabs(v1->y() - v2->y()) < thres){
         return true;
     }
@@ -94,7 +94,7 @@ bool Checker::isSameY(Vertex* v1, Vertex* v2){
 }
 
 bool Checker::isSameZ(Vertex* v1, Vertex* v2){
-    double thres = Checker::threshold_vertex;
+    double thres = Checker::thresholdVertex;
     if (fabs(v1->z() - v2->z()) < thres){
         return true;
     }
