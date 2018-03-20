@@ -1,0 +1,88 @@
+cmake_minimum_required(VERSION 3.9)
+project(TriangleMeshToClearSolid)
+
+set(CMAKE_CXX_STANDARD 11)
+
+include_directories(../TriangleMeshToClearSolid)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+find_package(CGAL REQUIRED )
+
+if ( CGAL_FOUND )
+    include( ${CGAL_USE_FILE} )
+    include( CGAL_CreateSingleSourceCGALProgram )
+endif()
+
+FIND_PACKAGE( Boost 1.40 REQUIRED COMPONENTS filesystem REQUIRED )
+INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
+find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+
+# INCLUDE_DIRECTORIES ( /usr/local/include/eigen3 )
+
+add_executable(TriangleMeshToClearSolid
+        features/Space.cpp
+        features/Space.h
+        features/Surface.cpp
+        features/Surface.h
+        features/SurfaceGraph.cpp
+        features/SurfaceGraph.h
+        features/Triangle.cpp
+        features/Triangle.h
+        features/TriangleMesh.h
+        features/TriangleMesh.cpp
+        features/TriangleMeshGraph.h
+        features/TriangleMeshGraph.cpp
+        features/Vertex.cpp
+        features/Vertex.h
+        features/HalfEdge.cpp
+        features/HalfEdge.h
+        fileio/import/ThreeDSImporter.cpp
+        fileio/import/ThreeDSImporter.h
+        fileio/GenerationWriter.cpp
+        fileio/GenerationWriter.h
+        fileio/import/Importer.h
+        fileio/JSONMaker.cpp
+        fileio/JSONMaker.h
+        fileio/import/TVRImporter.cpp
+        fileio/import/TVRImporter.h
+        cgal/CGALCalculation.cpp
+        cgal/CGALCalculation.h
+        logic/check.cpp
+        logic/check.hpp
+        compute/SurfacePairComputation.cpp
+        compute/SurfacePairComputation.h
+        compute/SurfacesListComputation.cpp
+        compute/SurfacesListComputation.h
+        manage/MergingRoomMaker.cpp
+        manage/MergingRoomMaker.h
+        manage/RoomMaker.cpp
+        manage/RoomMaker.h
+        space_maker/OnlyWallSpaceMaker.cpp
+        space_maker/OnlyWallSpaceMaker.h
+        predefine.h
+        Converter.cpp
+        util.cpp
+        util.h
+        cgal/SurfaceHoleCover.cpp
+        cgal/SurfaceHoleCover.h
+        cgal/Types.h
+        compute/VertexListComputation.cpp
+        compute/VertexListComputation.h
+        compute/SurfaceComputation.cpp
+        compute/SurfaceComputation.h
+        compute/VertexComputation.cpp
+        compute/VertexComputation.h
+        compute/HalfEdgeComputation.cpp
+        compute/HalfEdgeComputation.h
+        cgal/PolygonComputation.cpp
+        cgal/PolygonComputation.h
+        cgal/SurfaceIntersection.cpp
+        cgal/SurfaceIntersection.h
+        fileio/export/Exporter.h
+        fileio/export/JSONSurfaceExporter.cpp
+        fileio/export/JSONSurfaceExporter.h
+        )
+
+
+TARGET_LINK_LIBRARIES( TriangleMeshToClearSolid LINK_PUBLIC ${Boost_LIBRARIES} Eigen3::Eigen)

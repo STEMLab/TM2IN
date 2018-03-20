@@ -21,4 +21,6 @@ obj/
 cscope.out
 *.cscope_file_list
 
-
+#clion
+.idea/
+cmake-build-debug
