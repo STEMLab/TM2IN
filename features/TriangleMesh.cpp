@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iostream>
 #include <logic/check.hpp>
+#include <fileio/import/ThreeDSImporter.h>
 
 void TriangleMesh::makeGraph(){
     this->graphs.clear();
@@ -45,7 +46,6 @@ int TriangleMesh::groupByClosedSurface() {
                 triangles.push_back(this->triangles[groupI].second[cc[i][j]]);
             }
             newTriangles.push_back(make_pair(name, triangles));
-            break; //TODO : for TEST
         }
     }
     this->triangles = newTriangles;
@@ -128,7 +128,7 @@ void TriangleMesh::export3DS(const char *filePath) {
         return;
     }
 
-    unsigned short chunk_id = 0x4d4d;
+    unsigned short chunk_id = 0x4D4D;
     unsigned int chunk_length = 0;
     fwrite(&chunk_id, 2, 1, pFile);
     fwrite(&chunk_length, 4, 1, pFile);
@@ -159,17 +159,21 @@ void TriangleMesh::export3DS(const char *filePath) {
             triangleIndicies.push_back(triangleIndex);
         }
 
-        unsigned int triangleMeshLength = sizeof(unsigned short) + sizeof(unsigned int) + // Vertex : chunk_id and chunk_length
-                                      sizeof(unsigned short) + // Vertices number
-                                      sizeof(float) * 3 * vertices.size() + // Vertices List
-                                      sizeof(unsigned short) + sizeof(unsigned int) + // Polygon : chunk_id and chunk_length
-                                      sizeof(unsigned short) + // Polygons number
-                                      sizeof(unsigned short) * 4 * triangleIndicies.size(); // Polygons List
-        chunk_id = 0x4000;
-        chunk_length = (unsigned short)this->triangles[groupI].first.size() + 1 +
-                       sizeof(unsigned short) + sizeof(unsigned int) + // Triangle Mesh : chunk_id and chunk_length
-                       triangleMeshLength;
-        wholeLength += chunk_length + sizeof(unsigned short);
+        unsigned int VERTICES_LIST_LENGTH = sizeof(unsigned short) + sizeof(unsigned int) + // Vertex : chunk_id and chunk_length
+                                            sizeof(unsigned short) + // Vertices number
+                                            sizeof(float) * 3 * vertices.size(); // Vertices List
+        unsigned int FACES_DESCRIPTION_LENGTH = sizeof(unsigned short) + sizeof(unsigned int) + // Polygon : chunk_id and chunk_length
+                                                sizeof(unsigned short) + // Polygons number
+                                                sizeof(unsigned short) * 4 * triangleIndicies.size(); // Polygons List
+        unsigned int TRIANGULAR_MESH_LENGTH = sizeof(unsigned short) + sizeof(unsigned int) + //OBJ_TRIMESH
+                                              VERTICES_LIST_LENGTH + FACES_DESCRIPTION_LENGTH;
+
+        chunk_id = EDIT_OBJECT;
+        chunk_length = sizeof(unsigned short) + sizeof(unsigned int) +
+                       (unsigned short)this->triangles[groupI].first.size() + 1 +
+                       // Triangle Mesh : chunk_id and chunk_length
+                       TRIANGULAR_MESH_LENGTH;
+        wholeLength += chunk_length;
 
         fwrite(&chunk_id, 2, 1, pFile);
         fwrite(&chunk_length, 4, 1, pFile);
@@ -179,17 +183,17 @@ void TriangleMesh::export3DS(const char *filePath) {
             fwrite(&name[i], sizeof(char), 1, pFile);
         }
         char temp = 0;
-        fwrite(&temp, sizeof(char),1, pFile);
+        fwrite(&temp, sizeof(char),1, pFile); //NULL
 
         // Triangle Mesh
-        chunk_id = 0x4100;
-        chunk_length = triangleMeshLength;
+        chunk_id = OBJ_TRIMESH;
+        chunk_length = TRIANGULAR_MESH_LENGTH;
         fwrite(&chunk_id, 2, 1, pFile);
         fwrite(&chunk_length, 4, 1, pFile);
 
         // Vertices List
-        chunk_id = 0x4110;
-        chunk_length = sizeof(unsigned short) + sizeof(float) * 3 * vertices.size();
+        chunk_id = TRI_VERTEXL;
+        chunk_length = VERTICES_LIST_LENGTH;
         fwrite(&chunk_id, 2, 1, pFile);
         fwrite(&chunk_length, 4, 1, pFile);
         unsigned short sizeOfVertices = (unsigned short)vertices.size();
@@ -204,10 +208,8 @@ void TriangleMesh::export3DS(const char *filePath) {
         }
 
         // Triangle List
-        chunk_id = 0x4120;
-        chunk_length = sizeof(unsigned short) + // Polygons number
-                       sizeof(unsigned short) * 4 * triangleIndicies.size();
-        wholeLength += chunk_length;
+        chunk_id = TRI_FACEL1;
+        chunk_length = FACES_DESCRIPTION_LENGTH;
         fwrite(&chunk_id, 2, 1, pFile);
         fwrite(&chunk_length, 4, 1, pFile);
         unsigned short sizeOfTriangles = (unsigned short)triangleIndicies.size();
@@ -220,13 +222,14 @@ void TriangleMesh::export3DS(const char *filePath) {
             fwrite(&temp, sizeof(unsigned short), 1, pFile);
         }
     }
-    /*
     fseek(pFile, sizeof(unsigned short) * 2 + sizeof(unsigned int), SEEK_SET);
-    fwrite(&wholeLength, sizeof(unsigned short), 1, pFile);
     wholeLength += sizeof(unsigned short) + sizeof(unsigned int);
-    fseek(pFile, sizeof(unsigned short) , SEEK_SET);
     fwrite(&wholeLength, sizeof(unsigned short), 1, pFile);
-    */
+
+    fseek(pFile, sizeof(unsigned short) , SEEK_SET);
+    wholeLength += sizeof(unsigned short) + sizeof(unsigned int);
+    fwrite(&wholeLength, sizeof(unsigned short), 1, pFile);
+
     fclose(pFile);
     return;
 }

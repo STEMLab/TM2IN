@@ -20,7 +20,7 @@ bool checkAnswer(char a, char b){
 int MergingRoomMaker::pre_process() {
     if (this->resolveWrongTriangle()) return -1;
 
-    if (this->checkClosedSurface()) return -1;
+    if (this->constructMeshGraph()) return -1;
 
     if (this->convertTriangleMeshToSpace()) return -1;
 
@@ -59,7 +59,7 @@ int MergingRoomMaker::finish() {
     cout <<"Export 3DS?" << endl; cin >>doExport3DS;
     if (checkAnswer(doExport3DS, 'y')){
         if (this->convertSpaceToTriangleMesh()) return -1;
-        if (this->checkClosedSurface()) return -1;
+        if (this->constructMeshGraph()) return -1;
         this->mesh->export3DS((paths["versionDir"] + paths["filename"] + ".3DS").c_str());
     }
 
@@ -68,7 +68,6 @@ int MergingRoomMaker::finish() {
 
 int MergingRoomMaker::remainStructure() {
     cerr << "TODO" << endl;
-    this->mesh->groupByClosedSurface();
     return 0;
 }
 
@@ -182,17 +181,23 @@ int MergingRoomMaker::checkSelfIntersection() {
     return 0;
 }
 
-int MergingRoomMaker::checkClosedSurface() {
-    char doCheckClosedSurface;
-    cout << "check whether mesh is composed of only closed surfaces?" << endl;
-    cin >> doCheckClosedSurface;
+int MergingRoomMaker::constructMeshGraph() {
+    char doConstructMeshGraph;
+    cout << "Do you want to make graph about mesh?" << endl;
+    cin >> doConstructMeshGraph;
 
-    if (checkAnswer(doCheckClosedSurface, 'y')){
+    if (checkAnswer(doConstructMeshGraph, 'y')){
         this->mesh->makeGraph();
         if (!this->mesh->checkClosedSurface()){
             cerr << "it is not composed of closed surface"<< endl;
             return -1;
         }
+        char doGroupByComponent;
+        cout << "Group By Component?" << endl;
+        cin >> doGroupByComponent;
+        if (checkAnswer(doGroupByComponent, 'y'))
+            if (this->mesh->groupByClosedSurface()) return -1;
+
         char doRemainStructure;
         cout << "Remain only Indoor Structure?" << endl;
         cin >> doRemainStructure;

@@ -24,7 +24,7 @@ protected:
 private:
     double startDegree = 1.0;
 
-    int checkClosedSurface();
+    int constructMeshGraph();
 
     int processGenerations(Space *space, double &degree);
     int mergeSurfaces();

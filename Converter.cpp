@@ -7,6 +7,11 @@
 #include <manage/MergingRoomMaker.h>
 #include <fileio/import/ThreeDSImporter.h>
 
+#define __DEBUG__          0
+
+#define TRUE               0
+#define FALSE              1
+
 void createAndRemoveDir(const string &version, const string &resultPath, const string &fileName);
 map<string, string> getPaths(int type);
 
@@ -41,7 +46,7 @@ int main(int argc, const char * argv[]) {
     cout << "write file name" << endl; string fileName; cin >> fileName;
     paths["filename"] = fileName;
 
-    string version = "0.3.5"; cout << version << endl;
+    string version = "0.3.5_group"; cout << version << endl;
     paths["version"] = version;
     paths["versionDir"] = paths["resultDir"] + paths["filename"] + "/" + paths["version"] + "/";
 
