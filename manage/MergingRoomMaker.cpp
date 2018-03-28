@@ -190,14 +190,14 @@ int MergingRoomMaker::constructMeshGraph() {
         this->mesh->makeGraph();
         if (!this->mesh->checkClosedSurface()){
             cerr << "it is not composed of closed surface"<< endl;
-            return -1;
         }
         char doGroupByComponent;
         cout << "Group By Component?" << endl;
         cin >> doGroupByComponent;
-        if (checkAnswer(doGroupByComponent, 'y'))
+        if (checkAnswer(doGroupByComponent, 'y')){
+            assert(this->mesh->checkClosedSurface());
             if (this->mesh->groupByClosedSurface()) return -1;
-
+        }
         char doRemainStructure;
         cout << "Remain only Indoor Structure?" << endl;
         cin >> doRemainStructure;

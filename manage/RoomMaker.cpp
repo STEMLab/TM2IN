@@ -5,8 +5,8 @@
 int RoomMaker::importMesh() {
     string filePath = paths["resourceDir"] + paths["filename"] + "." + paths["filetype"];
     this->mesh = di->import(filePath.c_str());
-    if (this->mesh->triangles.size() == 0) return -1;
     if (this->mesh == NULL) return -1;
+    if (this->mesh->triangles.size() == 0) return -1;
     else return 0;
 }
 

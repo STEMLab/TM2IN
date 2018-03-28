@@ -26,3 +26,7 @@ void Vertex::translate(double diff[]){
 void Vertex::translateTo(vector<double> diff){
     for (int i = 0 ; i < 3; i++) coords[i] = diff[i];
 }
+
+void Vertex::setIndex(unsigned long i) {
+    this->index = i;
+}

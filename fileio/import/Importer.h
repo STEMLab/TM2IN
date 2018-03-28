@@ -7,7 +7,7 @@
 class Importer
 {
     public:
-        virtual TriangleMesh* import(const char*) = 0;
+        virtual TriangleMesh* import(const char *filePath) = 0;
     protected:
 
     private:

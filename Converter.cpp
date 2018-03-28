@@ -6,6 +6,7 @@
 #include "fileio/import/TVRImporter.h"
 #include <manage/MergingRoomMaker.h>
 #include <fileio/import/ThreeDSImporter.h>
+#include <fileio/import/COLLADAImporter.h>
 
 #define __DEBUG__          0
 
@@ -46,17 +47,14 @@ int main(int argc, const char * argv[]) {
     cout << "write file name" << endl; string fileName; cin >> fileName;
     paths["filename"] = fileName;
 
-    string version = "0.3.5_group"; cout << version << endl;
+    string version = "0.3.6"; cout << version << endl;
     paths["version"] = version;
     paths["versionDir"] = paths["resultDir"] + paths["filename"] + "/" + paths["version"] + "/";
 
     RoomMaker* manager = new MergingRoomMaker();
     if (dataType == 1)  manager->setImporter(new TVRImporter());
     else if (dataType == 2) manager->setImporter(new ThreeDSImporter());
-    else if (dataType == 3) {
-        cerr << "TODO" << endl;
-        return 0;
-    }
+    else if (dataType == 3) manager->setImporter(new COLLADAImporter());
 
     manager->setGenerationWriter(new GenerationWriter(paths["versionDir"]));
     manager->setExporter(new JSONSurfaceExporter());
@@ -97,6 +95,10 @@ map<string, string> getPaths(int type){
             paths["filetype"] = "3DS";
             break;
         case 3: //COLLADA
+            paths["projectDir"] = "/home/dongmin/dev/TriMeshToIndoor/";
+            paths["resourceDir"] = paths["projectDir"] + "Resource/COLLADA/";
+            paths["resultDir"] = paths["projectDir"] + "Result/";
+            paths["filetype"] = "dae";
             break;
         default:
             exit(-1);

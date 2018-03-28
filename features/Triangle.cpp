@@ -84,7 +84,7 @@ Vertex *Triangle::vertex(int idx) {
     return this->edges[idx]->vertices[0];
 }
 
-std::string Triangle::toJSON(std::string &indent) {
+std::string Triangle::toJSON(const std::string &indent) {
     std::string ret;
     ret += indent + "{\n";
 
@@ -93,6 +93,12 @@ std::string Triangle::toJSON(std::string &indent) {
     Vector_3 normal = getNormal();
     ret += indent + std::to_string(normal.x()) + ", " + std::to_string(normal.y()) + ", " + std::to_string(normal.z());
     ret += indent + "],\n";
+
+    //area
+    ret += indent + "\"area\" : ";
+    double area = getArea();
+    ret += indent + std::to_string(area);
+    ret += "\n";
 
     //coordinates
     ret += indent + "\"coord\" : [\n";

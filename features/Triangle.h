@@ -27,7 +27,7 @@ public:
 
     Vector_3 getNormal();
     double getArea();
-    std::string toJSON(std::string &indent);
+    std::string toJSON(const std::string &indent);
 };
 
 
