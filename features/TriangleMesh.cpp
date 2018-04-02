@@ -12,78 +12,77 @@
 #include <fileio/import/ThreeDSImporter.h>
 
 void TriangleMesh::makeGraph(){
-    this->graphs.clear();
-    for (int i = 0 ; i < this->triangles.size() ; i++){
-        TriangleMeshGraph* graph = new TriangleMeshGraph();
-        graph->makeAdjacentGraph(this->triangles[i].second);
-        this->graphs.push_back(graph);
-    }
-
+    this->graph = new TriangleMeshGraph();
+    this->graph->makeAdjacentGraph(this->triangles);
 }
 
 bool TriangleMesh::checkClosedSurface() {
-    for (int groupI = 0 ; groupI < this->graphs.size() ; groupI++){
-        bool isClosed = this->graphs[groupI]->isClosedTriangleMesh();
-        if (!isClosed) return false;
-        cout << "group " << groupI << " is composed of closed Triangle Mesh" << endl;
+    if (this->graph == NULL || this->graph->isEmpty()){
+        cerr << "You didn't make graph." << endl;
     }
+    bool isClosed = this->graph->isClosedTriangleMesh();
+    if (!isClosed) return false;
     return true;
 }
 
-int TriangleMesh::groupByClosedSurface() {
-    vector<pair<string, vector<Triangle*> > > newTriangles;
-    int index = 0;
-    for (int groupI = 0 ; groupI < this->graphs.size() ; groupI++){
-        vector<vector<ull>> cc = this->graphs[groupI]->getConnectedComponent();
-        if (cc.size() == 1) continue;
-
-        // Descending Order
-        sort(cc.begin(), cc.end(), [](const std::vector< ull >& a, const std::vector< ull >& b){ return a.size() > b.size(); } );
-        for (int i = 0 ; i < cc.size() ; i++){
-            string name = "new" + std::to_string(index++);
-            vector<Triangle*> triangles;
-            for (int j = 0 ; j < cc[i].size() ; j++){
-                triangles.push_back(this->triangles[groupI].second[cc[i][j]]);
-            }
-            newTriangles.push_back(make_pair(name, triangles));
-        }
+int TriangleMesh::groupByClosedSurface(vector<TriangleMesh *>& new_mesh_list) {
+    vector<vector<ull>> cc = this->graph->getConnectedComponent();
+    if (cc.size() == 1) {
+        new_mesh_list.push_back(this);
+        return 0;
     }
-    this->triangles = newTriangles;
-    return 0;
+    sort(cc.begin(), cc.end(), [](const std::vector< ull >& a, const std::vector< ull >& b){ return a.size() > b.size(); } );
+    for (int i = 0 ; i < cc.size() ; i++) {
+        TriangleMesh* new_mesh = new TriangleMesh();
+        new_mesh->name = this->name +"_new_"+std::to_string(i);
+        for (int j = 0 ; j < cc[i].size() ; j++){
+            new_mesh->triangles.push_back(this->triangles[cc[i][j]]);
+        }
+        new_mesh->updateVertexByTriangleList();
+        new_mesh_list.push_back(new_mesh);
+    }
+    delete this;
+    return 1;
 }
 
 bool TriangleMesh::resolveWrongTriangle() {
-    for (int i = 0 ; i < this->triangles.size() ; i++){
-        for (int j = 0 ; j < this->triangles[i].second.size() ; j++){
-            Triangle* triangle = this->triangles[i].second[j];
+    for (int j = 0 ; j < this->triangles.size() ; j++){
+        Triangle* triangle = this->triangles[j];
 
-            Vector_3 triangleNormal = triangle->getNormal();
+        Vector_3 triangleNormal = triangle->getNormal();
 
-            if (triangleNormal == CGAL::NULL_VECTOR){
-                for (int k = 0 ; k < 2; k ++){
-                    for (int w = k + 1; w < 3 ; w ++){
-                        if (Checker::isSameVertex(triangle->vertex(k), triangle->vertex(w))){
-                            this->vertices[triangle->vertex(k)->index] = triangle->vertex(w);
-                            this->triangles[i].second.erase(this->triangles[i].second.begin() + j);
-                            cerr << "Same Vertex In One Triangle" << endl;
-                            return true;
-                        }
+        if (triangleNormal == CGAL::NULL_VECTOR){
+            for (int k = 0 ; k < 2; k ++){
+                for (int w = k + 1; w < 3 ; w ++){
+                    if (Checker::isSameVertex(triangle->vertex(k), triangle->vertex(w))){
+                        this->vertices[triangle->vertex(k)->index] = triangle->vertex(w);
+                        this->triangles.erase(this->triangles.begin() + j);
+                        cerr << "Same Vertex In One Triangle" << endl;
+                        return true;
                     }
                 }
-                if (Checker::isCollinear(triangle->vertex(0), triangle->vertex(1), triangle->vertex(2))) {
-                    cerr << "Collinear Vertices in Triangle" << endl;
-                    this->triangles[i].second.erase(this->triangles[i].second.begin() + j);
-                    return true;
-                }
-                cerr << "Why you are here"<< endl;
-                assert(triangleNormal != CGAL::NULL_VECTOR);
             }
+            if (Checker::isCollinear(triangle->vertex(0), triangle->vertex(1), triangle->vertex(2))) {
+                cerr << "Collinear Vertices in Triangle" << endl;
+                this->triangles.erase(this->triangles.begin() + j);
+                return true;
+            }
+            cerr << "Why you are here"<< endl;
+            assert(triangleNormal != CGAL::NULL_VECTOR);
         }
     }
+
     return false;
 }
 
+void TriangleMesh::clear(){
+    triangles.clear();
+    vertices.clear();
+    graph->clear();
+}
 
+
+/*
 void TriangleMesh::exportTVR(const char *path) {
     std::cout << "save As TVR" << endl;
     cout << path;
@@ -119,117 +118,21 @@ void TriangleMesh::exportTVR(const char *path) {
     fclose(pFile);
 
 }
+*/
 
-void TriangleMesh::export3DS(const char *filePath) {
-    FILE* pFile;
-    pFile= fopen(filePath, "w");
-    if (!pFile) {
-        cerr << "cannot open export3DS";
-        return;
-    }
-
-    unsigned short chunk_id = 0x4D4D;
-    unsigned int chunk_length = 0;
-    fwrite(&chunk_id, 2, 1, pFile);
-    fwrite(&chunk_length, 4, 1, pFile);
-
-    chunk_id = 0x3D3D;
-    chunk_length = 0;
-    fwrite(&chunk_id, 2, 1, pFile);
-    fwrite(&chunk_length, 4, 1, pFile);
-
-    unsigned int wholeLength = 0;
-    for (int groupI = 0 ; groupI < this->triangles.size() ; groupI++) {
-        vector<Vertex*> vertices;
-        vector<vector<int>> triangleIndicies;
-        for (int triI = 0 ; triI < this->triangles[groupI].second.size(); triI++){
-            Triangle* triangle = this->triangles[groupI].second[triI];
-            vector<int> triangleIndex;
-            for (int vi = 0 ; vi < 3 ; vi++){
-                Vertex* vt = triangle->vertex(vi);
-                int index = 0;
-                for (; index < vertices.size(); index++){
-                    if (vertices[index] == vt)
-                        break;
+void TriangleMesh::updateVertexByTriangleList() {
+    for (int i = 0 ; i < this->triangles.size() ; i++){
+        for (int vt = 0 ; vt < 3; vt++){
+            int j;
+            for (j = 0 ; j < this->vertices.size() ; j++){
+                if (this->vertices[j] == this->triangles[i]->vertex(vt)){
+                    break;
                 }
-                if (vertices.size() == index) // New Vertex
-                    vertices.push_back(vt);
-                triangleIndex.push_back(index);
             }
-            triangleIndicies.push_back(triangleIndex);
-        }
-
-        unsigned int VERTICES_LIST_LENGTH = sizeof(unsigned short) + sizeof(unsigned int) + // Vertex : chunk_id and chunk_length
-                                            sizeof(unsigned short) + // Vertices number
-                                            sizeof(float) * 3 * vertices.size(); // Vertices List
-        unsigned int FACES_DESCRIPTION_LENGTH = sizeof(unsigned short) + sizeof(unsigned int) + // Polygon : chunk_id and chunk_length
-                                                sizeof(unsigned short) + // Polygons number
-                                                sizeof(unsigned short) * 4 * triangleIndicies.size(); // Polygons List
-        unsigned int TRIANGULAR_MESH_LENGTH = sizeof(unsigned short) + sizeof(unsigned int) + //OBJ_TRIMESH
-                                              VERTICES_LIST_LENGTH + FACES_DESCRIPTION_LENGTH;
-
-        chunk_id = EDIT_OBJECT;
-        chunk_length = sizeof(unsigned short) + sizeof(unsigned int) +
-                       (unsigned short)this->triangles[groupI].first.size() + 1 +
-                       // Triangle Mesh : chunk_id and chunk_length
-                       TRIANGULAR_MESH_LENGTH;
-        wholeLength += chunk_length;
-
-        fwrite(&chunk_id, 2, 1, pFile);
-        fwrite(&chunk_length, 4, 1, pFile);
-
-        const char* name = this->triangles[groupI].first.c_str();
-        for (int i = 0 ; name[i] != 0 ; i++){
-            fwrite(&name[i], sizeof(char), 1, pFile);
-        }
-        char temp = 0;
-        fwrite(&temp, sizeof(char),1, pFile); //NULL
-
-        // Triangle Mesh
-        chunk_id = OBJ_TRIMESH;
-        chunk_length = TRIANGULAR_MESH_LENGTH;
-        fwrite(&chunk_id, 2, 1, pFile);
-        fwrite(&chunk_length, 4, 1, pFile);
-
-        // Vertices List
-        chunk_id = TRI_VERTEXL;
-        chunk_length = VERTICES_LIST_LENGTH;
-        fwrite(&chunk_id, 2, 1, pFile);
-        fwrite(&chunk_length, 4, 1, pFile);
-        unsigned short sizeOfVertices = (unsigned short)vertices.size();
-        fwrite(&sizeOfVertices, sizeof(unsigned short), 1, pFile);
-        for (int vi = 0 ; vi < vertices.size(); vi++){
-            float x = (float)vertices[vi]->x();
-            float y = (float)vertices[vi]->y();
-            float z = (float)vertices[vi]->z();
-            fwrite(&x, sizeof(float), 1, pFile);
-            fwrite(&y, sizeof(float), 1, pFile);
-            fwrite(&z, sizeof(float), 1, pFile);
-        }
-
-        // Triangle List
-        chunk_id = TRI_FACEL1;
-        chunk_length = FACES_DESCRIPTION_LENGTH;
-        fwrite(&chunk_id, 2, 1, pFile);
-        fwrite(&chunk_length, 4, 1, pFile);
-        unsigned short sizeOfTriangles = (unsigned short)triangleIndicies.size();
-        fwrite(&sizeOfTriangles, sizeof(unsigned short), 1, pFile);
-        for (int tr = 0 ; tr < triangleIndicies.size(); tr++){
-            for (int i = 0 ; i < 3 ; i++){
-                fwrite(&triangleIndicies[tr][i], sizeof(unsigned short), 1, pFile);
+            if (j == this->vertices.size()){
+                this->vertices.push_back(this->triangles[i]->vertex(vt));
             }
-            unsigned short temp = 1;
-            fwrite(&temp, sizeof(unsigned short), 1, pFile);
         }
+
     }
-    fseek(pFile, sizeof(unsigned short) * 2 + sizeof(unsigned int), SEEK_SET);
-    wholeLength += sizeof(unsigned short) + sizeof(unsigned int);
-    fwrite(&wholeLength, sizeof(unsigned short), 1, pFile);
-
-    fseek(pFile, sizeof(unsigned short) , SEEK_SET);
-    wholeLength += sizeof(unsigned short) + sizeof(unsigned int);
-    fwrite(&wholeLength, sizeof(unsigned short), 1, pFile);
-
-    fclose(pFile);
-    return;
 }

@@ -100,6 +100,7 @@ bool CGALCalculation::isIntersect_BBOX(Surface* s1, Surface* s2){
 
 
 bool CGALCalculation::isAngleLowerThan(Vector_3& nv1, Vector_3& nv2, double degree){
+
     double angle = CGALCalculation::getAngle(nv1, nv2);
     //cout << nv1 << "          " << nv2 << endl;
     //cout << angle << endl;

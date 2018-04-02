@@ -1,5 +1,6 @@
 #include "manage/MergingRoomMaker.h"
 #include <compute/SurfacesListComputation.h>
+#include <fileio/export/MeshExporter.h>
 #include "compute/SurfaceComputation.h"
 #include "cgal/SurfaceHoleCover.h"
 
@@ -60,7 +61,7 @@ int MergingRoomMaker::finish() {
     if (checkAnswer(doExport3DS, 'y')){
         if (this->convertSpaceToTriangleMesh()) return -1;
         if (this->constructMeshGraph()) return -1;
-        this->mesh->export3DS((paths["versionDir"] + paths["filename"] + ".3DS").c_str());
+        this->export3DS((paths["versionDir"] + paths["filename"] + ".3DS").c_str());
     }
 
     return 0;
@@ -73,8 +74,9 @@ int MergingRoomMaker::remainStructure() {
 
 bool MergingRoomMaker::resolveWrongTriangle() {
     int count = 0;
-    while (this->mesh->resolveWrongTriangle()){
-        cout << count++ << ", ";
+    for (int i = 0 ; i < this->mesh_list.size() ; i++){
+        if (this->mesh_list[i]->resolveWrongTriangle())
+            count++;
     }
     return false;
 }
@@ -140,28 +142,6 @@ int MergingRoomMaker::processGenerations(Space *space, double &degree) {
     return 0;
 }
 
-int MergingRoomMaker::updateVertexList(){
-    vector<Vertex*> newVertices;
-    for (ull it = 0 ; it < this->spaceList.size() ; it++){
-        Space* space = this->spaceList[it];
-        space->putVerticesAndUpdateIndex(newVertices);
-    }
-    this->vertices = newVertices;
-    return 0;
-}
-
-int MergingRoomMaker::rotateSurfaces(){
-    for (ull it = 0 ; it < this->spaceList.size(); it++)
-    {
-        Space* space = this->spaceList[it];
-        space->rotateSpaceByFloorTo00();
-        if (space->translateSpaceToOrigin() == -1){
-            cout << "translateSpaceToOrigin error" << endl;
-            return -1;
-        }
-    }
-    return 0;
-}
 
 int MergingRoomMaker::triangulation() {
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
@@ -181,33 +161,6 @@ int MergingRoomMaker::checkSelfIntersection() {
     return 0;
 }
 
-int MergingRoomMaker::constructMeshGraph() {
-    char doConstructMeshGraph;
-    cout << "Do you want to make graph about mesh?" << endl;
-    cin >> doConstructMeshGraph;
-
-    if (checkAnswer(doConstructMeshGraph, 'y')){
-        this->mesh->makeGraph();
-        if (!this->mesh->checkClosedSurface()){
-            cerr << "it is not composed of closed surface"<< endl;
-        }
-        char doGroupByComponent;
-        cout << "Group By Component?" << endl;
-        cin >> doGroupByComponent;
-        if (checkAnswer(doGroupByComponent, 'y')){
-            assert(this->mesh->checkClosedSurface());
-            if (this->mesh->groupByClosedSurface()) return -1;
-        }
-        char doRemainStructure;
-        cout << "Remain only Indoor Structure?" << endl;
-        cin >> doRemainStructure;
-        if (checkAnswer(doRemainStructure, 'y'))
-            if (this->remainStructure()) return -1;
-    }
-
-    return 0;
-}
-
 int MergingRoomMaker::simplifyShareEdge() {
     //construct Surface Graph
 
@@ -218,6 +171,56 @@ int MergingRoomMaker::simplifyShareEdge() {
         space->removeStraight();
     }
     return 0;
+}
+
+int MergingRoomMaker::constructMeshGraph() {
+    char doConstructMeshGraph;
+    cout << "Do you want to make graph about mesh?" << endl;
+    cin >> doConstructMeshGraph;
+
+    if (checkAnswer(doConstructMeshGraph, 'y')){
+        for (int i = 0 ; i < this->mesh_list.size() ; i++) {
+            this->mesh_list[i]->makeGraph();
+            if (!this->mesh_list[i]->checkClosedSurface()){
+                cerr << i << " : it is not composed of closed surface"<< endl;
+            }
+        }
+
+        char doGroupByComponent;
+        cout << "Group By Component?" << endl;
+        cin >> doGroupByComponent;
+        if (checkAnswer(doGroupByComponent, 'y')){
+            if (this->groupByClosedMesh()) return -1;
+        }
+
+        char doRemainStructure;
+        cout << "Remain only Indoor Structure?" << endl;
+        cin >> doRemainStructure;
+        if (checkAnswer(doRemainStructure, 'y'))
+            if (this->remainStructure()) return -1;
+    }
+
+    return 0;
+}
+
+int MergingRoomMaker::groupByClosedMesh() {
+    int i = 0;
+    vector<TriangleMesh*> new_mesh_list;
+    while ( i < this->mesh_list.size() ){
+        assert(this->mesh_list[i]->checkClosedSurface());
+        int result = this->mesh_list[i]->groupByClosedSurface(new_mesh_list);
+        if(result == -1) return -1;
+        else
+            i++;
+    }
+    this->mesh_list = new_mesh_list;
+    cout << "The Number of Mesh : " << this->mesh_list.size() << endl;
+    return 0;
+}
+
+int MergingRoomMaker::export3DS(const char *path) {
+    if (MeshExporter::export3DS(this->mesh_list, path))
+        return -1;
 }
 
 

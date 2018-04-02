@@ -12,7 +12,7 @@ class COLLADAImporter : public Importer {
 public:
     COLLADAImporter();
     virtual ~COLLADAImporter();
-    TriangleMesh* import(const char *filePath);
+    vector<TriangleMesh*> import(const char *filePath);
 private:
     string queryAttributeValueInNodes(rapidxml::xml_node<> *pNode, const char *childNodeName,
                                           const char *condAttributeName, const char *condAttributeValue,

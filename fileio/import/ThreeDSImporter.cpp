@@ -29,7 +29,7 @@ long ThreeDSImporter::filelength(int f)
 	return(buf.st_size);
 }
 
-TriangleMesh* ThreeDSImporter::import(const char *p_filename)
+vector<TriangleMesh*> ThreeDSImporter::import(const char *p_filename)
 {
 	int i; //Index variable
 	FILE *l_file; //File pointer
@@ -43,14 +43,13 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
 
 	unsigned short l_face_flags; //Flag that stores some face information
 
-    if ( (l_file=fopen (p_filename, "rb") ) == NULL) return NULL;
+    assert( (l_file=fopen (p_filename, "rb") ) != NULL);
 
-    TriangleMesh* triangleMesh = new TriangleMesh();
-    vector<Triangle*> triangles;
+    vector<TriangleMesh*> meshList;
+    TriangleMesh* currentMesh = new TriangleMesh();
 
     string group_name;
     int f_count =0, v_count = 0;
-    int groupVertexInit = 0;
 
     while (ftell (l_file) < this->filelength (fileno (l_file))) //Loop to scan the whole file
 	{
@@ -86,10 +85,9 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
 			case EDIT_OBJECT:
                 cout << "\t\t0x4000 : " << l_chunk_length << endl;
                 if (f_count != 0){
-                    triangleMesh->triangles.push_back(make_pair(group_name, triangles));
-                    triangles.clear();
+                    meshList.push_back(currentMesh);
+                    currentMesh = new TriangleMesh();
                     f_count = 0;
-                    groupVertexInit = v_count;
                 }
 				i=0;
 				do
@@ -97,8 +95,8 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
 					fread (&l_char, 1, 1, l_file);
                     name[i] = l_char;
                     i++;
-                }while(l_char != '\0' && i<20);
-                group_name = name;
+                }while(l_char != '\0');
+                currentMesh->name = name;
 
                 if (strstr(name, "FC")){
                     cout << "skip furniture" << endl;
@@ -140,7 +138,7 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
                     fread (&temp, sizeof(float), 1, l_file);
                     vt->setZ(temp);
                     vt->index = i + v_count;
-                    triangleMesh->vertices.push_back(vt);
+                    currentMesh->vertices.push_back(vt);
                 }
                 v_count += l_qty;
                 break;
@@ -165,11 +163,11 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
                     fread (&b, sizeof (unsigned short), 1, l_file);
                     fread (&c, sizeof (unsigned short), 1, l_file);
                     fread (&l_face_flags, sizeof (unsigned short), 1, l_file);
-                    Vertex* va = triangleMesh->vertices[a + groupVertexInit];
-                    Vertex* vb = triangleMesh->vertices[b + groupVertexInit];
-                    Vertex* vc = triangleMesh->vertices[c + groupVertexInit];
+                    Vertex* va = currentMesh->vertices[a];
+                    Vertex* vb = currentMesh->vertices[b];
+                    Vertex* vc = currentMesh->vertices[c];
                     Triangle* tri = new Triangle(va, vb, vc);
-                    triangles.push_back(tri);
+                    currentMesh->triangles.push_back(tri);
                 }
                 break;
                 /*
@@ -188,9 +186,8 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
         }
 	}
     if (f_count != 0){
-        triangleMesh->triangles.push_back(make_pair(group_name, triangles));
-        triangles.clear();
+        meshList.push_back(currentMesh);
     }
 	fclose (l_file); // Closes the file stream
-    return triangleMesh;
+    return meshList;
 }

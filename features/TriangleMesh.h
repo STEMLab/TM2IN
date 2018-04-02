@@ -11,9 +11,10 @@ using namespace std;
 class TriangleMesh{
 private:
 public:
-    vector<pair<string, vector<Triangle*>>> triangles;
+    string name;
+    vector<Triangle*> triangles;
     vector<Vertex*> vertices;
-    vector<TriangleMeshGraph*> graphs;
+    TriangleMeshGraph* graph;
 
     TriangleMesh(){}
 
@@ -22,9 +23,13 @@ public:
     void export3DS(const char* filePath);
     bool checkClosedSurface();
 
-    int groupByClosedSurface();
+    int groupByClosedSurface(vector<TriangleMesh *>& new_mesh_list);
+
+    void updateVertexByTriangleList();
 
     bool resolveWrongTriangle();
+
+    void clear();
 };
 
 #endif // TRIANGLEMESH_H_INCLUDED

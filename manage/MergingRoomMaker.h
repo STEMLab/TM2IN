@@ -17,7 +17,6 @@ public:
     virtual int pre_process();
     virtual int constructSpace();
     virtual int finish();
-    virtual int rotateSurfaces();
 protected:
 
 
@@ -29,8 +28,6 @@ private:
     int processGenerations(Space *space, double &degree);
     int mergeSurfaces();
 
-    int updateVertexList();
-
     int triangulation();
 
     int checkSelfIntersection();
@@ -40,6 +37,10 @@ private:
     bool resolveWrongTriangle();
 
     int simplifyShareEdge();
+
+    int groupByClosedMesh();
+
+    int export3DS(const char *string);
 };
 
 #endif // RectRoomMaker_H

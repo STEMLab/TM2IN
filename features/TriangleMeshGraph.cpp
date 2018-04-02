@@ -95,3 +95,8 @@ bool TriangleMeshGraph::canBeNeighbor(Triangle* t1, Triangle* t2){
     }
     return false;
 }
+
+bool TriangleMeshGraph::isEmpty() {
+
+    return (sizeOfTriangles == 0);
+}

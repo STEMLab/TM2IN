@@ -18,8 +18,9 @@ COLLADAImporter::~COLLADAImporter() {
 
 }
 
-TriangleMesh *COLLADAImporter::import(const char *filePath) {
-    TriangleMesh* triangleMesh = new TriangleMesh();
+vector<TriangleMesh*> COLLADAImporter::import(const char *filePath) {
+    vector<TriangleMesh*> meshList;
+
 
     xml_document<> doc;
     xml_node<> * root_node;
@@ -35,13 +36,11 @@ TriangleMesh *COLLADAImporter::import(const char *filePath) {
     for (xml_node<>* library_geometries_node = root_node->first_node("library_geometries") ; library_geometries_node;
          library_geometries_node = library_geometries_node->next_sibling("library_geometries")){
         for (xml_node<>* geometry_node = library_geometries_node->first_node("geometry") ; geometry_node; geometry_node = geometry_node->next_sibling("geometry")){
-            vector<Triangle*> geometry_triangles;
-            vector<Vertex*> geometry_vertices;
-
-            string geometry_name = geometry_node->first_attribute("id")->value();
-
             xml_node<>* mesh_node = geometry_node->first_node("mesh");
             if (mesh_node == NULL) exit(-1);
+
+            TriangleMesh* currentMesh = new TriangleMesh();
+            currentMesh->name = geometry_node->first_attribute("id")->value();
 
             xml_node<>* triangles_node = mesh_node->first_node("triangles");
             if (triangles_node == NULL) continue; //lines
@@ -71,11 +70,10 @@ TriangleMesh *COLLADAImporter::import(const char *filePath) {
             int float_array_count=atoi(float_array_node->first_attribute("count")->value());
             for (int i = 0 ; i < float_array_count / 3; i++){
                 Vertex* vertex = new Vertex(stof(float_array_strings[i * 3 + 0]), stof(float_array_strings[i * 3 + 1]), stof(float_array_strings[i * 3 + 2]));
-                vertex->setIndex(triangleMesh->vertices.size() + i);
-                geometry_vertices.push_back(vertex);
-                cout << vertex->toJSON() << endl;
+                vertex->setIndex(i);
+                currentMesh->vertices.push_back(vertex);
             }
-            assert(num_of_vertices == geometry_vertices.size());
+            assert(num_of_vertices == currentMesh->vertices.size());
 
             int num_of_triangles = atoi(triangles_node->first_attribute("count")->value());
             int num_of_input_nodes = 0, vertex_offset;
@@ -95,17 +93,14 @@ TriangleMesh *COLLADAImporter::import(const char *filePath) {
                 int a = atoi(triangle_index_string[a_index].c_str());
                 int b = atoi(triangle_index_string[b_index].c_str());
                 int c = atoi(triangle_index_string[c_index].c_str());
-                Triangle* triangle = new Triangle(geometry_vertices[a], geometry_vertices[b], geometry_vertices[c]);
-                geometry_triangles.push_back(triangle);
-                //cout << triangle->toJSON("") << endl;
+                Triangle* triangle = new Triangle(currentMesh->vertices[a], currentMesh->vertices[b], currentMesh->vertices[c]);
+                currentMesh->triangles.push_back(triangle);
             }
-
-            triangleMesh->triangles.push_back(make_pair(geometry_name, geometry_triangles));
-            triangleMesh->vertices.insert(triangleMesh->vertices.end(), geometry_vertices.begin(), geometry_vertices.end());
+            meshList.push_back(currentMesh);
         }
 
     }
-    return triangleMesh;
+    return meshList;
 }
 
 

@@ -115,7 +115,7 @@ class ThreeDSImporter : public Importer
         ThreeDSImporter();
         virtual ~ThreeDSImporter();
 
-        TriangleMesh* import(const char*);
+        vector<TriangleMesh*> import(const char*);
     protected:
         long filelength(int f);
         Triangle* makeTriangle(string& input, vector<Vertex*>& vertex);
