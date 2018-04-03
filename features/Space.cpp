@@ -142,13 +142,15 @@ int Space::simplifySegment(){
                 if (!this->surfacesList[j]->isValid()){
                     delete this->surfacesList[j];
                     this->surfacesList.erase(this->surfacesList.begin() + j);
-                    cout << "Erase unvalid surface" << endl;
+                    Checker::num_of_invalid += 1;
+                    cout << "Erase invalid surface" << endl;
                     return simplifySegment();
                 }
                 if (!this->surfacesList[i]->isValid()){
                     delete this->surfacesList[i];
                     this->surfacesList.erase(this->surfacesList.begin() + i);
-                    cout << "Erase unvalid surface" << endl;
+                    Checker::num_of_invalid += 1;
+                    cout << "Erase invalid surface" << endl;
                     return simplifySegment();
                 }
 
@@ -166,22 +168,12 @@ int Space::checkSurfaceValid() {
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
     {
         Surface* surface = this->surfacesList[i];
-        /*
-        SurfaceComputation::removeConsecutiveDuplicationIndex(surface);
-        SurfaceComputation::removeConsecutiveDuplication(surface);
-        SurfaceComputation::removeStraight(surface);
-        */
         surface->updateMBB();
 
         if (surface->isValid()){
             i++;
         }
         else{
-            /*
-            delete surface;
-            this->surfacesList.erase(this->surfacesList.begin() + i);
-            cout << "Erase unvalid surface" << endl;
-            */
             return -1;
         }
     }
@@ -200,7 +192,8 @@ int Space::removeStraight(){
         else{
             delete surface;
             this->surfacesList.erase(this->surfacesList.begin() + i);
-            cout << "Erase unvalid surface" << endl;
+            Checker::num_of_invalid += 1;
+            cout << "Erase invalid surface" << endl;
         }
     }
 }

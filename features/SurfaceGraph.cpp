@@ -1,5 +1,6 @@
 #include "features/SurfaceGraph.h"
 #include <iostream>
+#include <compute/SurfacePairComputation.h>
 
 bool SurfaceGraph::isNeighbor(ull id1, ull id2){
     for (ull i = 0 ; i < adjList[id1].size() ; i++){
@@ -13,9 +14,10 @@ void SurfaceGraph::makeAdjacentGraph(vector<Surface*>& surface_list){
     for (ull i = 0 ; i < surface_list.size() - 1 ; i++){
         Surface* surface_i = surface_list[i];
         for (ull j = i + 1 ; j < surface_list.size() ; j ++){
-            if (surface_i->isAdjacent(surface_list[j])){
-                adjList[surface_i->sf_id].push_back(surface_list[j]->sf_id);
-                adjList[surface_list[j]->sf_id].push_back(surface_i->sf_id);
+            Surface* surface_j = surface_list[j];
+            if (SurfacePairComputation::doShareEdge(surface_i, surface_j)){
+                adjList[i].push_back(j);
+                adjList[j].push_back(i);
             }
         }
     }
@@ -32,9 +34,9 @@ bool SurfaceGraph::isClosedTriangleMesh(){
 }
 
 void SurfaceGraph::print_bfs(){
-    vector<bool> checked(this->size, false);
+    vector<bool> checked(this->adjList.size(), false);
 
-    for (unsigned int i = 0 ; i < this->size ; i ++){
+    for (unsigned int i = 0 ; i < this->adjList.size() ; i ++){
         if (checked[i]) continue;
         queue<int> wait_queue;
         wait_queue.push(i);

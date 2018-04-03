@@ -3,9 +3,9 @@
 
 Triangle::Triangle(Vertex* pa, Vertex *pb, Vertex* pc)
 {
-    edges.push_back(new HalfEdge(pa, pb, this));
-    edges.push_back(new HalfEdge(pb, pc, this));
-    edges.push_back(new HalfEdge(pc, pa, this));
+    edges.push_back(new HalfEdge(pa, pb));
+    edges.push_back(new HalfEdge(pb, pc));
+    edges.push_back(new HalfEdge(pc, pa));
     this->area = sqrt(CGALCalculation::getSquaredArea(pa, pb, pc));
     if (this->area != 0.0)
         this->normal = CGALCalculation::getUnitNormal(pa, pb, pc) * AREA_CONST * this->area;

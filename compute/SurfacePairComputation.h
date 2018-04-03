@@ -20,8 +20,9 @@ private:
 public:
     static int combine(Surface* cp1, Surface* cp2, double degree);
     static bool findShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj, ll& middle_i, ll& middle_j);
-    static bool isShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj);
     static int simplifyLineSegment(Surface *origin, Surface *);
+
+    static bool doShareEdge(Surface *&vi, Surface *&vj);
 
     // intersect
     static bool doIntersect(Surface* sp1, Surface* sp2);

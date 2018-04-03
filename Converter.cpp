@@ -36,7 +36,9 @@ int main(int argc, const char * argv[]) {
     Checker::thresholdVertex = 0.0000001;
     Checker::squaredDistanceOfSamePoint2D = 0.000001;
     Checker::degreeOfMerging = 1.0;
-    Checker::degreeOfStraight = 0.001;
+    Checker::degreeOfStraight = 0.00001;
+    Checker::num_of_straight = 0;
+    Checker::num_of_invalid = 0;
 
     cout << "choose Data type to import" << endl;
     cout << "1. TVR\n2. 3DS\n3. COLLADA\n";
@@ -47,7 +49,7 @@ int main(int argc, const char * argv[]) {
     cout << "write file name" << endl; string fileName; cin >> fileName;
     paths["filename"] = fileName;
 
-    string version = "0.3.7"; cout << version << endl;
+    string version = "0.3.7.1"; cout << version << endl;
     paths["version"] = version;
     paths["versionDir"] = paths["resultDir"] + paths["filename"] + "/" + paths["version"] + "/";
 
@@ -55,6 +57,7 @@ int main(int argc, const char * argv[]) {
     if (dataType == 1)  manager->setImporter(new TVRImporter());
     else if (dataType == 2) manager->setImporter(new ThreeDSImporter());
     else if (dataType == 3) manager->setImporter(new COLLADAImporter());
+    else return -1;
 
     manager->setGenerationWriter(new GenerationWriter(paths["versionDir"]));
     manager->setExporter(new JSONSurfaceExporter());
@@ -73,8 +76,9 @@ int main(int argc, const char * argv[]) {
     if (manager->constructSpace() == -1) return -1;
     if (manager->finish() == -1) return -1;
 
-
     std::cout << "End!\n";
+    std::cout << "straight vertex : " << Checker::num_of_straight <<endl;
+    std::cout << "unvaild Surface : " << Checker::num_of_invalid << endl;
     return 0;
 }
 

@@ -132,11 +132,13 @@ int OnlyWallSpaceMaker::removeOppositeSurfaces(vector<Surface*>& surfacesList){
             for (ull j = i + 1; j < surfacesList.size() ; j++){
                 Surface* jsf = surfacesList[j];
                 if ( CGALCalculation::getAngle(isf->normal, jsf->normal) > 179.99){
+                    /*
                     if ( isf->isAdjacent(jsf) ){
                         surfacesList.erase(surfacesList.begin() + j);
                         surfacesList.erase(surfacesList.begin() + i);
                         changed = true;
                     }
+                     */
                 }
             }
         }

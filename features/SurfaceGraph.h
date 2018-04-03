@@ -12,8 +12,10 @@ typedef pair<int, int> ii;
 class SurfaceGraph{
 public:
     ull size;
-
     vector<vector<ull> > adjList;
+
+    SurfaceGraph(){}
+
     void makeAdjacentGraph(vector<Surface*>& surface_list);
 
     bool isClosedTriangleMesh();

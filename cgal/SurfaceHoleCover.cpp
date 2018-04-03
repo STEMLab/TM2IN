@@ -48,7 +48,7 @@ public:
 
         // add the polyhedron triangles
         for( int i=0; i<(int)surfaces.size(); i++ ){
-            cout << "FACET :  " << i <<  " , " << surfaces[i]->triangles.size() << endl;
+            // cout << "FACET :  " << i <<  " , " << surfaces[i]->triangles.size() << endl;
             for ( int tri = 0 ; tri < (int)surfaces[i]->triangles.size() ; tri++){
                 B.begin_facet();
                 for (int vt = 0 ; vt < 3; vt++){

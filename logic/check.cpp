@@ -18,6 +18,9 @@ double Checker::squaredDistanceOfSamePoint2D = 0.0;
 double Checker::degreeOfMerging = 10.0;
 double Checker::degreeOfStraight = 0.001;
 
+int Checker::num_of_invalid = 0;
+int Checker::num_of_straight = 0;
+
 bool Checker::isCollinear(Vertex *start_p, Vertex *check_p, Vertex *end_p){
     return (CGALCalculation::isAngleLowerThan(start_p, check_p, end_p, Checker::degreeOfStraight)
     || CGALCalculation::isAngleLowerThan(end_p, check_p, start_p, Checker::degreeOfStraight)

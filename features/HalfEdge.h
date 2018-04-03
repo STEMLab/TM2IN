@@ -10,7 +10,7 @@
 class HalfEdge {
 public:
     std::vector<Vertex*> vertices;
-    Triangle* parentTriangle = NULL;
+    Surface* parent = NULL;
     HalfEdge* oppositeEdge = NULL;
 
     HalfEdge(){}
@@ -18,15 +18,15 @@ public:
         vertices.push_back(pa);
         vertices.push_back(pb);
     }
-    HalfEdge(Vertex* pa, Vertex* pb, Triangle* pTriangle){
+    HalfEdge(Vertex* pa, Vertex* pb, Surface* pSurface){
         vertices.push_back(pa);
         vertices.push_back(pb);
-        parentTriangle = pTriangle;
+        parent = pSurface;
     }
 
-    Triangle *getParentTriangle() const;
+    Surface * getParent() const;
 
-    void setParentTriangle(Triangle *parentTriangle);
+    void setParent(Surface *pSurface);
 
     HalfEdge *getOppositeEdge() const;
 

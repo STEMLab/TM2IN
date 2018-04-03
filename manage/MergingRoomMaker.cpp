@@ -23,6 +23,10 @@ int MergingRoomMaker::pre_process() {
 
     if (this->constructMeshGraph()) return -1;
 
+    if (this->groupByClosedMesh()) return -1;
+
+    if (this->remainStructure()) return -1;
+
     if (this->convertTriangleMeshToSpace()) return -1;
 
     return 0;
@@ -39,7 +43,7 @@ int MergingRoomMaker::constructSpace() {
     }
     if (this->mergeSurfaces()) return -1;
 
-    if (this->simplifyShareEdge()) return -1;
+    // if (this->simplifyShareEdge()) return -1;
 
     cout << "check Self Intersection? (y/n)" << endl;
     cin >> doCheckSelfIntersection;
@@ -54,21 +58,70 @@ int MergingRoomMaker::constructSpace() {
 
 
 int MergingRoomMaker::finish() {
-    char doExport3DS;
+/*
+    for (int i = 0 ; i < this->spaceList.size() ; i++){
+        cout << i << "th graph-------" << endl;
+        this->spaceList[i]->surfaceGraph = new SurfaceGraph();
+        this->spaceList[i]->surfaceGraph->makeAdjacentGraph(this->spaceList[i]->surfacesList);
+        this->spaceList[i]->surfaceGraph->print_bfs();
+    }
+*/
     this->exportSpace();
 
-    cout <<"Export 3DS?" << endl; cin >>doExport3DS;
-    if (checkAnswer(doExport3DS, 'y')){
+    char doConvertToMesh;
+    cout << "Convert To Triangle Mesh?" << endl;
+    cin >> doConvertToMesh;
+    if (checkAnswer(doConvertToMesh, 'y')){
         if (this->convertSpaceToTriangleMesh()) return -1;
         if (this->constructMeshGraph()) return -1;
-        this->export3DS((paths["versionDir"] + paths["filename"] + ".3DS").c_str());
+
+        char doExport3DS;
+
+        cout <<"Export 3DS?" << endl; cin >>doExport3DS;
+        if (checkAnswer(doExport3DS, 'y')){
+            this->export3DS((paths["versionDir"] + paths["filename"] + ".3DS").c_str());
+        }
     }
 
     return 0;
 }
 
-int MergingRoomMaker::remainStructure() {
-    cerr << "TODO" << endl;
+int MergingRoomMaker::constructMeshGraph() {
+    char doConstructMeshGraph;
+    cout << "Do you want to make graph about mesh?" << endl;
+    cin >> doConstructMeshGraph;
+
+    if (checkAnswer(doConstructMeshGraph, 'y')){
+        for (int i = 0 ; i < this->mesh_list.size() ; i++) {
+            this->mesh_list[i]->makeGraph();
+            if (!this->mesh_list[i]->checkClosedSurface()){
+                cerr << i << " : it is not composed of closed surface"<< endl;
+            }
+        }
+    }
+
+    return 0;
+}
+
+int MergingRoomMaker::groupByClosedMesh() {
+    char doGroupByComponent;
+    cout << "Group By Component?" << endl;
+    cin >> doGroupByComponent;
+
+    if (checkAnswer(doGroupByComponent, 'y')) {
+        int i = 0;
+        vector<TriangleMesh*> new_mesh_list;
+        while ( i < this->mesh_list.size() ){
+            assert(this->mesh_list[i]->checkClosedSurface());
+            int result = this->mesh_list[i]->groupByClosedSurface(new_mesh_list);
+            if(result == -1) return -1;
+            else
+                i++;
+        }
+        this->mesh_list = new_mesh_list;
+        cout << "The Number of Mesh : " << this->mesh_list.size() << endl;
+    }
+
     return 0;
 }
 
@@ -80,6 +133,19 @@ bool MergingRoomMaker::resolveWrongTriangle() {
     }
     return false;
 }
+
+int MergingRoomMaker::remainStructure() {
+    char doRemainStructure;
+    cout << "Remain only Indoor Structure?" << endl;
+    cin >> doRemainStructure;
+    if (checkAnswer(doRemainStructure, 'y')){
+        cerr << "TODO : now erase First one" << endl;
+        this->mesh_list.erase(this->mesh_list.begin() + 1, this->mesh_list.end());
+    }
+
+    return 0;
+}
+
 
 int MergingRoomMaker::mergeSurfaces() {
     cout << "Enter Start Degree of merging(Default : 1.0)" << endl;
@@ -100,15 +166,6 @@ int MergingRoomMaker::mergeSurfaces() {
         if (space->checkSurfaceValid() == -1){ cout << "Surface is not valid" << endl; return -1; }
         space->sortSurfacesByArea();
         space->tagID();
-
-        /*
-        if (snap_mode){
-            double diff = 0.0001;
-            if (space->snapSurface(diff) == -1){ cout << "snap Surface" << endl; return -1;}
-            if (processGenerations(space, gen, degree)) return -1;
-            if (space->checkSurfaceValid() == -1){ cout << "cannot handle defect" << endl; return -1; }
-        }
-        */
     }
     return 0;
 }
@@ -170,51 +227,6 @@ int MergingRoomMaker::simplifyShareEdge() {
         space->simplifySegment();
         space->removeStraight();
     }
-    return 0;
-}
-
-int MergingRoomMaker::constructMeshGraph() {
-    char doConstructMeshGraph;
-    cout << "Do you want to make graph about mesh?" << endl;
-    cin >> doConstructMeshGraph;
-
-    if (checkAnswer(doConstructMeshGraph, 'y')){
-        for (int i = 0 ; i < this->mesh_list.size() ; i++) {
-            this->mesh_list[i]->makeGraph();
-            if (!this->mesh_list[i]->checkClosedSurface()){
-                cerr << i << " : it is not composed of closed surface"<< endl;
-            }
-        }
-
-        char doGroupByComponent;
-        cout << "Group By Component?" << endl;
-        cin >> doGroupByComponent;
-        if (checkAnswer(doGroupByComponent, 'y')){
-            if (this->groupByClosedMesh()) return -1;
-        }
-
-        char doRemainStructure;
-        cout << "Remain only Indoor Structure?" << endl;
-        cin >> doRemainStructure;
-        if (checkAnswer(doRemainStructure, 'y'))
-            if (this->remainStructure()) return -1;
-    }
-
-    return 0;
-}
-
-int MergingRoomMaker::groupByClosedMesh() {
-    int i = 0;
-    vector<TriangleMesh*> new_mesh_list;
-    while ( i < this->mesh_list.size() ){
-        assert(this->mesh_list[i]->checkClosedSurface());
-        int result = this->mesh_list[i]->groupByClosedSurface(new_mesh_list);
-        if(result == -1) return -1;
-        else
-            i++;
-    }
-    this->mesh_list = new_mesh_list;
-    cout << "The Number of Mesh : " << this->mesh_list.size() << endl;
     return 0;
 }
 

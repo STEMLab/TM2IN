@@ -25,6 +25,7 @@ public:
 
     std::vector<Surface*> surfacesList;
     vector<Vertex *> vertices;
+    SurfaceGraph* surfaceGraph;
 
     double min_coords[3];
     double max_coords[3];

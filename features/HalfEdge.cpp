@@ -12,12 +12,12 @@ bool HalfEdge::isSame(HalfEdge* he){
     return false;
 }
 
-Triangle *HalfEdge::getParentTriangle() const {
-    return parentTriangle;
+Surface *HalfEdge::getParent() const {
+    return parent;
 }
 
-void HalfEdge::setParentTriangle(Triangle *parentTriangle) {
-    HalfEdge::parentTriangle = parentTriangle;
+void HalfEdge::setParent(Surface *pSurface) {
+    HalfEdge::parent = pSurface;
 }
 
 HalfEdge *HalfEdge::getOppositeEdge() const {

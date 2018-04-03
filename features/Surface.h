@@ -52,7 +52,6 @@ public:
     std::string toJSONWithTriangles();
 
     bool isInMBB(Vertex* vt);
-    bool isAdjacent(Surface* sf);
     bool isOpposite(Surface* sf);
 
     void setMBB(Triangle* pl);
