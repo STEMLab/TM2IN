@@ -12,7 +12,9 @@
 using namespace std;
 
 void SurfaceComputation::removeConsecutiveDuplication(Surface *&pSurface){
+    /*
     ull v_size = pSurface->v_list.size();
+
     int removed_count = 0;
     for (ull i = 0 ; i < v_size - 1; i++){
         if (Checker::isSameVertex(pSurface->v_list[i] , pSurface->v_list[i+1])){
@@ -24,20 +26,15 @@ void SurfaceComputation::removeConsecutiveDuplication(Surface *&pSurface){
     }
 
     if (removed_count) cout << removed_count << " are removed in duplication" << endl;
+    */
 }
 
 void SurfaceComputation::removeConsecutiveDuplicationIndex(Surface *&pSurface){
+    cerr << "TODO : SurfaceComputation::removeConsecutiveDuplicationIndex" << endl;
+    /*
     ull v_size = pSurface->v_list.size();
     int removed_count = 0;
     for (ull i = 0 ; i < v_size - 1; i++){
-        /*
-        if (Checker::isSameVertex(v_list[i] , v_list[i+1])){
-            v_list.erase(v_list.begin() + i + 1);
-            i--;
-            v_size -= 1;
-            removed_count += 1;
-        }
-        */
         if (pSurface->v_list[i] == pSurface->v_list[i+1]){
             pSurface->v_list.erase(pSurface->v_list.begin() + i + 1);
             i--;
@@ -47,6 +44,7 @@ void SurfaceComputation::removeConsecutiveDuplicationIndex(Surface *&pSurface){
     }
 
     if (removed_count) cout << removed_count << " are removed in duplication" << endl;
+     */
 }
 
 void SurfaceComputation::flatten(Surface *&sf) {
@@ -63,7 +61,7 @@ void SurfaceComputation::flatten(Surface *&sf) {
     }
 
     assert(newVertices.size() == sf->getVerticesSize());
-    sf->setVertices(newVertices);
+    sf->setVertexList(newVertices);
     sf->setPlaneRef(plane);
     sf->normal = plane.orthogonal_vector();
 }
@@ -163,7 +161,7 @@ void SurfaceComputation::removeStraight(Surface*& pSurface){
         }
     }
 
-    pSurface->setVertices(vertexList);
+    pSurface->setVertexList(vertexList);
 
     if (removed_count) cout << removed_count << " are removed in straight" << endl;
 }

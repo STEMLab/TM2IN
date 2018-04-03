@@ -24,10 +24,14 @@ public:
 
     static bool doShareEdge(Surface *&vi, Surface *&vj);
 
-    // intersect
-    static bool doIntersect(Surface* sp1, Surface* sp2);
+    static bool CanBeNeighbor(Surface *cp1, Surface *cp2);
 
-    static bool isNeighbor(Surface* cp1, Surface* cp2);
+    static bool isNeighbor(Surface *origin, Surface *piece);
+
+    static vector<int> listShareEdgesInPiece(Surface *origin, Surface *piece);
+
+    static vector<int> listShareEdgesInOrigin(Surface *origin, Surface *edges, vector<int> vector1);
+
 };
 
 #endif // CleanPolygonMaker_H_INCLUDED

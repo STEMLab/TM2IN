@@ -81,6 +81,7 @@ Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count,
         cerr << cp->toJSONString() << endl;
         exit(-1);
     }
+
     for (ull id = start ; id < this->surfacesList.size() ; id++)
     {
         if (!checked[id])
@@ -88,12 +89,12 @@ Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count,
             Surface* sf = this->surfacesList[id];
             if (SurfacePairComputation::combine(cp, sf, degree) == 0)
             {
-                // printProcess(id, this->surfacesList.size(), "attachSurfaces");
                 cout << ".";
                 cp->triangles.insert(cp->triangles.end(), sf->triangles.begin(), sf->triangles.end());
                 checked[id] = true;
                 count++;
             }
+
         }
     }
     return cp;
@@ -133,7 +134,7 @@ int Space::simplifySegment(){
             int loop_count = 0;
             int j_sizeOfVertices = (int) this->surfacesList[j]->getVerticesSize();
             int i_sizeOfVertices = (int) this->surfacesList[i]->getVerticesSize();
-            if (!SurfacePairComputation::isNeighbor(this->surfacesList[i], this->surfacesList[j])) continue;
+            if (!SurfacePairComputation::CanBeNeighbor(this->surfacesList[i], this->surfacesList[j])) continue;
             if (i_sizeOfVertices == 3) break;
             if (j_sizeOfVertices == 3) continue;
             assert (i_sizeOfVertices > 3 && j_sizeOfVertices > 3);

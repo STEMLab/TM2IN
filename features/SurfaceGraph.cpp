@@ -43,7 +43,7 @@ void SurfaceGraph::print_bfs(){
         checked[i] = true;
 
         int level = 0;
-        cout << i << endl;
+        cout << "from " <<i << "'s graph" << endl;
 
         while (wait_queue.size() > 0){
             int current = wait_queue.front();

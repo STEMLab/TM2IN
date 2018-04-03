@@ -18,3 +18,9 @@ Segment_3 HalfEdgeComputation::getCGALSegment_3(HalfEdge *he){
     Segment_3 seg(p1, p2);
     return  seg;
 }
+
+void HalfEdgeComputation::setParent(std::vector<HalfEdge *> edges, Surface *pSurface) {
+    for (HalfEdge* edge : edges){
+        edge->setParent(pSurface);
+    }
+}

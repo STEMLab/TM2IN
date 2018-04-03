@@ -4,7 +4,6 @@
 
 #include "predefine.h"
 #include "cgal/Types.h"
-
 #include <iostream>
 
 

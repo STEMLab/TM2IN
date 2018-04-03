@@ -6,7 +6,7 @@
 #include "compute/SurfacesListComputation.h"
 #include "cgal/Types.h"
 #include "cgal/CGALCalculation.h"
-
+/*
 class Segment{
 public :
     Vertex* first;
@@ -110,7 +110,7 @@ int OnlyWallSpaceMaker::removeSurfacesNotConnectedFC(vector<Surface*>& surfacesL
             i++;
         }
         else if ( surface_graph->isNeighbor(sf->sf_id, roof->sf_id) &&
-                  surface_graph->isNeighbor(sf->sf_id, floor->sf_id)){
+                  surface_graph->CanBeNeighbor(sf->sf_id, floor->sf_id)){
             i++;
         }
         else{
@@ -132,13 +132,13 @@ int OnlyWallSpaceMaker::removeOppositeSurfaces(vector<Surface*>& surfacesList){
             for (ull j = i + 1; j < surfacesList.size() ; j++){
                 Surface* jsf = surfacesList[j];
                 if ( CGALCalculation::getAngle(isf->normal, jsf->normal) > 179.99){
-                    /*
-                    if ( isf->isAdjacent(jsf) ){
-                        surfacesList.erase(surfacesList.begin() + j);
-                        surfacesList.erase(surfacesList.begin() + i);
-                        changed = true;
-                    }
-                     */
+//
+//                    if ( isf->isAdjacent(jsf) ){
+//                        surfacesList.erase(surfacesList.begin() + j);
+//                        surfacesList.erase(surfacesList.begin() + i);
+//                        changed = true;
+//                    }
+//
                 }
             }
         }
@@ -702,3 +702,4 @@ Vector_3 OnlyWallSpaceMaker::normal_list11[11] = {
         Vector_3(-1,-1,0)
 };
 
+*/

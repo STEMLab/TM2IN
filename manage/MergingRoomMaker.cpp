@@ -58,14 +58,14 @@ int MergingRoomMaker::constructSpace() {
 
 
 int MergingRoomMaker::finish() {
-/*
+
     for (int i = 0 ; i < this->spaceList.size() ; i++){
         cout << i << "th graph-------" << endl;
         this->spaceList[i]->surfaceGraph = new SurfaceGraph();
         this->spaceList[i]->surfaceGraph->makeAdjacentGraph(this->spaceList[i]->surfacesList);
         this->spaceList[i]->surfaceGraph->print_bfs();
     }
-*/
+
     this->exportSpace();
 
     char doConvertToMesh;
@@ -87,16 +87,10 @@ int MergingRoomMaker::finish() {
 }
 
 int MergingRoomMaker::constructMeshGraph() {
-    char doConstructMeshGraph;
-    cout << "Do you want to make graph about mesh?" << endl;
-    cin >> doConstructMeshGraph;
-
-    if (checkAnswer(doConstructMeshGraph, 'y')){
-        for (int i = 0 ; i < this->mesh_list.size() ; i++) {
-            this->mesh_list[i]->makeGraph();
-            if (!this->mesh_list[i]->checkClosedSurface()){
-                cerr << i << " : it is not composed of closed surface"<< endl;
-            }
+    for (int i = 0 ; i < this->mesh_list.size() ; i++) {
+        this->mesh_list[i]->makeGraph();
+        if (!this->mesh_list[i]->checkClosedSurface()){
+            cerr << i << " : it is not composed of closed surface"<< endl;
         }
     }
 

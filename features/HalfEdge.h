@@ -8,6 +8,8 @@
 #include "features/Triangle.h"
 
 class HalfEdge {
+private :
+
 public:
     std::vector<Vertex*> vertices;
     Surface* parent = NULL;

@@ -2,16 +2,12 @@
 #define TRIANGLE_H
 
 #include "features/Vertex.h"
+#include "features/Surface.h"
 #include "predefine.h"
 #include "cgal/CGALCalculation.h"
 
-class Triangle{
-private:
-    Vector_3 normal = CGAL::NULL_VECTOR;
-    double area = 0.0;
+class Triangle : public Surface {
 public:
-    std::vector<HalfEdge* > edges;
-
     Triangle(){}
 
     Triangle(Vertex* pa, Vertex *pb, Vertex* pc);
@@ -25,8 +21,6 @@ public:
     Vertex* operator[](int idx);
     Vertex* vertex(int idx);
 
-    Vector_3 getNormal();
-    double getArea();
     std::string toJSON(const std::string &indent);
 };
 
