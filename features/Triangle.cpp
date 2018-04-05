@@ -9,6 +9,7 @@ Triangle::Triangle(Vertex* pa, Vertex *pb, Vertex* pc)
     this->area = sqrt(CGALCalculation::getSquaredArea(pa, pb, pc));
     if (this->area != 0.0)
         this->normal = CGALCalculation::getUnitNormal(pa, pb, pc) * AREA_CONST * this->area;
+    this->updateMBB();
 }
 
 int Triangle::findShareSameHalfEdge(Triangle *pTriangle){

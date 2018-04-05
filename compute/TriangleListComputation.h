@@ -13,5 +13,5 @@
 
 
 namespace TMIC {
-    void connectOppositeHalfEdges(std::vector<Triangle*>& triangles);
+    void connectOppositeHalfEdges(std::vector<Triangle*>& triangleList);
 }
