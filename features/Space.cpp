@@ -161,6 +161,11 @@ int Space::simplifySegment(){
             }
         }
     }
+
+    for (ull i = 0 ; i < sizeOfSurfaces; i++){
+        assert((int) this->surfacesList[i]->getVerticesSize() >= 3);
+    }
+
     return 0;
 }
 

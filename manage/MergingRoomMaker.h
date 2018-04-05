@@ -22,25 +22,18 @@ protected:
 
 private:
     double startDegree = 1.0;
-
-    int constructMeshGraph();
-
     int processGenerations(Space *space, double &degree);
     int mergeSurfaces();
-
     int triangulation();
-
     int checkSelfIntersection();
 
+    //Triangle Mesh
+    int menifestTriangleMesh();
     int remainStructure();
-
-    bool resolveWrongTriangle();
+    int partitionTriangleMeshByComponent();
 
     int simplifyShareEdge();
 
-    int groupByClosedMesh();
-
-    int export3DS(const char *string);
 };
 
 #endif // RectRoomMaker_H

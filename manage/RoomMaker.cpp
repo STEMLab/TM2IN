@@ -1,4 +1,5 @@
 #include <fileio/JSONMaker.h>
+#include <fileio/export/MeshExporter.h>
 #include "manage/RoomMaker.h"
 
 
@@ -48,4 +49,9 @@ int RoomMaker::exportSpace() {
 
 void RoomMaker::setPaths(map<string, string> _paths) {
     this->paths = _paths;
+}
+
+int RoomMaker::export3DS(const char *path) {
+    if (MeshExporter::export3DS(this->mesh_list, path))
+        return -1;
 }

@@ -3,9 +3,9 @@
 
 Triangle::Triangle(Vertex* pa, Vertex *pb, Vertex* pc)
 {
-    boundaryEdges.push_back(new HalfEdge(pa, pb));
-    boundaryEdges.push_back(new HalfEdge(pb, pc));
-    boundaryEdges.push_back(new HalfEdge(pc, pa));
+    boundaryEdges.push_back(new HalfEdge(pa, pb, this));
+    boundaryEdges.push_back(new HalfEdge(pb, pc, this));
+    boundaryEdges.push_back(new HalfEdge(pc, pa, this));
     this->area = sqrt(CGALCalculation::getSquaredArea(pa, pb, pc));
     if (this->area != 0.0)
         this->normal = CGALCalculation::getUnitNormal(pa, pb, pc) * AREA_CONST * this->area;
@@ -36,11 +36,22 @@ Vertex* Triangle::operator[](int idx){
     }
 }
 
-bool Triangle::checkAndSetAdjacent(Triangle *tri){
-    bool isAdjacent;
+bool Triangle::checkNeighbor(Triangle *&tri){
+    bool isAdjacent = false;
+    for (int v1 = 0 ; v1 < 3 ; v1++){
+        if (this->boundaryEdges[v1]->oppositeEdge != NULL && this->boundaryEdges[v1]->oppositeEdge->parent == tri){
+            assert(!isAdjacent);
+            isAdjacent = true;
+        }
+    }
+    return isAdjacent;
+}
+
+bool Triangle::setNeighbor(Triangle*& tri){
+    bool isAdjacent = false;
     for (int v1 = 0 ; v1 < 3 ; v1++){
         for (int v2 = 0 ; v2 < 3 ;v2++){
-            if (this->boundaryEdges[v1]->isOpposite(tri->boundaryEdges[v2])){
+            if (this->boundaryEdges[v1]->hasOppositeTwoVertex(tri->boundaryEdges[v2])){
                 assert(!isAdjacent);
                 isAdjacent = true;
                 this->boundaryEdges[v1]->setOppositeEdge(tri->boundaryEdges[v2]);
@@ -52,22 +63,18 @@ bool Triangle::checkAndSetAdjacent(Triangle *tri){
 }
 
 bool Triangle::isOpposite(Triangle* tri){
-    int i = 0;
-    for (int j = 0 ; j < 3 ; j++){
-        if (this->vertex(i) == tri->vertex(j)){
-            while (this->vertex(i) == tri->vertex(j)){
-                i++; j--;
-                if (j < 0) j = 2;
-                if (i == 3) return true;
-                if (this->vertex(i) != tri->vertex(j)){
-                    return false;
-                }
-
-            }
+    int num_of_opposite = 0;
+    for (int i = 0 ; i < 3 ; i++){
+        if (this->boundary_edges(i)->getOppositeEdge() != NULL && this->boundary_edges(i)->oppositeEdge->parent == tri){
+            num_of_opposite++;
+        }
+        if (num_of_opposite == 2){
+            std::cerr << "isOpposite worognonrownr" << std::endl;
+            exit(-1);
         }
     }
-
-    return false;
+    if (num_of_opposite <= 1) return false;
+    else return true;
 
 }
 

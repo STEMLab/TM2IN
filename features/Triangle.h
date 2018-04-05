@@ -14,7 +14,8 @@ public:
 
     Triangle(std::vector<Vertex*>& vertices) : Triangle(vertices[0], vertices[1], vertices[2]) {}
 
-    bool checkAndSetAdjacent(Triangle *tri);
+    bool checkNeighbor(Triangle*& tri);
+    bool setNeighbor(Triangle*& tri);
     bool isOpposite(Triangle* tri);
     int findShareSameHalfEdge(Triangle *pTriangle);
 

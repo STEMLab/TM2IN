@@ -14,21 +14,21 @@ bool TriangleMeshGraph::isNeighbor(ull id1, ull id2){
     return false;
 }
 
-void TriangleMeshGraph::makeAdjacentGraph(vector<Triangle*>& tri_list){
+void TriangleMeshGraph::makeAdjacentGraph() {
+    vector<Triangle*>& tri_list = this->triangles;
     this->sizeOfTriangles = tri_list.size();
     adjList.assign(tri_list.size(), vector<ull>());
     for (ull i = 0 ; i < tri_list.size() - 1 ; i++){
         if (i % 10 == 0) printProcess(i, tri_list.size(), "make Graph");
         for (ull j = i + 1 ; j < tri_list.size() ; j ++){
-            if (canBeNeighbor(tri_list[i], tri_list[j])){
+            if (tri_list[i]->checkNeighbor(tri_list[j])){
                 if (!tri_list[i]->isOpposite(tri_list[j])){
-                    if (tri_list[i]->checkAndSetAdjacent(tri_list[j])){
-                        adjList[i].push_back(j);
-                        adjList[j].push_back(i);
-                    }
+                    adjList[i].push_back(j);
+                    adjList[j].push_back(i);
                 }
                 else{
                     cerr << "Opposite Triangle" << endl;
+                    exit(-1);
                 }
             }
         }
@@ -84,16 +84,6 @@ vector<vector<ull>> TriangleMeshGraph::getConnectedComponent() {
 
 vector<ull> TriangleMeshGraph::getNeighbors(ull i) {
     return adjList[i];
-}
-
-bool TriangleMeshGraph::canBeNeighbor(Triangle* t1, Triangle* t2){
-    Vertex* t1v1 = t1->vertex(0);
-    Vertex* t1v2 = t1->vertex(1);
-    for (int i = 0 ; i < 3 ; i++){
-        if (t1v1 == t2->vertex(i)) return true;
-        if (t1v2 == t2->vertex(i)) return true;
-    }
-    return false;
 }
 
 bool TriangleMeshGraph::isEmpty() {

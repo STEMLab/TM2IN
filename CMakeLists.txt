@@ -86,7 +86,7 @@ add_executable(TriangleMeshToClearSolid
         fileio/export/SpaceExporter.h
         fileio/export/JSONSurfaceExporter.cpp
         fileio/export/JSONSurfaceExporter.h
-        fileio/import/COLLADAImporter.cpp fileio/import/COLLADAImporter.h fileio/export/MeshExporter.cpp fileio/export/MeshExporter.h)
+        fileio/import/COLLADAImporter.cpp fileio/import/COLLADAImporter.h fileio/export/MeshExporter.cpp fileio/export/MeshExporter.h compute/TriangleListComputation.h compute/TriangleListComputation.cpp)
 
 
 TARGET_LINK_LIBRARIES( TriangleMeshToClearSolid LINK_PUBLIC ${Boost_LIBRARIES} Eigen3::Eigen)

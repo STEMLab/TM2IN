@@ -37,6 +37,7 @@ public:
 
     void setPaths(map<string, string> _paths);
 
+    int export3DS(const char *string);
 };
 
 #endif // MANAGER_H

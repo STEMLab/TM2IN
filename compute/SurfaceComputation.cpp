@@ -8,6 +8,8 @@
 #include "compute/VertexListComputation.h"
 #include "HalfEdgeComputation.h"
 #include "cgal/PolygonComputation.h"
+#include "features/TriangleMeshGraph.h"
+#include "TriangleListComputation.h"
 
 using namespace std;
 
@@ -183,8 +185,6 @@ int SurfaceComputation::triangulate(Surface *&pSurface) {
         cout << pSurface->toJSONString() << endl;
         cout << polygon << endl;
         return 0;
-//        int i = 0, j = 0;
-//        SurfaceIntersection::checkSelfIntersection(pSurface, i, j);
     }
     vector<Polygon_2> polygonList = PolygonComputation::convexPartition(polygon);
 
@@ -225,13 +225,16 @@ int SurfaceComputation::triangulate(Surface *&pSurface) {
     }
 
     pSurface->triangles = triangles;
+    TMIC::connectOppositeHalfEdges(triangles);
+    TriangleMeshGraph* meshGraph = new TriangleMeshGraph(pSurface->triangles);
+    meshGraph->makeAdjacentGraph();
 
     return 0;
 }
 
 std::vector<Segment_3> SurfaceComputation::makeSegment3List(Surface *&pSurface) {
     vector<Segment_3> result;
-    vector<HalfEdge*> edges = SurfaceComputation::makeHalfEdgesList(pSurface);
+    vector<HalfEdge*> edges = pSurface->getBoundaryEdgesList();
 
     for (int i = 0 ; i < edges.size() ; i++){
         Segment_3  seg = HalfEdgeComputation::getCGALSegment_3(edges[i]);
@@ -251,17 +254,6 @@ std::vector<Segment_2> SurfaceComputation::makeSegment2List(Surface *&pSurface, 
     Segment_2 last_seg(pointsList[pointsList.size() - 1], pointsList[0]);
     segmentsList.push_back(last_seg);
     return segmentsList;
-}
-
-std::vector<HalfEdge *> SurfaceComputation::makeHalfEdgesList(Surface *&pSurface) {
-    vector<HalfEdge*> edges;
-    vector<Vertex*> vertices = pSurface->getVerticesList();
-    for (int i = 0 ; i < vertices.size() - 1 ; i++){
-        HalfEdge* he = new HalfEdge(vertices[i], vertices[i+1]);
-        edges.push_back(he);
-    }
-    edges.push_back(new HalfEdge(vertices[vertices.size() - 1], vertices[0]));
-    return edges;
 }
 
 Plane_3 SurfaceComputation::getSimplePlane3WithNormal(Surface *&pSurface) {

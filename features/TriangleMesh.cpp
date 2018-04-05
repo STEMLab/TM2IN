@@ -10,22 +10,29 @@
 #include <iostream>
 #include <logic/check.hpp>
 #include <fileio/import/ThreeDSImporter.h>
+#include <compute/TriangleListComputation.h>
+
+void TriangleMesh::init() {
+    // this->resolveWrongTriangle();
+    TMIC::connectOppositeHalfEdges(this->triangles);
+    this->makeGraph();
+}
 
 void TriangleMesh::makeGraph(){
-    this->graph = new TriangleMeshGraph();
-    this->graph->makeAdjacentGraph(this->triangles);
+    this->graph = new TriangleMeshGraph(this->triangles);
+    this->graph->makeAdjacentGraph();
 }
 
 bool TriangleMesh::checkClosedSurface() {
     if (this->graph == NULL || this->graph->isEmpty()){
         cerr << "You didn't make graph." << endl;
+        assert(false);
     }
-    bool isClosed = this->graph->isClosedTriangleMesh();
-    if (!isClosed) return false;
-    return true;
+    else
+        return this->graph->isClosedTriangleMesh();
 }
 
-int TriangleMesh::groupByClosedSurface(vector<TriangleMesh *>& new_mesh_list) {
+int TriangleMesh::partitionByComponent(vector<TriangleMesh *> &new_mesh_list) {
     vector<vector<ull>> cc = this->graph->getConnectedComponent();
     if (cc.size() == 1) {
         new_mesh_list.push_back(this);
@@ -74,6 +81,7 @@ bool TriangleMesh::resolveWrongTriangle() {
 
     return false;
 }
+
 
 void TriangleMesh::clear(){
     triangles.clear();

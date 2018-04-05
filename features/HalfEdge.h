@@ -16,10 +16,6 @@ public:
     HalfEdge* oppositeEdge = NULL;
 
     HalfEdge(){}
-    HalfEdge(Vertex* pa, Vertex* pb){
-        vertices.push_back(pa);
-        vertices.push_back(pb);
-    }
     HalfEdge(Vertex* pa, Vertex* pb, Surface* pSurface){
         vertices.push_back(pa);
         vertices.push_back(pb);
@@ -35,7 +31,7 @@ public:
     void setOppositeEdge(HalfEdge *oppositeEdge);
 
     bool isSame(HalfEdge*);
-    bool isOpposite(HalfEdge*);
+    bool hasOppositeTwoVertex(HalfEdge *);
 
     Vertex* operator[](int idx){
         if (idx == 0 || idx == 1) return vertices[idx];

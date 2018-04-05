@@ -24,7 +24,7 @@ void SurfaceGraph::makeAdjacentGraph(vector<Surface*>& surface_list){
 }
 
 
-bool SurfaceGraph::isClosedTriangleMesh(){
+bool SurfaceGraph::isClosedSurface(){
     for (ull i = 0; i < adjList.size() ; i++){
         if (adjList[i].size() != 3){
             return false;

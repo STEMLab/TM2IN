@@ -9,7 +9,6 @@
 using namespace std;
 
 class TriangleMesh{
-private:
 public:
     string name;
     vector<Triangle*> triangles;
@@ -18,18 +17,18 @@ public:
 
     TriangleMesh(){}
 
-    void makeGraph();
-    void exportTVR(const char *);
-    void export3DS(const char* filePath);
+    void init();
+
     bool checkClosedSurface();
 
-    int groupByClosedSurface(vector<TriangleMesh *>& new_mesh_list);
-
-    void updateVertexByTriangleList();
-
-    bool resolveWrongTriangle();
+    int partitionByComponent(vector<TriangleMesh *> &new_mesh_list);
 
     void clear();
+
+    void updateVertexByTriangleList();
+    bool resolveWrongTriangle();
+private:
+    void makeGraph();
 };
 
 #endif // TRIANGLEMESH_H_INCLUDED
