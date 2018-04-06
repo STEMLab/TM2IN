@@ -1,52 +1,41 @@
 #include "SurfacePairComputation.h"
 #include "VertexComputation.h"
 #include "HalfEdgeComputation.h"
+#include "VertexListComputation.h"
 #include <stdlib.h>
 #include <features/HalfEdge.h>
 
 int SurfacePairComputation::combine(Surface* origin, Surface* piece, double degree) {
     // check Polygon is in near polygon or not
-    if (!CanBeNeighbor(origin, piece)) return 1;
+    if (!CGALCalculation::isIntersect_BBOX(origin, piece)) return 1;
 
+    // check They are neighbor
     if (!isNeighbor(origin, piece)) return 1;
-/*
-    if (origin->getVerticesSize() < piece->getVerticesSize()){
-        Surface* temp = origin;
-        origin = piece;
-        piece = temp;
-    }
-
-    vector<int> shareEdgesIndices_piece = listShareEdgesInPiece(origin, piece);
-    if (shareEdgesIndices_piece.size() != piece->getVerticesSize()){
-        if (!Checker::CanbeMerged(origin->normal, piece->normal, degree)) {
-            return 1;
-        }
-    }
-    vector<int> shareEdgesIndices_origin = listShareEdgesInOrigin(nullptr, piece, shareEdgesIndices_piece);
-*/
-
-    ll piece_end = -1, origin_end = -1;
-    ll piece_start = -1, origin_start = -1;
-    ll piece_middle = -1, origin_middle = -1;
 
     ll origin_size = origin->getVerticesSize();
     ll piece_size = piece->getVerticesSize();
     vector<Vertex*> origin_vertex_list = origin->getVerticesList();
     vector<Vertex*> piece_vertex_list = piece->getVerticesList();
 
+    ll piece_middle = -1, origin_middle = -1;
     if (!findShareVertex(piece_vertex_list, origin_vertex_list, piece_middle, origin_middle)) return 1;
     if (CGALCalculation::getAngle(origin->normal, piece->normal) > 179.999999){
         return 1;
     }
 
-    if (findStartAndEnd(piece_vertex_list, origin_vertex_list, piece_middle, origin_middle, piece_start, piece_end, origin_start, origin_end)){
-        cout << "\n" << origin->toJSONString() << endl;
-        cout << "\n" << piece->toJSONString() <<endl;
-        cout << CGALCalculation::getAngle(origin->normal, piece->normal)  << endl;
+    ll lastVertex_piece = -1, lastVertex_origin = -1;
+    ll firstVertex_piece = -1, firstVertex_origin = -1;
+    if (findStartAndEnd(piece_vertex_list, origin_vertex_list, piece_middle, origin_middle, firstVertex_piece, lastVertex_piece, firstVertex_origin, lastVertex_origin)){
+        cerr << "\n" << origin->toJSONString() << endl;
+        cerr << "\n" << piece->toJSONString() <<endl;
+        cerr << CGALCalculation::getAngle(origin->normal, piece->normal)  << endl;
         return 1;
     }
 
-    int seg_num = piece->getSegmentsNumber(piece_end, piece_start);
+    assert (piece->vertex(firstVertex_piece) == origin->vertex(lastVertex_origin));
+    assert (piece->vertex(lastVertex_piece) == origin->vertex(firstVertex_origin));
+
+    int seg_num = piece->getSegmentsNumber(lastVertex_piece, firstVertex_piece);
 
     if (seg_num == -1)
     {
@@ -65,99 +54,126 @@ int SurfacePairComputation::combine(Surface* origin, Surface* piece, double degr
         }
     }
 
-    //find if another line share. make Hole?
-    if (isMakingHole(piece_start, piece_end, origin_start, origin_end, piece_vertex_list, origin_vertex_list)) return 1;
-
     HalfEdgeComputation::setParent(piece->getBoundaryEdgesList(), origin);
     vector<HalfEdge*> new_edges;
 
-    for (ll j = origin_start; ; ){
+    for (ll j = lastVertex_origin; ; ){
         new_edges.push_back(origin->boundary_edges(j));
         j++;
         if (j == origin_size) j = 0;
-        if (j == origin_end) break;
+        if (j == firstVertex_origin) break;
     }
-    for (ll i = piece_end; ;){
+
+    for (ll i = lastVertex_piece; ;){
         new_edges.push_back(piece->boundary_edges(i));
         i++;
         if (i == piece_size) i = 0;
-        if (i == piece_start) break;
+        if (i == firstVertex_piece) break;
     }
+
+    vector<Vertex*> newVertexList = HalfEdgeComputation::getFirstVertexList(new_edges);
+    if (VertexListComputation::checkDuplicate(newVertexList)) return 1;
 
     origin->setBoundaryEdgesList(new_edges);
     origin->normal = origin->normal + piece->normal;
     origin->area += piece->area;
     origin->setMBB(piece);
-    /*
-    vector<Vertex*> new_v_list;
 
-    for (ll j = origin_start; ; ){
-        new_v_list.push_back(origin->v_list[j]);
+    // assert (!origin->checkDuplicate());
+
+    //TODO : delete old edges
+
+    // delete piece;
+
+    return 0;
+}
+
+
+int SurfacePairComputation::simplifyLineSegment(Surface *origin, Surface *piece) {
+    ll piece_middle = -1, origin_middle = -1;
+    ll piece_size = piece->getVerticesSize();
+    ll origin_size = origin->getVerticesSize();
+
+    vector<Vertex*> piece_vertex_list = piece->getVerticesList();
+    vector<Vertex*> origin_vertex_list = origin->getVerticesList();
+
+    for (ll i = 0 ; i < piece_size ;i++){
+        for (ll j = origin_size - 1 ; j >= 0 ; j--){
+            if (piece_vertex_list[i] == origin_vertex_list[j]){
+                ll next_i = i + 1 == piece_size? 0 : i+1;
+                ll next_j = j-1 == -1? origin_size-1 : j-1;
+
+                ll pre_i = i - 1 == -1? piece_size-1 : i-1;
+                ll pre_j = j + 1 == origin_size? 0 : j + 1;
+
+                if (piece_vertex_list[next_i] == origin_vertex_list[next_j]
+                    && piece_vertex_list[pre_i] == origin_vertex_list[pre_j]){
+                    piece_middle = i;
+                    origin_middle = j;
+                    break;
+                }
+            }
+        }
+        if (piece_middle != -1) break;
+    }
+
+    if (piece_middle == -1) return 1;
+
+    ll lastVertex_piece = -1, lastVertex_origin = -1;
+    ll firstVertex_piece = -1, firstVertex_origin = -1;
+    if (findStartAndEnd(piece_vertex_list, origin_vertex_list, piece_middle, origin_middle, firstVertex_piece, lastVertex_piece, firstVertex_origin, lastVertex_origin)) return 1;
+
+    assert (piece->getSegmentsNumber(firstVertex_piece, lastVertex_piece) > 1);
+    assert (piece->vertex(firstVertex_piece) == origin->vertex(lastVertex_origin));
+    assert (piece->vertex(lastVertex_piece) == origin->vertex(firstVertex_origin));
+
+    HalfEdge* newEdge_piece = new HalfEdge(piece->vertex(firstVertex_piece), piece->vertex(lastVertex_piece), piece);
+    HalfEdge* newEdge_origin = new HalfEdge(origin->vertex(firstVertex_origin), origin->vertex(lastVertex_origin), origin);
+    newEdge_origin->setOppositeEdge(newEdge_piece);
+    newEdge_piece->setOppositeEdge(newEdge_origin);
+
+    vector<HalfEdge*> newHalfEdgeList_piece;
+    vector<HalfEdge*> newHalfEdgeList_origin;
+
+    for (ll j = lastVertex_origin; ; ){
+        newHalfEdgeList_origin.push_back(origin->boundary_edges(j));
         j++;
         if (j == origin_size) j = 0;
-        if (j == origin_end) break;
+        if (j == firstVertex_origin) break;
     }
-    for (ll i = piece_end; ;){
-        new_v_list.push_back(piece->v_list[i]);
-        i++;
-        if (i == piece_size) i = 0;
-        if (i == piece_start) break;
+    newHalfEdgeList_origin.push_back(newEdge_origin);
 
+    for (ll j = lastVertex_piece; ; ){
+        newHalfEdgeList_piece.push_back(piece->boundary_edges(j));
+        j++;
+        if (j == piece_size) j = 0;
+        if (j == firstVertex_piece) break;
     }
+    newHalfEdgeList_piece.push_back(newEdge_piece);
 
-    origin->v_list.clear();
-    origin->v_list = new_v_list;
-    origin->normal = origin->normal + piece->normal;
-    origin->area += piece->area;
-    origin->setMBB(piece);
-*/
+    origin->setBoundaryEdgesList(newHalfEdgeList_origin);
+    piece->setBoundaryEdgesList(newHalfEdgeList_piece);
 
-    if (origin->checkDuplicate()){
-        cerr << "Duplicate" << endl;
-        exit(-1);
+    //if piece become line.(only has two vertex)
+    if (piece->getVerticesSize() < 3){
+        assert(piece->getVerticesSize() == 2);
+        newEdge_origin->setOppositeEdge(newHalfEdgeList_piece[0]->getOppositeEdge());
+        newHalfEdgeList_piece[0]->getOppositeEdge()->setOppositeEdge(newEdge_origin);
     }
 
     return 0;
 }
 
-bool SurfacePairComputation::isMakingHole(ll start_i, ll end_i, ll start_j, ll end_j, vector<Vertex*>& piece_v_list, vector<Vertex*>& origin_v_list)
-{
-    ll piece_size = piece_v_list.size();
-    ll origin_size = origin_v_list.size();
-
-    for (ll i = end_i + 1 ; i != start_i ; i++)
-    {
-        if (i == piece_size)
-        {
-            i = -1;
-            continue;
-        }
-        for (ll j = end_j - 1 ; j != start_j ; j--)
-        {
-            if (j == -1)
-            {
-                j = origin_size;
-                continue;
-            }
-
-            if (piece_v_list[i] == origin_v_list[j])
-            {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-bool SurfacePairComputation::doShareEdge(Surface *&surface_i, Surface *&surface_j){
-    vector<HalfEdge*> i_edge_list = surface_i->getBoundaryEdgesList();
-    for (HalfEdge* edge : i_edge_list){
+int SurfacePairComputation::doShareEdge(Surface *&surface_i, Surface *&surface_j){
+    vector<HalfEdge*> iEdgeList = surface_i->getBoundaryEdgesList();
+    int share_edge_count = 0;
+    for (HalfEdge* edge : iEdgeList){
         if (edge->oppositeEdge->parent == surface_j){
-            return true;
+            share_edge_count++;
         }
     }
 
-    return false;
+    return share_edge_count;
 }
 
 
@@ -204,7 +220,7 @@ int SurfacePairComputation::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>
         next_j = j - 1 == -1? origin_size-1 : j - 1;
     }
     end_i = i;
-    end_j = j;
+    start_j = j;
 
     i = middle_i;
     j = middle_j;
@@ -225,72 +241,7 @@ int SurfacePairComputation::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>
         next_j = j + 1 == origin_size? 0 : j + 1;
     }
     start_i = i;
-    start_j = j;
-    return 0;
-}
-
-bool SurfacePairComputation::CanBeNeighbor(Surface *cp1, Surface *cp2){
-    return CGALCalculation::isIntersect_BBOX(cp1, cp2);
-}
-
-int SurfacePairComputation::simplifyLineSegment(Surface *origin, Surface *piece) {
-    cerr << "TODO : simplifyLineSegment" << endl;
-    ll middle_i = -1, middle_j = -1;
-    ll piece_size = piece->getVerticesSize();
-    ll origin_size = origin->getVerticesSize();
-
-    vector<Vertex*> piece_vertex_list = piece->getVerticesList();
-    vector<Vertex*> origin_vertex_list = origin->getVerticesList();
-
-    ll infinite_check = 0;
-    for (ll i = 0 ; i < piece_size ;i++){
-        for (ll j = origin_size - 1 ; j >= 0 ; j--){
-            if (piece_vertex_list[i] == origin_vertex_list[j]){
-                ll next_i = i + 1 == piece_size? 0 : i+1;
-                ll next_j = j-1 == -1? origin_size-1 : j-1;
-
-                ll pre_i = i - 1 == -1? piece_size-1 : i-1;
-                ll pre_j = j + 1 == origin_size? 0 : j + 1;
-
-                if (piece_vertex_list[next_i] == origin_vertex_list[next_j]
-                    && piece_vertex_list[pre_i] == origin_vertex_list[pre_j]){
-                    middle_i = i;
-                    middle_j = j;
-                    break;
-                }
-            }
-        }
-        if (middle_i != -1) break;
-    }
-
-    if (middle_i == -1) return 1;
-    // if (CGALCalculation::getAngle(origin->normal, piece->normal) > 179.999999) return 1;
-
-    ll end_i = -1, end_j = -1;
-    ll start_i = -1, start_j = -1;
-    if (findStartAndEnd(piece_vertex_list, origin_vertex_list, middle_i, middle_j, start_i, end_i, start_j, end_j)) return 1;
-
-    assert (piece->getSegmentsNumber(start_i, end_i) > 1);
-
-    if ( end_i > start_i ){
-        piece_vertex_list.erase(piece_vertex_list.begin() + start_i + 1, piece_vertex_list.begin() + end_i);
-    }
-    else{
-        piece_vertex_list.erase(piece_vertex_list.begin() + start_i + 1, piece_vertex_list.end());
-        piece_vertex_list.erase(piece_vertex_list.begin(), piece_vertex_list.begin() + end_i);
-    }
-
-    if ( start_j > end_j ){
-        origin_vertex_list.erase(origin_vertex_list.begin() + end_j + 1, origin_vertex_list.begin() + start_j);
-    }
-    else{
-        origin_vertex_list.erase(origin_vertex_list.begin() + end_j + 1, origin_vertex_list.end());
-        origin_vertex_list.erase(origin_vertex_list.begin(), origin_vertex_list.begin() + start_j);
-    }
-
-    origin->setVertexList(origin_vertex_list);
-    piece->setVertexList(piece_vertex_list);
-
+    end_j = j;
     return 0;
 }
 
