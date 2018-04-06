@@ -16,6 +16,7 @@ public:
 
     static Vertex *getCenter(vector<Vertex *> vector);
     static Plane_3 getPlane3WithPCA(std::vector<Vertex *> vector);
+    static bool checkDuplicate(vector<Vertex*> vertices);
 };
 
 

@@ -33,3 +33,15 @@ Plane_3 VertexListComputation::getPlane3WithPCA(vector<Vertex *> vertices) {
     linear_least_squares_fitting_3(points.begin(), points.end(), plane, CGAL::Dimension_tag<0>());
     return plane;
 }
+
+bool VertexListComputation::checkDuplicate(vector<Vertex *> vertices) {
+    vector<Vertex*> sorted_v_list(vertices);
+
+    sort(sorted_v_list.begin(), sorted_v_list.end(), VertexComputation::greater);
+    for (ull i = 0 ; i < sorted_v_list.size() - 1; i++){
+        if (sorted_v_list[i] == sorted_v_list[i+1]){
+            return true;
+        }
+    }
+    return false;
+}
