@@ -171,7 +171,13 @@ void SurfaceComputation::removeStraight(Surface*& pSurface){
 
 int SurfaceComputation::triangulate(Surface *&pSurface) {
     std::vector<Vertex*> vertexList = pSurface->getVerticesList();
-    if (vertexList.size() == 3) return 0;
+    pSurface->triangles.clear();
+
+    if (vertexList.size() == 3) {
+        Triangle* newTriangle = new Triangle(vertexList);
+        pSurface->triangles.push_back(newTriangle);
+        return 0;
+    }
 
     // convert 3D point to 2D
     Plane_3 planeRef = SurfaceComputation::getSimplePlane3WithNormal(pSurface);
@@ -224,11 +230,9 @@ int SurfaceComputation::triangulate(Surface *&pSurface) {
         }
     }
 
-    pSurface->triangles = triangles;
-    TMIC::connectOppositeHalfEdges(triangles);
-    TriangleMeshGraph* meshGraph = new TriangleMeshGraph(pSurface->triangles);
-    meshGraph->makeAdjacentGraph();
+    cout << vertexList.size() << " , " << triangles.size() << endl;
 
+    pSurface->triangles = triangles;
     return 0;
 }
 
