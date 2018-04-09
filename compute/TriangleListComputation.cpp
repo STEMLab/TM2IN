@@ -3,6 +3,7 @@
 //
 #include "TriangleListComputation.h"
 #include "features/Triangle.h"
+#include "features/HalfEdge.h"
 
 void TMIC::connectOppositeHalfEdges(std::vector <Triangle *>& triangleList) {
     for (int i = 0 ; i < triangleList.size() - 1 ; i++){
@@ -13,3 +14,5 @@ void TMIC::connectOppositeHalfEdges(std::vector <Triangle *>& triangleList) {
         }
     }
 }
+
+

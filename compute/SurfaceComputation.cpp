@@ -169,7 +169,7 @@ void SurfaceComputation::removeStraight(Surface*& pSurface){
 }
 
 
-int SurfaceComputation::triangulate(Surface *&pSurface) {
+int SurfaceComputation::triangulate(Surface *&pSurface, bool repeat) {
     std::vector<Vertex*> vertexList = pSurface->getVerticesList();
     pSurface->triangles.clear();
 
@@ -187,6 +187,10 @@ int SurfaceComputation::triangulate(Surface *&pSurface) {
     Polygon_2 polygon = PolygonComputation::makePolygon(point2dList);
     if (!polygon.is_simple())
     {
+        if (!repeat){
+            pSurface->updateNormal();
+            return triangulate(pSurface, true);
+        }
         cerr << "polygon is not simple" << endl;
         cout << pSurface->toJSONString() << endl;
         cout << polygon << endl;
@@ -229,8 +233,6 @@ int SurfaceComputation::triangulate(Surface *&pSurface) {
             triangles.push_back(new Triangle(localTemp));
         }
     }
-
-    cout << vertexList.size() << " , " << triangles.size() << endl;
 
     pSurface->triangles = triangles;
     return 0;
