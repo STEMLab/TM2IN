@@ -11,12 +11,19 @@
 #include <logic/check.hpp>
 #include <fileio/import/ThreeDSImporter.h>
 #include <compute/TriangleListComputation.h>
+#include "features/HalfEdge.h"
 
 void TriangleMesh::init() {
     // this->resolveWrongTriangle();
+    for (int i = 0 ; i < this->triangles.size() ; i++){
+        for (HalfEdge* he : this->triangles[i]->boundaryEdges){
+            assert(he->getOppositeEdge() == NULL);
+        }
+    }
     TMIC::connectOppositeHalfEdges(this->triangles);
     this->makeGraph();
 }
+
 
 void TriangleMesh::makeGraph(){
     this->graph = new TriangleMeshGraph(this->triangles);

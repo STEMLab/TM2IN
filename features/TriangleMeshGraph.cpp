@@ -4,6 +4,7 @@
 
 #include "features/TriangleMeshGraph.h"
 #include <iostream>
+#include <compute/SurfacePairComputation.h>
 
 using namespace std;
 
@@ -14,26 +15,27 @@ bool TriangleMeshGraph::isNeighbor(ull id1, ull id2){
     return false;
 }
 
-void TriangleMeshGraph::makeAdjacentGraph() {
-    vector<Triangle*>& tri_list = this->triangles;
-    this->sizeOfTriangles = tri_list.size();
-    adjList.assign(tri_list.size(), vector<ull>());
-    for (ull i = 0 ; i < tri_list.size() - 1 ; i++){
-        if (i % 10 == 0) printProcess(i, tri_list.size(), "make Graph");
-        for (ull j = i + 1 ; j < tri_list.size() ; j ++){
-            if (tri_list[i]->checkNeighbor(tri_list[j])){
-                if (!tri_list[i]->isOpposite(tri_list[j])){
+int TriangleMeshGraph::makeAdjacentGraph() {
+    vector<Triangle*>& triangleList = this->triangles;
+    this->sizeOfTriangles = triangleList.size();
+    adjList.assign(triangleList.size(), vector<ull>());
+    for (ull i = 0 ; i < triangleList.size() - 1 ; i++){
+        if (i % 10 == 0) printProcess(i, triangleList.size(), "make Graph");
+        for (ull j = i + 1 ; j < triangleList.size() ; j ++){
+            if (triangleList[i]->checkNeighbor(triangleList[j])){
+                if (!triangleList[i]->isOpposite(triangleList[j])){
                     adjList[i].push_back(j);
                     adjList[j].push_back(i);
                 }
                 else{
                     cerr << "Opposite Triangle" << endl;
-                    exit(-1);
+                    return -1;
                 }
             }
         }
     }
     cout << endl;
+    return 0;
 }
 
 bool TriangleMeshGraph::isClosedTriangleMesh(){

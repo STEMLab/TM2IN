@@ -8,11 +8,6 @@
 #include <fileio/import/ThreeDSImporter.h>
 #include <fileio/import/COLLADAImporter.h>
 
-#define __DEBUG__          0
-
-#define TRUE               0
-#define FALSE              1
-
 void createAndRemoveDir(const string &version, const string &resultPath, const string &fileName);
 map<string, string> getPaths(int type);
 
@@ -29,27 +24,28 @@ void test(){
 
     cout << CGAL::squared_distance(seg1, p0) << endl;
     cout << CGAL::do_intersect(seg1, seg2) << endl;
-
 }
 
 int main(int argc, const char * argv[]) {
     Checker::thresholdVertex = 0.0000001;
     Checker::squaredDistanceOfSamePoint2D = 0.000001;
-    Checker::degreeOfMerging = 1.0;
+    Checker::degreeOfMerging = 0.001;
     Checker::degreeOfStraight = 0.00001;
     Checker::num_of_straight = 0;
     Checker::num_of_invalid = 0;
 
+    int dataType;
     cout << "choose Data type to import" << endl;
     cout << "1. TVR\n2. 3DS\n3. COLLADA\n";
-    int dataType; cin >> dataType;
-
+    cin >> dataType;
     map<string, string> paths = getPaths(dataType);
 
-    cout << "write file name" << endl; string fileName; cin >> fileName;
+    string fileName;
+    cout << "write file name" << endl;
+    cin >> fileName;
     paths["filename"] = fileName;
 
-    string version = "0.3.8"; cout << version << endl;
+    string version = "0.3.8.1"; cout << version << endl;
     paths["version"] = version;
     paths["versionDir"] = paths["resultDir"] + paths["filename"] + "/" + paths["version"] + "/";
 
@@ -78,7 +74,7 @@ int main(int argc, const char * argv[]) {
 
     std::cout << "End!\n";
     std::cout << "straight vertex : " << Checker::num_of_straight <<endl;
-    std::cout << "unvaild Surface : " << Checker::num_of_invalid << endl;
+    std::cout << "invalid Surface : " << Checker::num_of_invalid << endl;
     return 0;
 }
 

@@ -21,7 +21,7 @@ public:
         this->triangles = p_triangles;
     }
 
-    void makeAdjacentGraph();
+    int makeAdjacentGraph();
     bool isClosedTriangleMesh();
     bool isNeighbor(ull id1, ull id2);
 

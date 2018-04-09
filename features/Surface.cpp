@@ -96,7 +96,6 @@ int Surface::getSegmentsNumber(ll si, ll ei) {
         cerr << "getSegmentsNumber Error" << endl;
         return -1;
     }
-
     if (ei >= si){
         return ei - si;
     }
@@ -107,16 +106,8 @@ int Surface::getSegmentsNumber(ll si, ll ei) {
 
 // TODO : move validator
 bool Surface::checkDuplicate(){
-    vector<Vertex*> sorted_v_list(this->getVerticesList());
-
-    sort(sorted_v_list.begin(), sorted_v_list.end(), VertexComputation::greater);
-    for (ull i = 0 ; i < sorted_v_list.size() - 1; i++){
-        if (sorted_v_list[i] == sorted_v_list[i+1]){
-            cout << "\nSame Vertex" << endl;
-            return true;
-        }
-    }
-    return false;
+    vector<Vertex*> vertexList = this->getVerticesList();
+    return VertexListComputation::checkDuplicate(vertexList);
 }
 
 string Surface::toJSONString(){
@@ -127,8 +118,8 @@ string Surface::toJSONString(){
     string ret;
     ret.append("{");
     ret.append(" \n \"area\" : " + to_string(area) );
-    ret.append(" \n, \"id\" : " + to_string(sf_id) );
-    ret.append(" \n, \"normal\" : [");
+    ret.append(" ,\n \"id\" : \"" + sf_id + "\"" );
+    ret.append(" ,\n \"normal\" : [");
     ret.append(to_string(this->normal.x()) + ", ");
     ret.append(to_string(this->normal.y()) + ", ");
     ret.append(to_string(this->normal.z()));
@@ -149,7 +140,7 @@ std::string Surface::toJSONWithTriangles() {
     string ret;
     ret += "{";
     ret.append(" \n \"area\" : " + to_string(area) );
-    ret.append(" \n, \"id\" : " + to_string(sf_id) );
+    ret.append(" \n, \"id\" : \"" + sf_id + "\"" );
     ret.append( "\n, \"triangles\" : [\n");
     for (int i = 0 ; i < (int)this->triangles.size() ; i++){
         ret += this->triangles[i]->toJSON(indent);
@@ -277,16 +268,10 @@ Plane_3 Surface::getPlaneWithLowest(){
 }
 
 vector<Vertex *> Surface::getVerticesList() {
-    // return this->v_list;
-    vector<Vertex*> vertices;
-    for (HalfEdge* he : this->boundaryEdges){
-        vertices.push_back(he->vertices[0]);
-    }
-    return vertices;
+    return HalfEdgeComputation::getFirstVertexList(this->boundaryEdges);
 }
 
 void Surface::setVertexList(std::vector<Vertex *> newVertices) {
-    //this->v_list = newVertices;
     cerr << "TODO" << endl;
 }
 
@@ -346,4 +331,8 @@ int Surface::indexBoundaryEdge(HalfEdge *pEdge) {
 
 void Surface::removeVertexByIndex(int id) {
     cerr << "TODO : remove Surface::removeVertexByIndex" << endl;
+}
+
+std::ostream &operator<<(std::ostream &ou, Surface *pSurface) {
+    ou << pSurface->toJSONString() << endl;
 }

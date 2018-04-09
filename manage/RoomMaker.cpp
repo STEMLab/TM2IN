@@ -1,7 +1,8 @@
-#include <fileio/JSONMaker.h>
-#include <fileio/export/MeshExporter.h>
 #include "manage/RoomMaker.h"
 
+#include "features/HalfEdge.h"
+#include "fileio/JSONMaker.h"
+#include "fileio/export/MeshExporter.h"
 
 int RoomMaker::importMesh() {
     string filePath = paths["resourceDir"] + paths["filename"] + "." + paths["filetype"];
@@ -31,7 +32,13 @@ int RoomMaker::convertSpaceToTriangleMesh(){
     for (int spaceID = 0 ; spaceID < this->spaceList.size() ; spaceID++){
         Space* space = this->spaceList[spaceID];
         vector<Triangle*> triangleList = space->getTriangleListOfAllSurfaces();
-
+        for (Triangle* triangle : triangleList){
+            triangle->sf_id = to_string(spaceID) + "_" + triangle->sf_id;
+            vector<HalfEdge*> edges = triangle->getBoundaryEdgesList();
+            for (HalfEdge* he : edges){
+                assert(he->getOppositeEdge() == NULL);
+            }
+        }
         TriangleMesh* mesh = new TriangleMesh();
         mesh->triangles = triangleList;
         mesh->vertices = space->vertices;

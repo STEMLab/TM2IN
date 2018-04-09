@@ -19,7 +19,6 @@ public:
     void makeAdjacentGraph(vector<Surface*>& surface_list);
 
     bool isClosedSurface();
-    void print_bfs();
     bool isNeighbor(ull id1, ull id2);
 };
 

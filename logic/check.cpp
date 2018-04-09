@@ -15,7 +15,7 @@ using namespace std;
 
 double Checker::thresholdVertex = 0.0;
 double Checker::squaredDistanceOfSamePoint2D = 0.0;
-double Checker::degreeOfMerging = 10.0;
+double Checker::degreeOfMerging = 1.0;
 double Checker::degreeOfStraight = 0.001;
 
 int Checker::num_of_invalid = 0;

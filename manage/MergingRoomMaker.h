@@ -34,6 +34,7 @@ private:
 
     int simplifyShareEdge();
 
+    void makeSurfaceGraph();
 };
 
 #endif // RectRoomMaker_H

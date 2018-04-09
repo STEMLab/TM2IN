@@ -1,8 +1,10 @@
+#define __DEBUG__
 #include "manage/MergingRoomMaker.h"
 #include <compute/SurfacesListComputation.h>
 #include <fileio/export/MeshExporter.h>
 #include "compute/SurfaceComputation.h"
 #include "cgal/SurfaceHoleCover.h"
+#include <ctime>
 
 using namespace std;
 
@@ -20,7 +22,6 @@ bool checkAnswer(char a, char b){
 
 int MergingRoomMaker::pre_process() {
     if (this->menifestTriangleMesh()) return -1;
-
     if (this->convertTriangleMeshToSpace()) return -1;
 
     return 0;
@@ -31,7 +32,11 @@ int MergingRoomMaker::constructSpace() {
 
     char doNotMerge, doCheckSelfIntersection;
     cout << "keep Triangle without merging? (y/n)" << endl;
-    cin >> doNotMerge;
+
+    // cin >> doNotMerge;
+    doNotMerge = 'n';
+    cout << doNotMerge << endl;
+
     if (checkAnswer(doNotMerge, 'y')){
         return 0;
     }
@@ -39,12 +44,13 @@ int MergingRoomMaker::constructSpace() {
 
     if (this->simplifyShareEdge()) return -1;
 
-    cout << "check Self Intersection? (y/n)" << endl;
+    makeSurfaceGraph();
+    cout << "\n\ncheck Self Intersection? (y/n)" << endl;
     cin >> doCheckSelfIntersection;
     if (checkAnswer(doCheckSelfIntersection, 'y'))
         if (this->checkSelfIntersection()) return -1;
 
-    cout << "re-triangulation" << endl;
+    cout << "\n\nre-triangulation" << endl;
     if (this->triangulation()) return -1;
 
     return 0;
@@ -52,15 +58,6 @@ int MergingRoomMaker::constructSpace() {
 
 
 int MergingRoomMaker::finish() {
-    /*
-    for (int i = 0 ; i < this->spaceList.size() ; i++){
-        cout << i << "th graph-------" << endl;
-        this->spaceList[i]->surfaceGraph = new SurfaceGraph();
-        this->spaceList[i]->surfaceGraph->makeAdjacentGraph(this->spaceList[i]->surfacesList);
-        this->spaceList[i]->surfaceGraph->print_bfs();
-    }
-    */
-
     this->exportSpace();
 
     char doConvertToMesh;
@@ -68,10 +65,16 @@ int MergingRoomMaker::finish() {
     cin >> doConvertToMesh;
     if (checkAnswer(doConvertToMesh, 'y')){
         if (this->convertSpaceToTriangleMesh()) return -1;
-        if (this->menifestTriangleMesh()) return -1;
+        this->spaceList.clear();
+        for (int i = 0 ; i < this->mesh_list.size() ; i++){
+            TriangleMesh *&triangleMesh = this->mesh_list[i];
+            triangleMesh->init();
+            cout << "\n\n" << i << "th mesh" << endl;
+            if (triangleMesh->checkClosedSurface())
+                cout << "this mesh is closed\n\n" << endl;
+        }
 
         char doExport3DS;
-
         cout <<"Export 3DS?" << endl; cin >>doExport3DS;
         if (checkAnswer(doExport3DS, 'y')){
             this->export3DS((paths["versionDir"] + paths["filename"] + ".3DS").c_str());
@@ -79,6 +82,22 @@ int MergingRoomMaker::finish() {
     }
 
     return 0;
+}
+
+
+void MergingRoomMaker::makeSurfaceGraph() {
+    for (int i = 0 ; i < spaceList.size() ; i++){
+        cout << "\n\n" << i << "th graph" << endl;
+        spaceList[i]->surfaceGraph = new SurfaceGraph();
+        spaceList[i]->surfaceGraph->makeAdjacentGraph(spaceList[i]->surfacesList);
+        if (spaceList[i]->surfaceGraph->isClosedSurface()){
+            cout << "this is closed" << endl;
+        }
+        else{
+            cout << "not closed" << endl;
+        }
+        cout << "------------\n" << endl;
+    }
 }
 
 int MergingRoomMaker::partitionTriangleMeshByComponent() {
@@ -98,12 +117,21 @@ int MergingRoomMaker::partitionTriangleMeshByComponent() {
 }
 
 int MergingRoomMaker::menifestTriangleMesh() {
+    clock_t begin = clock();
     for (int i = 0 ; i < this->mesh_list.size() ; i++){
         this->mesh_list[i]->init();
         if (!this->mesh_list[i]->checkClosedSurface()){
             cerr << i << " : it is not composed of closed surface"<< endl;
         }
     }
+    clock_t end = clock();
+
+    #ifdef __DEBUG__
+        cout << "make graph time : " << double(end - begin) / CLOCKS_PER_SEC << "s" << endl;
+    #else
+
+    #endif
+
     if (this->partitionTriangleMeshByComponent()) return -1;
 
     if (this->remainStructure()) return -1;
@@ -121,8 +149,11 @@ int MergingRoomMaker::remainStructure() {
 
 int MergingRoomMaker::mergeSurfaces() {
     cout << "Enter Start Degree of merging(Default : 1.0)" << endl;
+#ifdef __DEBUG__
+    this->startDegree = 0.001;
+#else
     cin >> this->startDegree;
-
+#endif
     for (ull it = 0 ; it < this->spaceList.size(); it++)
     {
         Space* space = this->spaceList[it];
@@ -176,7 +207,6 @@ int MergingRoomMaker::triangulation() {
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
         cout << "space : " << it << endl;
         Space *space = this->spaceList[it];
-        // Triangulation
         space->triangulateSurfaces();
     }
     return 0;
@@ -191,8 +221,6 @@ int MergingRoomMaker::checkSelfIntersection() {
 }
 
 int MergingRoomMaker::simplifyShareEdge() {
-    //construct Surface Graph
-
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
         Space *space = this->spaceList[it];
         cout << "simplify space " << space->name << endl;

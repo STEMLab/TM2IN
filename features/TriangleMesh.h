@@ -13,7 +13,6 @@ public:
     string name;
     vector<Triangle*> triangles;
     vector<Vertex*> vertices;
-    TriangleMeshGraph* graph;
 
     TriangleMesh(){}
 
@@ -28,6 +27,8 @@ public:
     void updateVertexByTriangleList();
     bool resolveWrongTriangle();
 private:
+    TriangleMeshGraph* graph;
+
     void makeGraph();
 };
 

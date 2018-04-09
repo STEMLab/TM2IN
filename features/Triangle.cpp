@@ -38,14 +38,13 @@ Vertex* Triangle::operator[](int idx){
 }
 
 bool Triangle::checkNeighbor(Triangle *&tri){
-    bool isAdjacent = false;
     for (int v1 = 0 ; v1 < 3 ; v1++){
         if (this->boundaryEdges[v1]->oppositeEdge != NULL && this->boundaryEdges[v1]->oppositeEdge->parent == tri){
-            assert(!isAdjacent);
-            isAdjacent = true;
+            // assert(!isAdjacent);
+            return true;
         }
     }
-    return isAdjacent;
+    return false;
 }
 
 bool Triangle::setNeighbor(Triangle*& tri){
@@ -53,8 +52,10 @@ bool Triangle::setNeighbor(Triangle*& tri){
     for (int v1 = 0 ; v1 < 3 ; v1++){
         for (int v2 = 0 ; v2 < 3 ;v2++){
             if (this->boundaryEdges[v1]->hasOppositeTwoVertex(tri->boundaryEdges[v2])){
-                assert(!isAdjacent);
+                // assert(!isAdjacent);
                 isAdjacent = true;
+                assert(this->boundaryEdges[v1]->getOppositeEdge() == NULL);
+                assert(tri->boundaryEdges[v2]->getOppositeEdge() == NULL);
                 this->boundaryEdges[v1]->setOppositeEdge(tri->boundaryEdges[v2]);
                 tri->boundaryEdges[v2]->setOppositeEdge(this->boundaryEdges[v1]);
             }

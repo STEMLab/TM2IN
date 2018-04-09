@@ -16,7 +16,7 @@ class Surface{
 private:
     Plane_3 planeRef;
 public:
-    ull sf_id;
+    std::string sf_id;
     // std::vector<Vertex*> v_list;
     std::vector<HalfEdge* > innerEdges;
     std::vector<HalfEdge* > boundaryEdges;
@@ -88,6 +88,8 @@ public:
     HalfEdge *boundary_edges(int i);
 
     int indexBoundaryEdge(HalfEdge *pEdge);
+
+    friend std::ostream& operator<<(std::ostream& ou, Surface* pSurface);
 };
 
 

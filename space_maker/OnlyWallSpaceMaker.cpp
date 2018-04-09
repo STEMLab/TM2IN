@@ -110,7 +110,7 @@ int OnlyWallSpaceMaker::removeSurfacesNotConnectedFC(vector<Surface*>& surfacesL
             i++;
         }
         else if ( surface_graph->isNeighbor(sf->sf_id, roof->sf_id) &&
-                  surface_graph->CanBeNeighbor(sf->sf_id, floor->sf_id)){
+                  surface_graph->canBeNeighbor(sf->sf_id, floor->sf_id)){
             i++;
         }
         else{
