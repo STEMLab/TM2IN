@@ -10,6 +10,7 @@
 #include <cmath>
 #include <compute/SurfaceComputation.h>
 #include "cgal/SurfaceIntersection.h"
+#include "HalfEdge.h"
 
 Space::Space(){
     generation = 0;
@@ -133,27 +134,18 @@ int Space::simplifySegment(){
         {
             int loop_count = 0;
             int j_sizeOfVertices = (int) this->surfacesList[j]->getVerticesSize();
-            int i_sizeOfVertices = (int) this->surfacesList[i]->getVerticesSize();
-            if (!SurfacePairComputation::CanBeNeighbor(this->surfacesList[i], this->surfacesList[j])) continue;
-            if (i_sizeOfVertices == 3) break;
-            if (j_sizeOfVertices == 3) continue;
-            assert (i_sizeOfVertices > 3 && j_sizeOfVertices > 3);
+            if (!CGALCalculation::isIntersect_BBOX(this->surfacesList[i], this->surfacesList[j])) continue;
             while (SurfacePairComputation::simplifyLineSegment(this->surfacesList[i], this->surfacesList[j]) == 0)
             {
                 if (!this->surfacesList[j]->isValid()){
+                    cout << this->surfacesList[j]->toJSONString() << endl;
                     delete this->surfacesList[j];
                     this->surfacesList.erase(this->surfacesList.begin() + j);
                     Checker::num_of_invalid += 1;
                     cout << "Erase invalid surface" << endl;
                     return simplifySegment();
                 }
-                if (!this->surfacesList[i]->isValid()){
-                    delete this->surfacesList[i];
-                    this->surfacesList.erase(this->surfacesList.begin() + i);
-                    Checker::num_of_invalid += 1;
-                    cout << "Erase invalid surface" << endl;
-                    return simplifySegment();
-                }
+                assert (this->surfacesList[i]->isValid());
 
                 loop_count++;
                 assert(loop_count <= j_sizeOfVertices);
@@ -162,8 +154,12 @@ int Space::simplifySegment(){
         }
     }
 
+    sizeOfSurfaces = this->surfacesList.size();
     for (ull i = 0 ; i < sizeOfSurfaces; i++){
         assert((int) this->surfacesList[i]->getVerticesSize() >= 3);
+        for (HalfEdge* he : this->surfacesList[i]->boundaryEdges){
+            assert(he->parent == this->surfacesList[i]);
+        }
     }
 
     return 0;
@@ -298,17 +294,6 @@ void Space::triangulateSurfaces() {
         else {
             sfID++;
         }
-
-        /*
-        // for testing. remain only wrong surface
-        if (SurfaceComputation::triangulate(pSurface)){
-            cerr << "Triangulation Error" << endl;
-            sfID++;
-        }
-        else {
-            this->surfacesList.erase(this->surfacesList.begin() + sfID);
-        }
-        */
     }
 }
 
@@ -332,6 +317,10 @@ vector<Triangle *> Space::getTriangleListOfAllSurfaces() {
     vector<Triangle *> triangles;
     for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
         Surface* pSurface = this->surfacesList[sfID];
+        int index = 0;
+        for (Triangle* triangle : pSurface->triangles){
+            triangle->sf_id = to_string(sfID) + "_" + to_string(index++);
+        }
         triangles.insert(triangles.end(),pSurface->triangles.begin(),pSurface->triangles.end());
     }
     return triangles;
