@@ -17,9 +17,9 @@ public:
     static Plane_3 getPlane3WithPCA(Surface *&pSurface);
     static Plane_3 getPlane3WithCenter(Surface *&pSurface);
     static Plane_3 getPlane3WithMBB(Surface *&pSurface);
-    static Plane_3 getSimplePlane3WithNormal(Surface *&pSurface);
+    static Plane_3 getSimplePlane3WithNormal(Vector_3 pNormal);
 
-    static int triangulate(Surface *&pSurface, bool repeat = false);
+    static int triangulate(Surface *&pSurface);
 
     static std::vector<Point_2> projectTo3DPlane(Surface *&pSurface, Plane_3 plane);
 

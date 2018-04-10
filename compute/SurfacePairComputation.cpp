@@ -2,8 +2,10 @@
 #include "VertexComputation.h"
 #include "HalfEdgeComputation.h"
 #include "VertexListComputation.h"
+#include "SurfaceComputation.h"
 #include <stdlib.h>
 #include <features/HalfEdge.h>
+#include <cgal/PolygonComputation.h>
 
 int SurfacePairComputation::combine(Surface* origin, Surface* piece, double degree) {
     // check Polygon is in near polygon or not
@@ -123,6 +125,7 @@ int SurfacePairComputation::simplifyLineSegment(Surface *origin, Surface *piece)
     ll firstVertex_piece = -1, firstVertex_origin = -1;
     if (findStartAndEnd(piece_vertex_list, origin_vertex_list, piece_middle, origin_middle, firstVertex_piece, lastVertex_piece, firstVertex_origin, lastVertex_origin)) return 1;
 
+    assert (origin->getSegmentsNumber(firstVertex_origin, lastVertex_origin) > 1);
     assert (piece->getSegmentsNumber(firstVertex_piece, lastVertex_piece) > 1);
     assert (piece->vertex(firstVertex_piece) == origin->vertex(lastVertex_origin));
     assert (piece->vertex(lastVertex_piece) == origin->vertex(firstVertex_origin));
@@ -151,15 +154,31 @@ int SurfacePairComputation::simplifyLineSegment(Surface *origin, Surface *piece)
     }
     newHalfEdgeList_piece.push_back(newEdge_piece);
 
+    // check polygon after simplification
+    Surface* pSurface = new Surface();
+    pSurface->setBoundaryEdgesList(newHalfEdgeList_piece);
+    Plane_3 planeRef = SurfaceComputation::getSimplePlane3WithNormal(piece->normal);
+    vector<Point_2> point2dList = SurfaceComputation::projectTo3DPlane(pSurface, planeRef);
+    Polygon_2 polygon = PolygonComputation::makePolygon(point2dList);
+    if (!polygon.is_simple() || polygon.orientation() == -1){
+        cerr << "cannot be simplified" << endl;
+        return 1;
+    }
+
+    origin->boundaryEdges.clear();
+    piece->boundaryEdges.clear();
+
     origin->setBoundaryEdgesList(newHalfEdgeList_origin);
     piece->setBoundaryEdgesList(newHalfEdgeList_piece);
 
+    /*
     //if piece become line.(only has two vertex)
     if (piece->getVerticesSize() < 3){
         assert(piece->getVerticesSize() == 2);
         newEdge_origin->setOppositeEdge(newHalfEdgeList_piece[0]->getOppositeEdge());
         newHalfEdgeList_piece[0]->getOppositeEdge()->setOppositeEdge(newEdge_origin);
     }
+    */
 
     return 0;
 }

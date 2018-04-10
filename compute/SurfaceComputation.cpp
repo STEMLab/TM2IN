@@ -9,7 +9,7 @@
 #include "HalfEdgeComputation.h"
 #include "cgal/PolygonComputation.h"
 #include "features/TriangleMeshGraph.h"
-#include "TriangleListComputation.h"
+#include "Connect_halfedges.h"
 
 using namespace std;
 
@@ -132,7 +132,7 @@ Plane_3 SurfaceComputation::getPlane3WithPCA(Surface *&pSurface) {
 std::vector<Point_2> SurfaceComputation::projectTo3DPlane(Surface *&pSurface, Plane_3 plane) {
     std::vector<Vertex*> vertexList = pSurface->getVerticesList();
     std::vector<Point_2> pointList;
-    for (int i = 0 ; i < vertexList.size() ; i++){
+    for (int i = 0 ; i < vertexList.size(); i++){
         Point_2 point2d = plane.to_2d(VertexComputation::getCGALPoint(vertexList[i]));
         pointList.push_back(point2d);
     }
@@ -169,32 +169,36 @@ void SurfaceComputation::removeStraight(Surface*& pSurface){
 }
 
 
-int SurfaceComputation::triangulate(Surface *&pSurface, bool repeat) {
+int SurfaceComputation::triangulate(Surface *&pSurface) {
     std::vector<Vertex*> vertexList = pSurface->getVerticesList();
-    pSurface->triangles.clear();
+    pSurface->updateNormal();
 
     if (vertexList.size() == 3) {
         Triangle* newTriangle = new Triangle(vertexList);
+        pSurface->triangles.clear();
         pSurface->triangles.push_back(newTriangle);
         return 0;
     }
 
     // convert 3D point to 2D
-    Plane_3 planeRef = SurfaceComputation::getSimplePlane3WithNormal(pSurface);
+    Plane_3 planeRef = SurfaceComputation::getSimplePlane3WithNormal(pSurface->normal);
     vector<Point_2> point2dList = projectTo3DPlane(pSurface, planeRef);
 
     // partition Surface to convex 2D polygons.
     Polygon_2 polygon = PolygonComputation::makePolygon(point2dList);
     if (!polygon.is_simple())
     {
-        if (!repeat){
-            pSurface->updateNormal();
-            return triangulate(pSurface, true);
-        }
         cerr << "polygon is not simple" << endl;
-        cout << pSurface->toJSONString() << endl;
-        cout << polygon << endl;
+        cerr << pSurface->toJSONString() << endl;
+        cerr << polygon << endl;
         return 0;
+    }
+    if (polygon.orientation() == -1){
+        cerr << polygon << endl;
+        cerr << polygon.orientation() << endl;
+        return 0;
+//        std::reverse(point2dList.begin(), point2dList.end());
+//        polygon = PolygonComputation::makePolygon(point2dList);
     }
     vector<Polygon_2> polygonList = PolygonComputation::convexPartition(polygon);
 
@@ -233,7 +237,7 @@ int SurfaceComputation::triangulate(Surface *&pSurface, bool repeat) {
             triangles.push_back(new Triangle(localTemp));
         }
     }
-
+    pSurface->triangles.clear();
     pSurface->triangles = triangles;
     return 0;
 }
@@ -262,8 +266,8 @@ std::vector<Segment_2> SurfaceComputation::makeSegment2List(Surface *&pSurface, 
     return segmentsList;
 }
 
-Plane_3 SurfaceComputation::getSimplePlane3WithNormal(Surface *&pSurface) {
-    int type = CGALCalculation::findNormalType6(pSurface->normal);
+Plane_3 SurfaceComputation::getSimplePlane3WithNormal(Vector_3 pNormal) {
+    int type = CGALCalculation::findNormalType6(pNormal);
     Vector_3 normal = CGALCalculation::normal_list6[type];
     Point_3 origin(0,0,0);
     Plane_3 plane3(origin, normal);

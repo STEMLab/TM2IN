@@ -1,7 +1,7 @@
 //
 // Created by dongmin on 18. 4. 4.
 //
-#include "TriangleListComputation.h"
+#include "Connect_halfedges.h"
 #include "features/Triangle.h"
 #include "features/HalfEdge.h"
 
