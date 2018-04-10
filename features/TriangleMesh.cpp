@@ -10,7 +10,7 @@
 #include <iostream>
 #include <logic/check.hpp>
 #include <fileio/import/ThreeDSImporter.h>
-#include <compute/TriangleListComputation.h>
+#include <compute/Connect_halfedges.h>
 #include "features/HalfEdge.h"
 
 void TriangleMesh::init() {
@@ -30,7 +30,7 @@ void TriangleMesh::makeGraph(){
     this->graph->makeAdjacentGraph();
 }
 
-bool TriangleMesh::checkClosedSurface() {
+bool TriangleMesh::checkClosed() {
     if (this->graph == NULL || this->graph->isEmpty()){
         cerr << "You didn't make graph." << endl;
         assert(false);
@@ -150,4 +150,12 @@ void TriangleMesh::updateVertexByTriangleList() {
         }
 
     }
+}
+
+bool TriangleMesh::isFurniture() {
+    vector<Triangle_3> cgal_triangles;
+    for (int i = 0 ; i < this->triangles.size() ; i++){
+        cgal_triangles.push_back()
+    }
+    return false;
 }

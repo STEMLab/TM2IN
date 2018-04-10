@@ -18,7 +18,7 @@ public:
 
     void init();
 
-    bool checkClosedSurface();
+    bool checkClosed();
 
     int partitionByComponent(vector<TriangleMesh *> &new_mesh_list);
 
@@ -26,6 +26,7 @@ public:
 
     void updateVertexByTriangleList();
     bool resolveWrongTriangle();
+    bool isFurniture();
 private:
     TriangleMeshGraph* graph;
 

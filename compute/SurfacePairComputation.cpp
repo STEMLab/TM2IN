@@ -191,7 +191,6 @@ int SurfacePairComputation::doShareEdge(Surface *&surface_i, Surface *&surface_j
             share_edge_count++;
         }
     }
-
     return share_edge_count;
 }
 
