@@ -29,7 +29,7 @@ void test(){
 int main(int argc, const char * argv[]) {
     Checker::thresholdVertex = 0.0000001;
     Checker::squaredDistanceOfSamePoint2D = 0.000001;
-    Checker::degreeOfMerging = 0.001;
+    Checker::degreeOfMerging = 10.0;
     Checker::degreeOfStraight = 0.00001;
     Checker::num_of_straight = 0;
     Checker::num_of_invalid = 0;
@@ -45,7 +45,7 @@ int main(int argc, const char * argv[]) {
     cin >> fileName;
     paths["filename"] = fileName;
 
-    string version = "0.3.8.1"; cout << version << endl;
+    string version = "0.3.9"; cout << version << endl;
     paths["version"] = version;
     paths["versionDir"] = paths["resultDir"] + paths["filename"] + "/" + paths["version"] + "/";
 
