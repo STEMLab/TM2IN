@@ -46,6 +46,9 @@ public:
     static bool isCollinear(Vertex *start_p, Vertex *check_p, Vertex *end_p);
 
     static int compare_vertex(Vertex* v1, Vertex* v2);
+
+    static int num_of_straight;
+    static int num_of_invalid;
 };
 
 #endif /* check_hpp */

@@ -1,5 +1,6 @@
 #include "features/SurfaceGraph.h"
 #include <iostream>
+#include <compute/SurfacePairComputation.h>
 
 bool SurfaceGraph::isNeighbor(ull id1, ull id2){
     for (ull i = 0 ; i < adjList[id1].size() ; i++){
@@ -13,54 +14,51 @@ void SurfaceGraph::makeAdjacentGraph(vector<Surface*>& surface_list){
     for (ull i = 0 ; i < surface_list.size() - 1 ; i++){
         Surface* surface_i = surface_list[i];
         for (ull j = i + 1 ; j < surface_list.size() ; j ++){
-            if (surface_i->isAdjacent(surface_list[j])){
-                adjList[surface_i->sf_id].push_back(surface_list[j]->sf_id);
-                adjList[surface_list[j]->sf_id].push_back(surface_i->sf_id);
+            Surface* surface_j = surface_list[j];
+            int shareEdgeCount = SurfacePairComputation::doShareEdge(surface_i, surface_j);
+            if (shareEdgeCount){
+                adjList[i].push_back(j);
+                adjList[j].push_back(i);
+            }
+
+            // test
+            if (shareEdgeCount > 1){
+                cerr << "They have two share?" << endl;
             }
         }
     }
 }
 
 
-bool SurfaceGraph::isClosedTriangleMesh(){
-    for (ull i = 0; i < adjList.size() ; i++){
-        if (adjList[i].size() != 3){
-            return false;
-        }
-    }
-    return true;
-}
+bool SurfaceGraph::isClosedSurface(){
+    vector<bool> checked(this->adjList.size(), false);
 
-void SurfaceGraph::print_bfs(){
-    vector<bool> checked(this->size, false);
+    queue<int> wait_queue;
+    wait_queue.push(0);
+    checked[0] = true;
 
-    for (unsigned int i = 0 ; i < this->size ; i ++){
-        if (checked[i]) continue;
-        queue<int> wait_queue;
-        wait_queue.push(i);
-        checked[i] = true;
+    int surfaceCount = 0;
 
-        int level = 0;
-        cout << i << endl;
+    while (wait_queue.size() > 0){
+        int current = wait_queue.front();
+        wait_queue.pop();
 
-        while (wait_queue.size() > 0){
-            int current = wait_queue.front();
-            wait_queue.pop();
+        surfaceCount += 1;
 
-            level += 1;
-
-            for (unsigned int nb = 0 ; nb < adjList[current].size() ; nb++){
-                ull next_surface = adjList[current][nb];
-                if (checked[next_surface]) continue;
-                else{
-                    checked[next_surface] = true;
-                    cout << next_surface << " ";
-                    wait_queue.push(next_surface);
-                }
+        for (unsigned int nb = 0 ; nb < adjList[current].size() ; nb++){
+            ull next_surface = adjList[current][nb];
+            if (checked[next_surface]) continue;
+            else{
+                checked[next_surface] = true;
+                wait_queue.push(next_surface);
             }
         }
-
-        cout << "------------\n" << endl;
     }
+
+    if (surfaceCount != this->adjList.size()){
+        cout << surfaceCount << endl;
+        return false;
+    } else
+        return true;
 
 }

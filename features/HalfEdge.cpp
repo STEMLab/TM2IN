@@ -12,12 +12,12 @@ bool HalfEdge::isSame(HalfEdge* he){
     return false;
 }
 
-Triangle *HalfEdge::getParentTriangle() const {
-    return parentTriangle;
+Surface *HalfEdge::getParent() const {
+    return parent;
 }
 
-void HalfEdge::setParentTriangle(Triangle *parentTriangle) {
-    HalfEdge::parentTriangle = parentTriangle;
+void HalfEdge::setParent(Surface *pSurface) {
+    HalfEdge::parent = pSurface;
 }
 
 HalfEdge *HalfEdge::getOppositeEdge() const {
@@ -28,7 +28,7 @@ void HalfEdge::setOppositeEdge(HalfEdge *oppositeEdge) {
     HalfEdge::oppositeEdge = oppositeEdge;
 }
 
-bool HalfEdge::isOpposite(HalfEdge * he) {
+bool HalfEdge::hasOppositeTwoVertex(HalfEdge *he) {
     if (this->vertices[0] == he->vertices[1]){
         if (this->vertices[1] == he->vertices[0])
             return true;

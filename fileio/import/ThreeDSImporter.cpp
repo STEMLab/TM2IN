@@ -29,7 +29,7 @@ long ThreeDSImporter::filelength(int f)
 	return(buf.st_size);
 }
 
-TriangleMesh* ThreeDSImporter::import(const char *p_filename)
+vector<TriangleMesh*> ThreeDSImporter::import(const char *p_filename)
 {
 	int i; //Index variable
 	FILE *l_file; //File pointer
@@ -43,14 +43,13 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
 
 	unsigned short l_face_flags; //Flag that stores some face information
 
-    if ( (l_file=fopen (p_filename, "rb") ) == NULL) return NULL;
+    assert( (l_file=fopen (p_filename, "rb") ) != NULL);
 
-    TriangleMesh* triangleMesh = new TriangleMesh();
-    vector<Triangle*> triangles;
+    vector<TriangleMesh*> meshList;
+    TriangleMesh* currentMesh = new TriangleMesh();
 
     string group_name;
     int f_count =0, v_count = 0;
-    int groupVertexInit = 0;
 
     while (ftell (l_file) < this->filelength (fileno (l_file))) //Loop to scan the whole file
 	{
@@ -65,7 +64,7 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
 			// Chunk ID: 4d4d
 			// Chunk Lenght: 0 + sub chunks
 			//-------------------------------------------
-			case 0x4d4d:
+			case MAIN3DS:
                 cout << "0x4D4D : " << l_chunk_length << endl;
 			break;
 
@@ -74,7 +73,7 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
 			// Chunk ID: 3d3d (hex)
 			// Chunk Lenght: 0 + sub chunks
 			//-------------------------------------------
-			case 0x3d3d:
+			case EDIT3DS:
                 cout << "\t0x3D3D : " << l_chunk_length << endl;
 			break;
 
@@ -83,13 +82,12 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
 			// Chunk ID: 4000 (hex)
 			// Chunk Lenght: len(object name) + sub chunks
 			//-------------------------------------------
-			case 0x4000:
+			case EDIT_OBJECT:
                 cout << "\t\t0x4000 : " << l_chunk_length << endl;
                 if (f_count != 0){
-                    triangleMesh->triangles.push_back(make_pair(group_name, triangles));
-                    triangles.clear();
+                    meshList.push_back(currentMesh);
+                    currentMesh = new TriangleMesh();
                     f_count = 0;
-                    groupVertexInit = v_count;
                 }
 				i=0;
 				do
@@ -97,8 +95,8 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
 					fread (&l_char, 1, 1, l_file);
                     name[i] = l_char;
                     i++;
-                }while(l_char != '\0' && i<20);
-                group_name = name;
+                }while(l_char != '\0');
+                currentMesh->name = name;
 
                 if (strstr(name, "FC")){
                     cout << "skip furniture" << endl;
@@ -112,7 +110,8 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
 			// Chunk ID: 4100 (hex)
 			// Chunk Lenght: 0 + sub chunks
 			//-------------------------------------------
-			case 0x4100:
+
+            case OBJ_TRIMESH:
                 cout << "\t\t\t0x4100 : " << l_chunk_length << endl;
                 break;
 
@@ -123,7 +122,8 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
 			//             + 3 x float (vertices coordinates) x (number of vertices)
 			//             + sub chunks
 			//-------------------------------------------
-			case 0x4110:
+			case TRI_VERTEXL:
+                cout << "\t\t\t\t0x4110 : " << l_chunk_length << endl;
                 fread (&l_qty, sizeof (unsigned short), 1, l_file);
                 printf("Number of vertices: %d\n",l_qty);
 
@@ -138,7 +138,7 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
                     fread (&temp, sizeof(float), 1, l_file);
                     vt->setZ(temp);
                     vt->index = i + v_count;
-                    triangleMesh->vertices.push_back(vt);
+                    currentMesh->vertices.push_back(vt);
                 }
                 v_count += l_qty;
                 break;
@@ -151,7 +151,8 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
 			//             + sub chunks
 			//-------------------------------------------
 
-			case 0x4120:
+			case TRI_FACEL1:
+                cout << "\t\t\t\t0x4120 : " << l_chunk_length << endl;
                 fread (&l_qty, sizeof (unsigned short), 1, l_file);
                 printf("Number of triangles: %d\n",l_qty);
                 f_count = l_qty;
@@ -162,31 +163,17 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
                     fread (&b, sizeof (unsigned short), 1, l_file);
                     fread (&c, sizeof (unsigned short), 1, l_file);
                     fread (&l_face_flags, sizeof (unsigned short), 1, l_file);
-                    Vertex* va = triangleMesh->vertices[a + groupVertexInit];
-                    Vertex* vb = triangleMesh->vertices[b + groupVertexInit];
-                    Vertex* vc = triangleMesh->vertices[c + groupVertexInit];
+                    Vertex* va = currentMesh->vertices[a];
+                    Vertex* vb = currentMesh->vertices[b];
+                    Vertex* vc = currentMesh->vertices[c];
                     Triangle* tri = new Triangle(va, vb, vc);
-                    triangles.push_back(tri);
+                    currentMesh->triangles.push_back(tri);
                 }
                 break;
-
-			//------------- TRI_MAPPINGCOORS ------------
-			// Description: Vertices list
-			// Chunk ID: 4140 (hex)
-			// Chunk Lenght: 1 x unsigned short (number of mapping points)
-			//             + 2 x float (mapping coordinates) x (number of mapping points)
-			//             + sub chunks
-			//-------------------------------------------
-			case 0x4140:
-                fread (&l_qty, sizeof (unsigned short), 1, l_file);
-                cout << "mappingcoords : " << l_qty << endl;
-                for (i=0; i<l_qty; i++)
-                {
-                    float temp3;
-                    fread (&temp3, sizeof (float), 1, l_file);
-                    fread (&temp3, sizeof (float), 1, l_file);
-                }
+                /*
+            case KEYF3DS:
                 break;
+                 */
 
 			//----------- Skip unknow chunks ------------
 			//We need to skip all the chunks that currently we don't use
@@ -194,14 +181,13 @@ TriangleMesh* ThreeDSImporter::import(const char *p_filename)
 			//to the same level next chunk
 			//-------------------------------------------
 			default:
-                cout << "\tNo id" << endl;
+                printf("skip.. 0x%X : %d\n", l_chunk_id, l_chunk_length);
                 fseek(l_file, l_chunk_length-6, SEEK_CUR);
         }
 	}
     if (f_count != 0){
-        triangleMesh->triangles.push_back(make_pair(group_name, triangles));
-        triangles.clear();
+        meshList.push_back(currentMesh);
     }
 	fclose (l_file); // Closes the file stream
-    return triangleMesh;
+    return meshList;
 }

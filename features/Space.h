@@ -24,7 +24,8 @@ public:
     virtual ~Space();
 
     std::vector<Surface*> surfacesList;
-    vector<Vertex*> *p_vertexList;
+    vector<Vertex *> vertices;
+    SurfaceGraph* surfaceGraph;
 
     double min_coords[3];
     double max_coords[3];
@@ -41,24 +42,12 @@ public:
 
     int combineSurface(double degree);
     int simplifySegment();
-    int translateSpaceToOrigin();
     int checkSurfaceValid();
     int updateNormal();
-
-    int snapSurface(double);
-    void rotateSpaceByFloorTo00();
-
-    int makeSurfacesPlanar();
 
     void sortSurfacesByArea();
 
     void tagID();
-
-    void putVerticesAndUpdateIndex(vector<Vertex *> &vector);
-
-    void resolveIntersectionINTRASurface();
-
-    void clearTrianglesListInSurfaces();
 
     void triangulateSurfaces();
 
@@ -67,10 +56,21 @@ public:
     vector<Triangle *> getTriangleListOfAllSurfaces();
 
     int removeStraight();
+
+
+    int translateSpaceToOrigin();
+    int snapSurface(double);
+    void rotateSpaceByFloorTo00();
+    void resolveIntersectionINTRASurface();
+    void clearTrianglesListInSurfaces();
+    int makeSurfacesPlanar();
+
+
 protected:
     Surface* attachSurfaces(Surface* cp, ull start, bool* checked, ll& count, double degree);
     void updateMBB();
     void freeSurfaces();
+
 
 
 };

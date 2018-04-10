@@ -3,31 +3,23 @@
 
 Triangle::Triangle(Vertex* pa, Vertex *pb, Vertex* pc)
 {
-    edges.push_back(new HalfEdge(pa, pb, this));
-    edges.push_back(new HalfEdge(pb, pc, this));
-    edges.push_back(new HalfEdge(pc, pa, this));
+    boundaryEdges.push_back(new HalfEdge(pa, pb, this));
+    boundaryEdges.push_back(new HalfEdge(pb, pc, this));
+    boundaryEdges.push_back(new HalfEdge(pc, pa, this));
     this->area = sqrt(CGALCalculation::getSquaredArea(pa, pb, pc));
     if (this->area != 0.0)
         this->normal = CGALCalculation::getUnitNormal(pa, pb, pc) * AREA_CONST * this->area;
-}
-
-Vector_3 Triangle::getNormal()
-{
-    return this->normal;
-}
-
-double Triangle::getArea(){
-    return this->area;
+    this->updateMBB();
 }
 
 int Triangle::findShareSameHalfEdge(Triangle *pTriangle){
     int result = -1;
     for (int i = 0 ; i < 3 ; i++){
         for (int j = 0 ; j < 3 ; j++) {
-            if (this->edges[i]->isSame(pTriangle->edges[j])){
+            if (this->boundaryEdges[i]->isSame(pTriangle->boundaryEdges[j])){
                 if (result == -1) result = i;
                 else {
-                    std::cerr << "already share same edges" << std::endl;
+                    std::cerr << "already share same boundaryEdges" << std::endl;
                     exit(-1);
                 }
             }
@@ -38,22 +30,34 @@ int Triangle::findShareSameHalfEdge(Triangle *pTriangle){
 
 
 Vertex* Triangle::operator[](int idx){
-    if (idx < 3 && idx >= 0) return (*edges[idx])[0];
+    if (idx < 3 && idx >= 0) return (*boundaryEdges[idx])[0];
     else{
-        std::cerr << "Triangle only has three edge" << std::endl;
+        std::cerr << "Triangle only has three boundaryEdge" << std::endl;
         exit(-1);
     }
 }
 
-bool Triangle::checkAndSetAdjacent(Triangle *tri){
-    bool isAdjacent;
+bool Triangle::checkNeighbor(Triangle *&tri){
+    for (int v1 = 0 ; v1 < 3 ; v1++){
+        if (this->boundaryEdges[v1]->oppositeEdge != NULL && this->boundaryEdges[v1]->oppositeEdge->parent == tri){
+            // assert(!isAdjacent);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Triangle::setNeighbor(Triangle*& tri){
+    bool isAdjacent = false;
     for (int v1 = 0 ; v1 < 3 ; v1++){
         for (int v2 = 0 ; v2 < 3 ;v2++){
-            if (this->edges[v1]->isOpposite(tri->edges[v2])){
-                assert(!isAdjacent);
+            if (this->boundaryEdges[v1]->hasOppositeTwoVertex(tri->boundaryEdges[v2])){
+                // assert(!isAdjacent);
                 isAdjacent = true;
-                this->edges[v1]->setOppositeEdge(tri->edges[v2]);
-                tri->edges[v2]->setOppositeEdge(this->edges[v1]);
+                assert(this->boundaryEdges[v1]->getOppositeEdge() == NULL);
+                assert(tri->boundaryEdges[v2]->getOppositeEdge() == NULL);
+                this->boundaryEdges[v1]->setOppositeEdge(tri->boundaryEdges[v2]);
+                tri->boundaryEdges[v2]->setOppositeEdge(this->boundaryEdges[v1]);
             }
         }
     }
@@ -61,30 +65,26 @@ bool Triangle::checkAndSetAdjacent(Triangle *tri){
 }
 
 bool Triangle::isOpposite(Triangle* tri){
-    int i = 0;
-    for (int j = 0 ; j < 3 ; j++){
-        if (this->vertex(i) == tri->vertex(j)){
-            while (this->vertex(i) == tri->vertex(j)){
-                i++; j--;
-                if (j < 0) j = 2;
-                if (i == 3) return true;
-                if (this->vertex(i) != tri->vertex(j)){
-                    return false;
-                }
-
-            }
+    int num_of_opposite = 0;
+    for (int i = 0 ; i < 3 ; i++){
+        if (this->boundary_edges(i)->getOppositeEdge() != NULL && this->boundary_edges(i)->oppositeEdge->parent == tri){
+            num_of_opposite++;
+        }
+        if (num_of_opposite == 2){
+            std::cerr << "isOpposite worognonrownr" << std::endl;
+            exit(-1);
         }
     }
-
-    return false;
+    if (num_of_opposite <= 1) return false;
+    else return true;
 
 }
 
 Vertex *Triangle::vertex(int idx) {
-    return this->edges[idx]->vertices[0];
+    return this->boundaryEdges[idx]->vertices[0];
 }
 
-std::string Triangle::toJSON(std::string &indent) {
+std::string Triangle::toJSON(const std::string &indent) {
     std::string ret;
     ret += indent + "{\n";
 
@@ -93,6 +93,12 @@ std::string Triangle::toJSON(std::string &indent) {
     Vector_3 normal = getNormal();
     ret += indent + std::to_string(normal.x()) + ", " + std::to_string(normal.y()) + ", " + std::to_string(normal.z());
     ret += indent + "],\n";
+
+    //area
+    ret += indent + "\"area\" : ";
+    double area = getArea();
+    ret += indent + std::to_string(area);
+    ret += "\n";
 
     //coordinates
     ret += indent + "\"coord\" : [\n";

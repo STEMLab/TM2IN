@@ -106,7 +106,7 @@ int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
                     int pointJ = pj + j == segmentList.size() ? 0 : pj + j;
 
                     if (pi != 2 && pj != 2){
-                        if (pSurface->getVertex(pointI) != pSurface->getVertex(pointJ)){
+                        if (pSurface->vertex(pointI) != pSurface->vertex(pointJ)){
                             pSurface->setVertex(pointI, vt);
                             pSurface->setVertex(pointJ, vt);
                         }
@@ -186,14 +186,14 @@ int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
                     bool sourceVertexOfIntersectionPointExist = (sourceJ != 2 && sourceI != 2);
                     bool targetVertexOfIntersectionPointExist = (targetJ != 2 && targetI != 2);
                     if (sourceVertexOfIntersectionPointExist){
-                        if (pSurface->getVertex(indexSourceI) != pSurface->getVertex(indexSourceJ)){
-                            pSurface->setVertex(indexSourceI, pSurface->getVertex(indexSourceJ));
+                        if (pSurface->vertex(indexSourceI) != pSurface->vertex(indexSourceJ)){
+                            pSurface->setVertex(indexSourceI, pSurface->vertex(indexSourceJ));
                         }
                     }
 
                     if (targetVertexOfIntersectionPointExist){
-                        if (pSurface->getVertex(indexTargetI) != pSurface->getVertex(indexTargetJ)){
-                            pSurface->setVertex(indexTargetI, pSurface->getVertex(indexTargetJ));
+                        if (pSurface->vertex(indexTargetI) != pSurface->vertex(indexTargetJ)){
+                            pSurface->setVertex(indexTargetI, pSurface->vertex(indexTargetJ));
                         }
                     }
 
@@ -206,14 +206,14 @@ int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
                     // j
                     if (targetJ == 2 || sourceJ == 2){
                         if (targetJ == 2 && sourceJ == 2){
-                            pSurface->insertVertex(j + 1, pSurface->getVertex(indexSourceI));
-                            pSurface->insertVertex(j + 1, pSurface->getVertex(indexTargetI));
+                            pSurface->insertVertex(j + 1, pSurface->vertex(indexSourceI));
+                            pSurface->insertVertex(j + 1, pSurface->vertex(indexTargetI));
                         }
                         else if (targetJ == 2){
-                            pSurface->insertVertex(j + 1, pSurface->getVertex(indexTargetI));
+                            pSurface->insertVertex(j + 1, pSurface->vertex(indexTargetI));
                         }
                         else if (sourceJ == 2){
-                            pSurface->insertVertex(j + 1, pSurface->getVertex(indexSourceI));
+                            pSurface->insertVertex(j + 1, pSurface->vertex(indexSourceI));
                         }
                         return 0;
                     }
@@ -221,14 +221,14 @@ int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
                     // i
                     if (targetI == 2 || sourceI == 2){
                         if (targetI == 2 && sourceI == 2){
-                            pSurface->insertVertex(i + 1, pSurface->getVertex(indexTargetJ));
-                            pSurface->insertVertex(i+1, pSurface->getVertex(indexSourceJ));
+                            pSurface->insertVertex(i + 1, pSurface->vertex(indexTargetJ));
+                            pSurface->insertVertex(i+1, pSurface->vertex(indexSourceJ));
                         }
                         else if (targetI == 2){
-                            pSurface->insertVertex(i + 1, pSurface->getVertex(indexTargetJ));
+                            pSurface->insertVertex(i + 1, pSurface->vertex(indexTargetJ));
                         }
                         else if (sourceI == 2){
-                            pSurface->insertVertex(i + 1, pSurface->getVertex(indexSourceJ));
+                            pSurface->insertVertex(i + 1, pSurface->vertex(indexSourceJ));
                         }
                         return 0;
                     }

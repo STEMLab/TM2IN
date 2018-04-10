@@ -8,32 +8,30 @@
 #include "features/Triangle.h"
 
 class HalfEdge {
+private :
+
 public:
     std::vector<Vertex*> vertices;
-    Triangle* parentTriangle = NULL;
+    Surface* parent = NULL;
     HalfEdge* oppositeEdge = NULL;
 
     HalfEdge(){}
-    HalfEdge(Vertex* pa, Vertex* pb){
+    HalfEdge(Vertex* pa, Vertex* pb, Surface* pSurface){
         vertices.push_back(pa);
         vertices.push_back(pb);
-    }
-    HalfEdge(Vertex* pa, Vertex* pb, Triangle* pTriangle){
-        vertices.push_back(pa);
-        vertices.push_back(pb);
-        parentTriangle = pTriangle;
+        parent = pSurface;
     }
 
-    Triangle *getParentTriangle() const;
+    Surface * getParent() const;
 
-    void setParentTriangle(Triangle *parentTriangle);
+    void setParent(Surface *pSurface);
 
     HalfEdge *getOppositeEdge() const;
 
     void setOppositeEdge(HalfEdge *oppositeEdge);
 
     bool isSame(HalfEdge*);
-    bool isOpposite(HalfEdge*);
+    bool hasOppositeTwoVertex(HalfEdge *);
 
     Vertex* operator[](int idx){
         if (idx == 0 || idx == 1) return vertices[idx];

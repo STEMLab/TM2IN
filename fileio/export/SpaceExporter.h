@@ -7,7 +7,7 @@
 #ifndef TRIANGLEMESHTOCLEARSOLID_EXPORTER_H
 #define TRIANGLEMESHTOCLEARSOLID_EXPORTER_H
 
-class Exporter{
+class SpaceExporter{
 public:
     virtual int exportSpace(vector<Space *> spaceList, const char *filePath) =0;
 };

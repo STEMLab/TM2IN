@@ -16,26 +16,27 @@ TVRImporter::~TVRImporter()
     //dtor
 }
 
-TriangleMesh* TVRImporter::import(const char* f_path){
+vector<TriangleMesh*> TVRImporter::import(const char* f_path){
     ifstream fin;
     fin.open(f_path);
 
-    if (!fin) return NULL;//error
+    assert(fin);
 
     string inputstr;
     getline(fin, inputstr);
     if (inputstr.find("TVR0") == string::npos){
         cout << "different version : " <<  inputstr << endl;
-        return NULL;
+        return vector<TriangleMesh*>();
     }
 
     string group_name;
     int v_count = 0;
     int f_count = 0;
 
-    TriangleMesh* tm = new TriangleMesh();
-    vector<Triangle*> triangles;
-    vector<Vertex*> sorted_vertex;
+    vector<TriangleMesh*> meshList;
+    TriangleMesh* currentMesh = new TriangleMesh();
+
+    vector<Vertex*> vertices;
 
     while(!fin.eof()){
         getline(fin, inputstr);
@@ -45,13 +46,8 @@ TriangleMesh* TVRImporter::import(const char* f_path){
                 break;
             }
             case 'v':{
-                Vertex vt;
-                this->makeVertex(v_count, inputstr, vt);
-
-                Vertex* pt_v = new Vertex(vt);
-                // Vertex* pt_v = this->findSameVertex(sorted_vertex, check, vt);
-                // pt_v->index = v_count;
-                tm->vertices.push_back(pt_v);
+                Vertex* pt_v = this->makeVertex(v_count, inputstr);
+                vertices.push_back(pt_v);
 
                 v_count++;
                 if (v_count % 5000 == 0) cout << "Loaded vertices : " << v_count << endl;
@@ -60,30 +56,32 @@ TriangleMesh* TVRImporter::import(const char* f_path){
             }
             case 'g':{
                 if (f_count != 0){
-                    tm->triangles.push_back(make_pair(group_name, triangles));
-                    triangles.clear();
+                    currentMesh->vertices = vertices;
+                    meshList.push_back(currentMesh);
+                    currentMesh = new TriangleMesh();
                     f_count = 0;
                 }
                 group_name = this->getGroupName(inputstr);
                 if (group_name.find('\r') != string::npos) group_name.erase(group_name.find('\r'));
-
+                currentMesh->name = group_name;
                 break;
             }
             case 'f':{
-                assert(tm->vertices.size() > 0);
+                assert(vertices.size() > 0);
 
                 f_count++;
                 if (f_count % 5000 == 0) cout << "Loaded faces : " << f_count << endl;
 
-                Triangle* tri = this->makeTriangle(inputstr, tm->vertices);
-                triangles.push_back(tri);
+                Triangle* tri = this->makeTriangle(inputstr, vertices);
+                currentMesh->triangles.push_back(tri);
 
                 break;
             }
         }
     }
-    tm->triangles.push_back(make_pair(group_name, triangles));
-    return tm;
+    currentMesh->vertices = vertices;
+    meshList.push_back(currentMesh);
+    return meshList;
 }
 
 /*
@@ -133,7 +131,7 @@ Triangle* TVRImporter::makeTriangle(string& input, vector<Vertex*>& vertex){
 
 
 
-void TVRImporter::makeVertex(int id, string& input, Vertex& vt){
+Vertex* TVRImporter::makeVertex(int id, string &input){
     std::stringstream ss;
     ss.str(input);
 
@@ -141,12 +139,11 @@ void TVRImporter::makeVertex(int id, string& input, Vertex& vt){
     getline(ss, line, '\t');
     std::vector<std::string> strings = split(line, ' ');
 
-    //vt.x = stod(x[1]);
-    vt.index = id;
-    vt.setX(atof(strings[1].c_str()));
-    vt.setY(stod(strings[2]));
-    vt.setZ(stod(strings[3]));
+    Vertex* vt = new Vertex(stod(strings[1]), stod(strings[2]), stod(strings[3]));
+    vt->index = id;
     strings.clear();
+
+    return vt;
 }
 
 int TVRImporter::extractMINtvr(string filename){

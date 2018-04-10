@@ -7,21 +7,20 @@
 #include <climits>
 #include <cassert>
 
-#include "features/Triangle.h"
 #include "logic/check.hpp"
 #include "util.h"
 #include "predefine.h"
-
 #include "cgal/Types.h"
 
 class Surface{
 private:
     Plane_3 planeRef;
 public:
-    ull sf_id;
-    std::vector<Vertex*> v_list;
-    std::vector<std::vector<Vertex*> > inner_ring;
+    std::string sf_id;
+    // std::vector<Vertex*> v_list;
+    std::vector<HalfEdge* > innerEdges;
     std::vector<HalfEdge* > boundaryEdges;
+
     Vector_3 normal = CGAL::NULL_VECTOR;
 
     std::vector<Triangle*> triangles;
@@ -30,32 +29,27 @@ public:
     double max_coords[3];
     double area = 0.0;
 
-    Surface(){
-    }
+    Surface(){}
     Surface(Triangle& pl);
     Surface(Triangle* pl) : Surface(*pl) {}
     Surface(Surface* cp);
     Surface(std::vector<Vertex*>& pVertices);
 
-    ull getVerticesSize(){ return v_list.size(); }
-
-    void setZ(double value);
+    ull getVerticesSize(){ return boundaryEdges.size(); }
 
     void setVertex(int index, Vertex* vt);
-    Vertex* getVertex(int index){
-        return v_list[index];
-    }
-
+    virtual Vertex* vertex(int index);
     void insertVertex(int index, Vertex* vt);
+
+    Vector_3 getNormal();
+    double getArea();
 
     std::string toJSONString();
     std::string toJSONWithTriangles();
 
     bool isInMBB(Vertex* vt);
-    bool isAdjacent(Surface* sf);
     bool isOpposite(Surface* sf);
 
-    void setMBB(Triangle* pl);
     void setMBB(Surface* pl);
     void updateMBB();
     int getSegmentsNumber(ll start_index, ll end_index);
@@ -76,9 +70,7 @@ public:
 
     std::vector<Vertex *> getVerticesList();
 
-    Vertex *vertex(ull i);
-
-    void setVertices(std::vector<Vertex *> vector);
+    void setVertexList(std::vector<Vertex *> vector);
 
     std::vector<HalfEdge *> getBoundaryEdgesList();
     void setBoundaryEdgesList(std::vector<HalfEdge*> edges);
@@ -93,6 +85,11 @@ public:
     }
     void setPlaneRef(Plane_3 plane);
 
+    HalfEdge *boundary_edges(int i);
+
+    int indexBoundaryEdge(HalfEdge *pEdge);
+
+    friend std::ostream& operator<<(std::ostream& ou, Surface* pSurface);
 };
 
 

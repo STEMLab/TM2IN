@@ -5,11 +5,11 @@
 #ifndef TRIANGLEMESHTOCLEARSOLID_JSONSURFACEEXPORTER_H
 #define TRIANGLEMESHTOCLEARSOLID_JSONSURFACEEXPORTER_H
 
-#include "Exporter.h"
+#include "SpaceExporter.h"
 
 using namespace std;
 
-class JSONSurfaceExporter : public Exporter{
+class JSONSurfaceExporter : public SpaceExporter{
 public:
     int exportSpace(vector<Space *> spaceList, const char *filePath);
 };

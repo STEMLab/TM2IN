@@ -10,6 +10,7 @@
 #include <cmath>
 #include <compute/SurfaceComputation.h>
 #include "cgal/SurfaceIntersection.h"
+#include "HalfEdge.h"
 
 Space::Space(){
     generation = 0;
@@ -81,6 +82,7 @@ Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count,
         cerr << cp->toJSONString() << endl;
         exit(-1);
     }
+
     for (ull id = start ; id < this->surfacesList.size() ; id++)
     {
         if (!checked[id])
@@ -88,12 +90,12 @@ Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count,
             Surface* sf = this->surfacesList[id];
             if (SurfacePairComputation::combine(cp, sf, degree) == 0)
             {
-                // printProcess(id, this->surfacesList.size(), "attachSurfaces");
                 cout << ".";
                 cp->triangles.insert(cp->triangles.end(), sf->triangles.begin(), sf->triangles.end());
                 checked[id] = true;
                 count++;
             }
+
         }
     }
     return cp;
@@ -132,25 +134,18 @@ int Space::simplifySegment(){
         {
             int loop_count = 0;
             int j_sizeOfVertices = (int) this->surfacesList[j]->getVerticesSize();
-            int i_sizeOfVertices = (int) this->surfacesList[i]->getVerticesSize();
-            if (!SurfacePairComputation::isNeighbor(this->surfacesList[i], this->surfacesList[j])) continue;
-            if (i_sizeOfVertices == 3) break;
-            if (j_sizeOfVertices == 3) continue;
-            assert (i_sizeOfVertices > 3 && j_sizeOfVertices > 3);
+            if (!CGALCalculation::isIntersect_BBOX(this->surfacesList[i], this->surfacesList[j])) continue;
             while (SurfacePairComputation::simplifyLineSegment(this->surfacesList[i], this->surfacesList[j]) == 0)
             {
                 if (!this->surfacesList[j]->isValid()){
+                    cout << this->surfacesList[j]->toJSONString() << endl;
                     delete this->surfacesList[j];
                     this->surfacesList.erase(this->surfacesList.begin() + j);
-                    cout << "Erase unvalid surface" << endl;
+                    Checker::num_of_invalid += 1;
+                    cout << "Erase invalid surface" << endl;
                     return simplifySegment();
                 }
-                if (!this->surfacesList[i]->isValid()){
-                    delete this->surfacesList[i];
-                    this->surfacesList.erase(this->surfacesList.begin() + i);
-                    cout << "Erase unvalid surface" << endl;
-                    return simplifySegment();
-                }
+                assert (this->surfacesList[i]->isValid());
 
                 loop_count++;
                 assert(loop_count <= j_sizeOfVertices);
@@ -158,6 +153,15 @@ int Space::simplifySegment(){
             }
         }
     }
+
+    sizeOfSurfaces = this->surfacesList.size();
+    for (ull i = 0 ; i < sizeOfSurfaces; i++){
+        assert((int) this->surfacesList[i]->getVerticesSize() >= 3);
+        for (HalfEdge* he : this->surfacesList[i]->boundaryEdges){
+            assert(he->parent == this->surfacesList[i]);
+        }
+    }
+
     return 0;
 }
 
@@ -166,22 +170,12 @@ int Space::checkSurfaceValid() {
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
     {
         Surface* surface = this->surfacesList[i];
-        /*
-        SurfaceComputation::removeConsecutiveDuplicationIndex(surface);
-        SurfaceComputation::removeConsecutiveDuplication(surface);
-        SurfaceComputation::removeStraight(surface);
-        */
         surface->updateMBB();
 
         if (surface->isValid()){
             i++;
         }
         else{
-            /*
-            delete surface;
-            this->surfacesList.erase(this->surfacesList.begin() + i);
-            cout << "Erase unvalid surface" << endl;
-            */
             return -1;
         }
     }
@@ -200,7 +194,8 @@ int Space::removeStraight(){
         else{
             delete surface;
             this->surfacesList.erase(this->surfacesList.begin() + i);
-            cout << "Erase unvalid surface" << endl;
+            Checker::num_of_invalid += 1;
+            cout << "Erase invalid surface" << endl;
         }
     }
 }
@@ -222,8 +217,8 @@ int Space::translateSpaceToOrigin(){
         this->surfacesList[i]->translate(diff);
     }
 
-    for (ull i = 0 ; i < this->p_vertexList->size() ; i++){
-        this->p_vertexList->at(i)->translate(diff);
+    for (ull i = 0 ; i < this->vertices.size() ; i++){
+        this->vertices[i]->translate(diff);
     }
 
     return 0;
@@ -247,6 +242,91 @@ void Space::freeSurfaces(){
 }
 
 
+int Space::checkDuplicateVertexInSurfaces() {
+    for (unsigned int s_i = 0 ; s_i < this->surfacesList.size() ;s_i++){
+        if (surfacesList[s_i]->checkDuplicate()){
+            cout << "it has duplicate Vertex" << endl;
+            return -1;
+        }
+    }
+    return 0;
+}
+
+int Space::makeSurfacesPlanar() {
+    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
+        SurfaceComputation::flatten(this->surfacesList[i]);
+    }
+    return 0;
+}
+
+void Space::sortSurfacesByArea() {
+    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
+}
+
+void Space::tagID() {
+    SurfacesListComputation::tagID(this->surfacesList);
+}
+
+void Space::resolveIntersectionINTRASurface() {
+    int newSurfaceCount = 0;
+    for (int sfID = 0 ; sfID < this->surfacesList.size(); ) {
+        vector<Surface*> newSurfaces = SurfaceIntersection::resolveSelfIntersection(this->surfacesList[sfID]);
+    }
+    cout << "Intersect Surfaces : " << this->surfacesList.size() << endl;
+}
+
+
+void Space::clearTrianglesListInSurfaces() {
+    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
+        this->surfacesList[sfID]->clearTriangleList();
+    }
+}
+
+void Space::triangulateSurfaces() {
+    this->hasTriangulation = true;
+    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); ) {
+        Surface* pSurface = this->surfacesList[sfID];
+
+        if (SurfaceComputation::triangulate(pSurface)){
+            cerr << "Triangulation Error" << endl;
+            this->surfacesList.erase(this->surfacesList.begin() + sfID);
+        }
+        else {
+            sfID++;
+        }
+    }
+}
+
+int Space::checkSelfIntersection() {
+    int count = 0;
+    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
+        Surface* pSurface = this->surfacesList[sfID];
+        if (SurfaceIntersection::checkSelfIntersection(pSurface)){
+            cerr << "Self Intersection in Surface " << sfID << endl;
+            cerr << pSurface->toJSONString() << endl;
+            count++;
+        }
+        else {
+        }
+    }
+    cout << this->name << " Self Intersection Count : " << count << endl;
+    return 0;
+}
+
+vector<Triangle *> Space::getTriangleListOfAllSurfaces() {
+    vector<Triangle *> triangles;
+    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
+        Surface* pSurface = this->surfacesList[sfID];
+        int index = 0;
+        for (Triangle* triangle : pSurface->triangles){
+            triangle->sf_id = to_string(sfID) + "_" + to_string(index++);
+        }
+        triangles.insert(triangles.end(),pSurface->triangles.begin(),pSurface->triangles.end());
+    }
+    return triangles;
+}
+
+/*
 
 void Space::rotateSpaceByFloorTo00(){
     cout << " ---------- rotate -------------" << endl;
@@ -287,106 +367,4 @@ void Space::rotateSpaceByFloorTo00(){
         this->p_vertexList->at(i)->setCoords(p.x(), p.y(), p.z());
     }
 }
-
-int Space::checkDuplicateVertexInSurfaces() {
-    for (unsigned int s_i = 0 ; s_i < this->surfacesList.size() ;s_i++){
-        if (surfacesList[s_i]->checkDuplicate()){
-            cout << "it has duplicate Vertex" << endl;
-            return -1;
-        }
-    }
-    return 0;
-}
-
-int Space::makeSurfacesPlanar() {
-    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
-        SurfaceComputation::flatten(this->surfacesList[i]);
-    }
-    return 0;
-}
-
-void Space::sortSurfacesByArea() {
-    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
-}
-
-void Space::tagID() {
-    SurfacesListComputation::tagID(this->surfacesList);
-}
-
-void Space::putVerticesAndUpdateIndex(vector<Vertex *> &vertices) {
-    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++){
-        vector<Vertex*> vt = this->surfacesList[sfID]->getVerticesList();
-        for (unsigned int i = 0 ; i < vt.size() ; i++){
-            vt[i]->index = vertices.size();
-            vertices.push_back(vt[i]);
-        }
-    }
-}
-
-void Space::resolveIntersectionINTRASurface() {
-    int newSurfaceCount = 0;
-    for (int sfID = 0 ; sfID < this->surfacesList.size(); ) {
-        vector<Surface*> newSurfaces = SurfaceIntersection::resolveSelfIntersection(this->surfacesList[sfID]);
-    }
-    cout << "Intersect Surfaces : " << this->surfacesList.size() << endl;
-}
-
-
-void Space::clearTrianglesListInSurfaces() {
-    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
-        this->surfacesList[sfID]->clearTriangleList();
-    }
-}
-
-void Space::triangulateSurfaces() {
-    this->hasTriangulation = true;
-    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); ) {
-        Surface* pSurface = this->surfacesList[sfID];
-
-        if (SurfaceComputation::triangulate(pSurface)){
-            cerr << "Triangulation Error" << endl;
-            this->surfacesList.erase(this->surfacesList.begin() + sfID);
-        }
-        else {
-            sfID++;
-        }
-
-
-        /*
-        // for testing. remain only wrong surface
-        if (SurfaceComputation::triangulate(pSurface)){
-            cerr << "Triangulation Error" << endl;
-            sfID++;
-        }
-        else {
-            this->surfacesList.erase(this->surfacesList.begin() + sfID);
-        }
-        */
-    }
-}
-
-int Space::checkSelfIntersection() {
-    int count = 0;
-    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
-        Surface* pSurface = this->surfacesList[sfID];
-        if (SurfaceIntersection::checkSelfIntersection(pSurface)){
-            cerr << "Self Intersection in Surface " << sfID << endl;
-            cerr << pSurface->toJSONString() << endl;
-            count++;
-        }
-        else {
-        }
-    }
-    cout << this->name << " Self Intersection Count : " << count << endl;
-    return 0;
-}
-
-vector<Triangle *> Space::getTriangleListOfAllSurfaces() {
-    vector<Triangle *> triangles;
-    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
-        Surface* pSurface = this->surfacesList[sfID];
-        triangles.insert(triangles.end(),pSurface->triangles.begin(),pSurface->triangles.end());
-    }
-    return triangles;
-}
-
+*/

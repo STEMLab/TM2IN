@@ -12,12 +12,12 @@ class TVRImporter : public Importer
         TVRImporter();
         virtual ~TVRImporter();
 
-        TriangleMesh* import(const char*);
+        std::vector<TriangleMesh*> import(const char*);
         static int extractMINtvr(string filename);
     protected:
         Triangle* makeTriangle(string& input, vector<Vertex*>& vertex);
         string getGroupName(string& input);
-        void makeVertex(int id, string& input, Vertex& vt);
+        Vertex * makeVertex(int id, string &input);
         // Vertex* findSameVertex(vector<Vertex*>& vertices, Checker* check, Vertex& vt);
     private:
 };

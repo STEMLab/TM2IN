@@ -9,22 +9,27 @@
 using namespace std;
 
 class TriangleMesh{
-private:
 public:
-    vector<pair<string, vector<Triangle*>>> triangles;
+    string name;
+    vector<Triangle*> triangles;
     vector<Vertex*> vertices;
-    vector<TriangleMeshGraph*> graphs;
 
     TriangleMesh(){}
 
-    void makeGraph();
-    void exportTVR(const char *);
-    void export3DS(const char* filePath);
+    void init();
+
     bool checkClosedSurface();
 
-    int groupByClosedSurface();
+    int partitionByComponent(vector<TriangleMesh *> &new_mesh_list);
 
+    void clear();
+
+    void updateVertexByTriangleList();
     bool resolveWrongTriangle();
+private:
+    TriangleMeshGraph* graph;
+
+    void makeGraph();
 };
 
 #endif // TRIANGLEMESH_H_INCLUDED

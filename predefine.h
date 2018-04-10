@@ -9,10 +9,9 @@
 #include <cassert>
 
 class Vertex;
-class Surface;
 class SurfaceGraph;
+class Surface;
 class Space;
-class OBJCollection;
 class Segment;
 class SurfacesListComputation;
 class TriangleMesh;

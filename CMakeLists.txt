@@ -21,6 +21,10 @@ find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 # INCLUDE_DIRECTORIES ( /usr/local/include/eigen3 )
 
 add_executable(TriangleMeshToClearSolid
+        rapidxml/rapidxml.hpp
+        rapidxml/rapidxml_iterators.hpp
+        rapidxml/rapidxml_print.hpp
+        rapidxml/rapidxml_utils.hpp
         features/Space.cpp
         features/Space.h
         features/Surface.cpp
@@ -79,10 +83,10 @@ add_executable(TriangleMeshToClearSolid
         cgal/PolygonComputation.h
         cgal/SurfaceIntersection.cpp
         cgal/SurfaceIntersection.h
-        fileio/export/Exporter.h
+        fileio/export/SpaceExporter.h
         fileio/export/JSONSurfaceExporter.cpp
         fileio/export/JSONSurfaceExporter.h
-        )
+        fileio/import/COLLADAImporter.cpp fileio/import/COLLADAImporter.h fileio/export/MeshExporter.cpp fileio/export/MeshExporter.h compute/TriangleListComputation.h compute/TriangleListComputation.cpp)
 
 
 TARGET_LINK_LIBRARIES( TriangleMeshToClearSolid LINK_PUBLIC ${Boost_LIBRARIES} Eigen3::Eigen)

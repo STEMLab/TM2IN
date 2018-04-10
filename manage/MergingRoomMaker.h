@@ -17,29 +17,24 @@ public:
     virtual int pre_process();
     virtual int constructSpace();
     virtual int finish();
-    virtual int rotateSurfaces();
 protected:
 
 
 private:
     double startDegree = 1.0;
-
-    int checkClosedSurface();
-
     int processGenerations(Space *space, double &degree);
     int mergeSurfaces();
-
-    int updateVertexList();
-
     int triangulation();
-
     int checkSelfIntersection();
 
+    //Triangle Mesh
+    int menifestTriangleMesh();
     int remainStructure();
-
-    bool resolveWrongTriangle();
+    int partitionTriangleMeshByComponent();
 
     int simplifyShareEdge();
+
+    void makeSurfaceGraph();
 };
 
 #endif // RectRoomMaker_H

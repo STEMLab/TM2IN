@@ -59,6 +59,7 @@ public:
 
     std::string toJSON();
 
+    void setIndex(unsigned long i);
 };
 
 /** < for Searching upper_bound and lower_bound */

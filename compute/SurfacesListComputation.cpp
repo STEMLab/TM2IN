@@ -11,7 +11,7 @@ using namespace std;
 void SurfacesListComputation::tagID(vector<Surface*>& surfacesList){
     for (ull i = 0 ; i < (ull)surfacesList.size() ; i++)
     {
-        surfacesList[i]->sf_id = i;
+        surfacesList[i]->sf_id = to_string(i);
     }
 }
 
