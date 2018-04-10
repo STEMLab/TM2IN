@@ -35,6 +35,10 @@ private:
     int simplifyShareEdge();
 
     void makeSurfaceGraph();
+
+    void tagID();
+
+    int handleOpenTriangleMesh();
 };
 
 #endif // RectRoomMaker_H

@@ -33,7 +33,6 @@ int RoomMaker::convertSpaceToTriangleMesh(){
         Space* space = this->spaceList[spaceID];
         vector<Triangle*> triangleList = space->getTriangleListOfAllSurfaces();
         for (Triangle* triangle : triangleList){
-            triangle->sf_id = to_string(spaceID) + "_" + triangle->sf_id;
             vector<HalfEdge*> edges = triangle->getBoundaryEdgesList();
             for (HalfEdge* he : edges){
                 assert(he->getOppositeEdge() == NULL);
