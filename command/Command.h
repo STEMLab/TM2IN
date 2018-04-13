@@ -7,7 +7,7 @@
 #include "fileio/import/Importer.h"
 #include "util.h"
 
-class RoomMaker
+class Command
 {
 public:
     Importer* di;
@@ -18,8 +18,8 @@ public:
     GenerationWriter* generation_writer;
     map<string, string> paths;
 
-    RoomMaker(){};
-    virtual ~RoomMaker(){};
+    Command(){};
+    virtual ~Command(){};
 
     int importMesh();
     int convertTriangleMeshToSpace();

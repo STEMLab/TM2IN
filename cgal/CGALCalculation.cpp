@@ -23,6 +23,7 @@ double CGALCalculation::getAngle(Vector_3& nv1, Vector_3& nv2){
     else if (cos < -0.99999) cos = -1;
     double angle = acos(cos) * 180.0/PI;
 
+    assert(angle == angle); //check NAN
     return angle;
 }
 

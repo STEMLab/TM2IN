@@ -58,10 +58,10 @@ add_executable(TriangleMeshToClearSolid
         compute/SurfacePairComputation.h
         compute/SurfacesListComputation.cpp
         compute/SurfacesListComputation.h
-        manage/MergingRoomMaker.cpp
-        manage/MergingRoomMaker.h
-        manage/RoomMaker.cpp
-        manage/RoomMaker.h
+        command/Merge_Command.cpp
+        command/Merge_Command.h
+        command/Command.cpp
+        command/Command.h
         space_maker/OnlyWallSpaceMaker.cpp
         space_maker/OnlyWallSpaceMaker.h
         predefine.h

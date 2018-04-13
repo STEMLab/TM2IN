@@ -4,7 +4,7 @@
 #include <boost/filesystem.hpp>
 #include <fileio/export/JSONSurfaceExporter.h>
 #include "fileio/import/TVRImporter.h"
-#include <manage/MergingRoomMaker.h>
+#include <command/Merge_Command.h>
 #include <fileio/import/ThreeDSImporter.h>
 #include <fileio/import/COLLADAImporter.h>
 
@@ -49,7 +49,7 @@ int main(int argc, const char * argv[]) {
     paths["version"] = version;
     paths["versionDir"] = paths["resultDir"] + paths["filename"] + "/" + paths["version"] + "/";
 
-    RoomMaker* manager = new MergingRoomMaker();
+    Command* manager = new Merge_Command();
     if (dataType == 1)  manager->setImporter(new TVRImporter());
     else if (dataType == 2) manager->setImporter(new ThreeDSImporter());
     else if (dataType == 3) manager->setImporter(new COLLADAImporter());
