@@ -391,7 +391,7 @@ void Space::rotateSpaceByFloorTo00(){
                             1);
 
     for (ull i = 0 ; i < this->p_vertexList->size() ; i++){
-        Point_3 p = VertexComputation::getCGALPoint(this->p_vertexList->at(i));
+        Point_3 p = CGAL_User::getCGALPoint(this->p_vertexList->at(i));
         p = p.transform(rotateZ);
         this->p_vertexList->at(i)->setCoords(p.x(), p.y(), p.z());
     }

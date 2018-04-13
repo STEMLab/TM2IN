@@ -12,6 +12,6 @@
 #include "predefine.h"
 
 
-namespace TMIC {
+namespace CGAL_User {
     void connectOppositeHalfEdges(std::vector<Triangle*>& triangleList);
 }

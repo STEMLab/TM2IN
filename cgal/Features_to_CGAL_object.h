@@ -13,7 +13,7 @@
 #include "features/Triangle.h"
 
 
-namespace TMIC {
+namespace CGAL_User {
     Point_3 getCGALPoint(Vertex* vt);
     Triangle_3 getCGALTriangle(Triangle*& pTriangle);
 }

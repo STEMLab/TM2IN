@@ -3,6 +3,7 @@
 //
 
 #include <cgal/SurfaceIntersection.h>
+#include <cgal/Features_to_CGAL_object.h>
 #include "SurfaceComputation.h"
 #include "VertexComputation.h"
 #include "compute/VertexListComputation.h"
@@ -55,7 +56,7 @@ void SurfaceComputation::flatten(Surface *&sf) {
     vector<Vertex*> newVertices;
     for (ull index = 0 ; index < sf->getVerticesSize() ; index++ )
     {
-        Point_3 point = VertexComputation::getCGALPoint(sf->vertex(index));
+        Point_3 point = CGAL_User::getCGALPoint(sf->vertex(index));
         Point_3 projected = plane.projection(point);
 
         Vertex* v = new Vertex(projected.x(), projected.y(), projected.z());
@@ -112,7 +113,7 @@ Plane_3 SurfaceComputation::getPlane3WithMBB(Surface *&pSurface){
 
 Plane_3 SurfaceComputation::getPlane3WithCenter(Surface *&pSurface){
     Vertex* centerV = VertexListComputation::getCenter(pSurface->getVerticesList());
-    Point_3 centerPoint = VertexComputation::getCGALPoint(centerV);
+    Point_3 centerPoint = CGAL_User::getCGALPoint(centerV);
     Plane_3 plane(centerPoint, pSurface->normal);
     return plane;
 }
@@ -133,7 +134,7 @@ std::vector<Point_2> SurfaceComputation::projectTo3DPlane(Surface *&pSurface, Pl
     std::vector<Vertex*> vertexList = pSurface->getVerticesList();
     std::vector<Point_2> pointList;
     for (int i = 0 ; i < vertexList.size(); i++){
-        Point_2 point2d = plane.to_2d(VertexComputation::getCGALPoint(vertexList[i]));
+        Point_2 point2d = plane.to_2d(CGAL_User::getCGALPoint(vertexList[i]));
         pointList.push_back(point2d);
     }
     return pointList;
