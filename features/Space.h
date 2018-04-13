@@ -12,7 +12,7 @@
 #include "features/SurfaceGraph.h"
 #include "features/Triangle.h"
 #include "features/Surface.h"
-#include "compute/SurfacePairComputation.h"
+#include "compute/Surface_pair_computation.h"
 
 using namespace std;
 

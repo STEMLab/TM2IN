@@ -9,26 +9,17 @@
 #include "util.h"
 
 using namespace std;
-class SurfacePairComputation{
-private:
+namespace TMIC {
     static int findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj, ll middle_i, ll middle_j, ll& start_i, ll& end_i, ll& start_j, ll& end_j);
-    static vector<Vertex*> simplifySegment(vector<Vertex*>& origin, ll start, ll end);
-
-    // intersect
-
-public:
-    static int combine(Surface* cp1, Surface* cp2, double degree);
     static bool findShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj, ll& middle_i, ll& middle_j);
-    static int simplifyLineSegment(Surface *origin, Surface *);
-
+    static bool isNeighbor(Surface *origin, Surface *piece);
     static int doShareEdge(Surface *&vi, Surface *&vj);
 
-    static bool isNeighbor(Surface *origin, Surface *piece);
-
     static vector<int> listShareEdgesInPiece(Surface *origin, Surface *piece);
+    static vector<int> listShareEdgesInOrigin(Surface *origin, Surface *piece, vector<int> vector1);
 
-    static vector<int> listShareEdgesInOrigin(Surface *origin, Surface *edges, vector<int> vector1);
-
+    static int combine(Surface* cp1, Surface* cp2, double degree);
+    static int simplifyLineSegment(Surface *origin, Surface *piece);
 };
 
 #endif // CleanPolygonMaker_H_INCLUDED

@@ -13,19 +13,6 @@ map<string, string> getPaths(int type);
 
 using namespace std;
 
-void test(){
-    Point_3 p51(-373.2655, 360.9103, 49.3925);
-    Point_3 p52(-372.7594, 373.1839, 25.1797);
-    Point_3 p0(-373.2519, 361.2404, 48.7411);
-    Point_3 p1(-374.2917, 359.6632, 42.686);
-
-    Segment_3 seg1(p51 ,p52);
-    Segment_3 seg2(p0, p1);
-
-    cout << CGAL::squared_distance(seg1, p0) << endl;
-    cout << CGAL::do_intersect(seg1, seg2) << endl;
-}
-
 int main(int argc, const char * argv[]) {
     Checker::thresholdVertex = 0.0000001;
     Checker::squaredDistanceOfSamePoint2D = 0.000001;
@@ -45,7 +32,7 @@ int main(int argc, const char * argv[]) {
     cin >> fileName;
     paths["filename"] = fileName;
 
-    string version = "0.3.9"; cout << version << endl;
+    string version = "0.4.0"; cout << version << endl;
     paths["version"] = version;
     paths["versionDir"] = paths["resultDir"] + paths["filename"] + "/" + paths["version"] + "/";
 

@@ -23,7 +23,7 @@ void TriangleMesh::init() {
             assert(he->getOppositeEdge() == NULL);
         }
     }
-    CGAL_User::connectOppositeHalfEdges(this->triangles);
+    TMIC::connectOppositeHalfEdges(this->triangles);
     this->makeGraph();
 }
 

@@ -54,8 +54,8 @@ add_executable(TriangleMeshToClearSolid
         cgal/CGALCalculation.h
         logic/check.cpp
         logic/check.hpp
-        compute/SurfacePairComputation.cpp
-        compute/SurfacePairComputation.h
+        compute/Surface_pair_computation.cpp
+        compute/Surface_pair_computation.h
         compute/SurfacesListComputation.cpp
         compute/SurfacesListComputation.h
         command/Merge_Command.cpp

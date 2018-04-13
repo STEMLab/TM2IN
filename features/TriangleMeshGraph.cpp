@@ -4,7 +4,7 @@
 
 #include "features/TriangleMeshGraph.h"
 #include <iostream>
-#include <compute/SurfacePairComputation.h>
+#include <compute/Surface_pair_computation.h>
 
 using namespace std;
 

@@ -5,7 +5,7 @@
 #include "features/Triangle.h"
 #include "features/HalfEdge.h"
 
-void CGAL_User::connectOppositeHalfEdges(std::vector <Triangle *>& triangleList) {
+void TMIC::connectOppositeHalfEdges(std::vector <Triangle *>& triangleList) {
     for (int i = 0 ; i < triangleList.size() - 1 ; i++){
         if (i % 10 == 0) printProcess(i, triangleList.size(), "connect Edges");
         for (int j = i + 1; j < triangleList.size() ; j++){

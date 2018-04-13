@@ -1,6 +1,6 @@
 #include "features/SurfaceGraph.h"
 #include <iostream>
-#include <compute/SurfacePairComputation.h>
+#include <compute/Surface_pair_computation.h>
 
 bool SurfaceGraph::isNeighbor(ull id1, ull id2){
     for (ull i = 0 ; i < adjList[id1].size() ; i++){

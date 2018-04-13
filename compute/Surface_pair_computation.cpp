@@ -1,4 +1,4 @@
-#include "SurfacePairComputation.h"
+#include "Surface_pair_computation.h"
 #include "VertexComputation.h"
 #include "HalfEdgeComputation.h"
 #include "VertexListComputation.h"
@@ -7,7 +7,7 @@
 #include <features/HalfEdge.h>
 #include <cgal/PolygonComputation.h>
 
-int SurfacePairComputation::combine(Surface* origin, Surface* piece, double degree) {
+int TMIC::combine(Surface* origin, Surface* piece, double degree) {
     // check Polygon is in near polygon or not
     if (!CGALCalculation::isIntersect_BBOX(origin, piece)) return 1;
 
@@ -91,7 +91,7 @@ int SurfacePairComputation::combine(Surface* origin, Surface* piece, double degr
 }
 
 
-int SurfacePairComputation::simplifyLineSegment(Surface *origin, Surface *piece) {
+int TMIC::simplifyLineSegment(Surface *origin, Surface *piece) {
     ll piece_middle = -1, origin_middle = -1;
     ll piece_size = piece->getVerticesSize();
     ll origin_size = origin->getVerticesSize();
@@ -183,7 +183,7 @@ int SurfacePairComputation::simplifyLineSegment(Surface *origin, Surface *piece)
     return 0;
 }
 
-int SurfacePairComputation::doShareEdge(Surface *&surface_i, Surface *&surface_j){
+int TMIC::doShareEdge(Surface *&surface_i, Surface *&surface_j){
     vector<HalfEdge*> iEdgeList = surface_i->getBoundaryEdgesList();
     int share_edge_count = 0;
     for (HalfEdge* edge : iEdgeList){
@@ -195,7 +195,7 @@ int SurfacePairComputation::doShareEdge(Surface *&surface_i, Surface *&surface_j
 }
 
 
-bool SurfacePairComputation::findShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj, ll& middle_i, ll& middle_j){
+bool TMIC::findShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj, ll& middle_i, ll& middle_j){
     ll piece_size = vi.size();
     ll origin_size = vj.size();
 
@@ -216,7 +216,7 @@ bool SurfacePairComputation::findShareVertex(vector<Vertex*>& vi, vector<Vertex*
     return false;
 }
 
-int SurfacePairComputation::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj, ll middle_i, ll middle_j, ll& start_i, ll& end_i, ll& start_j, ll& end_j){
+int TMIC::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj, ll middle_i, ll middle_j, ll& start_i, ll& end_i, ll& start_j, ll& end_j){
     ll piece_size = (ll)vi.size();
     ll origin_size = (ll)vj.size();
 
@@ -264,14 +264,14 @@ int SurfacePairComputation::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>
 }
 
 
-bool SurfacePairComputation::isNeighbor(Surface *origin, Surface *piece) {
+bool TMIC::isNeighbor(Surface *origin, Surface *piece) {
     for (HalfEdge* he : origin->getBoundaryEdgesList()){
         if (he->oppositeEdge != NULL && he->oppositeEdge->parent == piece) return true;
     }
     return false;
 }
 
-vector<int> SurfacePairComputation::listShareEdgesInPiece(Surface *origin, Surface *piece) {
+vector<int> TMIC::listShareEdgesInPiece(Surface *origin, Surface *piece) {
     vector<int> share_edges;
     int i = 0;
     for (HalfEdge* he : piece->getBoundaryEdgesList()){
@@ -307,7 +307,7 @@ vector<int> SurfacePairComputation::listShareEdgesInPiece(Surface *origin, Surfa
     }
 }
 
-vector<int> SurfacePairComputation::listShareEdgesInOrigin(Surface *origin, Surface *piece, vector<int> share_edges) {
+vector<int> TMIC::listShareEdgesInOrigin(Surface *origin, Surface *piece, vector<int> share_edges) {
     vector<int> origin_edges;
     for (int i = 0 ; i < share_edges.size() ; i++){
         HalfEdge* he = piece->boundary_edges(share_edges[i]);
