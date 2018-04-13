@@ -187,11 +187,10 @@ int SurfacePairComputation::doShareEdge(Surface *&surface_i, Surface *&surface_j
     vector<HalfEdge*> iEdgeList = surface_i->getBoundaryEdgesList();
     int share_edge_count = 0;
     for (HalfEdge* edge : iEdgeList){
-        if (edge->oppositeEdge->parent == surface_j){
+        if (edge->oppositeEdge != NULL && edge->oppositeEdge->parent == surface_j){
             share_edge_count++;
         }
     }
-
     return share_edge_count;
 }
 
@@ -267,7 +266,7 @@ int SurfacePairComputation::findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>
 
 bool SurfacePairComputation::isNeighbor(Surface *origin, Surface *piece) {
     for (HalfEdge* he : origin->getBoundaryEdgesList()){
-        if (he->oppositeEdge->parent == piece) return true;
+        if (he->oppositeEdge != NULL && he->oppositeEdge->parent == piece) return true;
     }
     return false;
 }

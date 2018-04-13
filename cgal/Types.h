@@ -34,6 +34,8 @@
 #include <CGAL/partition_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+#include <CGAL/Bbox_3.h>
+
 
 //typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -49,6 +51,7 @@ typedef Kernel::Segment_2 Segment_2;
 typedef Kernel::Segment_3 Segment_3;
 typedef Kernel::Intersect_2 Intersect_2;
 typedef Kernel::Intersect_3 Intersect_3;
+typedef CGAL::Bbox_3 Bbox_3;
 
 typedef CGAL::Triangulation_vertex_base_with_info_2<double, Kernel> Vb;
 typedef CGAL::Triangulation_data_structure_2<Vb> Tds;

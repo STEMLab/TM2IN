@@ -1,5 +1,5 @@
 #define __DEBUG__
-#include "manage/MergingRoomMaker.h"
+#include "Merge_Command.h"
 #include <compute/SurfacesListComputation.h>
 #include <fileio/export/MeshExporter.h>
 #include "compute/SurfaceComputation.h"
@@ -20,14 +20,14 @@ bool checkAnswer(char a, char b){
     return false;
 }
 
-int MergingRoomMaker::pre_process() {
+int Merge_Command::pre_process() {
     if (this->menifestTriangleMesh()) return -1;
     if (this->convertTriangleMeshToSpace()) return -1;
 
     return 0;
 }
 
-int MergingRoomMaker::constructSpace() {
+int Merge_Command::constructSpace() {
     assert (this->spaceList.size() != 0);
 
     char doNotMerge, doCheckSelfIntersection;
@@ -44,7 +44,8 @@ int MergingRoomMaker::constructSpace() {
 
     if (this->simplifyShareEdge()) return -1;
 
-    makeSurfaceGraph();
+    this->makeSurfaceGraph();
+
     cout << "\n\ncheck Self Intersection? (y/n)" << endl;
     cin >> doCheckSelfIntersection;
     if (checkAnswer(doCheckSelfIntersection, 'y'))
@@ -57,7 +58,8 @@ int MergingRoomMaker::constructSpace() {
 }
 
 
-int MergingRoomMaker::finish() {
+int Merge_Command::finish() {
+    this->tagID();
     this->exportSpace();
 
     char doConvertToMesh;
@@ -70,7 +72,7 @@ int MergingRoomMaker::finish() {
             TriangleMesh *&triangleMesh = this->mesh_list[i];
             triangleMesh->init();
             cout << "\n\n" << i << "th mesh" << endl;
-            if (triangleMesh->checkClosedSurface())
+            if (triangleMesh->checkClosed())
                 cout << "this mesh is closed\n\n" << endl;
         }
 
@@ -85,7 +87,7 @@ int MergingRoomMaker::finish() {
 }
 
 
-void MergingRoomMaker::makeSurfaceGraph() {
+void Merge_Command::makeSurfaceGraph() {
     for (int i = 0 ; i < spaceList.size() ; i++){
         cout << "\n\n" << i << "th graph" << endl;
         spaceList[i]->surfaceGraph = new SurfaceGraph();
@@ -100,11 +102,12 @@ void MergingRoomMaker::makeSurfaceGraph() {
     }
 }
 
-int MergingRoomMaker::partitionTriangleMeshByComponent() {
+int Merge_Command::partitionTriangleMeshByComponent() {
     int i = 0;
     vector<TriangleMesh*> new_mesh_list;
     while ( i < this->mesh_list.size() ){
-        assert(this->mesh_list[i]->checkClosedSurface());
+        assert(this->mesh_list[i]->checkClosed());
+
         int result = this->mesh_list[i]->partitionByComponent(new_mesh_list);
         if(result == -1) return -1;
         else
@@ -116,21 +119,16 @@ int MergingRoomMaker::partitionTriangleMeshByComponent() {
     return 0;
 }
 
-int MergingRoomMaker::menifestTriangleMesh() {
+int Merge_Command::menifestTriangleMesh() {
     clock_t begin = clock();
     for (int i = 0 ; i < this->mesh_list.size() ; i++){
         this->mesh_list[i]->init();
-        if (!this->mesh_list[i]->checkClosedSurface()){
-            cerr << i << " : it is not composed of closed surface"<< endl;
-        }
     }
     clock_t end = clock();
 
-    #ifdef __DEBUG__
-        cout << "make graph time : " << double(end - begin) / CLOCKS_PER_SEC << "s" << endl;
-    #else
+    cout << "make graph time : " << double(end - begin) / CLOCKS_PER_SEC << "s" << endl;
 
-    #endif
+    if (this->handleOpenTriangleMesh()) return -1;
 
     if (this->partitionTriangleMeshByComponent()) return -1;
 
@@ -139,18 +137,24 @@ int MergingRoomMaker::menifestTriangleMesh() {
     return false;
 }
 
-int MergingRoomMaker::remainStructure() {
-    cerr << "TODO : remainStructure" << endl;
-    // this->mesh_list.erase(this->mesh_list.begin() + 1, this->mesh_list.end());
-
+int Merge_Command::remainStructure() {
+    int i = 0;
+    while (i < this->mesh_list.size()){
+        if (this->mesh_list[i]->isFurniture()){
+            this->mesh_list.erase(this->mesh_list.begin() + i);
+        } else
+            i++;
+    }
+    printf("There are %d Remaining Meshes.\n\n", this->mesh_list.size());
     return 0;
 }
 
 
-int MergingRoomMaker::mergeSurfaces() {
-    cout << "Enter Start Degree of merging(Default : 1.0)" << endl;
+int Merge_Command::mergeSurfaces() {
+    cout << "Enter Start Degree of merging" << endl;
 #ifdef __DEBUG__
-    this->startDegree = 0.001;
+    this->startDegree = 0.1;
+    cout << this->startDegree << endl;
 #else
     cin >> this->startDegree;
 #endif
@@ -168,12 +172,11 @@ int MergingRoomMaker::mergeSurfaces() {
 
         if (space->checkSurfaceValid() == -1){ cout << "Surface is not valid" << endl; return -1; }
         space->sortSurfacesByArea();
-        space->tagID();
     }
     return 0;
 }
 
-int MergingRoomMaker::processGenerations(Space *space, double &degree) {
+int Merge_Command::processGenerations(Space *space, double &degree) {
     ll p_size = space->surfacesList.size();
     while (true){
         assert(p_size > 0);
@@ -203,7 +206,7 @@ int MergingRoomMaker::processGenerations(Space *space, double &degree) {
 }
 
 
-int MergingRoomMaker::triangulation() {
+int Merge_Command::triangulation() {
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
         cout << "space : " << it << endl;
         Space *space = this->spaceList[it];
@@ -212,7 +215,7 @@ int MergingRoomMaker::triangulation() {
     return 0;
 }
 
-int MergingRoomMaker::checkSelfIntersection() {
+int Merge_Command::checkSelfIntersection() {
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
         Space *space = this->spaceList[it];
         space->checkSelfIntersection();
@@ -220,13 +223,36 @@ int MergingRoomMaker::checkSelfIntersection() {
     return 0;
 }
 
-int MergingRoomMaker::simplifyShareEdge() {
+int Merge_Command::simplifyShareEdge() {
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
         Space *space = this->spaceList[it];
         cout << "simplify space " << space->name << endl;
         space->simplifySegment();
         // space->removeStraight();
     }
+    return 0;
+}
+
+void Merge_Command::tagID() {
+    for (ull it = 0 ; it < this->spaceList.size() ; it++) {
+        Space *space = this->spaceList[it];
+        space->tagID();
+    }
+}
+
+int Merge_Command::handleOpenTriangleMesh() {
+    cerr << "TODO : handleOpenTriangleMesh" << endl;
+    int i = 0, count = 0;
+    while ( i < this->mesh_list.size() ) {
+        if (!this->mesh_list[i]->checkClosed()) {
+            count++;
+            this->mesh_list.erase(this->mesh_list.begin() + i);
+            continue;
+        }
+        i++;
+    }
+    printf("\n\n%d meshes have been removed because it is open.\n", count);
+    assert(this->mesh_list.size() >= 0);
     return 0;
 }
 

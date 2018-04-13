@@ -19,6 +19,7 @@
 #include <cstdlib>
 #include <compute/SurfaceComputation.h>
 #include <compute/VertexListComputation.h>
+#include <cgal/Features_to_CGAL_object.h>
 
 
 using namespace std;
@@ -235,7 +236,7 @@ bool Surface::compareArea(Surface* i, Surface* j) {
 // TODO : move
 bool Surface::isValid(){
     if (this->getVerticesSize() < 3) {
-        cout << "The number of vertexes is "  << this->getVerticesSize() <<endl;
+        // cout << "The number of vertexes is "  << this->getVerticesSize() <<endl;
         return false;
     }
     if (this->checkDuplicate()) return false;
@@ -244,13 +245,13 @@ bool Surface::isValid(){
 
 Point_3 Surface::findLowestPoint(){
     Vertex* cent = SurfaceComputation::getCenterPoint(this);
-    Plane_3 plane(VertexComputation::getCGALPoint(cent), this->normal);
+    Plane_3 plane(CGAL_User::getCGALPoint(cent), this->normal);
     delete cent;
 
     double max_dist = -1.0;
     int max_index = 0;
     for (ull index= 0 ; index < this->getVerticesSize() ; index++){
-        Point_3 p = VertexComputation::getCGALPoint(this->vertex(index));
+        Point_3 p = CGAL_User::getCGALPoint(this->vertex(index));
         if (plane.oriented_side(p) != CGAL::ON_POSITIVE_SIDE){
             double dist = CGAL::squared_distance(plane, p);
             if (dist > max_dist){
@@ -259,7 +260,7 @@ Point_3 Surface::findLowestPoint(){
             }
         }
     }
-    return VertexComputation::getCGALPoint(this->vertex(max_index));
+    return CGAL_User::getCGALPoint(this->vertex(max_index));
 }
 
 Plane_3 Surface::getPlaneWithLowest(){
@@ -272,7 +273,7 @@ vector<Vertex *> Surface::getVerticesList() {
 }
 
 void Surface::setVertexList(std::vector<Vertex *> newVertices) {
-    cerr << "TODO" << endl;
+    cerr << "setVertexList : TODO" << endl;
 }
 
 std::vector<HalfEdge *> Surface::getBoundaryEdgesList() {

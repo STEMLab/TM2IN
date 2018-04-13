@@ -2,6 +2,7 @@
 // Created by dongmin on 18. 1. 18.
 //
 
+#include <cgal/Features_to_CGAL_object.h>
 #include "VertexComputation.h"
 #include "VertexListComputation.h"
 #include "features/HalfEdge.h"
@@ -27,7 +28,7 @@ Vertex *VertexListComputation::getCenter(vector<Vertex *> vertices) {
 Plane_3 VertexListComputation::getPlane3WithPCA(vector<Vertex *> vertices) {
     vector<Point_3> points;
     for (int i = 0 ; i < vertices.size() ; i++){
-        points.push_back(VertexComputation::getCGALPoint(vertices[i]));
+        points.push_back(CGAL_User::getCGALPoint(vertices[i]));
     }
     Plane_3 plane;
     linear_least_squares_fitting_3(points.begin(), points.end(), plane, CGAL::Dimension_tag<0>());

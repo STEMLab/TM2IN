@@ -127,14 +127,25 @@ int Space::simplifySegment(){
         assert((int) this->surfacesList[i]->getVerticesSize() >= 3);
     }
 
-    for (ull i = 0 ; i < sizeOfSurfaces - 1; i++)
-    {
+    for (ull i = 0 ; i < sizeOfSurfaces - 1; i++){
+        Surface *&surfaceI = this->surfacesList[i];
+        if (!surfaceI->isValid()) continue;
         printProcess(i, sizeOfSurfaces, "");
+        for (ull j = i + 1; j < sizeOfSurfaces ; j++){
+            Surface *&surfaceJ = this->surfacesList[j];
+            if (!surfaceI->isValid()) break;
+            if (!surfaceJ->isValid()) continue;
+            if (!CGALCalculation::isIntersect_BBOX(surfaceI, surfaceJ)) continue;
+            while (SurfacePairComputation::simplifyLineSegment(this->surfacesList[i], this->surfacesList[j]) == 0){
+                if (!surfaceI->isValid() || !surfaceJ->isValid()) break;
+            }
+        }
+        /* v0.3.8
         for (ull j = i + 1; j < sizeOfSurfaces ; j++)
         {
             int loop_count = 0;
             int j_sizeOfVertices = (int) this->surfacesList[j]->getVerticesSize();
-            if (!CGALCalculation::isIntersect_BBOX(this->surfacesList[i], this->surfacesList[j])) continue;
+            if (!CGALCalculation::isIntersect_BBOX(surfaceI, this->surfacesList[j])) continue;
             while (SurfacePairComputation::simplifyLineSegment(this->surfacesList[i], this->surfacesList[j]) == 0)
             {
                 if (!this->surfacesList[j]->isValid()){
@@ -150,19 +161,37 @@ int Space::simplifySegment(){
                 loop_count++;
                 assert(loop_count <= j_sizeOfVertices);
                 j_sizeOfVertices = (int) this->surfacesList[j]->getVerticesSize();
+
             }
         }
+        */
     }
-
     sizeOfSurfaces = this->surfacesList.size();
+    /* v0.3.8
     for (ull i = 0 ; i < sizeOfSurfaces; i++){
         assert((int) this->surfacesList[i]->getVerticesSize() >= 3);
         for (HalfEdge* he : this->surfacesList[i]->boundaryEdges){
             assert(he->parent == this->surfacesList[i]);
         }
     }
+    */
 
-    return 0;
+    bool hasRemoved = false;
+    for (int i = sizeOfSurfaces - 1; i >= 0 ; i--){
+        if (this->surfacesList[i]->isValid()){
+
+        }
+        else{
+            hasRemoved = true;
+            delete this->surfacesList[i];
+            this->surfacesList.erase(this->surfacesList.begin() + i);
+        }
+    }
+
+    if (hasRemoved)
+        return simplifySegment();
+    else
+        return 0;
 }
 
 int Space::checkSurfaceValid() {
@@ -362,7 +391,7 @@ void Space::rotateSpaceByFloorTo00(){
                             1);
 
     for (ull i = 0 ; i < this->p_vertexList->size() ; i++){
-        Point_3 p = VertexComputation::getCGALPoint(this->p_vertexList->at(i));
+        Point_3 p = CGAL_User::getCGALPoint(this->p_vertexList->at(i));
         p = p.transform(rotateZ);
         this->p_vertexList->at(i)->setCoords(p.x(), p.y(), p.z());
     }

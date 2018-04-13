@@ -1,18 +1,13 @@
 #ifndef RectRoomMaker_H
 #define RectRoomMaker_H
 
-#include "manage/RoomMaker.h"
+#include "Command.h"
 
 
-class MergingRoomMaker : public RoomMaker{
+class Merge_Command : public Command{
 public:
-
-    MergingRoomMaker(){
-        cout << "MergingRoomMaker" << endl;
-    }
-    ~MergingRoomMaker(){
-
-    }
+    Merge_Command(){}
+    ~Merge_Command(){}
 
     virtual int pre_process();
     virtual int constructSpace();
@@ -35,6 +30,10 @@ private:
     int simplifyShareEdge();
 
     void makeSurfaceGraph();
+
+    void tagID();
+
+    int handleOpenTriangleMesh();
 };
 
 #endif // RectRoomMaker_H

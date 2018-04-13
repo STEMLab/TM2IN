@@ -5,6 +5,7 @@
 #include "features/Vertex.h"
 #include "features/Surface.h"
 #include "space_maker/OnlyWallSpaceMaker.h"
+#include "Features_to_CGAL_object.h"
 
 using namespace std;
 
@@ -22,6 +23,7 @@ double CGALCalculation::getAngle(Vector_3& nv1, Vector_3& nv2){
     else if (cos < -0.99999) cos = -1;
     double angle = acos(cos) * 180.0/PI;
 
+    assert(angle == angle); //check NAN
     return angle;
 }
 
@@ -44,13 +46,13 @@ double CGALCalculation::getAngle(Vector_2& nv1, Vector_2& nv2){
 }
 
 Vector_3 CGALCalculation::getVector(Vertex* va, Vertex* vb){
-    return Vector_3(VertexComputation::getCGALPoint(va),VertexComputation::getCGALPoint(vb));
+    return Vector_3(CGAL_User::getCGALPoint(va),CGAL_User::getCGALPoint(vb));
 }
 
 
 double CGALCalculation::getSquaredDistance(Vertex* v1, Vertex* v2){
     return CGAL::squared_distance(
-            VertexComputation::getCGALPoint(v1), VertexComputation::getCGALPoint(v2));
+            CGAL_User::getCGALPoint(v1), CGAL_User::getCGALPoint(v2));
 }
 
 Vector_3 CGALCalculation::getUnitNormal(Vertex* va, Vertex* vb, Vertex* vc){

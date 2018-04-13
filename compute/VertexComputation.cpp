@@ -5,11 +5,6 @@
 #include "VertexComputation.h"
 #include "predefine.h"
 
-Point_3 VertexComputation::getCGALPoint(Vertex *v) {
-    return Point_3(v->x(),v->y(),v->z());;
-}
-
-
 int VertexComputation::compare(Vertex* a, Vertex* b){
     ll multiple = pow(10, DECIMAL);
     int ax = (int)(a->x() * multiple);
