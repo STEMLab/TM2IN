@@ -88,7 +88,7 @@ Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count,
         if (!checked[id])
         {
             Surface* sf = this->surfacesList[id];
-            if (SurfacePairComputation::combine(cp, sf, degree) == 0)
+            if (TMIC::combine(cp, sf, degree) == 0)
             {
                 cout << ".";
                 cp->triangles.insert(cp->triangles.end(), sf->triangles.begin(), sf->triangles.end());
@@ -136,7 +136,7 @@ int Space::simplifySegment(){
             if (!surfaceI->isValid()) break;
             if (!surfaceJ->isValid()) continue;
             if (!CGALCalculation::isIntersect_BBOX(surfaceI, surfaceJ)) continue;
-            while (SurfacePairComputation::simplifyLineSegment(this->surfacesList[i], this->surfacesList[j]) == 0){
+            while (TMIC::simplifyLineSegment(this->surfacesList[i], this->surfacesList[j]) == 0){
                 if (!surfaceI->isValid() || !surfaceJ->isValid()) break;
             }
         }
@@ -227,10 +227,8 @@ int Space::removeStraight(){
             cout << "Erase invalid surface" << endl;
         }
     }
+    return 0;
 }
-
-
-
 
 int Space::translateSpaceToOrigin(){
     cout << "\n------------- translateSpaceToOrigin --------------\n" << endl;
@@ -255,7 +253,7 @@ int Space::translateSpaceToOrigin(){
 
 void Space::updateMBB(){
     vector<vector<double> > min_max;
-    min_max = SLC::getMBB(this->surfacesList);
+    min_max = SurfacesListComputation::getMBB(this->surfacesList);
     for (int i = 0 ; i < 3 ; i++){
         this->min_coords[i] = min_max[0][i];
         this->max_coords[i] = min_max[1][i];

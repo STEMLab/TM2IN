@@ -15,7 +15,7 @@ void SurfaceGraph::makeAdjacentGraph(vector<Surface*>& surface_list){
         Surface* surface_i = surface_list[i];
         for (ull j = i + 1 ; j < surface_list.size() ; j ++){
             Surface* surface_j = surface_list[j];
-            int shareEdgeCount = SurfacePairComputation::doShareEdge(surface_i, surface_j);
+            int shareEdgeCount = TMIC::doShareEdge(surface_i, surface_j);
             if (shareEdgeCount){
                 adjList[i].push_back(j);
                 adjList[j].push_back(i);

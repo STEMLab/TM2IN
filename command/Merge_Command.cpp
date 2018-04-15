@@ -145,7 +145,7 @@ int Merge_Command::remainStructure() {
         } else
             i++;
     }
-    printf("There are %d Remaining Meshes.\n\n", this->mesh_list.size());
+    printf("There are %lu Remaining Meshes.\n\n", this->mesh_list.size());
     return 0;
 }
 

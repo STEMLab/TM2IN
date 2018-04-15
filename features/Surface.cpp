@@ -334,6 +334,7 @@ void Surface::removeVertexByIndex(int id) {
     cerr << "TODO : remove Surface::removeVertexByIndex" << endl;
 }
 
-std::ostream &operator<<(std::ostream &ou, Surface *pSurface) {
+std::ostream& operator<<(std::ostream &ou, Surface *pSurface) {
     ou << pSurface->toJSONString() << endl;
+    return ou;
 }

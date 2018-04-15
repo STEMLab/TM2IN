@@ -31,8 +31,7 @@ public:
 
     void setImporter(Importer* p_di){ di = p_di; }
     void setGenerationWriter(GenerationWriter * pw){generation_writer = pw;}
-
-    int setExporter(SpaceExporter* _de){ de = _de;}
+    void setExporter(SpaceExporter* _de){ de = _de;}
     int exportSpace();
 
     void setPaths(map<string, string> _paths);

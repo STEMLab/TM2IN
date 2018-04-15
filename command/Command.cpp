@@ -60,4 +60,5 @@ void Command::setPaths(map<string, string> _paths) {
 int Command::export3DS(const char *path) {
     if (MeshExporter::export3DS(this->mesh_list, path))
         return -1;
+    return 0;
 }
