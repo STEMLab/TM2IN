@@ -58,14 +58,14 @@ add_executable(TriangleMeshToClearSolid
         compute/Surface_pair_computation.h
         compute/SurfacesListComputation.cpp
         compute/SurfacesListComputation.h
-        command/Merge_Command.cpp
-        command/Merge_Command.h
-        command/Command.cpp
-        command/Command.h
+        converter/TriangulationConverter.cpp
+        converter/TriangulationConverter.h
+        converter/Converter.cpp
+        converter/Converter.h
         space_maker/OnlyWallSpaceMaker.cpp
         space_maker/OnlyWallSpaceMaker.h
         predefine.h
-        Converter.cpp
+        main.cpp
         util.cpp
         util.h
         cgal/SurfaceHoleCover.cpp

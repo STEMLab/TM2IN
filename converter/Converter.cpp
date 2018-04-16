@@ -1,108 +1,77 @@
-#define __DEBUG__
-#include "Merge_Command.h"
-#include <compute/SurfacesListComputation.h>
-#include <fileio/export/MeshExporter.h>
-#include "compute/SurfaceComputation.h"
-#include "cgal/SurfaceHoleCover.h"
-#include <ctime>
+#include "TriangulationConverter.h"
+#include "Converter.h"
 
-using namespace std;
+#include "features/HalfEdge.h"
+#include "fileio/JSONMaker.h"
+#include "fileio/export/MeshExporter.h"
 
-/**
- * @param a
- * @param b lower case. the answer what I expect.
- * @return
- */
-bool checkAnswer(char a, char b){
-    if (a == b || a == b + 32){
-        return true;
-    }
-    return false;
+int Converter::importMesh() {
+    string filePath = paths["resourceDir"] + paths["filename"] + "." + paths["filetype"];
+    this->mesh_list = di->import(filePath.c_str());
+    if (this->mesh_list.size() == 0) return -1;
+    else return 0;
 }
 
-int Merge_Command::pre_process() {
-    if (this->menifestTriangleMesh()) return -1;
-    if (this->convertTriangleMeshToSpace()) return -1;
-
+int Converter::convertTriangleMeshToSpace() {
+    for (int space_id = 0 ; space_id < this->mesh_list.size() ; space_id++){
+        Space* space = new Space();
+        space->setName(this->mesh_list[space_id]->name);
+        if (space->convertTrianglesToSurfaces(this->mesh_list[space_id]->triangles)){
+            cout << "make Surfaces error" << endl;
+            return -1;
+        }
+        space->vertices = this->mesh_list[space_id]->vertices;
+        // this->mesh_list[space_id]->clear();
+        this->spaceList.push_back(space);
+    }
+    this->mesh_list.clear();
     return 0;
 }
 
-int Merge_Command::constructSpace() {
-    assert (this->spaceList.size() != 0);
-
-    char doNotMerge, doCheckSelfIntersection;
-    cout << "keep Triangle without merging? (y/n)" << endl;
-
-    // cin >> doNotMerge;
-    doNotMerge = 'n';
-    cout << doNotMerge << endl;
-
-    if (checkAnswer(doNotMerge, 'y')){
-        return 0;
+int Converter::convertSpaceToTriangleMesh(){
+    this->mesh_list.clear();
+    for (int spaceID = 0 ; spaceID < this->spaceList.size() ; spaceID++){
+        Space* space = this->spaceList[spaceID];
+        vector<Triangle*> triangleList = space->getTriangleListOfAllSurfaces();
+        for (Triangle* triangle : triangleList){
+            vector<HalfEdge*> edges = triangle->getBoundaryEdgesList();
+            for (HalfEdge* he : edges){
+                assert(he->getOppositeEdge() == NULL);
+            }
+        }
+        TriangleMesh* mesh = new TriangleMesh();
+        mesh->triangles = triangleList;
+        mesh->vertices = space->vertices;
+        mesh->name = space->name;
+        this->mesh_list.push_back(mesh);
     }
-    if (this->mergeSurfaces()) return -1;
-
-    if (this->simplifyShareEdge()) return -1;
-
-    this->makeSurfaceGraph();
-
-    cout << "\n\ncheck Self Intersection? (y/n)" << endl;
-    cin >> doCheckSelfIntersection;
-    if (checkAnswer(doCheckSelfIntersection, 'y'))
-        if (this->checkSelfIntersection()) return -1;
-
-    cout << "\n\nre-triangulation" << endl;
-    if (this->triangulation()) return -1;
-
     return 0;
 }
 
-
-int Merge_Command::finish() {
-    this->tagID();
-    this->exportSpace();
-
-    char doConvertToMesh;
-    cout << "Convert To Triangle Mesh?" << endl;
-    cin >> doConvertToMesh;
-    if (checkAnswer(doConvertToMesh, 'y')){
-        if (this->convertSpaceToTriangleMesh()) return -1;
-        this->spaceList.clear();
-        for (int i = 0 ; i < this->mesh_list.size() ; i++){
-            TriangleMesh *&triangleMesh = this->mesh_list[i];
-            triangleMesh->init();
-            cout << "\n\n" << i << "th mesh" << endl;
-            if (triangleMesh->checkClosed())
-                cout << "this mesh is closed\n\n" << endl;
-        }
-
-        char doExport3DS;
-        cout <<"Export 3DS?" << endl; cin >>doExport3DS;
-        if (checkAnswer(doExport3DS, 'y')){
-            this->export3DS((paths["versionDir"] + paths["filename"] + ".3DS").c_str());
-        }
-    }
-
+int Converter::exportSpace() {
+    string filePath = paths["versionDir"] + "surfaces.json";
+    if (de->exportSpace(this->spaceList, filePath.c_str())) return 1;
     return 0;
 }
 
+void Converter::setPaths(map<string, string> _paths) {
+    this->paths = _paths;
+}
 
-void Merge_Command::makeSurfaceGraph() {
-    for (int i = 0 ; i < spaceList.size() ; i++){
-        cout << "\n\n" << i << "th graph" << endl;
-        spaceList[i]->surfaceGraph = new SurfaceGraph();
-        spaceList[i]->surfaceGraph->makeAdjacentGraph(spaceList[i]->surfacesList);
-        if (spaceList[i]->surfaceGraph->isClosedSurface()){
-            cout << "this is closed" << endl;
-        }
-        else{
-            cout << "not closed" << endl;
-        }
-        cout << "------------\n" << endl;
+int Converter::export3DS(const char *path) {
+    if (MeshExporter::export3DS(this->mesh_list, path))
+        return -1;
+    return 0;
+}
+
+void Converter::tagID() {
+    for (ull it = 0 ; it < this->spaceList.size() ; it++) {
+        Space *space = this->spaceList[it];
+        space->tagID();
     }
 }
 
-int Merge_Command::partitionTriangleMeshByComponent() {
+int Converter::partitionTriangleMeshByComponent() {
     int i = 0;
     vector<TriangleMesh*> new_mesh_list;
     while ( i < this->mesh_list.size() ){
@@ -119,7 +88,7 @@ int Merge_Command::partitionTriangleMeshByComponent() {
     return 0;
 }
 
-int Merge_Command::menifestTriangleMesh() {
+int Converter::menifestTriangleMesh() {
     clock_t begin = clock();
     for (int i = 0 ; i < this->mesh_list.size() ; i++){
         this->mesh_list[i]->init();
@@ -137,7 +106,7 @@ int Merge_Command::menifestTriangleMesh() {
     return false;
 }
 
-int Merge_Command::remainStructure() {
+int Converter::remainStructure() {
     int i = 0;
     while (i < this->mesh_list.size()){
         if (this->mesh_list[i]->isFurniture()){
@@ -149,15 +118,13 @@ int Merge_Command::remainStructure() {
     return 0;
 }
 
-
-int Merge_Command::mergeSurfaces() {
+int Converter::mergeSurfaces() {
     cout << "Enter Start Degree of merging" << endl;
-#ifdef __DEBUG__
     this->startDegree = 0.1;
     cout << this->startDegree << endl;
-#else
-    cin >> this->startDegree;
-#endif
+
+   // cin >> this->startDegree;
+
     for (ull it = 0 ; it < this->spaceList.size(); it++)
     {
         Space* space = this->spaceList[it];
@@ -176,7 +143,7 @@ int Merge_Command::mergeSurfaces() {
     return 0;
 }
 
-int Merge_Command::processGenerations(Space *space, double &degree) {
+int Converter::processGenerations(Space *space, double &degree) {
     ll p_size = space->surfacesList.size();
     while (true){
         assert(p_size > 0);
@@ -205,17 +172,7 @@ int Merge_Command::processGenerations(Space *space, double &degree) {
     return 0;
 }
 
-
-int Merge_Command::triangulation() {
-    for (ull it = 0 ; it < this->spaceList.size() ; it++) {
-        cout << "space : " << it << endl;
-        Space *space = this->spaceList[it];
-        space->triangulateSurfaces();
-    }
-    return 0;
-}
-
-int Merge_Command::checkSelfIntersection() {
+int Converter::checkSelfIntersection() {
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
         Space *space = this->spaceList[it];
         space->checkSelfIntersection();
@@ -223,7 +180,7 @@ int Merge_Command::checkSelfIntersection() {
     return 0;
 }
 
-int Merge_Command::simplifyShareEdge() {
+int Converter::simplifyShareEdge() {
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
         Space *space = this->spaceList[it];
         cout << "simplify space " << space->name << endl;
@@ -233,14 +190,7 @@ int Merge_Command::simplifyShareEdge() {
     return 0;
 }
 
-void Merge_Command::tagID() {
-    for (ull it = 0 ; it < this->spaceList.size() ; it++) {
-        Space *space = this->spaceList[it];
-        space->tagID();
-    }
-}
-
-int Merge_Command::handleOpenTriangleMesh() {
+int Converter::handleOpenTriangleMesh() {
     cerr << "TODO : handleOpenTriangleMesh" << endl;
     int i = 0, count = 0;
     while ( i < this->mesh_list.size() ) {
@@ -255,5 +205,3 @@ int Merge_Command::handleOpenTriangleMesh() {
     assert(this->mesh_list.size() >= 0);
     return 0;
 }
-
-
