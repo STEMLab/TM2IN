@@ -1,18 +1,18 @@
-#Xcode
+# Xcode
 *.xcodeproj
 DerivedData/
 
-#data
+# data
 *.3DS
 *.tvr
 **/pano8K_images
 *.json
 Resource/
 
-#Result
+# Result
 Result/
 
-#Code Blocks
+# Code Blocks
 *.cbp
 *.depend
 *.layout
@@ -21,9 +21,9 @@ obj/
 cscope.out
 *.cscope_file_list
 
-#clion
+# clion
 .idea/
 cmake-build-debug
 
-# external
-rapidxml/
+# main
+main.cpp
