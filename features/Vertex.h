@@ -13,9 +13,9 @@ public:
 
     Vertex(double px, double py, double pz){
         coords = new double[3];
-        coords[0] = px;
-        coords[1] = py;
-        coords[2] = pz;
+        coords[0] = CGAL::to_double(px);
+        coords[1] = CGAL::to_double(py);
+        coords[2] = CGAL::to_double(pz);
     }
 
     Vertex(){

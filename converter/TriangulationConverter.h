@@ -19,8 +19,6 @@ private:
     int triangulation();
 
     void makeSurfaceGraph();
-
-
 };
 
 #endif // RectRoomMaker_H

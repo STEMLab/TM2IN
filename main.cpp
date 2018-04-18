@@ -16,7 +16,8 @@ using namespace std;
 int main(int argc, const char * argv[]) {
     Checker::thresholdVertex = 0.0000001;
     Checker::squaredDistanceOfSamePoint2D = 0.000001;
-    Checker::degreeOfMerging = 10.0;
+    Checker::coplanar_degree = 1.0;
+    Checker::merge_degree = 5.0;
     Checker::degreeOfStraight = 0.00001;
     Checker::num_of_straight = 0;
     Checker::num_of_invalid = 0;

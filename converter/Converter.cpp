@@ -88,7 +88,7 @@ int Converter::partitionTriangleMeshByComponent() {
     return 0;
 }
 
-int Converter::menifestTriangleMesh() {
+int Converter::initTriangleMesh() {
     clock_t begin = clock();
     for (int i = 0 ; i < this->mesh_list.size() ; i++){
         this->mesh_list[i]->init();
@@ -97,13 +97,7 @@ int Converter::menifestTriangleMesh() {
 
     cout << "make graph time : " << double(end - begin) / CLOCKS_PER_SEC << "s" << endl;
 
-    if (this->handleOpenTriangleMesh()) return -1;
-
-    if (this->partitionTriangleMeshByComponent()) return -1;
-
-    if (this->remainStructure()) return -1;
-
-    return false;
+    return 0;
 }
 
 int Converter::remainStructure() {
@@ -123,12 +117,10 @@ int Converter::mergeSurfaces() {
     this->startDegree = 0.1;
     cout << this->startDegree << endl;
 
-   // cin >> this->startDegree;
-
     for (ull it = 0 ; it < this->spaceList.size(); it++)
     {
         Space* space = this->spaceList[it];
-        this->generation_writer->start(space);
+        if (this->generation_writer) this->generation_writer->start(space);
 
         // check duplicate coordinates
         if (this->spaceList[it]->checkDuplicateVertexInSurfaces()) return -1;
@@ -164,7 +156,7 @@ int Converter::processGenerations(Space *space, double &degree) {
         }
         else p_size = (int)space->surfacesList.size();
 
-        this->generation_writer->write();
+        if (this->generation_writer) this->generation_writer->write();
         if (degree < 15) degree += 0.05;
 
         space->generation++;

@@ -4,6 +4,7 @@ project(TriangleMeshToClearSolid)
 set(CMAKE_CXX_STANDARD 11)
 
 include_directories(../TriangleMeshToClearSolid)
+include_directories(../lib)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
@@ -21,10 +22,10 @@ find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 # INCLUDE_DIRECTORIES ( /usr/local/include/eigen3 )
 
 add_executable(TriangleMeshToClearSolid
-        rapidxml/rapidxml.hpp
-        rapidxml/rapidxml_iterators.hpp
-        rapidxml/rapidxml_print.hpp
-        rapidxml/rapidxml_utils.hpp
+        ../lib/rapidxml/rapidxml.hpp
+        ../lib/rapidxml/rapidxml_iterators.hpp
+        ../lib/rapidxml/rapidxml_print.hpp
+        ../lib/rapidxml/rapidxml_utils.hpp
         features/Space.cpp
         features/Space.h
         features/Surface.cpp
@@ -65,7 +66,6 @@ add_executable(TriangleMeshToClearSolid
         space_maker/OnlyWallSpaceMaker.cpp
         space_maker/OnlyWallSpaceMaker.h
         predefine.h
-        main.cpp
         util.cpp
         util.h
         cgal/SurfaceHoleCover.cpp
@@ -86,7 +86,9 @@ add_executable(TriangleMeshToClearSolid
         fileio/export/SpaceExporter.h
         fileio/export/JSONSurfaceExporter.cpp
         fileio/export/JSONSurfaceExporter.h
-        fileio/import/COLLADAImporter.cpp fileio/import/COLLADAImporter.h fileio/export/MeshExporter.cpp fileio/export/MeshExporter.h compute/Connect_halfedges.h compute/Connect_halfedges.cpp cgal/Features_to_CGAL_object.h cgal/Features_to_CGAL_object.cpp)
+        fileio/import/COLLADAImporter.cpp fileio/import/COLLADAImporter.h fileio/export/MeshExporter.cpp fileio/export/MeshExporter.h compute/Connect_halfedges.h compute/Connect_halfedges.cpp cgal/Features_to_CGAL_object.h cgal/Features_to_CGAL_object.cpp
+#        test.cpp)
+        main.cpp)
 
 
 TARGET_LINK_LIBRARIES( TriangleMeshToClearSolid LINK_PUBLIC ${Boost_LIBRARIES} Eigen3::Eigen)

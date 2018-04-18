@@ -21,9 +21,11 @@ bool checkAnswer(char a, char b){
 }
 
 int TriangulationConverter::pre_process() {
-    if (this->menifestTriangleMesh()) return -1;
+    if (this->initTriangleMesh()) return -1;
+    if (this->handleOpenTriangleMesh()) return -1;
+    if (this->partitionTriangleMeshByComponent()) return -1;
+    if (this->remainStructure()) return -1;
     if (this->convertTriangleMeshToSpace()) return -1;
-
     return 0;
 }
 

@@ -27,7 +27,7 @@ private:
 public:
     static double squaredDistanceOfSamePoint2D;
     static double thresholdVertex;
-    static double degreeOfMerging;
+    static double coplanar_degree;
     static double degreeOfStraight;
 
     static bool isSameDouble(double a, double b);
@@ -42,13 +42,15 @@ public:
     static bool isSameVertex(Vertex& v1, Vertex& v2);
     static bool isSameVertex(Vertex* v1, Vertex* v2);
 
-    static bool CanbeMerged(Vector_3& big, Vector_3& small, double degree);
+    static bool isCoplanar(Vector_3 &big, Vector_3 &small);
     static bool isCollinear(Vertex *start_p, Vertex *check_p, Vertex *end_p);
+    static bool checkMerge(Vector_3 &big, Vector_3 &small, double degree);
 
     static int compare_vertex(Vertex* v1, Vertex* v2);
 
     static int num_of_straight;
     static int num_of_invalid;
+    static double merge_degree;
 };
 
 #endif /* check_hpp */

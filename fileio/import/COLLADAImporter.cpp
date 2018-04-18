@@ -21,7 +21,6 @@ COLLADAImporter::~COLLADAImporter() {
 vector<TriangleMesh*> COLLADAImporter::import(const char *filePath) {
     vector<TriangleMesh*> meshList;
 
-
     xml_document<> doc;
     xml_node<> * root_node;
     ifstream pFile(filePath);
@@ -84,7 +83,7 @@ vector<TriangleMesh*> COLLADAImporter::import(const char *filePath) {
 
             string p = triangles_node->first_node("p")->value();
             std::vector<std::string> triangle_index_string = split(p, ' ');
-            printf("%d\n", triangle_index_string.size());
+            printf("%d\n", (int)triangle_index_string.size());
 
             for (int i = 0 ; i < num_of_triangles; i++){
                 int a_index = i * 3 * (num_of_input_nodes) + (num_of_input_nodes) * 0 + vertex_offset;

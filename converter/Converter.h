@@ -10,13 +10,6 @@
 class Converter
 {
 
-    int partitionTriangleMeshByComponent();
-
-    int remainStructure();
-
-    int processGenerations(Space *space, double &degree);
-
-    int handleOpenTriangleMesh();
 
 protected:
     double startDegree = 1.0;
@@ -25,10 +18,10 @@ protected:
     int checkSelfIntersection();
 
     //Triangle Mesh
-    int menifestTriangleMesh();
+    int initTriangleMesh();
 
     int mergeSurfaces();
-
+    int processGenerations(Space *space, double &degree);
     int simplifyShareEdge();
 
     int convertTriangleMeshToSpace();
@@ -36,6 +29,11 @@ protected:
 
     int export3DS(const char *string);
     int exportSpace();
+
+    int partitionTriangleMeshByComponent();
+    int remainStructure();
+    int handleOpenTriangleMesh();
+
 public:
     Importer* di;
     SpaceExporter* de;

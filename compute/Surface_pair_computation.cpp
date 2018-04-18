@@ -51,7 +51,7 @@ int TMIC::combine(Surface* origin, Surface* piece, double degree) {
 
     }
     else{
-        if (!Checker::CanbeMerged(origin->normal, piece->normal, degree)) {
+        if (!Checker::checkMerge(origin->normal, piece->normal, degree)) {
             return 1;
         }
     }
