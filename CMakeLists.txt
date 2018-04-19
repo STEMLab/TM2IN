@@ -97,7 +97,7 @@ set(SOURCE_FILES
 
 add_executable(TriangleMeshToClearSolid
         ${SOURCE_FILES}
-        main.cpp)
+        cleaner.cpp)
 
 
 TARGET_LINK_LIBRARIES( TriangleMeshToClearSolid LINK_PUBLIC ${Boost_LIBRARIES} Eigen3::Eigen)

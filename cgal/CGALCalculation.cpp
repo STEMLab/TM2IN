@@ -10,6 +10,7 @@
 using namespace std;
 
 double CGALCalculation::getAngle(Vector_3& nv1, Vector_3& nv2){
+    assert(nv1.squared_length() > 0 && nv2.squared_length() > 0);
     double nv1_length = sqrt(nv1.squared_length());
     double nv2_length = sqrt(nv2.squared_length());
 
@@ -28,6 +29,7 @@ double CGALCalculation::getAngle(Vector_3& nv1, Vector_3& nv2){
 }
 
 double CGALCalculation::getAngle(Vector_2& nv1, Vector_2& nv2){
+    assert(nv1.squared_length() > 0 && nv2.squared_length() > 0);
     double nv1_length = sqrt(nv1.squared_length());
     double nv2_length = sqrt(nv2.squared_length());
 
@@ -101,10 +103,7 @@ bool CGALCalculation::isIntersect_BBOX(Surface* s1, Surface* s2){
 
 
 bool CGALCalculation::isAngleLowerThan(Vector_3& nv1, Vector_3& nv2, double degree){
-
     double angle = CGALCalculation::getAngle(nv1, nv2);
-    //cout << nv1 << "          " << nv2 << endl;
-    //cout << angle << endl;
     assert(angle >= 0);
     return (angle <= degree) ;
 }
@@ -117,6 +116,7 @@ bool CGALCalculation::isAngleLowerThan(Vertex* origin, Vertex* v1, Vertex* v2, d
 
     Vector_3 vec1(p3a,p3b);
     Vector_3 vec2(p3a,p3c);
+    assert(vec1.squared_length() > 0 && vec2.squared_length() > 0);
 
     return CGALCalculation::isAngleLowerThan(vec1, vec2, degree);
 }

@@ -9,24 +9,24 @@
 class Vertex{
 public:
     ll index = 0;
-    double* coords;
+    double coords[3];
 
     Vertex(double px, double py, double pz){
-        coords = new double[3];
+        //coords = new double[3];
         coords[0] = CGAL::to_double(px);
         coords[1] = CGAL::to_double(py);
         coords[2] = CGAL::to_double(pz);
     }
 
     Vertex(){
-        coords = new double[3];
+        //coords = new double[3];
         coords[0] = 0.0;
         coords[1] = 0.0;
         coords[2] = 0.0;
     }
 
     Vertex(Vertex& vt){
-        coords = new double[3];
+        //coords = new double[3];
         coords[0] = vt.x();
         coords[1] = vt.y();
         coords[2] = vt.z();
@@ -34,7 +34,7 @@ public:
     }
 
     ~Vertex(){
-        delete[] coords;
+        //delete[] coords;
     }
 
     double x(){return coords[0];}
@@ -63,7 +63,7 @@ public:
 };
 
 /** < for Searching upper_bound and lower_bound */
-struct CompareVertexAndX
+struct CompareVertex_X
 {
    bool operator()( const Vertex* v, double x ) const
    {

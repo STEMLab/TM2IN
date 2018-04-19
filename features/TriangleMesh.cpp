@@ -17,7 +17,6 @@
 #include <random>
 
 void TriangleMesh::init() {
-    // this->resolveWrongTriangle();
     for (int i = 0 ; i < this->triangles.size() ; i++){
         for (HalfEdge* he : this->triangles[i]->boundaryEdges){
             assert(he->getOppositeEdge() == NULL);
@@ -60,37 +59,6 @@ int TriangleMesh::partitionByComponent(vector<TriangleMesh *> &new_mesh_list) {
     delete this;
     return 1;
 }
-
-bool TriangleMesh::resolveWrongTriangle() {
-    for (int j = 0 ; j < this->triangles.size() ; j++){
-        Triangle* triangle = this->triangles[j];
-
-        Vector_3 triangleNormal = triangle->getNormal();
-
-        if (triangleNormal == CGAL::NULL_VECTOR){
-            for (int k = 0 ; k < 2; k ++){
-                for (int w = k + 1; w < 3 ; w ++){
-                    if (Checker::isSameVertex(triangle->vertex(k), triangle->vertex(w))){
-                        this->vertices[triangle->vertex(k)->index] = triangle->vertex(w);
-                        this->triangles.erase(this->triangles.begin() + j);
-                        cerr << "Same Vertex In One Triangle" << endl;
-                        return true;
-                    }
-                }
-            }
-            if (Checker::isCollinear(triangle->vertex(0), triangle->vertex(1), triangle->vertex(2))) {
-                cerr << "Collinear Vertices in Triangle" << endl;
-                this->triangles.erase(this->triangles.begin() + j);
-                return true;
-            }
-            cerr << "Why you are here"<< endl;
-            assert(triangleNormal != CGAL::NULL_VECTOR);
-        }
-    }
-
-    return false;
-}
-
 
 void TriangleMesh::clear(){
     triangles.clear();

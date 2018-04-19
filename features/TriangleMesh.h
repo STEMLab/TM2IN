@@ -25,7 +25,6 @@ public:
     void clear();
 
     void updateVertexByTriangleList();
-    bool resolveWrongTriangle();
     bool isFurniture();
 private:
     TriangleMeshGraph* graph;
