@@ -25,5 +25,6 @@ cscope.out
 .idea/
 cmake-build-debug
 
-# main
+# develop
 main.cpp
+cleaner.cpp
