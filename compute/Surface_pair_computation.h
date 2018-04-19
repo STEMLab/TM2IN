@@ -18,7 +18,7 @@ namespace TMIC {
     vector<int> listShareEdgesInPiece(Surface *origin, Surface *piece);
     vector<int> listShareEdgesInOrigin(Surface *origin, Surface *piece, vector<int> vector1);
 
-    int combine(Surface* cp1, Surface* cp2, double degree);
+    int combine(Surface *cp1, Surface *cp2);
     int simplifyLineSegment(Surface *origin, Surface *piece);
 };
 

@@ -41,3 +41,16 @@ void removeFilesInDirectory(std::string path){
     }
     closedir(theFolder);
 }
+
+
+/**
+ * @param a
+ * @param b lower case. the answer what I expect.
+ * @return
+ */
+bool checkAnswer(char a, char b){
+    if (a == b || a == b + 32){
+        return true;
+    }
+    return false;
+}

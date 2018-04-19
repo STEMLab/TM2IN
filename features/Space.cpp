@@ -43,7 +43,7 @@ int Space::convertTrianglesToSurfaces(vector<Triangle*>& triangles){
 }
 
 
-int Space::combineSurface(double degree){
+int Space::combineSurface() {
     cout << "Combine Surfaces" << endl;
 
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareLength);
@@ -61,7 +61,7 @@ int Space::combineSurface(double degree){
         ll count = -1;
         Surface* newcp = new Surface(this->surfacesList[i]);
         while(count != 0){
-            newcp = attachSurfaces(newcp, i+1, checked, count, degree);
+            newcp = attachSurfaces(newcp, i + 1, checked, count);
             if (newcp == NULL) break;
             printProcess(combined_count, this->surfacesList.size(), "combineSurface");
             combined_count += count;
@@ -74,7 +74,7 @@ int Space::combineSurface(double degree){
     return 0;
 }
 
-Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count, double degree)
+Surface * Space::attachSurfaces(Surface *cp, ull start, bool *checked, ll &count)
 {
     count = 0;
     if (cp->normal == CGAL::NULL_VECTOR) {
@@ -88,7 +88,7 @@ Surface* Space::attachSurfaces(Surface* cp, ull start, bool* checked, ll& count,
         if (!checked[id])
         {
             Surface* sf = this->surfacesList[id];
-            if (TMIC::combine(cp, sf, degree) == 0)
+            if (TMIC::combine(cp, sf) == 0)
             {
                 cout << ".";
                 cp->triangles.insert(cp->triangles.end(), sf->triangles.begin(), sf->triangles.end());

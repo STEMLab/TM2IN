@@ -14,10 +14,17 @@ map<string, string> getPaths(int type);
 using namespace std;
 
 int main(int argc, const char * argv[]) {
+//    Vector_3 vec1(-0.051682, -0.016531, 0.005755);
+//    Vector_3 vec2(-0.000627, -0.000565, 0.000068);
+//    cout << CGALCalculation::getAngle(vec1, vec2) << endl;
+//
+//    Point_3 p1(0,0,0), p2(4,2,0), p3(2,4,0);
+//    cout << CGAL::normal(p1, p2, p3) << endl;
+//    return 0;
     Checker::thresholdVertex = 0.0000001;
     Checker::squaredDistanceOfSamePoint2D = 0.000001;
     Checker::coplanar_degree = 1.0;
-    Checker::merge_degree = 5.0;
+    Checker::merge_degree = 10.0;
     Checker::degreeOfStraight = 0.00001;
     Checker::num_of_straight = 0;
     Checker::num_of_invalid = 0;
@@ -37,18 +44,18 @@ int main(int argc, const char * argv[]) {
     paths["version"] = version;
     paths["versionDir"] = paths["resultDir"] + paths["filename"] + "/" + paths["version"] + "/";
 
-    Converter* manager = new TriangulationConverter();
-    if (dataType == 1)  manager->setImporter(new TVRImporter());
-    else if (dataType == 2) manager->setImporter(new ThreeDSImporter());
-    else if (dataType == 3) manager->setImporter(new COLLADAImporter());
+    Converter* converter = new TriangulationConverter();
+    if (dataType == 1)  converter->setImporter(new TVRImporter());
+    else if (dataType == 2) converter->setImporter(new ThreeDSImporter());
+    else if (dataType == 3) converter->setImporter(new COLLADAImporter());
     else return -1;
 
-    manager->setGenerationWriter(new GenerationWriter(paths["versionDir"]));
-    manager->setExporter(new JSONSurfaceExporter());
-    manager->setPaths(paths);
+    converter->setGenerationWriter(new GenerationWriter(paths["versionDir"]));
+    converter->setExporter(new JSONSurfaceExporter());
+    converter->setPaths(paths);
 
     cout << "Load TM File.." << endl;
-    if (manager->importMesh()){
+    if (converter->importMesh()){
         cout << "Load File Error";
         return -1;
     }
@@ -56,9 +63,15 @@ int main(int argc, const char * argv[]) {
     // create Result directory
     createAndRemoveDir(version, paths["resultDir"], fileName);
 
-    if (manager->pre_process() == -1) return -1;
-    if (manager->constructSpace() == -1) return -1;
-    if (manager->finish() == -1) return -1;
+    if (converter->pre_process() == -1) return -1;
+    if (converter->constructSpace() == -1) return -1;
+    if (converter->finish() == -1) return -1;
+
+    char doExport3DS;
+    cout <<"Export 3DS?" << endl; cin >>doExport3DS;
+    if (checkAnswer(doExport3DS, 'y')){
+        converter->export3DS();
+    }
 
     std::cout << "End!\n";
     std::cout << "straight vertex : " << Checker::num_of_straight <<endl;

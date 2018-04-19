@@ -40,7 +40,7 @@ public:
     int convertTrianglesToSurfaces(vector<Triangle*>& triangles);
     int checkDuplicateVertexInSurfaces();
 
-    int combineSurface(double degree);
+    int combineSurface();
     int simplifySegment();
     int checkSurfaceValid();
     int updateNormal();
@@ -67,7 +67,7 @@ public:
 
 
 protected:
-    Surface* attachSurfaces(Surface* cp, ull start, bool* checked, ll& count, double degree);
+    Surface *attachSurfaces(Surface *cp, ull start, bool *checked, ll &count);
     void updateMBB();
     void freeSurfaces();
 

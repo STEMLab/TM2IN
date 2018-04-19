@@ -8,7 +8,7 @@
 
 #include "features/Surface.h"
 
-#include "logic/check.hpp"
+#include "logic/check.h"
 #include "compute/Surface_pair_computation.h"
 #include "compute/HalfEdgeComputation.h"
 #include "compute/VertexComputation.h"

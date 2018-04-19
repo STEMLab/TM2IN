@@ -7,7 +7,7 @@
 #include <features/HalfEdge.h>
 #include <cgal/PolygonComputation.h>
 
-int TMIC::combine(Surface* origin, Surface* piece, double degree) {
+int TMIC::combine(Surface *origin, Surface *piece) {
     // check Polygon is in near polygon or not
     if (!CGALCalculation::isIntersect_BBOX(origin, piece)) return 1;
 
@@ -51,7 +51,7 @@ int TMIC::combine(Surface* origin, Surface* piece, double degree) {
 
     }
     else{
-        if (!Checker::checkMerge(origin->normal, piece->normal, degree)) {
+        if (!Checker::checkMerge(origin->normal, piece->normal)) {
             return 1;
         }
     }

@@ -49,19 +49,14 @@ int Converter::convertSpaceToTriangleMesh(){
 }
 
 int Converter::exportSpace() {
-    string filePath = paths["versionDir"] + "surfaces.json";
+    string filePath = paths["versionDir"] + paths["fileName"];
     if (de->exportSpace(this->spaceList, filePath.c_str())) return 1;
     return 0;
 }
 
 void Converter::setPaths(map<string, string> _paths) {
     this->paths = _paths;
-}
-
-int Converter::export3DS(const char *path) {
-    if (MeshExporter::export3DS(this->mesh_list, path))
-        return -1;
-    return 0;
+    this->paths["fileName"] = "surfaces.json";
 }
 
 void Converter::tagID() {
@@ -113,12 +108,10 @@ int Converter::remainStructure() {
 }
 
 int Converter::mergeSurfaces() {
-    cout << "Enter Start Degree of merging" << endl;
-    this->startDegree = 0.1;
-    cout << this->startDegree << endl;
 
     for (ull it = 0 ; it < this->spaceList.size(); it++)
     {
+        Checker::merge_degree = 10.0;
         Space* space = this->spaceList[it];
         if (this->generation_writer) this->generation_writer->start(space);
 
@@ -126,8 +119,8 @@ int Converter::mergeSurfaces() {
         if (this->spaceList[it]->checkDuplicateVertexInSurfaces()) return -1;
 
         // limit degree of same normal vector angle
-        double degree = startDegree;
-        if (processGenerations(space, degree)) return -1;
+
+        if (processGenerations(space)) return -1;
 
         if (space->checkSurfaceValid() == -1){ cout << "Surface is not valid" << endl; return -1; }
         space->sortSurfacesByArea();
@@ -135,12 +128,12 @@ int Converter::mergeSurfaces() {
     return 0;
 }
 
-int Converter::processGenerations(Space *space, double &degree) {
-    ll p_size = space->surfacesList.size();
+int Converter::processGenerations(Space *space) {
+    ll p_size = (ull)space->surfacesList.size();
     while (true){
         assert(p_size > 0);
         cout << "generation " << space->generation << ": " << space->surfacesList.size()<< endl;
-        if (space->combineSurface(degree) == -1){
+        if (space->combineSurface() == -1){
             cerr << "combine error" << endl;
             return -1;
         }
@@ -157,7 +150,7 @@ int Converter::processGenerations(Space *space, double &degree) {
         else p_size = (int)space->surfacesList.size();
 
         if (this->generation_writer) this->generation_writer->write();
-        if (degree < 15) degree += 0.05;
+        if (Checker::merge_degree < 40) Checker::merge_degree += 5.0;
 
         space->generation++;
     }
@@ -195,5 +188,20 @@ int Converter::handleOpenTriangleMesh() {
     }
     printf("\n\n%d meshes have been removed because it is open.\n", count);
     assert(this->mesh_list.size() >= 0);
+    return 0;
+}
+
+int Converter::export3DS() {
+    if (this->convertSpaceToTriangleMesh()) return -1;
+
+    for (int i = 0 ; i < this->mesh_list.size() ; i++){
+        TriangleMesh *&triangleMesh = this->mesh_list[i];
+        triangleMesh->init();
+        cout << "\n\n" << i << "th mesh" << endl;
+        if (triangleMesh->checkClosed())
+            cout << "this mesh is closed\n\n" << endl;
+    }
+
+    MeshExporter::export3DS(this->mesh_list, (paths["versionDir"] + paths["filename"] + ".3DS").c_str());
     return 0;
 }

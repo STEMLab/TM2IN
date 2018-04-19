@@ -6,7 +6,7 @@
 //  Copyright © 2017년 Dong's MacBook Pro. All rights reserved.
 //
 
-#include "logic/check.hpp"
+#include "logic/check.h"
 #include <algorithm>
 #include <cmath>
 
@@ -38,15 +38,19 @@ bool Checker::isSameVertex(Vertex& v1, Vertex& v2){
     return (fabs(v1.z() - v2.z()) < thres && fabs(v1.x() - v2.x()) < thres && fabs(v1.y() - v2.y()) < thres);
 }
 
-bool Checker::isCoplanar(Vector_3 &big, Vector_3 &small) {
+bool Checker::isCoplanar(Vector_3 &big, Vector_3 &small, double degree) {
     double angle = CGALCalculation::getAngle(big, small);
-    return angle <= Checker::coplanar_degree;
+    if (degree < 0) return angle <= Checker::merge_degree;
+    else return angle <= degree;
 }
 
-bool Checker::checkMerge(Vector_3 &big, Vector_3 &small, double degree){
+bool Checker::checkMerge(Vector_3 &big, Vector_3 &small, double degree) {
     Vector_3 added = big + small;
-    if (Checker::isCoplanar(big, small))
-        return (CGALCalculation::getAngle(added, big) <= degree);
+    if (Checker::isCoplanar(big, small)){
+        double angle = CGALCalculation::getAngle(added, big);
+        if (degree < 0) return (angle <= Checker::merge_degree);
+        else return angle <= degree;
+    }
     return false;
 }
 

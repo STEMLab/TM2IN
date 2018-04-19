@@ -8,17 +8,6 @@
 
 using namespace std;
 
-/**
- * @param a
- * @param b lower case. the answer what I expect.
- * @return
- */
-bool checkAnswer(char a, char b){
-    if (a == b || a == b + 32){
-        return true;
-    }
-    return false;
-}
 
 int TriangulationConverter::pre_process() {
     if (this->initTriangleMesh()) return -1;
@@ -32,7 +21,7 @@ int TriangulationConverter::pre_process() {
 int TriangulationConverter::constructSpace() {
     assert (this->spaceList.size() != 0);
 
-    char doNotMerge, doCheckSelfIntersection;
+    char doNotMerge;
     cout << "keep Triangle without merging? (y/n)" << endl;
 
     // cin >> doNotMerge;
@@ -49,9 +38,12 @@ int TriangulationConverter::constructSpace() {
     this->makeSurfaceGraph();
 
     cout << "\n\ncheck Self Intersection? (y/n)" << endl;
-    cin >> doCheckSelfIntersection;
-    if (checkAnswer(doCheckSelfIntersection, 'y'))
-        if (this->checkSelfIntersection()) return -1;
+//    char doCheckSelfIntersection;
+//    cin >> doCheckSelfIntersection;
+//    if (checkAnswer(doCheckSelfIntersection, 'y'))
+//        if (this->checkSelfIntersection())
+//          return -1;
+    this->checkSelfIntersection();
 
     cout << "\n\nre-triangulation" << endl;
     if (this->triangulation()) return -1;
@@ -64,26 +56,7 @@ int TriangulationConverter::finish() {
     this->tagID();
     this->exportSpace();
 
-    char doConvertToMesh;
-    cout << "Convert To Triangle Mesh?" << endl;
-    cin >> doConvertToMesh;
-    if (checkAnswer(doConvertToMesh, 'y')){
-        if (this->convertSpaceToTriangleMesh()) return -1;
-        this->spaceList.clear();
-        for (int i = 0 ; i < this->mesh_list.size() ; i++){
-            TriangleMesh *&triangleMesh = this->mesh_list[i];
-            triangleMesh->init();
-            cout << "\n\n" << i << "th mesh" << endl;
-            if (triangleMesh->checkClosed())
-                cout << "this mesh is closed\n\n" << endl;
-        }
 
-        char doExport3DS;
-        cout <<"Export 3DS?" << endl; cin >>doExport3DS;
-        if (checkAnswer(doExport3DS, 'y')){
-            this->export3DS((paths["versionDir"] + paths["filename"] + ".3DS").c_str());
-        }
-    }
 
     return 0;
 }

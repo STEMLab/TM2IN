@@ -42,9 +42,9 @@ public:
     static bool isSameVertex(Vertex& v1, Vertex& v2);
     static bool isSameVertex(Vertex* v1, Vertex* v2);
 
-    static bool isCoplanar(Vector_3 &big, Vector_3 &small);
+    static bool isCoplanar(Vector_3 &big, Vector_3 &small, double degree = -1.0);
     static bool isCollinear(Vertex *start_p, Vertex *check_p, Vertex *end_p);
-    static bool checkMerge(Vector_3 &big, Vector_3 &small, double degree);
+    static bool checkMerge(Vector_3 &big, Vector_3 &small, double degree = -1.0);
 
     static int compare_vertex(Vertex* v1, Vertex* v2);
 

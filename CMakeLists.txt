@@ -3,8 +3,10 @@ project(TriangleMeshToClearSolid)
 
 set(CMAKE_CXX_STANDARD 11)
 
-include_directories(../TriangleMeshToClearSolid)
-include_directories(../lib)
+include_directories(
+        ../TriangleMeshToClearSolid
+        ~/dev/lib)
+
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
@@ -22,10 +24,10 @@ find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 # INCLUDE_DIRECTORIES ( /usr/local/include/eigen3 )
 
 add_executable(TriangleMeshToClearSolid
-        ../lib/rapidxml/rapidxml.hpp
-        ../lib/rapidxml/rapidxml_iterators.hpp
-        ../lib/rapidxml/rapidxml_print.hpp
-        ../lib/rapidxml/rapidxml_utils.hpp
+        ~/dev/lib/rapidxml/rapidxml.hpp
+        ~/dev/lib/rapidxml/rapidxml_iterators.hpp
+        ~/dev/lib/rapidxml/rapidxml_print.hpp
+        ~/dev/lib/rapidxml/rapidxml_utils.hpp
         features/Space.cpp
         features/Space.h
         features/Surface.cpp
@@ -54,7 +56,7 @@ add_executable(TriangleMeshToClearSolid
         cgal/CGALCalculation.cpp
         cgal/CGALCalculation.h
         logic/check.cpp
-        logic/check.hpp
+        logic/check.h
         compute/Surface_pair_computation.cpp
         compute/Surface_pair_computation.h
         compute/SurfacesListComputation.cpp
@@ -86,8 +88,14 @@ add_executable(TriangleMeshToClearSolid
         fileio/export/SpaceExporter.h
         fileio/export/JSONSurfaceExporter.cpp
         fileio/export/JSONSurfaceExporter.h
-        fileio/import/COLLADAImporter.cpp fileio/import/COLLADAImporter.h fileio/export/MeshExporter.cpp fileio/export/MeshExporter.h compute/Connect_halfedges.h compute/Connect_halfedges.cpp cgal/Features_to_CGAL_object.h cgal/Features_to_CGAL_object.cpp
-#        test.cpp)
+        fileio/import/COLLADAImporter.cpp
+        fileio/import/COLLADAImporter.h
+        fileio/export/MeshExporter.cpp
+        fileio/export/MeshExporter.h
+        compute/Connect_halfedges.h
+        compute/Connect_halfedges.cpp
+        cgal/Features_to_CGAL_object.h
+        cgal/Features_to_CGAL_object.cpp
         main.cpp)
 
 

@@ -19,6 +19,4 @@ class TriangleMeshGraph;
 class Triangle;
 class HalfEdge;
 
-
-
 #endif // PREDEFINE_H_INCLUDED

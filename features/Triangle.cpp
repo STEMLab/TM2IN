@@ -6,9 +6,10 @@ Triangle::Triangle(Vertex* pa, Vertex *pb, Vertex* pc)
     boundaryEdges.push_back(new HalfEdge(pa, pb, this));
     boundaryEdges.push_back(new HalfEdge(pb, pc, this));
     boundaryEdges.push_back(new HalfEdge(pc, pa, this));
-    this->area = sqrt(CGALCalculation::getSquaredArea(pa, pb, pc));
+    Vector_3 _normal = CGALCalculation::getCrossProduct(pa, pb, pc);
+    this->area = CGAL::to_double(sqrt(_normal.squared_length())) / 2;
     if (this->area != 0.0)
-        this->normal = CGALCalculation::getUnitNormal(pa, pb, pc) * AREA_CONST * this->area;
+        this->normal = _normal;
     this->updateMBB();
 }
 
@@ -27,7 +28,6 @@ int Triangle::findShareSameHalfEdge(Triangle *pTriangle){
     }
     return result;
 }
-
 
 Vertex* Triangle::operator[](int idx){
     if (idx < 3 && idx >= 0) return (*boundaryEdges[idx])[0];

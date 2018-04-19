@@ -1,7 +1,7 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include <logic/check.hpp>
+#include <logic/check.h>
 #include <fileio/GenerationWriter.h>
 #include <fileio/export/SpaceExporter.h>
 #include "fileio/import/Importer.h"
@@ -12,7 +12,6 @@ class Converter
 
 
 protected:
-    double startDegree = 1.0;
     void tagID();
 
     int checkSelfIntersection();
@@ -21,7 +20,7 @@ protected:
     int initTriangleMesh();
 
     int mergeSurfaces();
-    int processGenerations(Space *space, double &degree);
+    int processGenerations(Space *space);
     int simplifyShareEdge();
 
     int convertTriangleMeshToSpace();
@@ -56,7 +55,7 @@ public:
     void setExporter(SpaceExporter* _de){ de = _de;}
     void setPaths(map<string, string> _paths);
 
-
+    int export3DS();
 private:
 
 };

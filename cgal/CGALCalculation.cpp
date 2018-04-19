@@ -27,7 +27,6 @@ double CGALCalculation::getAngle(Vector_3& nv1, Vector_3& nv2){
     return angle;
 }
 
-
 double CGALCalculation::getAngle(Vector_2& nv1, Vector_2& nv2){
     double nv1_length = sqrt(nv1.squared_length());
     double nv2_length = sqrt(nv2.squared_length());

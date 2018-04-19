@@ -3,7 +3,7 @@
 
 
 #include "predefine.h"
-#include "cgal/Types.h"
+#include "Types.h"
 #include <iostream>
 
 

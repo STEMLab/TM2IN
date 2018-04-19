@@ -8,7 +8,7 @@
 #include <functional>
 #include <fstream>
 #include <iostream>
-#include <logic/check.hpp>
+#include <logic/check.h>
 #include <fileio/import/ThreeDSImporter.h>
 #include <compute/Connect_halfedges.h>
 #include <cgal/Features_to_CGAL_object.h>
