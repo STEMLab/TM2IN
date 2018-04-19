@@ -30,6 +30,8 @@ public:
 
     void setOppositeEdge(HalfEdge *oppositeEdge);
 
+    void setVertex(int i, Vertex* vt);
+
     bool isSame(HalfEdge*);
     bool hasOppositeTwoVertex(HalfEdge *);
 

@@ -4,7 +4,7 @@
 
 using namespace std;
 
-std::string Vertex::toJSON()
+std::string Vertex::toJSONString()
 {
     std::string ret;
     ret.append("[");

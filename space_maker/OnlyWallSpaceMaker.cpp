@@ -29,7 +29,7 @@ public :
         std::string ret;
         ret += first->toJSON();
         ret += " --> ";
-        ret += second->toJSON();
+        ret += second->toJSONString();
         return ret;
     }
 
