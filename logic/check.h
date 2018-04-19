@@ -15,7 +15,6 @@
 #include "features/Vertex.h"
 #include "cgal/CGALCalculation.h"
 
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Vector_3.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/Kernel/global_functions.h>
