@@ -22,8 +22,7 @@ INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 # INCLUDE_DIRECTORIES ( /usr/local/include/eigen3 )
-
-add_executable(TriangleMeshToClearSolid
+set(SOURCE_FILES
         ~/dev/lib/rapidxml/rapidxml.hpp
         ~/dev/lib/rapidxml/rapidxml_iterators.hpp
         ~/dev/lib/rapidxml/rapidxml_print.hpp
@@ -95,8 +94,13 @@ add_executable(TriangleMeshToClearSolid
         compute/Connect_halfedges.h
         compute/Connect_halfedges.cpp
         cgal/Features_to_CGAL_object.h
-        cgal/Features_to_CGAL_object.cpp
+        cgal/Features_to_CGAL_object.cpp)
+
+add_executable(TriangleMeshToClearSolid
+        ${SOURCE_FILES}
         main.cpp)
 
 
 TARGET_LINK_LIBRARIES( TriangleMeshToClearSolid LINK_PUBLIC ${Boost_LIBRARIES} Eigen3::Eigen)
+
+add_library(TMIC ${SOURCE_FILES})
