@@ -24,6 +24,7 @@ cscope.out
 # clion
 .idea/
 cmake-build-debug
+CMakeLists.txt
 
 # develop
 main.cpp
