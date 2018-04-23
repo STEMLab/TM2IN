@@ -110,7 +110,6 @@ int Converter::remainStructure() {
 }
 
 int Converter::mergeSurfaces() {
-
     for (ull it = 0 ; it < this->spaceList.size(); it++)
     {
         Checker::merge_degree = 10.0;
@@ -138,6 +137,9 @@ int Converter::processGenerations(Space *space) {
         cout << "generation " << space->generation << ": " << space->surfacesList.size()<< endl;
         if (space->combineSurface() == -1){
             cerr << "combine error" << endl;
+            return -1;
+        }
+        if (space->simplifySegment() == -1){
             return -1;
         }
 
@@ -225,6 +227,7 @@ void Converter::makeSurfaceGraph() {
 }
 
 int Converter::polygonize(Polygonizer *polygonizer) {
+    if (polygonizer == NULL) return 0;
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
         Space *space = this->spaceList[it];
         polygonizer->make(space);

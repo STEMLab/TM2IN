@@ -33,14 +33,15 @@ int TriangulationConverter::constructSpace() {
     }
     if (this->mergeSurfaces()) return -1;
 
-    if (this->simplifyShareEdge()) return -1;
+    // if (this->simplifyShareEdge()) return -1;
 
     this->makeSurfaceGraph();
 
     this->checkSelfIntersection();
 
     cout << "\n\nre-triangulation" << endl;
-    if (this->triangulation()) return -1;
+
+    // if (this->triangulation()) return -1;
 
     return 0;
 }

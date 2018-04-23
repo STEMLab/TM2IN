@@ -14,16 +14,6 @@ void Triangle_Polygonizer::make(Space *space) {
     vector<Surface*> newSurfaceList;
 
     for (int i = 0 ; i < triangleList.size() ; i++){
-        for (HalfEdge* he : triangleList[i]->boundaryEdges){
-            assert(he->getOppositeEdge() == NULL);
-        }
-    }
-    TMIC::connectOppositeHalfEdges(triangleList);
-    TriangleMeshGraph* graph = new TriangleMeshGraph(triangleList);
-    graph->makeAdjacentGraph();
-    assert(graph->isClosedTriangleMesh());
-
-    for (int i = 0 ; i < triangleList.size() ; i++){
         newSurfaceList.push_back(triangleList[i]);
     }
 

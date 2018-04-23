@@ -80,6 +80,7 @@ int TMIC::combine(Surface *origin, Surface *piece) {
     origin->normal = origin->normal + piece->normal;
     origin->area += piece->area;
     origin->setMBB(piece);
+    origin->triangles.insert(origin->triangles.end(), piece->triangles.begin(), piece->triangles.end());
 
     // assert (!origin->checkDuplicate());
 

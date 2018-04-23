@@ -45,35 +45,13 @@ int Space::convertTrianglesToSurfaces(vector<Triangle*>& triangles){
 
 int Space::combineSurface() {
     cout << "Combine Surfaces" << endl;
-
-    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareLength);
-    ull p_size = this->surfacesList.size();
-    bool* checked = (bool*)malloc(sizeof(bool) * p_size);
-    std::fill(checked, checked + p_size, false);
-
-    vector<Surface*> new_poly_list;
-    int combined_count = 0;
-    for (ull i = 0 ; i < this->surfacesList.size() ; i++)
-    {
-        if (checked[i]) continue;
-        checked[i] = true;
-
-        ll count = -1;
-        Surface* newcp = new Surface(this->surfacesList[i]);
-        while(count != 0){
-            newcp = attachSurfaces(newcp, i + 1, checked, count);
-            if (newcp == NULL) break;
-            printProcess(combined_count, this->surfacesList.size(), "combineSurface");
-            combined_count += count;
-        }
-        if (newcp != NULL) new_poly_list.push_back(newcp);
-    }
-
+    vector<Surface*> new_poly_list = TMIC::mergeSurfaces(this->surfacesList);
     freeSurfaces();
     this->surfacesList = new_poly_list;
     return 0;
 }
 
+/*
 Surface * Space::attachSurfaces(Surface *cp, ull start, bool *checked, ll &count)
 {
     count = 0;
@@ -91,7 +69,7 @@ Surface * Space::attachSurfaces(Surface *cp, ull start, bool *checked, ll &count
             if (TMIC::combine(cp, sf) == 0)
             {
                 cout << ".";
-                cp->triangles.insert(cp->triangles.end(), sf->triangles.begin(), sf->triangles.end());
+
                 checked[id] = true;
                 count++;
             }
@@ -100,6 +78,7 @@ Surface * Space::attachSurfaces(Surface *cp, ull start, bool *checked, ll &count
     }
     return cp;
 }
+*/
 
 int Space::updateNormal(){
     cout << "\n------------updateNormal------------\n" << endl;
@@ -123,9 +102,8 @@ int Space::simplifySegment(){
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareLength);
     ull sizeOfSurfaces = this->surfacesList.size();
 
-    for (ull i = 0 ; i < sizeOfSurfaces; i++){
+    for (ull i = 0 ; i < sizeOfSurfaces; i++)
         assert((int) this->surfacesList[i]->getVerticesSize() >= 3);
-    }
 
     for (ull i = 0 ; i < sizeOfSurfaces - 1; i++){
         Surface *&surfaceI = this->surfacesList[i];
@@ -137,52 +115,20 @@ int Space::simplifySegment(){
             if (!surfaceJ->isValid()) continue;
             if (!CGALCalculation::isIntersect_BBOX(surfaceI, surfaceJ)) continue;
             while (TMIC::simplifyLineSegment(this->surfacesList[i], this->surfacesList[j]) == 0){
+                cout << "Simplification" << endl;
                 if (!surfaceI->isValid() || !surfaceJ->isValid()) break;
             }
         }
-        /* v0.3.8
-        for (ull j = i + 1; j < sizeOfSurfaces ; j++)
-        {
-            int loop_count = 0;
-            int j_sizeOfVertices = (int) this->surfacesList[j]->getVerticesSize();
-            if (!CGALCalculation::isIntersect_BBOX(surfaceI, this->surfacesList[j])) continue;
-            while (SurfacePairComputation::simplifyLineSegment(this->surfacesList[i], this->surfacesList[j]) == 0)
-            {
-                if (!this->surfacesList[j]->isValid()){
-                    cout << this->surfacesList[j]->toJSONString() << endl;
-                    delete this->surfacesList[j];
-                    this->surfacesList.erase(this->surfacesList.begin() + j);
-                    Checker::num_of_invalid += 1;
-                    cout << "Erase invalid surface" << endl;
-                    return simplifySegment();
-                }
-                assert (this->surfacesList[i]->isValid());
-
-                loop_count++;
-                assert(loop_count <= j_sizeOfVertices);
-                j_sizeOfVertices = (int) this->surfacesList[j]->getVerticesSize();
-
-            }
-        }
-        */
     }
     sizeOfSurfaces = this->surfacesList.size();
-    /* v0.3.8
-    for (ull i = 0 ; i < sizeOfSurfaces; i++){
-        assert((int) this->surfacesList[i]->getVerticesSize() >= 3);
-        for (HalfEdge* he : this->surfacesList[i]->boundaryEdges){
-            assert(he->parent == this->surfacesList[i]);
-        }
-    }
-    */
 
     bool hasRemoved = false;
     for (int i = sizeOfSurfaces - 1; i >= 0 ; i--){
         if (this->surfacesList[i]->isValid()){
-
         }
         else{
             hasRemoved = true;
+            cout << "remove" << endl;
             delete this->surfacesList[i];
             this->surfacesList.erase(this->surfacesList.begin() + i);
         }
