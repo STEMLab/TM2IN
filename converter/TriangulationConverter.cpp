@@ -11,9 +11,9 @@ using namespace std;
 
 int TriangulationConverter::pre_process() {
     if (this->initTriangleMesh()) return -1;
-//    if (this->handleOpenTriangleMesh()) return -1;
-//    if (this->partitionTriangleMeshByComponent()) return -1;
-//    if (this->remainStructure()) return -1;
+    if (this->handleOpenTriangleMesh()) return -1;
+    if (this->partitionTriangleMeshByComponent()) return -1;
+    if (this->remainStructure()) return -1;
     if (this->convertTriangleMeshToSpace()) return -1;
     return 0;
 }
@@ -50,25 +50,7 @@ int TriangulationConverter::finish() {
     this->tagID();
     this->exportSpace();
 
-
-
     return 0;
-}
-
-
-void TriangulationConverter::makeSurfaceGraph() {
-    for (int i = 0 ; i < spaceList.size() ; i++){
-        cout << "\n\n" << i << "th graph" << endl;
-        spaceList[i]->surfaceGraph = new SurfaceGraph();
-        spaceList[i]->surfaceGraph->makeAdjacentGraph(spaceList[i]->surfacesList);
-        if (spaceList[i]->surfaceGraph->isClosedSurface()){
-            cout << "this is closed" << endl;
-        }
-        else{
-            cout << "not closed" << endl;
-        }
-        cout << "------------\n" << endl;
-    }
 }
 
 

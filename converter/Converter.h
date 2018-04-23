@@ -6,10 +6,10 @@
 #include <fileio/export/SpaceExporter.h>
 #include "fileio/import/Importer.h"
 #include "util.h"
+#include "polygonizer/Polygonizer.h"
 
 class Converter
 {
-
 
 protected:
     void tagID();
@@ -32,6 +32,8 @@ protected:
     int partitionTriangleMeshByComponent();
     int remainStructure();
     int handleOpenTriangleMesh();
+
+    void makeSurfaceGraph();
 
 public:
     Importer* di;
@@ -56,8 +58,8 @@ public:
     void setPaths(map<string, string> _paths);
 
     int export3DS();
-private:
 
+    int polygonize(Polygonizer *polygonizer);
 };
 
 #endif // MANAGER_H

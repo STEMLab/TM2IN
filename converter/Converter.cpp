@@ -38,7 +38,7 @@ int Converter::convertSpaceToTriangleMesh(){
         for (Triangle* triangle : triangleList){
             vector<HalfEdge*> edges = triangle->getBoundaryEdgesList();
             for (HalfEdge* he : edges){
-                assert(he->getOppositeEdge() == NULL);
+                he->oppositeEdge = NULL;
             }
         }
         TriangleMesh* mesh = new TriangleMesh();
@@ -206,5 +206,28 @@ int Converter::export3DS() {
     }
 
     MeshExporter::export3DS(this->mesh_list, (paths["versionDir"] + paths["filename"] + ".3DS").c_str());
+    return 0;
+}
+
+void Converter::makeSurfaceGraph() {
+    for (int i = 0 ; i < spaceList.size() ; i++){
+        cout << "\n\n" << i << "th graph" << endl;
+        spaceList[i]->surfaceGraph = new SurfaceGraph();
+        spaceList[i]->surfaceGraph->makeAdjacentGraph(spaceList[i]->surfacesList);
+        if (spaceList[i]->surfaceGraph->isClosedSurface()){
+            cout << "this is closed" << endl;
+        }
+        else{
+            cout << "not closed" << endl;
+        }
+        cout << "------------\n" << endl;
+    }
+}
+
+int Converter::polygonize(Polygonizer *polygonizer) {
+    for (ull it = 0 ; it < this->spaceList.size() ; it++) {
+        Space *space = this->spaceList[it];
+        polygonizer->make(space);
+    }
     return 0;
 }

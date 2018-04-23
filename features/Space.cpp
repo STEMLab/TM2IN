@@ -311,15 +311,12 @@ void Space::clearTrianglesListInSurfaces() {
 
 void Space::triangulateSurfaces() {
     this->hasTriangulation = true;
-    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); ) {
+    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
         Surface* pSurface = this->surfacesList[sfID];
 
         if (SurfaceComputation::triangulate(pSurface)){
             cerr << "Triangulation Error" << endl;
-            this->surfacesList.erase(this->surfacesList.begin() + sfID);
-        }
-        else {
-            sfID++;
+            exit(-1);
         }
     }
 }

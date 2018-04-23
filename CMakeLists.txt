@@ -93,7 +93,11 @@ set(SOURCE_FILES
         compute/Connect_halfedges.h
         compute/Connect_halfedges.cpp
         cgal/Features_to_CGAL_object.h
-        cgal/Features_to_CGAL_object.cpp)
+        cgal/Features_to_CGAL_object.cpp
+        polygonizer/Polygonizer.h
+        polygonizer/Triangle_Polygonizer.cpp
+        polygonizer/Triangle_Polygonizer.h
+        )
 
 add_executable(TriangleMeshToClearSolid
         ${SOURCE_FILES}
