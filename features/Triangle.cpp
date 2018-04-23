@@ -40,7 +40,6 @@ Vertex* Triangle::operator[](int idx){
 bool Triangle::checkNeighbor(Triangle *&tri){
     for (int v1 = 0 ; v1 < 3 ; v1++){
         if (this->boundaryEdges[v1]->oppositeEdge != NULL && this->boundaryEdges[v1]->oppositeEdge->parent == tri){
-            // assert(!isAdjacent);
             return true;
         }
     }
@@ -112,4 +111,15 @@ std::string Triangle::toJSON(const std::string &indent) {
     ret += indent + "]}";
 
     return ret;
+}
+
+bool Triangle::checkOppositeEdge(Triangle *&tri) {
+    for (int v1 = 0 ; v1 < 3 ; v1++){
+        for (int v2 = 0 ; v2 < 3 ;v2++){
+            if (this->boundaryEdges[v1]->hasOppositeTwoVertex(tri->boundaryEdges[v2])){
+                return true;
+            }
+        }
+    }
+    return false;
 }

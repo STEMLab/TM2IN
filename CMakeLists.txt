@@ -68,8 +68,8 @@ set(SOURCE_FILES
         predefine.h
         util.cpp
         util.h
-        cgal/SurfaceHoleCover.cpp
-        cgal/SurfaceHoleCover.h
+        cgal/Polygon_mesh_processing.cpp
+        cgal/Polygon_mesh_processing.h
         cgal/Types.h
         compute/VertexListComputation.cpp
         compute/VertexListComputation.h
@@ -97,7 +97,7 @@ set(SOURCE_FILES
 
 add_executable(TriangleMeshToClearSolid
         ${SOURCE_FILES}
-        cleaner.cpp)
+        main.cpp)
 
 
 TARGET_LINK_LIBRARIES( TriangleMeshToClearSolid LINK_PUBLIC ${Boost_LIBRARIES} Eigen3::Eigen)

@@ -3,7 +3,7 @@
 #include <compute/SurfacesListComputation.h>
 #include <fileio/export/MeshExporter.h>
 #include "compute/SurfaceComputation.h"
-#include "cgal/SurfaceHoleCover.h"
+#include "cgal/Polygon_mesh_processing.h"
 #include "Converter.h"
 
 using namespace std;
@@ -11,9 +11,9 @@ using namespace std;
 
 int TriangulationConverter::pre_process() {
     if (this->initTriangleMesh()) return -1;
-    if (this->handleOpenTriangleMesh()) return -1;
-    if (this->partitionTriangleMeshByComponent()) return -1;
-    if (this->remainStructure()) return -1;
+//    if (this->handleOpenTriangleMesh()) return -1;
+//    if (this->partitionTriangleMeshByComponent()) return -1;
+//    if (this->remainStructure()) return -1;
     if (this->convertTriangleMeshToSpace()) return -1;
     return 0;
 }
@@ -37,12 +37,6 @@ int TriangulationConverter::constructSpace() {
 
     this->makeSurfaceGraph();
 
-    cout << "\n\ncheck Self Intersection? (y/n)" << endl;
-//    char doCheckSelfIntersection;
-//    cin >> doCheckSelfIntersection;
-//    if (checkAnswer(doCheckSelfIntersection, 'y'))
-//        if (this->checkSelfIntersection())
-//          return -1;
     this->checkSelfIntersection();
 
     cout << "\n\nre-triangulation" << endl;

@@ -1,3 +1,4 @@
+#include <features/TriangleMesh.h>
 #include "space_maker/OnlyWallSpaceMaker.h"
 #include "SurfacesListComputation.h"
 
@@ -45,5 +46,13 @@ int SurfacesListComputation::findFirstSurfaceIndexSimilarWithAxis(vector<Surface
         }
     }
     assert(false);
+}
+
+ull SurfacesListComputation::countTriangles(vector<TriangleMesh *> tm) {
+    ull result = 0;
+    for (TriangleMesh* mesh : tm){
+        result += mesh->triangles.size();
+    }
+    return result;
 }
 

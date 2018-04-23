@@ -9,9 +9,9 @@
 
 using namespace std;
 
-class SurfaceHoleCover {
-public:
-    static vector<Vertex *> fillHole(vector<Vertex*>& vertices, vector<Surface *>& surfaces) ;
+namespace CGAL_User{
+    vector<Vertex *> fillHole(vector<Vertex*>& vertices, vector<Surface *>& surfaces);
+    void fillHole(TriangleMesh* tm);
 };
 
 

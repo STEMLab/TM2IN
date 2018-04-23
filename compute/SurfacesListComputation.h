@@ -12,6 +12,7 @@ public:
     static int findFirstSurfaceIndexSimilarWithAxis(vector<Surface*>& surfacesList, int axis);
     static void tagID(vector<Surface*>& surfacesList);
     static vector<vector<double>> getMBB(vector<Surface*>& surfacesList);
+    static ull countTriangles(vector<TriangleMesh*> tm);
 };
 
 #endif // SURFACESLISTCALCULATION_H_INCLUDED

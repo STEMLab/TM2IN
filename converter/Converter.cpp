@@ -1,3 +1,4 @@
+#include <compute/SurfacesListComputation.h>
 #include "TriangulationConverter.h"
 #include "Converter.h"
 
@@ -8,6 +9,7 @@
 int Converter::importMesh() {
     string filePath = paths["resourceDir"] + paths["filename"] + "." + paths["filetype"];
     this->mesh_list = di->import(filePath.c_str());
+    cout << "Whole Facet number is " << SurfacesListComputation::countTriangles(this->mesh_list) << endl;
     if (this->mesh_list.size() == 0) return -1;
     else return 0;
 }
@@ -21,8 +23,8 @@ int Converter::convertTriangleMeshToSpace() {
             return -1;
         }
         space->vertices = this->mesh_list[space_id]->vertices;
-        // this->mesh_list[space_id]->clear();
         this->spaceList.push_back(space);
+        break;
     }
     this->mesh_list.clear();
     return 0;
@@ -114,6 +116,7 @@ int Converter::mergeSurfaces() {
         Checker::merge_degree = 10.0;
         Space* space = this->spaceList[it];
         if (this->generation_writer) this->generation_writer->start(space);
+        space->generation++;
 
         // check duplicate coordinates
         if (this->spaceList[it]->checkDuplicateVertexInSurfaces()) return -1;
