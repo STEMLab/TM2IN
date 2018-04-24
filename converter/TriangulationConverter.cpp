@@ -32,16 +32,11 @@ int TriangulationConverter::constructSpace() {
         return 0;
     }
     if (this->mergeSurfaces()) return -1;
-
     // if (this->simplifyShareEdge()) return -1;
 
     this->makeSurfaceGraph();
 
     this->checkSelfIntersection();
-
-    cout << "\n\nre-triangulation" << endl;
-
-    // if (this->triangulation()) return -1;
 
     return 0;
 }
@@ -56,6 +51,7 @@ int TriangulationConverter::finish() {
 
 
 int TriangulationConverter::triangulation() {
+    cout << "\n\nTriangulationConverter::re-triangulation" << endl;
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
         cout << "space : " << it << endl;
         Space *space = this->spaceList[it];
@@ -63,5 +59,3 @@ int TriangulationConverter::triangulation() {
     }
     return 0;
 }
-
-

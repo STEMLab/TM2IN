@@ -13,12 +13,12 @@ public:
     virtual int constructSpace();
     virtual int finish();
 
+    int triangulation();
 
 protected:
 
 
 private:
-    int triangulation();
 
 };
 

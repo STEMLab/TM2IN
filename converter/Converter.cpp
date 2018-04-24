@@ -7,7 +7,7 @@
 #include "fileio/export/MeshExporter.h"
 
 int Converter::importMesh() {
-    string filePath = paths["resourceDir"] + paths["filename"] + "." + paths["filetype"];
+    string filePath = paths["resourceDir"] + paths["dataName"] + "." + paths["filetype"];
     this->mesh_list = di->import(filePath.c_str());
     cout << "Whole Facet number is " << SurfacesListComputation::countTriangles(this->mesh_list) << endl;
     if (this->mesh_list.size() == 0) return -1;
@@ -51,14 +51,13 @@ int Converter::convertSpaceToTriangleMesh(){
 }
 
 int Converter::exportSpace() {
-    string filePath = paths["versionDir"] + paths["fileName"];
+    string filePath = paths["versionDir"] + paths["outputDataName"];
     if (de->exportSpace(this->spaceList, filePath.c_str())) return 1;
     return 0;
 }
 
 void Converter::setPaths(map<string, string> _paths) {
     this->paths = _paths;
-    this->paths["fileName"] = "surfaces.json";
 }
 
 void Converter::tagID() {
@@ -112,7 +111,7 @@ int Converter::remainStructure() {
 int Converter::mergeSurfaces() {
     for (ull it = 0 ; it < this->spaceList.size(); it++)
     {
-        Checker::merge_degree = 10.0;
+        Checker::coplanar_degree = 10.0;
         Space* space = this->spaceList[it];
         if (this->generation_writer) this->generation_writer->start(space);
         space->generation++;
@@ -155,7 +154,7 @@ int Converter::processGenerations(Space *space) {
         else p_size = (int)space->surfacesList.size();
 
         if (this->generation_writer) this->generation_writer->write();
-        if (Checker::merge_degree < 40) Checker::merge_degree += 5.0;
+        if (Checker::coplanar_degree < 40) Checker::coplanar_degree += 5.0;
 
         space->generation++;
     }
@@ -207,7 +206,7 @@ int Converter::export3DS() {
             cout << "this mesh is closed\n\n" << endl;
     }
 
-    MeshExporter::export3DS(this->mesh_list, (paths["versionDir"] + paths["filename"] + ".3DS").c_str());
+    MeshExporter::export3DS(this->mesh_list, (paths["versionDir"] + paths["dataName"] + ".3DS").c_str());
     return 0;
 }
 
@@ -228,9 +227,13 @@ void Converter::makeSurfaceGraph() {
 
 int Converter::polygonize(Polygonizer *polygonizer) {
     if (polygonizer == NULL) return 0;
+
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
         Space *space = this->spaceList[it];
         polygonizer->make(space);
     }
     return 0;
 }
+
+
+

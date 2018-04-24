@@ -146,12 +146,12 @@ Vertex* TVRImporter::makeVertex(int id, string &input){
     return vt;
 }
 
-int TVRImporter::extractMINtvr(string filename){
+int TVRImporter::extractMINtvr(string fileName){
     ifstream fin;
-    fin.open(filename+".tvr");
+    fin.open(fileName+".tvr");
 
     ofstream fout;
-    fout.open(filename+".min.tvr");
+    fout.open(fileName+".min.tvr");
     if (!fin) return -1;//error
 
     string inputstr;

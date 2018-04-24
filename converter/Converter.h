@@ -60,6 +60,7 @@ public:
     int export3DS();
 
     int polygonize(Polygonizer *polygonizer);
+    virtual int triangulation(){}
 };
 
 #endif // MANAGER_H

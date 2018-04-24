@@ -40,7 +40,7 @@ bool Checker::isSameVertex(Vertex& v1, Vertex& v2){
 
 bool Checker::isCoplanar(Vector_3 &big, Vector_3 &small, double degree) {
     double angle = CGALCalculation::getAngle(big, small);
-    if (degree < 0) return angle <= Checker::merge_degree;
+    if (degree < 0) return angle <= Checker::coplanar_degree;
     else return angle <= degree;
 }
 
