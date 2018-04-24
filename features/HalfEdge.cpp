@@ -35,3 +35,7 @@ bool HalfEdge::hasOppositeTwoVertex(HalfEdge *he) {
     }
     return false;
 }
+
+void HalfEdge::setVertex(int i, Vertex *vt) {
+    this->vertices[i] = vt;
+}

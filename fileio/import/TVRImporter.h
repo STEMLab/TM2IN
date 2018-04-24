@@ -13,7 +13,7 @@ class TVRImporter : public Importer
         virtual ~TVRImporter();
 
         std::vector<TriangleMesh*> import(const char*);
-        static int extractMINtvr(string filename);
+        static int extractMINtvr(string fileName);
     protected:
         Triangle* makeTriangle(string& input, vector<Vertex*>& vertex);
         string getGroupName(string& input);

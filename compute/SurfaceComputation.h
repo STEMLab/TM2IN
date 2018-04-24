@@ -31,6 +31,8 @@ public:
 
     static std::vector<Segment_3> makeSegment3List(Surface *&pSurface);
     static std::vector<Segment_2> makeSegment2List(Surface *&pSurface, Plane_3 plane3);
+
+
 };
 
 

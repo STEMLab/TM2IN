@@ -2,12 +2,12 @@
 // Created by dongmin on 18. 1. 17.
 //
 
-#include "SurfaceHoleCover.h"
+#include "Polygon_mesh_processing.h"
 #include <algorithm>
 #include <iostream>
 #include "features/Surface.h"
 #include "features/Triangle.h"
-#include "cgal/Types.h"
+#include "Types.h"
 
 typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
 
@@ -65,7 +65,7 @@ public:
     }
 };
 
-vector<Vertex *> SurfaceHoleCover::fillHole (vector<Vertex*>& vertices, vector<Surface *>& surfaces) {
+vector<Vertex *> CGAL_User::fillHole (vector<Vertex*>& vertices, vector<Surface *>& surfaces) {
     Polyhedron poly;
     polyhedron_builder<HalfedgeDS> polybuilder (vertices, surfaces);
     poly.delegate(polybuilder);
@@ -118,4 +118,8 @@ vector<Vertex *> SurfaceHoleCover::fillHole (vector<Vertex*>& vertices, vector<S
     surfaces.clear();
     surfaces = newSurface;
     return newVertices;
+}
+
+void CGAL_User::fillHole(TriangleMesh *tm) {
+
 }

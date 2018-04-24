@@ -13,6 +13,8 @@ public:
     string name;
     vector<Triangle*> triangles;
     vector<Vertex*> vertices;
+    TriangleMeshGraph* graph;
+
 
     TriangleMesh(){}
 
@@ -25,12 +27,9 @@ public:
     void clear();
 
     void updateVertexByTriangleList();
-    bool resolveWrongTriangle();
     bool isFurniture();
-private:
-    TriangleMeshGraph* graph;
-
     void makeGraph();
+private:
 };
 
 #endif // TRIANGLEMESH_H_INCLUDED

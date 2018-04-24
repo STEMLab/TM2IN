@@ -19,9 +19,4 @@ class TriangleMeshGraph;
 class Triangle;
 class HalfEdge;
 
-
-typedef SurfacesListComputation SLC;
-
-
-
 #endif // PREDEFINE_H_INCLUDED

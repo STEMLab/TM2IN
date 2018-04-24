@@ -15,6 +15,7 @@ public:
     Triangle(std::vector<Vertex*>& vertices) : Triangle(vertices[0], vertices[1], vertices[2]) {}
 
     bool checkNeighbor(Triangle*& tri);
+    bool checkOppositeEdge(Triangle*& tri);
     bool setNeighbor(Triangle*& tri);
     bool isOpposite(Triangle* tri);
     int findShareSameHalfEdge(Triangle *pTriangle);
@@ -23,6 +24,8 @@ public:
     Vertex* vertex(int idx);
 
     std::string toJSON(const std::string &indent);
+
+
 };
 
 

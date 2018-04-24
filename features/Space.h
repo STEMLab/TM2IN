@@ -12,7 +12,7 @@
 #include "features/SurfaceGraph.h"
 #include "features/Triangle.h"
 #include "features/Surface.h"
-#include "compute/SurfacePairComputation.h"
+#include "compute/Surface_pair_computation.h"
 
 using namespace std;
 
@@ -40,7 +40,7 @@ public:
     int convertTrianglesToSurfaces(vector<Triangle*>& triangles);
     int checkDuplicateVertexInSurfaces();
 
-    int combineSurface(double degree);
+    int combineSurface();
     int simplifySegment();
     int checkSurfaceValid();
     int updateNormal();
@@ -65,12 +65,10 @@ public:
     void clearTrianglesListInSurfaces();
     int makeSurfacesPlanar();
 
-
 protected:
-    Surface* attachSurfaces(Surface* cp, ull start, bool* checked, ll& count, double degree);
+    Surface *attachSurfaces(Surface *cp, ull start, bool *checked, ll &count);
     void updateMBB();
     void freeSurfaces();
-
 
 
 };

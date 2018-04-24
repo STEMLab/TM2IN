@@ -178,68 +178,69 @@ int SurfaceComputation::triangulate(Surface *&pSurface) {
         Triangle* newTriangle = new Triangle(vertexList);
         pSurface->triangles.clear();
         pSurface->triangles.push_back(newTriangle);
-        return 0;
     }
+    else{
+        // convert 3D point to 2D
+        Plane_3 planeRef = SurfaceComputation::getSimplePlane3WithNormal(pSurface->normal);
+        vector<Point_2> point2dList = projectTo3DPlane(pSurface, planeRef);
 
-    // convert 3D point to 2D
-    Plane_3 planeRef = SurfaceComputation::getSimplePlane3WithNormal(pSurface->normal);
-    vector<Point_2> point2dList = projectTo3DPlane(pSurface, planeRef);
-
-    // partition Surface to convex 2D polygons.
-    Polygon_2 polygon = PolygonComputation::makePolygon(point2dList);
-    if (!polygon.is_simple())
-    {
-        cerr << "polygon is not simple" << endl;
-        cerr << pSurface->toJSONString() << endl;
-        cerr << polygon << endl;
-        return 0;
-    }
-    if (polygon.orientation() == -1){
-        cerr << polygon << endl;
-        cerr << polygon.orientation() << endl;
-        return 0;
-//        std::reverse(point2dList.begin(), point2dList.end());
-//        polygon = PolygonComputation::makePolygon(point2dList);
-    }
-    vector<Polygon_2> polygonList = PolygonComputation::convexPartition(polygon);
-
-    vector<Triangle* > triangles;
-    for (int i = 0 ; i < polygonList.size() ; i++){
-        CGAL_assertion(polygonList[i].is_simple() && polygonList[i].is_convex());
-
-        Polygon_2 p = polygonList[i];
-        vector<Point_2> points;
-        for (Polygon_2::Vertex_iterator vi = p.vertices_begin(); vi != p.vertices_end(); ++vi){
-            Point_2 point2d(vi->x(), vi->y());
-            points.push_back(point2d);
-        }
-
-        Delaunay T;
-        T.insert(points.begin(),points.end());
-        for(Delaunay::Finite_faces_iterator fit = T.finite_faces_begin();
-            fit != T.finite_faces_end(); ++fit)
+        // partition Surface to convex 2D polygons.
+        Polygon_2 polygon = PolygonComputation::makePolygon(point2dList);
+        if (!polygon.is_simple())
         {
-            vector<Vertex*> localTemp;
-            Delaunay::Face_handle facet = fit;
+            cerr << "polygon is not simple" << endl;
+            cerr << pSurface->toJSONString() << endl;
+            cerr << polygon << endl;
+            return 0;
+        }
+        if (polygon.orientation() == -1){
+            cerr << polygon << endl;
+            cerr << polygon.orientation() << endl;
+            return 0;
+        }
+        vector<Polygon_2> polygonList = PolygonComputation::convexPartition(polygon);
 
-            for (int j = 0 ; j < 3 ; j++){
-                Point_2 point2d = facet->vertex(j)->point();
-                int k;
-                for (k = 0 ; k < point2dList.size() ; k++){
-                    if (point2d == point2dList[k]) break;
-                }
-                if (k == point2dList.size()){
-                    cerr << "new Point" << endl;
-                    exit(-1);
-                }
-                localTemp.push_back(vertexList[k]);
+        vector<Triangle* > triangles;
+        for (int i = 0 ; i < polygonList.size() ; i++){
+            CGAL_assertion(polygonList[i].is_simple() && polygonList[i].is_convex());
+
+            Polygon_2 p = polygonList[i];
+            vector<Point_2> points;
+            for (Polygon_2::Vertex_iterator vi = p.vertices_begin(); vi != p.vertices_end(); ++vi){
+                Point_2 point2d(vi->x(), vi->y());
+                points.push_back(point2d);
             }
 
-            triangles.push_back(new Triangle(localTemp));
+            Delaunay T;
+            T.insert(points.begin(),points.end());
+            for(Delaunay::Finite_faces_iterator fit = T.finite_faces_begin();
+                fit != T.finite_faces_end(); ++fit)
+            {
+                vector<Vertex*> localTemp;
+                Delaunay::Face_handle facet = fit;
+
+                for (int j = 0 ; j < 3 ; j++){
+                    Point_2 point2d = facet->vertex(j)->point();
+                    int k;
+                    for (k = 0 ; k < point2dList.size() ; k++){
+                        if (point2d == point2dList[k]) break;
+                    }
+                    if (k == point2dList.size()){
+                        cerr << "new Point" << endl;
+                        exit(-1);
+                    }
+                    localTemp.push_back(vertexList[k]);
+                }
+
+                triangles.push_back(new Triangle(localTemp));
+            }
         }
+        pSurface->triangles.clear();
+        pSurface->triangles = triangles;
     }
-    pSurface->triangles.clear();
-    pSurface->triangles = triangles;
+//    pSurface->setArea(addWholeArea(pSurface));
+//    pSurface->setNormal(addWholeNormal(pSurface->triangles) * AREA_CONST);
+
     return 0;
 }
 

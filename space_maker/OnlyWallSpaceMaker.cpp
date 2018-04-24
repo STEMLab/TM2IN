@@ -1,7 +1,7 @@
 #include <compute/SurfaceComputation.h>
 #include "features/Surface.h"
-#include "logic/check.hpp"
-#include "space_maker/OnlyWallSpaceMaker.h"
+#include "logic/check.h"
+#include "OnlyWallSpaceMaker.h"
 #include "features/SurfaceGraph.h"
 #include "compute/SurfacesListComputation.h"
 #include "cgal/Types.h"
@@ -29,7 +29,7 @@ public :
         std::string ret;
         ret += first->toJSON();
         ret += " --> ";
-        ret += second->toJSON();
+        ret += second->toJSONString();
         return ret;
     }
 

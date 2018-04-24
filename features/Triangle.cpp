@@ -6,9 +6,10 @@ Triangle::Triangle(Vertex* pa, Vertex *pb, Vertex* pc)
     boundaryEdges.push_back(new HalfEdge(pa, pb, this));
     boundaryEdges.push_back(new HalfEdge(pb, pc, this));
     boundaryEdges.push_back(new HalfEdge(pc, pa, this));
-    this->area = sqrt(CGALCalculation::getSquaredArea(pa, pb, pc));
+    Vector_3 _normal = CGALCalculation::getCrossProduct(pa, pb, pc);
+    this->area = CGAL::to_double(sqrt(_normal.squared_length())) / 2;
     if (this->area != 0.0)
-        this->normal = CGALCalculation::getUnitNormal(pa, pb, pc) * AREA_CONST * this->area;
+        this->normal = _normal;
     this->updateMBB();
 }
 
@@ -28,7 +29,6 @@ int Triangle::findShareSameHalfEdge(Triangle *pTriangle){
     return result;
 }
 
-
 Vertex* Triangle::operator[](int idx){
     if (idx < 3 && idx >= 0) return (*boundaryEdges[idx])[0];
     else{
@@ -40,7 +40,6 @@ Vertex* Triangle::operator[](int idx){
 bool Triangle::checkNeighbor(Triangle *&tri){
     for (int v1 = 0 ; v1 < 3 ; v1++){
         if (this->boundaryEdges[v1]->oppositeEdge != NULL && this->boundaryEdges[v1]->oppositeEdge->parent == tri){
-            // assert(!isAdjacent);
             return true;
         }
     }
@@ -104,7 +103,7 @@ std::string Triangle::toJSON(const std::string &indent) {
     ret += indent + "\"coord\" : [\n";
     for (int i = 0 ; i < 3 ; i++){
         ret += indent + "\t";
-        ret += this->vertex(i)->toJSON();
+        ret += this->vertex(i)->toJSONString();
         if (i != 2)
             ret += ",";
         ret += "\n";
@@ -112,4 +111,15 @@ std::string Triangle::toJSON(const std::string &indent) {
     ret += indent + "]}";
 
     return ret;
+}
+
+bool Triangle::checkOppositeEdge(Triangle *&tri) {
+    for (int v1 = 0 ; v1 < 3 ; v1++){
+        for (int v2 = 0 ; v2 < 3 ;v2++){
+            if (this->boundaryEdges[v1]->hasOppositeTwoVertex(tri->boundaryEdges[v2])){
+                return true;
+            }
+        }
+    }
+    return false;
 }

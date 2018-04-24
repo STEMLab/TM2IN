@@ -5,7 +5,7 @@
 #ifndef TRIANGLEMESHTOCLEARSOLID_SURFACEINTERSECTION_H
 #define TRIANGLEMESHTOCLEARSOLID_SURFACEINTERSECTION_H
 
-#include "cgal/Types.h"
+#include "Types.h"
 #include "features/Surface.h"
 
 class SurfaceIntersection {

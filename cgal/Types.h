@@ -6,12 +6,10 @@
 #define TRIANGLEMESHTOCLEARSOLID_CGALTYPES_H
 
 
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Vector_3.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/Plane_3.h>
 #include <CGAL/Kernel/global_functions.h>
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Vector_3.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Point_2.h>

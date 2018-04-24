@@ -29,7 +29,7 @@ long ThreeDSImporter::filelength(int f)
 	return(buf.st_size);
 }
 
-vector<TriangleMesh*> ThreeDSImporter::import(const char *p_filename)
+vector<TriangleMesh*> ThreeDSImporter::import(const char *p_fileName)
 {
 	int i; //Index variable
 	FILE *l_file; //File pointer
@@ -43,7 +43,7 @@ vector<TriangleMesh*> ThreeDSImporter::import(const char *p_filename)
 
 	unsigned short l_face_flags; //Flag that stores some face information
 
-    assert( (l_file=fopen (p_filename, "rb") ) != NULL);
+    assert( (l_file=fopen (p_fileName, "rb") ) != NULL);
 
     vector<TriangleMesh*> meshList;
     TriangleMesh* currentMesh = new TriangleMesh();
@@ -53,7 +53,7 @@ vector<TriangleMesh*> ThreeDSImporter::import(const char *p_filename)
 
     while (ftell (l_file) < this->filelength (fileno (l_file))) //Loop to scan the whole file
 	{
-		//getch(); //Insert this command for debug (to wait for keypress for each chuck reading)
+		//getch(); //Insert this converter for debug (to wait for keypress for each chuck reading)
 		fread (&l_chunk_id, 2, 1, l_file); //Read the chunk header
 		fread (&l_chunk_length, 4, 1, l_file); //Read the length of the chunk
 

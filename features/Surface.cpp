@@ -8,8 +8,8 @@
 
 #include "features/Surface.h"
 
-#include "logic/check.hpp"
-#include "compute/SurfacePairComputation.h"
+#include "logic/check.h"
+#include "compute/Surface_pair_computation.h"
 #include "compute/HalfEdgeComputation.h"
 #include "compute/VertexComputation.h"
 #include "features/Triangle.h"
@@ -127,10 +127,10 @@ string Surface::toJSONString(){
     ret.append("], \n");
     ret.append(" \"coord\" : [");
     for (unsigned int i = 0 ; i < this->getVerticesSize() ; i++){
-        ret.append(this->vertex(i)->toJSON());
+        ret.append(this->vertex(i)->toJSONString());
         ret.append(",");
     }
-    ret.append(this->vertex(0)->toJSON());
+    ret.append(this->vertex(0)->toJSONString());
     ret.append("] }");
     return ret;
 }
@@ -300,8 +300,11 @@ void Surface::removeVertexByIndex(int startIndex, int endIndex) {
 }
 
 void Surface::setVertex(int index, Vertex *vt) {
-    // this->v_list[index] = vt;
-    cerr << "TODO" << endl;
+    this->boundaryEdges[index]->setVertex(0, vt);
+    if (index == 0)
+        this->boundaryEdges[this->getVerticesSize() - 1]->setVertex(1, vt);
+    else
+        this->boundaryEdges[index - 1]->setVertex(1, vt);
 }
 
 void Surface::insertVertex(int index, Vertex *vt) {
@@ -334,6 +337,7 @@ void Surface::removeVertexByIndex(int id) {
     cerr << "TODO : remove Surface::removeVertexByIndex" << endl;
 }
 
-std::ostream &operator<<(std::ostream &ou, Surface *pSurface) {
+std::ostream& operator<<(std::ostream &ou, Surface *pSurface) {
     ou << pSurface->toJSONString() << endl;
+    return ou;
 }

@@ -87,7 +87,7 @@ vector<TriangleMesh*> TVRImporter::import(const char* f_path){
 /*
 Vertex* TVRImporter::findSameVertex(vector<Vertex*>& vertices, Checker* check, Vertex& vt){
     vector<Vertex*>::iterator it, low;
-    low = std::lower_bound(vertices.begin(), vertices.end(), vt.x() - check->thresholdVertex * 2, CompareVertexAndX() );
+    low = std::lower_bound(vertices.begin(), vertices.end(), vt.x() - check->thresholdVertex * 2, CompareVertex_X() );
 
     for (it = low ; it != vertices.end() ; it++){
         double diff = check->compare_vertex( (*it), &vt);
@@ -146,12 +146,12 @@ Vertex* TVRImporter::makeVertex(int id, string &input){
     return vt;
 }
 
-int TVRImporter::extractMINtvr(string filename){
+int TVRImporter::extractMINtvr(string fileName){
     ifstream fin;
-    fin.open(filename+".tvr");
+    fin.open(fileName+".tvr");
 
     ofstream fout;
-    fout.open(filename+".min.tvr");
+    fout.open(fileName+".min.tvr");
     if (!fin) return -1;//error
 
     string inputstr;

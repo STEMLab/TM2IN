@@ -7,7 +7,7 @@
 #include <climits>
 #include <cassert>
 
-#include "logic/check.hpp"
+#include "logic/check.h"
 #include "util.h"
 #include "predefine.h"
 #include "cgal/Types.h"
