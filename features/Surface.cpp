@@ -35,6 +35,7 @@ Surface::Surface(Surface* cp){
     }
     this->area = cp->area;
     this->triangles = cp->triangles;
+    this->sf_id = cp->sf_id;
 }
 
 Surface::Surface(std::vector<Vertex*>& pVertices){
@@ -170,17 +171,24 @@ bool Surface::updateNormal(){
     if (this->getVerticesSize() <= 4){
         this->normal = getSimpleNormal();
     }
+    else{
+        vector<Triangle*> triangles;
+        Surface* thisSurface = this;
+        int triangulate = SurfaceComputation::triangulate(thisSurface, triangles);
+        if (triangulate) return true;
 
-    this->normal = this->normal / sqrt(this->normal.squared_length());
-    this->normal = this->normal * this->area * AREA_CONST;
-
-    if (this->normal == CGAL::NULL_VECTOR){
-        cout << "NULLVECTOR" << endl;
-        assert(this->normal != CGAL::NULL_VECTOR);
+        Vector_3 sumNormal(0,0,0);
+        for (Triangle* tri : triangles){
+            sumNormal += tri->normal;
+            delete tri;
+        }
+        this->normal = sumNormal;
     }
+//    this->normal = this->normal / sqrt(this->normal.squared_length());
+//    this->normal = this->normal * this->area * AREA_CONST;
 
+    assert(this->normal != CGAL::NULL_VECTOR);
     return true;
-
 }
 
 // TODO : move

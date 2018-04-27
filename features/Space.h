@@ -27,12 +27,10 @@ public:
     vector<Vertex *> vertices;
     SurfaceGraph* surfaceGraph;
 
-    double min_coords[3];
-    double max_coords[3];
+    CGAL::Bbox_3 mbb;
     string name;
     double whole_area = 0;
     int generation;
-    bool hasTriangulation = false;
 
     void setName(string _name){
         name = _name;
@@ -40,7 +38,7 @@ public:
     int convertTrianglesToSurfaces(vector<Triangle*>& triangles);
     int checkDuplicateVertexInSurfaces();
 
-    int combineSurface();
+    int mergeSurface();
     int simplifySegment();
     int checkSurfaceValid();
     int updateNormal();
@@ -53,7 +51,9 @@ public:
 
     int checkSelfIntersection();
 
-    vector<Triangle *> getTriangleListOfAllSurfaces();
+    vector<Triangle *> getTriangulation();
+
+    double getAverageError();
 
     int removeStraight();
 

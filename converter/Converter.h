@@ -61,6 +61,8 @@ public:
 
     int polygonize(Polygonizer *polygonizer);
     virtual int triangulation(){}
+
+    void printInputDataSpec();
 };
 
 #endif // MANAGER_H

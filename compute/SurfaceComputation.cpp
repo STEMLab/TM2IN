@@ -170,14 +170,20 @@ void SurfaceComputation::removeStraight(Surface*& pSurface){
 }
 
 
-int SurfaceComputation::triangulate(Surface *&pSurface) {
+int SurfaceComputation::triangulate(Surface *&pSurface, std::vector<Triangle*>& result) {
+    result.clear();
+
     std::vector<Vertex*> vertexList = pSurface->getVerticesList();
-    pSurface->updateNormal();
+    if (vertexList.size() <= 4){
+        pSurface->setNormal(pSurface->getSimpleNormal());
+    }
 
     if (vertexList.size() == 3) {
         Triangle* newTriangle = new Triangle(vertexList);
-        pSurface->triangles.clear();
-        pSurface->triangles.push_back(newTriangle);
+        result.push_back(newTriangle);
+        return 0;
+//        pSurface->triangles.clear();
+//        pSurface->triangles.push_back(newTriangle);
     }
     else{
         // convert 3D point to 2D
@@ -191,12 +197,12 @@ int SurfaceComputation::triangulate(Surface *&pSurface) {
             cerr << "polygon is not simple" << endl;
             cerr << pSurface->toJSONString() << endl;
             cerr << polygon << endl;
-            return 0;
+            return 1;
         }
         if (polygon.orientation() == -1){
             cerr << polygon << endl;
             cerr << polygon.orientation() << endl;
-            return 0;
+            return 1;
         }
         vector<Polygon_2> polygonList = PolygonComputation::convexPartition(polygon);
 
@@ -235,12 +241,8 @@ int SurfaceComputation::triangulate(Surface *&pSurface) {
                 triangles.push_back(new Triangle(localTemp));
             }
         }
-        pSurface->triangles.clear();
-        pSurface->triangles = triangles;
+        result = triangles;
     }
-//    pSurface->setArea(addWholeArea(pSurface));
-//    pSurface->setNormal(addWholeNormal(pSurface->triangles) * AREA_CONST);
-
     return 0;
 }
 
@@ -276,3 +278,16 @@ Plane_3 SurfaceComputation::getSimplePlane3WithNormal(Vector_3 pNormal) {
     return plane3;
 }
 
+double TMIC::computeError(Surface *&pSurface) {
+    double difference = 0.0;
+    Plane_3 pca = SurfaceComputation::getPlane3WithPCA(pSurface);
+    vector<Vertex*> vertices = pSurface->getVerticesList();
+    for (Vertex* vt : vertices){
+        Point_3 pt = vt->getCGALPoint();
+        double dist = CGAL::squared_distance(pt, pca);
+        if (dist > 0.000001)
+            difference += CGAL::to_double(sqrt(dist));
+    }
+
+    return difference;
+}

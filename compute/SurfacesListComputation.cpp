@@ -17,7 +17,7 @@ void SurfacesListComputation::tagID(vector<Surface*>& surfacesList){
     }
 }
 
-vector<vector<double>> SurfacesListComputation::getMBB(vector<Surface*>& surfacesList){
+CGAL::Bbox_3 TMIC::getMBB(vector<Surface *> &surfacesList){
     vector<vector<double>> v_minmax;
     v_minmax.assign(2, vector<double>());
 
@@ -36,7 +36,8 @@ vector<vector<double>> SurfacesListComputation::getMBB(vector<Surface*>& surface
         }
     }
 
-    return v_minmax;
+    CGAL::Bbox_3 bbox_3(v_minmax[0][0],v_minmax[0][1], v_minmax[0][2], v_minmax[1][0], v_minmax[1][1], v_minmax[1][2]);
+    return bbox_3;
 }
 
 int SurfacesListComputation::findFirstSurfaceIndexSimilarWithAxis(vector<Surface*>& surfacesList, int axis){
@@ -57,60 +58,57 @@ ull SurfacesListComputation::countTriangles(vector<TriangleMesh *> tm) {
     return result;
 }
 
-vector<Surface *> TMIC::mergeSurfaces(vector<Surface *> &surfacesList) {
-    vector<Surface*> newSurfacesList;
+bool TMIC::mergeSurfaces(vector<Surface *> &surfacesList, vector<Surface*>& result) {
+    result.clear();
+    //deep copy
     for (ull i = 0 ; i < surfacesList.size() ; i++){
-        newSurfacesList.push_back(new Surface(surfacesList[i]));
+        result.push_back(new Surface(surfacesList[i]));
     }
 
+    bool hasMerged = false;
     bool isMerged = true;
     ull combined_count = 0;
     while (isMerged){
-        sort(newSurfacesList.begin(), newSurfacesList.end(), Surface::compareLength);
-        isMerged = false;
-        for (ull i = 0 ; i < newSurfacesList.size() - 1 ; i++){
-            for (ull j = i + 1 ; j < newSurfacesList.size() ;){
-                if (TMIC::combine(newSurfacesList[i], newSurfacesList[j]) == 0)
+        sort(result.begin(), result.end(), Surface::compareLength);
+        if (result.size() == 1) break;
+        for (ull i = 0 ; i < result.size() - 1 ; i++){
+            ull j = i + 1;
+            isMerged = false;
+            while (j < result.size()){
+                if (TMIC::combine(result[i], result[j]) == 0)
                 {
                     cout << ".";
                     combined_count++;
                     isMerged = true;
-                    newSurfacesList.erase(newSurfacesList.begin() + j);
+                    hasMerged = true;
+                    result.erase(result.begin() + j);
                 } else
                     j++;
             }
-            printProcess(combined_count, newSurfacesList.size(), "combineSurface");
+            if (isMerged) i -= 1;
+            printProcess(combined_count, surfacesList.size(), "mergeSurface");
         }
     }
 
-    return newSurfacesList;
-    /*
-    ull p_size = surfacesList.size();
-    bool* checked = (bool*)malloc(sizeof(bool) * p_size);
-    std::fill(checked, checked + p_size, false);
-
-    int combined_count = 0;
-    for (ull i = 0 ; i < surfacesList.size() ; i++)
-    {
-        if (checked[i]) continue;
-        checked[i] = true;
-
-        ll count = -1;
-        Surface* newcp = new Surface(this->surfacesList[i]);
-        while(count != 0){
-            newcp = attachSurfaces(newcp, i + 1, checked, count);
-            if (newcp == NULL) break;
-            printProcess(combined_count, this->surfacesList.size(), "combineSurface");
-            combined_count += count;
-        }
-        if (newcp != NULL) newSurfacesList.push_back(newcp);
-    }
-    */
+    return hasMerged;
 }
 
-vector<Surface *> TMIC::mergeSurfaces(vector<Triangle *> &triangleList) {
+bool TMIC::mergeSurfaces(vector<Triangle *> &triangleList, vector<Surface*>& result) {
     vector<Surface *> surfacesList;
     for (Triangle* tri : triangleList)
         surfacesList.push_back(new Surface(tri));
-    return TMIC::mergeSurfaces(surfacesList);
+    bool hasMerged = TMIC::mergeSurfaces(surfacesList, result);
+    for(Surface* sf : surfacesList)
+        delete sf;
+    return hasMerged;
+}
+
+double TMIC::getAverageSize(const vector<Surface *> &surfacesList) {
+    double wholeArea = 0.0;
+
+    for (Surface* sf : surfacesList){
+        wholeArea += sf->getArea();
+    }
+
+    return wholeArea / (double)surfacesList.size();
 }

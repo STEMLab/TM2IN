@@ -47,9 +47,9 @@ bool Checker::isCoplanar(Vector_3 &big, Vector_3 &small, double degree) {
 bool Checker::checkMerge(Vector_3 &big, Vector_3 &small, double degree) {
     Vector_3 added = big + small;
     if (Checker::isCoplanar(big, small)){
-        double angle = CGALCalculation::getAngle(added, big);
-        if (degree < 0) return (angle <= Checker::merge_degree);
-        else return angle <= degree;
+        double addedAngle = CGALCalculation::getAngle(added, big);
+        if (degree < 0) return (addedAngle <= Checker::merge_degree);
+        else return addedAngle <= degree;
     }
     return false;
 }

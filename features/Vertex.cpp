@@ -1,4 +1,5 @@
 #include <string>
+#include <cgal/Features_to_CGAL_object.h>
 
 #include "features/Vertex.h"
 
@@ -29,4 +30,8 @@ void Vertex::translateTo(vector<double> diff){
 
 void Vertex::setIndex(unsigned long i) {
     this->index = i;
+}
+
+Kernel::Point_3 Vertex::getCGALPoint() {
+    return CGAL_User::getCGALPoint(this);
 }

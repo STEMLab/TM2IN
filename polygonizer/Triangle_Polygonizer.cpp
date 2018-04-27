@@ -9,8 +9,7 @@
 #include "features/TriangleMeshGraph.h"
 
 void Triangle_Polygonizer::make(Space *space) {
-    assert(space->hasTriangulation);
-    vector<Triangle*> triangleList = space->getTriangleListOfAllSurfaces();
+    vector<Triangle*> triangleList = space->getTriangulation();
     vector<Surface*> newSurfaceList;
 
     for (int i = 0 ; i < triangleList.size() ; i++){

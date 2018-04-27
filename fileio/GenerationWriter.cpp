@@ -2,6 +2,7 @@
 #include "fileio/JSONMaker.h"
 
 #include <boost/filesystem.hpp>
+#include <compute/SurfacesListComputation.h>
 
 void GenerationWriter::start(Space* p_space){
     this->space = p_space;
@@ -41,7 +42,11 @@ void GenerationWriter::writeJSON(){
 void GenerationWriter::writeStat(){
     ofstream statout;
     statout.open(process_path + this->space->name + "/gs" + ".txt", ios::app);
-    statout << "Generation " << this->space->generation << " : " << space->surfacesList.size() << endl;
+    statout << this->space->generation;
+    statout << " , " << space->surfacesList.size();
+    statout << " , " << TMIC::getAverageSize(space->surfacesList);
+    statout << " , " << space->getAverageError();
+    statout << "\n";
     statout.close();
 }
 

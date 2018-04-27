@@ -43,12 +43,13 @@ int Space::convertTrianglesToSurfaces(vector<Triangle*>& triangles){
 }
 
 
-int Space::combineSurface() {
+int Space::mergeSurface() {
     cout << "Combine Surfaces" << endl;
-    vector<Surface*> new_poly_list = TMIC::mergeSurfaces(this->surfacesList);
+    vector<Surface*> new_poly_list;
+    bool hasMerged = TMIC::mergeSurfaces(this->surfacesList, new_poly_list);
     freeSurfaces();
     this->surfacesList = new_poly_list;
-    return 0;
+    return hasMerged;
 }
 
 /*
@@ -98,6 +99,7 @@ int Space::updateNormal(){
 
 
 int Space::simplifySegment(){
+    bool hasSimplified = false;
     cout << "\n------------simplifySegment------------\n" << endl;
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareLength);
     ull sizeOfSurfaces = this->surfacesList.size();
@@ -116,6 +118,7 @@ int Space::simplifySegment(){
             if (!CGALCalculation::isIntersect_BBOX(surfaceI, surfaceJ)) continue;
             while (TMIC::simplifyLineSegment(this->surfacesList[i], this->surfacesList[j]) == 0){
                 cout << "Simplification" << endl;
+                hasSimplified = true;
                 if (!surfaceI->isValid() || !surfaceJ->isValid()) break;
             }
         }
@@ -135,9 +138,9 @@ int Space::simplifySegment(){
     }
 
     if (hasRemoved)
-        return simplifySegment();
-    else
-        return 0;
+        hasSimplified = (simplifySegment() || hasSimplified);
+
+    return hasSimplified;
 }
 
 int Space::checkSurfaceValid() {
@@ -182,7 +185,7 @@ int Space::translateSpaceToOrigin(){
     updateMBB();
     double diff[3];
     for (int i = 0 ; i < 3 ; i++){
-        diff[i] = -this->min_coords[i];
+        diff[i] = -this->mbb.min(i);
     }
 
     for (ull i = 0 ; i < this->surfacesList.size() ; i++)
@@ -198,12 +201,7 @@ int Space::translateSpaceToOrigin(){
 }
 
 void Space::updateMBB(){
-    vector<vector<double> > min_max;
-    min_max = SurfacesListComputation::getMBB(this->surfacesList);
-    for (int i = 0 ; i < 3 ; i++){
-        this->min_coords[i] = min_max[0][i];
-        this->max_coords[i] = min_max[1][i];
-    }
+    mbb = TMIC::getMBB(this->surfacesList);
 }
 
 void Space::freeSurfaces(){
@@ -256,14 +254,15 @@ void Space::clearTrianglesListInSurfaces() {
 }
 
 void Space::triangulateSurfaces() {
-    this->hasTriangulation = true;
     for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
         Surface* pSurface = this->surfacesList[sfID];
-
-        if (SurfaceComputation::triangulate(pSurface)){
+        vector<Triangle*> triangles;
+        if (SurfaceComputation::triangulate(pSurface, triangles)){
             cerr << "Triangulation Error" << endl;
             exit(-1);
         }
+        assert(triangles.size());
+        pSurface->triangulation = triangles;
     }
 }
 
@@ -283,17 +282,28 @@ int Space::checkSelfIntersection() {
     return 0;
 }
 
-vector<Triangle *> Space::getTriangleListOfAllSurfaces() {
+vector<Triangle *> Space::getTriangulation() {
     vector<Triangle *> triangles;
     for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
         Surface* pSurface = this->surfacesList[sfID];
+        assert(pSurface->triangulation.size());
         int index = 0;
-        for (Triangle* triangle : pSurface->triangles){
+        for (Triangle* triangle : pSurface->triangulation){
             triangle->sf_id = to_string(sfID) + "_" + to_string(index++);
         }
-        triangles.insert(triangles.end(),pSurface->triangles.begin(),pSurface->triangles.end());
+        triangles.insert(triangles.end(),pSurface->triangulation.begin(),pSurface->triangulation.end());
     }
     return triangles;
+}
+
+double Space::getAverageError() {
+    double errorSum = 0.0;
+    for (Surface* surface : this->surfacesList){
+        errorSum += TMIC::computeError(surface);
+        if (errorSum > 0)
+            cout << errorSum << endl;
+    }
+    return errorSum;
 }
 
 /*

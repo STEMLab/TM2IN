@@ -63,6 +63,8 @@ public:
         return ou;
     }
     void setIndex(unsigned long i);
+
+    Kernel::Point_3 getCGALPoint();
 };
 
 /** < for Searching upper_bound and lower_bound */

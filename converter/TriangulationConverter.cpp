@@ -32,6 +32,7 @@ int TriangulationConverter::constructSpace() {
         return 0;
     }
     if (this->mergeSurfaces()) return -1;
+
     // if (this->simplifyShareEdge()) return -1;
 
     this->makeSurfaceGraph();

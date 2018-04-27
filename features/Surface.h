@@ -24,6 +24,7 @@ public:
     Vector_3 normal = CGAL::NULL_VECTOR;
 
     std::vector<Triangle*> triangles;
+    std::vector<Triangle *> triangulation;
 
     double min_coords[3];
     double max_coords[3];
@@ -36,11 +37,11 @@ public:
     Surface(std::vector<Vertex*>& pVertices);
 
     ull getVerticesSize(){ return boundaryEdges.size(); }
-
     void setVertex(int index, Vertex* vt);
     virtual Vertex* vertex(int index);
     void insertVertex(int index, Vertex* vt);
 
+    void setNormal(Vector_3 _normal){ this->normal = _normal; }
     Vector_3 getNormal();
     double getArea();
 
@@ -90,6 +91,7 @@ public:
     int indexBoundaryEdge(HalfEdge *pEdge);
 
     friend std::ostream& operator<<(std::ostream& ou, Surface* pSurface);
+
 };
 
 

@@ -56,7 +56,6 @@ int TMIC::combine(Surface *origin, Surface *piece) {
         }
     }
 
-    HalfEdgeComputation::setParent(piece->getBoundaryEdgesList(), origin);
     vector<HalfEdge*> new_edges;
 
     for (ll j = lastVertex_origin; ; ){
@@ -76,8 +75,25 @@ int TMIC::combine(Surface *origin, Surface *piece) {
     vector<Vertex*> newVertexList = HalfEdgeComputation::getFirstVertexList(new_edges);
     if (VertexListComputation::checkDuplicate(newVertexList)) return 1;
 
+    // check polygon after merging
+    Surface* pSurface = new Surface();
+    pSurface->setBoundaryEdgesList(new_edges);
+    Vector_3 newNormal = origin->normal + piece->normal;
+    Plane_3 planeRef = SurfaceComputation::getSimplePlane3WithNormal(newNormal);
+    vector<Point_2> point2dList = SurfaceComputation::projectTo3DPlane(pSurface, planeRef);
+    Polygon_2 polygon = PolygonComputation::makePolygon(point2dList);
+    if (!polygon.is_simple() || polygon.orientation() == -1){
+        cerr << "cannot be merged" << endl;
+        return 1;
+    }
+    else{
+        delete pSurface;
+    }
+
+    HalfEdgeComputation::setParent(piece->getBoundaryEdgesList(), origin);
+
     origin->setBoundaryEdgesList(new_edges);
-    origin->normal = origin->normal + piece->normal;
+    origin->normal = newNormal;
     origin->area += piece->area;
     origin->setMBB(piece);
     origin->triangles.insert(origin->triangles.end(), piece->triangles.begin(), piece->triangles.end());

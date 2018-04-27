@@ -67,7 +67,6 @@ int JSONMaker::printTriangleJSON(ofstream& fout, vector<Space *>& spaces) {
 
 
 int JSONMaker::printTriangleJSON(ofstream &fout, Space *space) {
-    if (!space->hasTriangulation) return 1;
     fout << "{\n";
     fout<< " \"name\" : \"" << space->name << "\", \n" ;
     JSONMaker::printTriangleJSON(fout, space->surfacesList);

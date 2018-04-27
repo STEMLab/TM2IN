@@ -8,7 +8,7 @@
 
 #include "Polygonizer.h"
 
-class TriangleMerge_Polygonizer : public Polygonizer {
+class DividedPolygonizer : public Polygonizer {
     void make(Space* space);
 };
 

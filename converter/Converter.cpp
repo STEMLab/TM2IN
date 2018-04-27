@@ -9,7 +9,6 @@
 int Converter::importMesh() {
     string filePath = paths["resourceDir"] + paths["dataName"] + "." + paths["filetype"];
     this->mesh_list = di->import(filePath.c_str());
-    cout << "Whole Facet number is " << SurfacesListComputation::countTriangles(this->mesh_list) << endl;
     if (this->mesh_list.size() == 0) return -1;
     else return 0;
 }
@@ -34,7 +33,7 @@ int Converter::convertSpaceToTriangleMesh(){
     this->mesh_list.clear();
     for (int spaceID = 0 ; spaceID < this->spaceList.size() ; spaceID++){
         Space* space = this->spaceList[spaceID];
-        vector<Triangle*> triangleList = space->getTriangleListOfAllSurfaces();
+        vector<Triangle*> triangleList = space->getTriangulation();
         for (Triangle* triangle : triangleList){
             vector<HalfEdge*> edges = triangle->getBoundaryEdgesList();
             for (HalfEdge* he : edges){
@@ -111,7 +110,6 @@ int Converter::remainStructure() {
 int Converter::mergeSurfaces() {
     for (ull it = 0 ; it < this->spaceList.size(); it++)
     {
-        Checker::coplanar_degree = 10.0;
         Space* space = this->spaceList[it];
         if (this->generation_writer) this->generation_writer->start(space);
         space->generation++;
@@ -121,6 +119,10 @@ int Converter::mergeSurfaces() {
 
         // limit degree of same normal vector angle
 
+        if (processGenerations(space)) return -1;
+
+        Checker::merge_degree = 10.0;
+        Checker::coplanar_degree = 40.0;
         if (processGenerations(space)) return -1;
 
         if (space->checkSurfaceValid() == -1){ cout << "Surface is not valid" << endl; return -1; }
@@ -134,29 +136,36 @@ int Converter::processGenerations(Space *space) {
     while (true){
         assert(p_size > 0);
         cout << "generation " << space->generation << ": " << space->surfacesList.size()<< endl;
-        if (space->combineSurface() == -1){
+        cout << "degree  : " << Checker::coplanar_degree << endl;
+        int mergeSurface = space->mergeSurface();
+        if (mergeSurface == -1){
             cerr << "combine error" << endl;
             return -1;
         }
-        if (space->simplifySegment() == -1){
+        int simplifySegment = 0;
+        if (!mergeSurface)
+            simplifySegment = space->simplifySegment();
+        if (simplifySegment == -1){
             return -1;
         }
-
         if (space->checkSurfaceValid() == -1){
             cerr << "Surface is not valid" << endl;
             return -1;
         }
 
-        if (p_size == (int)space->surfacesList.size()) {
-            cout << "generation " << space->generation  << " done..\n\n\n"<< endl;
+        if (mergeSurface || simplifySegment){
+            p_size = (int)space->surfacesList.size();
+        }
+        else{
+            cout << "generation " << space->generation << " done..\n\n\n"<< endl;
             break;
         }
-        else p_size = (int)space->surfacesList.size();
 
         if (this->generation_writer) this->generation_writer->write();
-        if (Checker::coplanar_degree < 40) Checker::coplanar_degree += 5.0;
+        if (Checker::coplanar_degree < 40) Checker::coplanar_degree += 2.0;
 
         space->generation++;
+        space->updateNormal();
     }
     return 0;
 }
@@ -233,6 +242,25 @@ int Converter::polygonize(Polygonizer *polygonizer) {
         polygonizer->make(space);
     }
     return 0;
+}
+
+void Converter::printInputDataSpec() {
+    vector<Surface*> surfaces;
+
+    for (ull it = 0 ; it <this->mesh_list.size() ; it++){
+        for (Triangle* triangle : this->mesh_list[it]->triangles)
+            surfaces.push_back(triangle);
+    }
+
+    int trianglesCount = surfaces.size();
+    double area = TMIC::getAverageSize(surfaces);
+    CGAL::Bbox_3 mbb;
+    mbb = TMIC::getMBB(surfaces);
+
+    cout << "\n\nTriangles : " << trianglesCount << endl;
+    cout << "Bbox : " << mbb << endl;
+    cout << "Area : " << area << endl;
+    cout << "\n\n" << endl;
 }
 
 
