@@ -1,4 +1,4 @@
-#include "features/Space.h"
+#include "features/Solid.h"
 
 #include "compute/SurfacesListComputation.h"
 #include "compute/VertexComputation.h"
@@ -12,23 +12,23 @@
 #include "cgal/SurfaceIntersection.h"
 #include "HalfEdge.h"
 
-Space::Space(){
+Solid::Solid(){
     generation = 0;
 }
 
-Space::Space(string pname)
+Solid::Solid(string pname)
 {
     name = pname;
     generation = 0;
 }
 
-Space::~Space()
+Solid::~Solid()
 {
     //dtor
 }
 
 
-int Space::convertTrianglesToSurfaces(vector<Triangle*>& triangles){
+int Solid::convertTrianglesToSurfaces(vector<Triangle*>& triangles){
     vector<Surface*> c_list;
     ull size = triangles.size();
     for (ull i = 0 ; i < size; i++){
@@ -43,7 +43,7 @@ int Space::convertTrianglesToSurfaces(vector<Triangle*>& triangles){
 }
 
 
-int Space::mergeSurface() {
+int Solid::mergeSurface() {
     cout << "Combine Surfaces" << endl;
     vector<Surface*> new_poly_list;
     bool hasMerged = TMIC::mergeSurfaces(this->surfacesList, new_poly_list);
@@ -53,7 +53,7 @@ int Space::mergeSurface() {
 }
 
 /*
-Surface * Space::attachSurfaces(Surface *cp, ull start, bool *checked, ll &count)
+Surface * Solid::attachSurfaces(Surface *cp, ull start, bool *checked, ll &count)
 {
     count = 0;
     if (cp->normal == CGAL::NULL_VECTOR) {
@@ -81,7 +81,7 @@ Surface * Space::attachSurfaces(Surface *cp, ull start, bool *checked, ll &count
 }
 */
 
-int Space::updateNormal(){
+int Solid::updateNormal(){
     cout << "\n------------updateNormal------------\n" << endl;
     for (ull i = 0 ; i < (int)this->surfacesList.size() ; i++)
     {
@@ -98,7 +98,7 @@ int Space::updateNormal(){
 }
 
 
-int Space::simplifySegment(){
+int Solid::simplifySegment(){
     bool hasSimplified = false;
     cout << "\n------------simplifySegment------------\n" << endl;
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareLength);
@@ -143,7 +143,7 @@ int Space::simplifySegment(){
     return hasSimplified;
 }
 
-int Space::checkSurfaceValid() {
+int Solid::checkSurfaceValid() {
     cout << "\n------------- check whether surface is valid --------------\n" << endl;
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
     {
@@ -161,7 +161,7 @@ int Space::checkSurfaceValid() {
 }
 
 
-int Space::removeStraight(){
+int Solid::removeStraight(){
     cout << "\n------------- removeStraight --------------\n" << endl;
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); ){
         Surface* surface = this->surfacesList[i];
@@ -179,7 +179,7 @@ int Space::removeStraight(){
     return 0;
 }
 
-int Space::translateSpaceToOrigin(){
+int Solid::translateSpaceToOrigin(){
     cout << "\n------------- translateSpaceToOrigin --------------\n" << endl;
 
     updateMBB();
@@ -200,11 +200,11 @@ int Space::translateSpaceToOrigin(){
     return 0;
 }
 
-void Space::updateMBB(){
+void Solid::updateMBB(){
     mbb = TMIC::getMBB(this->surfacesList);
 }
 
-void Space::freeSurfaces(){
+void Solid::freeSurfaces(){
     for (ull i = 0 ; i < this->surfacesList.size() ; i++)
     {
         delete(this->surfacesList[i]);
@@ -213,7 +213,7 @@ void Space::freeSurfaces(){
 }
 
 
-int Space::checkDuplicateVertexInSurfaces() {
+int Solid::checkDuplicateVertexInSurfaces() {
     for (unsigned int s_i = 0 ; s_i < this->surfacesList.size() ;s_i++){
         if (surfacesList[s_i]->checkDuplicate()){
             cout << "it has duplicate Vertex" << endl;
@@ -223,22 +223,22 @@ int Space::checkDuplicateVertexInSurfaces() {
     return 0;
 }
 
-int Space::makeSurfacesPlanar() {
+int Solid::makeSurfacesPlanar() {
     for (ull i = 0 ; i < this->surfacesList.size() ; i++){
         SurfaceComputation::flatten(this->surfacesList[i]);
     }
     return 0;
 }
 
-void Space::sortSurfacesByArea() {
+void Solid::sortSurfacesByArea() {
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
 }
 
-void Space::tagID() {
+void Solid::tagID() {
     SurfacesListComputation::tagID(this->surfacesList);
 }
 
-void Space::resolveIntersectionINTRASurface() {
+void Solid::resolveIntersectionINTRASurface() {
     int newSurfaceCount = 0;
     for (int sfID = 0 ; sfID < this->surfacesList.size(); ) {
         vector<Surface*> newSurfaces = SurfaceIntersection::resolveSelfIntersection(this->surfacesList[sfID]);
@@ -247,13 +247,13 @@ void Space::resolveIntersectionINTRASurface() {
 }
 
 
-void Space::clearTrianglesListInSurfaces() {
+void Solid::clearTrianglesListInSurfaces() {
     for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
         this->surfacesList[sfID]->clearTriangleList();
     }
 }
 
-void Space::triangulateSurfaces() {
+void Solid::triangulateSurfaces() {
     for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
         Surface* pSurface = this->surfacesList[sfID];
         vector<Triangle*> triangles;
@@ -266,7 +266,7 @@ void Space::triangulateSurfaces() {
     }
 }
 
-int Space::checkSelfIntersection() {
+int Solid::checkSelfIntersection() {
     int count = 0;
     for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
         Surface* pSurface = this->surfacesList[sfID];
@@ -282,7 +282,7 @@ int Space::checkSelfIntersection() {
     return 0;
 }
 
-vector<Triangle *> Space::getTriangulation() {
+vector<Triangle *> Solid::getTriangulation() {
     vector<Triangle *> triangles;
     for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
         Surface* pSurface = this->surfacesList[sfID];
@@ -296,7 +296,7 @@ vector<Triangle *> Space::getTriangulation() {
     return triangles;
 }
 
-double Space::getAverageError() {
+double Solid::getAverageError() {
     double errorSum = 0.0;
     for (Surface* surface : this->surfacesList){
         errorSum += TMIC::computeError(surface);
@@ -308,7 +308,7 @@ double Space::getAverageError() {
 
 /*
 
-void Space::rotateSpaceByFloorTo00(){
+void Solid::rotateSpaceByFloorTo00(){
     cout << " ---------- rotate -------------" << endl;
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
     int floor_index = SLC::findFirstSurfaceIndexSimilarWithAxis(this->surfacesList, 2);

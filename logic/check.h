@@ -26,7 +26,7 @@ private:
 public:
     static double squaredDistanceOfSamePoint2D;
     static double thresholdVertex;
-    static double coplanar_degree;
+    static double threshold_1;
     static double degreeOfStraight;
 
     static bool isSameDouble(double a, double b);
@@ -49,7 +49,7 @@ public:
 
     static int num_of_straight;
     static int num_of_invalid;
-    static double merge_degree;
+    static double threshold_2;
 };
 
 #endif /* check_hpp */

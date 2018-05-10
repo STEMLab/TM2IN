@@ -11,7 +11,7 @@
 class Vertex;
 class SurfaceGraph;
 class Surface;
-class Space;
+class Solid;
 class Segment;
 class SurfacesListComputation;
 class TriangleMesh;

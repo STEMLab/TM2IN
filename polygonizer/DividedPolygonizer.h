@@ -9,7 +9,7 @@
 #include "Polygonizer.h"
 
 class DividedPolygonizer : public Polygonizer {
-    void make(Space* space);
+    void make(Solid* space);
 };
 
 

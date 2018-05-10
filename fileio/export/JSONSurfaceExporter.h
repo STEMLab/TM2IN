@@ -11,7 +11,7 @@ using namespace std;
 
 class JSONSurfaceExporter : public SpaceExporter{
 public:
-    int exportSpace(vector<Space *> spaceList, const char *filePath);
+    int exportSpace(vector<Solid *> spaceList, const char *filePath);
 };
 
 

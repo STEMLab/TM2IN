@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <algorithm>
-#include "features/Space.h"
+#include "features/Solid.h"
 #include "features/Vertex.h"
 
 TVRImporter::TVRImporter()

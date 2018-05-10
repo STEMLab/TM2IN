@@ -6,7 +6,7 @@
 #include <fileio/JSONMaker.h>
 #include "JSONSurfaceExporter.h"
 
-int JSONSurfaceExporter::exportSpace(vector<Space *> spaceList, const char *filePath) {
+int JSONSurfaceExporter::exportSpace(vector<Solid *> spaceList, const char *filePath) {
     ofstream fout;
     fout.open(filePath, ios::out|ios::trunc);
 

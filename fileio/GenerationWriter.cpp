@@ -4,7 +4,7 @@
 #include <boost/filesystem.hpp>
 #include <compute/SurfacesListComputation.h>
 
-void GenerationWriter::start(Space* p_space){
+void GenerationWriter::start(Solid* p_space){
     this->space = p_space;
 
     //Create Generation directory

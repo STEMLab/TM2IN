@@ -55,7 +55,7 @@ int TriangulationConverter::triangulation() {
     cout << "\n\nTriangulationConverter::re-triangulation" << endl;
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
         cout << "space : " << it << endl;
-        Space *space = this->spaceList[it];
+        Solid *space = this->spaceList[it];
         space->triangulateSurfaces();
     }
     return 0;

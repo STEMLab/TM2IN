@@ -15,7 +15,7 @@ int Converter::importMesh() {
 
 int Converter::convertTriangleMeshToSpace() {
     for (int space_id = 0 ; space_id < this->mesh_list.size() ; space_id++){
-        Space* space = new Space();
+        Solid* space = new Solid();
         space->setName(this->mesh_list[space_id]->name);
         if (space->convertTrianglesToSurfaces(this->mesh_list[space_id]->triangles)){
             cout << "make Surfaces error" << endl;
@@ -32,7 +32,7 @@ int Converter::convertTriangleMeshToSpace() {
 int Converter::convertSpaceToTriangleMesh(){
     this->mesh_list.clear();
     for (int spaceID = 0 ; spaceID < this->spaceList.size() ; spaceID++){
-        Space* space = this->spaceList[spaceID];
+        Solid* space = this->spaceList[spaceID];
         vector<Triangle*> triangleList = space->getTriangulation();
         for (Triangle* triangle : triangleList){
             vector<HalfEdge*> edges = triangle->getBoundaryEdgesList();
@@ -61,7 +61,7 @@ void Converter::setPaths(map<string, string> _paths) {
 
 void Converter::tagID() {
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
-        Space *space = this->spaceList[it];
+        Solid *space = this->spaceList[it];
         space->tagID();
     }
 }
@@ -110,7 +110,7 @@ int Converter::remainStructure() {
 int Converter::mergeSurfaces() {
     for (ull it = 0 ; it < this->spaceList.size(); it++)
     {
-        Space* space = this->spaceList[it];
+        Solid* space = this->spaceList[it];
         if (this->generation_writer) this->generation_writer->start(space);
         space->generation++;
 
@@ -121,8 +121,8 @@ int Converter::mergeSurfaces() {
 
         if (processGenerations(space)) return -1;
 
-        Checker::merge_degree = 10.0;
-        Checker::coplanar_degree = 40.0;
+        Checker::threshold_2 = 10.0;
+        Checker::threshold_1 = 40.0;
         if (processGenerations(space)) return -1;
 
         if (space->checkSurfaceValid() == -1){ cout << "Surface is not valid" << endl; return -1; }
@@ -131,12 +131,12 @@ int Converter::mergeSurfaces() {
     return 0;
 }
 
-int Converter::processGenerations(Space *space) {
+int Converter::processGenerations(Solid *space) {
     ll p_size = (ull)space->surfacesList.size();
     while (true){
         assert(p_size > 0);
         cout << "generation " << space->generation << ": " << space->surfacesList.size()<< endl;
-        cout << "degree  : " << Checker::coplanar_degree << endl;
+        cout << "degree  : " << Checker::threshold_1 << endl;
         int mergeSurface = space->mergeSurface();
         if (mergeSurface == -1){
             cerr << "combine error" << endl;
@@ -162,7 +162,7 @@ int Converter::processGenerations(Space *space) {
         }
 
         if (this->generation_writer) this->generation_writer->write();
-        if (Checker::coplanar_degree < 40) Checker::coplanar_degree += 2.0;
+        if (Checker::threshold_1 < 40) Checker::threshold_1 += 2.0;
 
         space->generation++;
         space->updateNormal();
@@ -172,7 +172,7 @@ int Converter::processGenerations(Space *space) {
 
 int Converter::checkSelfIntersection() {
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
-        Space *space = this->spaceList[it];
+        Solid *space = this->spaceList[it];
         space->checkSelfIntersection();
     }
     return 0;
@@ -180,7 +180,7 @@ int Converter::checkSelfIntersection() {
 
 int Converter::simplifyShareEdge() {
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
-        Space *space = this->spaceList[it];
+        Solid *space = this->spaceList[it];
         cout << "simplify space " << space->name << endl;
         space->simplifySegment();
         // space->removeStraight();
@@ -238,9 +238,17 @@ int Converter::polygonize(Polygonizer *polygonizer) {
     if (polygonizer == NULL) return 0;
 
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
-        Space *space = this->spaceList[it];
+        Solid *space = this->spaceList[it];
         polygonizer->make(space);
     }
+
+//    vector<Surface*> sf_list;
+//    for (Solid* sp : this->spaceList){
+//        sf_list.insert(sf_list.end(), sp->surfacesList.begin(), sp->surfacesList.end());
+//    }
+//    double area = TMIC::getAverageSize(sf_list);
+//    cout << area << endl;
+
     return 0;
 }
 

@@ -6,9 +6,9 @@
 #include <compute/Connect_halfedges.h>
 #include "DividedPolygonizer.h"
 
-void DividedPolygonizer::make(Space *space) {
-    Checker::merge_degree = 45.00;
-    Checker::coplanar_degree = 1.0;
+void DividedPolygonizer::make(Solid *space) {
+    Checker::threshold_2 = 45.00;
+    Checker::threshold_1 = 1.0;
     vector<Surface*> newSurfacesList;
     for (int i = 0 ; i < space->surfacesList.size() ; i++){
         Surface* sf = space->surfacesList[i];

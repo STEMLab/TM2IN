@@ -8,7 +8,7 @@
 #include "features/HalfEdge.h"
 #include "features/TriangleMeshGraph.h"
 
-void Triangle_Polygonizer::make(Space *space) {
+void Triangle_Polygonizer::make(Solid *space) {
     vector<Triangle*> triangleList = space->getTriangulation();
     vector<Surface*> newSurfaceList;
 

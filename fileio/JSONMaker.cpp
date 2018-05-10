@@ -3,7 +3,7 @@
 
 #include <fstream>
 
-int JSONMaker:: printJSON(ofstream& fout, vector<Space*>& ts){
+int JSONMaker:: printJSON(ofstream& fout, vector<Solid*>& ts){
     fout << "{ \n";
     fout << " \"spaces\" : [ \n";
     for (unsigned int index = 0 ; index < ts.size(); index++){
@@ -16,7 +16,7 @@ int JSONMaker:: printJSON(ofstream& fout, vector<Space*>& ts){
     return 0;
 }
 
-int JSONMaker::printJSON(ofstream& fout, Space* space){
+int JSONMaker::printJSON(ofstream& fout, Solid* space){
     fout << "{\n";
     fout<< " \"name\" : \"" << space->name << "\", \n" ;
 
@@ -48,7 +48,7 @@ int JSONMaker::printJSON(ofstream& fout, vector<Surface*>& cp){
     return 0;
 }
 
-int JSONMaker::printTriangleJSON(ofstream& fout, vector<Space *>& spaces) {
+int JSONMaker::printTriangleJSON(ofstream& fout, vector<Solid *>& spaces) {
     fout << "{ \n";
     fout << " \"spaces\" : [ \n";
     for (unsigned int index = 0 ; index < spaces.size(); index++){
@@ -66,7 +66,7 @@ int JSONMaker::printTriangleJSON(ofstream& fout, vector<Space *>& spaces) {
 }
 
 
-int JSONMaker::printTriangleJSON(ofstream &fout, Space *space) {
+int JSONMaker::printTriangleJSON(ofstream &fout, Solid *space) {
     fout << "{\n";
     fout<< " \"name\" : \"" << space->name << "\", \n" ;
     JSONMaker::printTriangleJSON(fout, space->surfacesList);

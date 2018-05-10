@@ -20,7 +20,7 @@ protected:
     int initTriangleMesh();
 
     int mergeSurfaces();
-    int processGenerations(Space *space);
+    int processGenerations(Solid *space);
     int simplifyShareEdge();
 
     int convertTriangleMeshToSpace();
@@ -39,7 +39,7 @@ public:
     Importer* di;
     SpaceExporter* de;
     vector<TriangleMesh*> mesh_list;
-    vector<Space*> spaceList;
+    vector<Solid*> spaceList;
     GenerationWriter* generation_writer;
     map<string, string> paths;
 

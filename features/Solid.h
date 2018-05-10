@@ -16,12 +16,12 @@
 
 using namespace std;
 
-class Space
+class Solid
 {
 public:
-    Space();
-    Space(string pname);
-    virtual ~Space();
+    Solid();
+    Solid(string pname);
+    virtual ~Solid();
 
     std::vector<Surface*> surfacesList;
     vector<Vertex *> vertices;
