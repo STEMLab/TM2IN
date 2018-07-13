@@ -2,7 +2,7 @@
 // Created by dongmin on 18. 4. 23.
 //
 
-#include "Triangle_Polygonizer.h"
+#include "TrianglePolygonizer.h"
 
 #include "compute/Connect_halfedges.h"
 #include "features/HalfEdge.h"
