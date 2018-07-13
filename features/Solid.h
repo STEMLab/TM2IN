@@ -59,17 +59,13 @@ public:
 
 
     int translateSpaceToOrigin();
-    int snapSurface(double);
     void rotateSpaceByFloorTo00();
+
     void resolveIntersectionINTRASurface();
-    void clearTrianglesListInSurfaces();
-    int makeSurfacesPlanar();
 
 protected:
-    Surface *attachSurfaces(Surface *cp, ull start, bool *checked, ll &count);
     void updateMBB();
     void freeSurfaces();
-
 
 };
 

@@ -25,15 +25,6 @@ Vertex *VertexListComputation::getCenter(vector<Vertex *> vertices) {
     return newVertex;
 }
 
-Plane_3 VertexListComputation::getPlane3WithPCA(vector<Vertex *> vertices) {
-    vector<Point_3> points;
-    for (int i = 0 ; i < vertices.size() ; i++){
-        points.push_back(CGAL_User::getCGALPoint(vertices[i]));
-    }
-    Plane_3 plane;
-    linear_least_squares_fitting_3(points.begin(), points.end(), plane, CGAL::Dimension_tag<0>());
-    return plane;
-}
 
 bool VertexListComputation::checkDuplicate(vector<Vertex *> vertices) {
     vector<Vertex*> sorted_v_list(vertices);

@@ -244,7 +244,6 @@ bool Surface::compareArea(Surface* i, Surface* j) {
 // TODO : move
 bool Surface::isValid(){
     if (this->getVerticesSize() < 3) {
-        // cout << "The number of vertexes is "  << this->getVerticesSize() <<endl;
         return false;
     }
     if (this->checkDuplicate()) return false;
@@ -281,7 +280,13 @@ vector<Vertex *> Surface::getVerticesList() {
 }
 
 void Surface::setVertexList(std::vector<Vertex *> newVertices) {
-    cerr << "setVertexList : TODO" << endl;
+    this->boundaryEdges.clear();
+    for (int i = 0 ; i < newVertices.size() - 1; i++){
+        Vertex* v1 = newVertices[i];
+        Vertex* v2 = newVertices[i+1];
+        this->boundaryEdges.push_back(new HalfEdge(v1, v2, this));
+    }
+    this->boundaryEdges.push_back(new HalfEdge(newVertices[newVertices.size() - 1], newVertices[0], this));
 }
 
 std::vector<HalfEdge *> Surface::getBoundaryEdgesList() {
@@ -317,7 +322,7 @@ void Surface::setVertex(int index, Vertex *vt) {
 
 void Surface::insertVertex(int index, Vertex *vt) {
     // this->v_list.insert(this->v_list.begin() + index, vt);
-    cerr << "TODO" << endl;
+    cerr << "TODO : insertVertex" << endl;
 }
 
 void Surface::setPlaneRef(Plane_3 pl) {

@@ -1,5 +1,4 @@
 #include <compute/SurfacesListComputation.h>
-#include "TriangulationConverter.h"
 #include "Converter.h"
 
 #include "features/HalfEdge.h"
@@ -13,6 +12,21 @@ int Converter::importMesh() {
     else return 0;
 }
 
+int Converter::export3DS() {
+    if (this->convertSpaceToTriangleMesh()) return -1;
+
+    for (int i = 0 ; i < this->mesh_list.size() ; i++){
+        TriangleMesh *&triangleMesh = this->mesh_list[i];
+        triangleMesh->init();
+        cout << "\n\n" << i << "th mesh" << endl;
+        if (triangleMesh->checkClosed())
+            cout << "this mesh is closed\n\n" << endl;
+    }
+
+    MeshExporter::export3DS(this->mesh_list, (paths["versionDir"] + paths["dataName"] + ".3DS").c_str());
+    return 0;
+}
+
 int Converter::convertTriangleMeshToSpace() {
     for (int space_id = 0 ; space_id < this->mesh_list.size() ; space_id++){
         Solid* space = new Solid();
@@ -23,7 +37,6 @@ int Converter::convertTriangleMeshToSpace() {
         }
         space->vertices = this->mesh_list[space_id]->vertices;
         this->spaceList.push_back(space);
-        break;
     }
     this->mesh_list.clear();
     return 0;
@@ -95,14 +108,31 @@ int Converter::initTriangleMesh() {
     return 0;
 }
 
-int Converter::remainStructure() {
-    int i = 0;
-    while (i < this->mesh_list.size()){
-        if (this->mesh_list[i]->isFurniture()){
-            this->mesh_list.erase(this->mesh_list.begin() + i);
-        } else
-            i++;
+int Converter::remainSelectedMesh(int arch) {
+    int i;
+    switch(arch){
+        case ARCH:
+            i = 0;
+            while (i < this->mesh_list.size()){
+                if (this->mesh_list[i]->isFurniture())
+                    this->mesh_list.erase(this->mesh_list.begin() + i);
+                else
+                    i++;
+            }
+            break;
+        case NON_ARCH:
+            i = 0;
+            while (i < this->mesh_list.size()){
+                if (this->mesh_list[i]->isFurniture())
+                    i++;
+                else
+                    this->mesh_list.erase(this->mesh_list.begin() + i);
+            }
+            break;
+        default:
+            break;
     }
+
     printf("There are %lu Remaining Meshes.\n\n", this->mesh_list.size());
     return 0;
 }
@@ -204,20 +234,6 @@ int Converter::handleOpenTriangleMesh() {
     return 0;
 }
 
-int Converter::export3DS() {
-    if (this->convertSpaceToTriangleMesh()) return -1;
-
-    for (int i = 0 ; i < this->mesh_list.size() ; i++){
-        TriangleMesh *&triangleMesh = this->mesh_list[i];
-        triangleMesh->init();
-        cout << "\n\n" << i << "th mesh" << endl;
-        if (triangleMesh->checkClosed())
-            cout << "this mesh is closed\n\n" << endl;
-    }
-
-    MeshExporter::export3DS(this->mesh_list, (paths["versionDir"] + paths["dataName"] + ".3DS").c_str());
-    return 0;
-}
 
 void Converter::makeSurfaceGraph() {
     for (int i = 0 ; i < spaceList.size() ; i++){
@@ -252,6 +268,7 @@ int Converter::polygonize(Polygonizer *polygonizer) {
     return 0;
 }
 
+
 void Converter::printInputDataSpec() {
     vector<Surface*> surfaces;
 
@@ -271,5 +288,21 @@ void Converter::printInputDataSpec() {
     cout << "\n\n" << endl;
 }
 
+int Converter::finish() {
+    this->tagID();
+    this->exportSpace();
+
+    return 0;
+}
+
+int Converter::triangulation() {
+    cout << "\n\nTriangulationConverter::re-triangulation" << endl;
+    for (ull it = 0 ; it < this->spaceList.size() ; it++) {
+        cout << "space : " << it << endl;
+        Solid *space = this->spaceList[it];
+        space->triangulateSurfaces();
+    }
+    return 0;
+}
 
 

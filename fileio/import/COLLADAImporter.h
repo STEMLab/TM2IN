@@ -6,7 +6,7 @@
 #define TRIANGLEMESHTOCLEARSOLID_COLLADAIMPORTER_H
 
 #include "Importer.h"
-#include "rapidxml/rapidxml.hpp"
+#include "lib/rapidxml/rapidxml.hpp"
 
 class COLLADAImporter : public Importer {
 public:

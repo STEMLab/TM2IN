@@ -24,8 +24,8 @@ void Vertex::translate(double diff[]){
     for (int i = 0 ; i < 3 ; i++) coords[i] += diff[i];
 }
 
-void Vertex::translateTo(vector<double> diff){
-    for (int i = 0 ; i < 3; i++) coords[i] = diff[i];
+void Vertex::translateTo(vector<double> dest){
+    for (int i = 0 ; i < 3; i++) coords[i] = dest[i];
 }
 
 void Vertex::setIndex(unsigned long i) {

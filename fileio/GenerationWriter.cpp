@@ -45,7 +45,7 @@ void GenerationWriter::writeStat(){
     statout << this->space->generation;
     statout << " , " << space->surfacesList.size();
     statout << " , " << TMIC::getAverageSize(space->surfacesList);
-    statout << " , " << space->getAverageError();
+    // statout << " , " << space->getAverageError();
     statout << "\n";
     statout.close();
 }

@@ -10,30 +10,8 @@
 
 class Converter
 {
-
 protected:
-    void tagID();
 
-    int checkSelfIntersection();
-
-    //Triangle Mesh
-    int initTriangleMesh();
-
-    int mergeSurfaces();
-    int processGenerations(Solid *space);
-    int simplifyShareEdge();
-
-    int convertTriangleMeshToSpace();
-    int convertSpaceToTriangleMesh();
-
-    int export3DS(const char *string);
-    int exportSpace();
-
-    int partitionTriangleMeshByComponent();
-    int remainStructure();
-    int handleOpenTriangleMesh();
-
-    void makeSurfaceGraph();
 
 public:
     Importer* di;
@@ -48,9 +26,29 @@ public:
 
     int importMesh();
 
-    virtual int pre_process() = 0;
-    virtual int constructSpace() = 0;
-    virtual int finish() = 0;
+    int finish();
+
+    void tagID();
+
+    int checkSelfIntersection();
+
+    //Triangle Mesh
+    int initTriangleMesh();
+
+    int mergeSurfaces();
+    int processGenerations(Solid *space);
+    int simplifyShareEdge();
+
+    int convertTriangleMeshToSpace();
+    int convertSpaceToTriangleMesh();
+
+    int exportSpace();
+
+    int partitionTriangleMeshByComponent();
+    int remainSelectedMesh(int arch);
+    int handleOpenTriangleMesh();
+
+    void makeSurfaceGraph();
 
     void setImporter(Importer* p_di){ di = p_di; }
     void setGenerationWriter(GenerationWriter * pw){generation_writer = pw;}
@@ -60,7 +58,7 @@ public:
     int export3DS();
 
     int polygonize(Polygonizer *polygonizer);
-    virtual int triangulation(){}
+    int triangulation();
 
     void printInputDataSpec();
 };

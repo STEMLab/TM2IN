@@ -14,24 +14,6 @@
 
 using namespace std;
 
-void SurfaceComputation::removeConsecutiveDuplication(Surface *&pSurface){
-    /*
-    ull v_size = pSurface->v_list.size();
-
-    int removed_count = 0;
-    for (ull i = 0 ; i < v_size - 1; i++){
-        if (Checker::isSameVertex(pSurface->v_list[i] , pSurface->v_list[i+1])){
-            pSurface->v_list.erase(pSurface->v_list.begin() + i + 1);
-            i--;
-            v_size -= 1;
-            removed_count += 1;
-        }
-    }
-
-    if (removed_count) cout << removed_count << " are removed in duplication" << endl;
-    */
-}
-
 void SurfaceComputation::removeConsecutiveDuplicationIndex(Surface *&pSurface){
     cerr << "TODO : SurfaceComputation::removeConsecutiveDuplicationIndex" << endl;
     /*
@@ -50,24 +32,6 @@ void SurfaceComputation::removeConsecutiveDuplicationIndex(Surface *&pSurface){
      */
 }
 
-void SurfaceComputation::flatten(Surface *&sf) {
-    Plane_3 plane = getPlane3WithPCA(sf);
-
-    vector<Vertex*> newVertices;
-    for (ull index = 0 ; index < sf->getVerticesSize() ; index++ )
-    {
-        Point_3 point = CGAL_User::getCGALPoint(sf->vertex(index));
-        Point_3 projected = plane.projection(point);
-
-        Vertex* v = new Vertex(projected.x(), projected.y(), projected.z());
-        newVertices.push_back(v);
-    }
-
-    assert(newVertices.size() == sf->getVerticesSize());
-    sf->setVertexList(newVertices);
-    sf->setPlaneRef(plane);
-    sf->normal = plane.orthogonal_vector();
-}
 
 Vertex* SurfaceComputation::getCenterPoint(Surface *pSurface) {
     Vertex* center = VertexListComputation::getCenter(pSurface->getVerticesList());
@@ -118,17 +82,6 @@ Plane_3 SurfaceComputation::getPlane3WithCenter(Surface *&pSurface){
     return plane;
 }
 
-Plane_3 SurfaceComputation::getPlane3WithPCA(Surface *&pSurface) {
-    Plane_3 plane = VertexListComputation::getPlane3WithPCA(pSurface->getVerticesList());
-    Vector_3 normal = pSurface->normal;
-    Vector_3 planeVector = plane.orthogonal_vector();
-    if (pSurface->normal == CGAL::NULL_VECTOR) return plane;
-    if (CGALCalculation::getAngle(planeVector, normal) > 90){
-        return plane.opposite();
-    }
-    else
-        return plane;
-}
 
 std::vector<Point_2> SurfaceComputation::projectTo3DPlane(Surface *&pSurface, Plane_3 plane) {
     std::vector<Vertex*> vertexList = pSurface->getVerticesList();
@@ -280,14 +233,6 @@ Plane_3 SurfaceComputation::getSimplePlane3WithNormal(Vector_3 pNormal) {
 
 double TMIC::computeError(Surface *&pSurface) {
     double difference = 0.0;
-    Plane_3 pca = SurfaceComputation::getPlane3WithPCA(pSurface);
-    vector<Vertex*> vertices = pSurface->getVerticesList();
-    for (Vertex* vt : vertices){
-        Point_3 pt = vt->getCGALPoint();
-        double dist = CGAL::squared_distance(pt, pca);
-        if (dist > 0.000001)
-            difference += CGAL::to_double(sqrt(dist));
-    }
-
+    cerr << "TODO : computeError" << endl;
     return difference;
 }

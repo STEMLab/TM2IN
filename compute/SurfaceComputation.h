@@ -10,11 +10,8 @@
 
 class SurfaceComputation {
 public:
-    static void flatten(Surface *&sf);
-
     static Vertex* getCenterPoint(Surface *pSurface);
 
-    static Plane_3 getPlane3WithPCA(Surface *&pSurface);
     static Plane_3 getPlane3WithCenter(Surface *&pSurface);
     static Plane_3 getPlane3WithMBB(Surface *&pSurface);
     static Plane_3 getSimplePlane3WithNormal(Vector_3 pNormal);
@@ -26,8 +23,6 @@ public:
     static void removeStraight(Surface *&pSurface);
 
     static void removeConsecutiveDuplicationIndex(Surface *&pSurface);
-
-    static void removeConsecutiveDuplication(Surface *&pSurface);
 
     static std::vector<Segment_3> makeSegment3List(Surface *&pSurface);
     static std::vector<Segment_2> makeSegment2List(Surface *&pSurface, Plane_3 plane3);

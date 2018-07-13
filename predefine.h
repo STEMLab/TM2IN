@@ -19,4 +19,5 @@ class TriangleMeshGraph;
 class Triangle;
 class HalfEdge;
 
+enum ARCHITECTURE {ARCH, NON_ARCH, ALL};
 #endif // PREDEFINE_H_INCLUDED

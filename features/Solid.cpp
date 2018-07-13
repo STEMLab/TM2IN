@@ -52,35 +52,6 @@ int Solid::mergeSurface() {
     return hasMerged;
 }
 
-/*
-Surface * Solid::attachSurfaces(Surface *cp, ull start, bool *checked, ll &count)
-{
-    count = 0;
-    if (cp->normal == CGAL::NULL_VECTOR) {
-        cerr << "Normal Vector is NULL in attach Surfaces" << endl;
-        cerr << cp->toJSONString() << endl;
-        exit(-1);
-    }
-
-    for (ull id = start ; id < this->surfacesList.size() ; id++)
-    {
-        if (!checked[id])
-        {
-            Surface* sf = this->surfacesList[id];
-            if (TMIC::combine(cp, sf) == 0)
-            {
-                cout << ".";
-
-                checked[id] = true;
-                count++;
-            }
-
-        }
-    }
-    return cp;
-}
-*/
-
 int Solid::updateNormal(){
     cout << "\n------------updateNormal------------\n" << endl;
     for (ull i = 0 ; i < (int)this->surfacesList.size() ; i++)
@@ -223,34 +194,12 @@ int Solid::checkDuplicateVertexInSurfaces() {
     return 0;
 }
 
-int Solid::makeSurfacesPlanar() {
-    for (ull i = 0 ; i < this->surfacesList.size() ; i++){
-        SurfaceComputation::flatten(this->surfacesList[i]);
-    }
-    return 0;
-}
-
 void Solid::sortSurfacesByArea() {
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
 }
 
 void Solid::tagID() {
     SurfacesListComputation::tagID(this->surfacesList);
-}
-
-void Solid::resolveIntersectionINTRASurface() {
-    int newSurfaceCount = 0;
-    for (int sfID = 0 ; sfID < this->surfacesList.size(); ) {
-        vector<Surface*> newSurfaces = SurfaceIntersection::resolveSelfIntersection(this->surfacesList[sfID]);
-    }
-    cout << "Intersect Surfaces : " << this->surfacesList.size() << endl;
-}
-
-
-void Solid::clearTrianglesListInSurfaces() {
-    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
-        this->surfacesList[sfID]->clearTriangleList();
-    }
 }
 
 void Solid::triangulateSurfaces() {

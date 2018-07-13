@@ -6,6 +6,9 @@ Dongmin Kim, Pusan National University
 
 ## Dependencies
 CGAL
+SFCGAL
 Eigen3
 Boost
+
+## Externel Libraries
 rapidxml
