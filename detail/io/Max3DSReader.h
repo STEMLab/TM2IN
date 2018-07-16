@@ -2,8 +2,26 @@
 // Created by dongmin on 18. 7. 16.
 //
 
-#ifndef TRIANGLEMESHTOCLEARSOLID_CODE_3DS_H
-#define TRIANGLEMESHTOCLEARSOLID_CODE_3DS_H
+#ifndef TM2IN_MAX3DSREADER_H
+#define TM2IN_MAX3DSREADER_H
+
+#include <features/TriangleMesh.h>
+#include <fstream>
+
+namespace TM2IN {
+    namespace detail {
+        namespace io {
+            class Max3DSReader {
+                public:
+                    Max3DSReader(FILE* _fp);
+                    std::vector<TriangleMesh *> read();
+                private:
+                    FILE* fp;
+                    long filelength(int f);
+            };
+        }
+    }
+}
 
 
 
@@ -110,4 +128,5 @@
 #define DISABLED      0x0010
 #define BOGUS         0x0011
 
-#endif //TRIANGLEMESHTOCLEARSOLID_CODE_3DS_H
+
+#endif //TM2IN_MAX3DSREADER_H
