@@ -1,7 +1,10 @@
-#ifndef THREEDSIMPORTER_H
-#define THREEDSIMPORTER_H
+//
+// Created by dongmin on 18. 7. 16.
+//
 
-#include "Importer.h"
+#ifndef TRIANGLEMESHTOCLEARSOLID_CODE_3DS_H
+#define TRIANGLEMESHTOCLEARSOLID_CODE_3DS_H
+
 
 
 //>------ tools
@@ -107,21 +110,4 @@
 #define DISABLED      0x0010
 #define BOGUS         0x0011
 
-using namespace std;
-
-class ThreeDSImporter : public Importer
-{
-    public:
-        ThreeDSImporter();
-        virtual ~ThreeDSImporter();
-
-        vector<TriangleMesh*> import(const char*);
-    protected:
-        long filelength(int f);
-        Triangle* makeTriangle(string& input, vector<Vertex*>& vertex);
-        string getGroupName(string& input);
-        void makeVertex(int id, string& input, Vertex& vt);
-    private:
-};
-
-#endif // THREEDSIMPORTER_H
+#endif //TRIANGLEMESHTOCLEARSOLID_CODE_3DS_H

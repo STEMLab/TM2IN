@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9)
-project(TriangleMeshToClearSolid)
+project(TM2IN)
 
 set(CMAKE_CXX_STANDARD 11)
 
@@ -28,15 +28,20 @@ file(GLOB LIB_FILES
         "lib/rapidxml/*.hpp"
         )
 
+file(GLOB DETAIL_FILES
+        "detail/io/*.h"
+        "detail/io/*.cpp"
+        )
+
 file(GLOB SOURCE_FILES
         "features/*.h"
         "features/*.cpp"
-        "fileio/*.h"
-        "fileio/*.cpp"
-        "fileio/import/*.h"
-        "fileio/import/*.cpp"
-        "fileio/export/*.h"
-        "fileio/export/*.cpp"
+        "io/*.h"
+        "io/*.cpp"
+        "io/import/*.h"
+        "io/import/*.cpp"
+        "io/export/*.h"
+        "io/export/*.cpp"
         "cgal/*.h"
         "cgal/*.cpp"
         "logic/*.h"
@@ -46,6 +51,12 @@ file(GLOB SOURCE_FILES
         "converter/*.h"
         "converter/*.cpp"
         "polygonizer/Polygonizer.h"
+        "polygonizer/PCAPolygonizer.cpp"
+        "polygonizer/PCAPolygonizer.h"
+        "polygonizer/TrianglePolygonizer.h"
+        "polygonizer/TrianglePolygonizer.cpp"
+        "polygonizer/DividedPolygonizer.cpp"
+        "polygonizer/DividedPolygonizer.h"
         predefine.h
         util.cpp
         util.h
@@ -53,6 +64,7 @@ file(GLOB SOURCE_FILES
 
 add_executable(develop1
         ${SOURCE_FILES}
+        ${DETAIL_FILES}
         ${LIB_FILES}
         main.cpp)
 
@@ -61,3 +73,4 @@ TARGET_LINK_LIBRARIES(develop1 LINK_PUBLIC ${Boost_LIBRARIES} Eigen3::Eigen ${SF
 include_directories(
         ../TriangleMeshToClearSolid
         lib)
+

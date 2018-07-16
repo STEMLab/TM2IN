@@ -20,14 +20,6 @@ ThreeDSImporter::~ThreeDSImporter()
     //dtor
 }
 
-long ThreeDSImporter::filelength(int f)
-{
-	struct stat buf;
-
-	fstat(f, &buf);
-
-	return(buf.st_size);
-}
 
 vector<TriangleMesh*> ThreeDSImporter::import(const char *p_fileName)
 {

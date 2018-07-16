@@ -1,12 +1,12 @@
 #ifndef TVRIMPORTER_H
 #define TVRIMPORTER_H
 
-#include "Importer.h"
+#include "fileio/MeshImporter.h"
 #include "util.h"
 
 using namespace std;
 
-class TVRImporter : public Importer
+class TVRImporter : public MeshImporter
 {
     public:
         TVRImporter();

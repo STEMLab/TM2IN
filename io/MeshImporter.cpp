@@ -1,24 +1,20 @@
 //
-// Created by dongmin on 18. 3. 23.
+// Created by dongmin on 18. 7. 16.
 //
 
-#include <fstream>
-#include <iostream>
-#include "COLLADAImporter.h"
+#include "MeshImporter.h"
+#include "lib/rapidxml/rapidxml.hpp"
+#include "code_3DS.h"
 
-using namespace rapidxml;
-using namespace std;
-
-
-COLLADAImporter::COLLADAImporter() {
-
+vector<TriangleMesh *> MeshImporter::import3DS(const char *filePath) {
+    return vector<TriangleMesh *>();
 }
 
-COLLADAImporter::~COLLADAImporter() {
-
+vector<TriangleMesh *> MeshImporter::importTVR(const char *filePath) {
+    return vector<TriangleMesh *>();
 }
 
-vector<TriangleMesh*> COLLADAImporter::import(const char *filePath) {
+vector<TriangleMesh *> MeshImporter::importDAE(const char *filePath) {
     vector<TriangleMesh*> meshList;
 
     xml_document<> doc;
@@ -102,8 +98,7 @@ vector<TriangleMesh*> COLLADAImporter::import(const char *filePath) {
     return meshList;
 }
 
-
-string COLLADAImporter::queryAttributeValueInNodes(rapidxml::xml_node<> *pNode, const char *childNodeName,
+string MeshImporter::queryAttributeValueInNodes(rapidxml::xml_node<> *pNode, const char *childNodeName,
                                                    const char *condAttributeName, const char *condAttributeValue,
                                                    const char *resultAttributeName) {
     for (xml_node<>* input_node = pNode->first_node(childNodeName) ; input_node ; input_node->next_sibling(childNodeName)){
