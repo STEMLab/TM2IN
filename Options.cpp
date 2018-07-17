@@ -1,0 +1,114 @@
+//
+// Created by dongmin on 18. 7. 17.
+//
+
+#include "Options.h"
+#include <getopt.h>
+#include <iostream>
+#include <cassert>
+
+Options::Options(int argc, char **argv) {
+    const char *short_opts = "I:E:r:t";
+    const option long_opts[] = {
+            {"input-dir",   1, 0, 'i'},
+            {"output-dir",  1, 0, 'O'},
+            {"version",     1, 0, 'v'},
+            {"input-type",  1, 0, 'r'},
+            {"no-merge",    0, 0, 't'},
+            {"polygonizer", 1, 0, 'p'},
+            {"thres1"     , 1, 0, 'a'},
+            {"thres2",      1, 0, 'b'},
+            {"output-tvr",  0, 0, 'T'},
+            {"output-3ds",  0, 0, 'D'},
+            {0, 0, 0, 0}
+    };
+    int index = 0;
+    int c;
+    while (-1 != (c = getopt_long(argc, argv, short_opts, long_opts, &index))){
+        switch (c){
+            char* stopstring;
+            case 'i':
+                assert(optarg != NULL);
+                printf("%s=%s\n", "input_dir", optarg);
+                input_dir = optarg;
+                has_input_dir = true;
+                break;
+            case 'O':
+                assert(optarg != NULL);
+                printf("%s=%s\n", "output_dir", optarg);
+                output_dir = optarg;
+                has_output_dir = true;
+                break;
+            case 'r':
+                assert(optarg != NULL);
+                has_input_type = true;
+                if (optarg == "tvr" || optarg == "TVR"){
+                    input_type = 1;
+                }
+                else if (optarg == "3ds" || optarg == "3DS"){
+                    input_type = 2;
+                }
+                else if (optarg == "collada" || optarg == "dae" || optarg == "DAE" || optarg == "COLLADA"){
+                    input_type = 3;
+                }
+                else{
+                    printf("\n");
+                    printf("Import mode should be one type of {tvr, 3ds, collada}");
+                    printf("\n");
+                }
+                break;
+            case 'v':
+                version = optarg;
+            case 't':
+                has_no_merge = true;
+                break;
+            case 'p':
+                has_polygonizer = true;
+                break;
+            case 'a':
+                assert(optarg != NULL);
+                threshold_1 = strtod(optarg, &stopstring);
+                break;
+            case 'b':
+                assert(optarg != NULL);
+                threshold_2 = strtod(optarg, &stopstring);
+                break;
+            case 'T':
+                break;
+            case 'D':
+                break;
+        }
+    }
+
+    if (optind < argc)
+    {
+        input_file = argv[optind++];
+    }
+    else{
+        fprintf(stderr, "There is no input file name..\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (optind < argc){
+        fprintf(stderr, "Only one file is needed\n");
+    }
+
+    check_options();
+}
+
+void Options::check_options() {
+    if (!has_input_dir){
+        throw std::runtime_error("--input-dir is missing..;\n");
+    }
+
+    if (!has_output_dir){
+        throw std::runtime_error("--output-dir missing : where can I store..\n");
+    }
+
+    if (!has_input_type){
+        fprintf(stderr, "WARNING : we will detect your file type and covert. Maybe it will be right..\n");
+        fprintf(stderr, "IF you can make it sure, define value of --input-type option.\n");
+    }
+}
+
+
