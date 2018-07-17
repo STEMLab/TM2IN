@@ -25,9 +25,9 @@ private:
 
 public:
     static double squaredDistanceOfSamePoint2D;
-    static double thresholdVertex;
+    static double threshold_same_vt_distance;
     static double threshold_1;
-    static double degreeOfStraight;
+    static double threshold_collinear;
 
     static bool isSameDouble(double a, double b);
     static bool isSameX(Vertex* a, Vertex* b);

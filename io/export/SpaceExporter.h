@@ -5,7 +5,7 @@
 #ifndef TRIANGLEMESHTOCLEARSOLID_JSONSURFACEEXPORTER_H
 #define TRIANGLEMESHTOCLEARSOLID_JSONSURFACEEXPORTER_H
 
-#include <features/Solid.h>
+#include <features/PolyhedralSurface.h>
 
 using namespace std;
 

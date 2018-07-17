@@ -6,11 +6,11 @@
 #define TRIANGLEMESHTOCLEARSOLID_POLYGONIZER_H
 
 
-#include <features/Solid.h>
+#include <features/PolyhedralSurface.h>
 
 class Polygonizer {
 public:
-    virtual void make(Solid* space) = 0;
+    virtual void make(PolyhedralSurface* space) = 0;
 };
 
 

@@ -6,7 +6,7 @@
 #include <compute/Connect_halfedges.h>
 #include "DividedPolygonizer.h"
 
-void DividedPolygonizer::make(Solid *space) {
+void DividedPolygonizer::make(PolyhedralSurface *space) {
     Checker::threshold_2 = 45.00;
     Checker::threshold_1 = 1.0;
     vector<Surface*> newSurfacesList;

@@ -12,7 +12,7 @@ using namespace std;
 
 class PCAPolygonizer : public Polygonizer {
 public:
-    void make(Solid* space);
+    void make(PolyhedralSurface* space);
 private:
     void scale_up(vector<Vertex *> &vertices, double scale);
 

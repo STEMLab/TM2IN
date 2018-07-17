@@ -9,7 +9,7 @@
 
 
 class Triangle_Polygonizer : public Polygonizer{
-    void make(Solid* space);
+    void make(PolyhedralSurface* space);
 };
 
 

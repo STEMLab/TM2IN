@@ -14,8 +14,8 @@ namespace TM2IN{
             FILE *l_file;
             assert( (l_file=fopen (filePath, "rb") ) != NULL);
 
-            TM2IN::detail::io::Max3DSReader cr(l_file);
-            return cr.read();
+            TM2IN::detail::io::Max3DSReader reader(l_file);
+            return reader.read();
         }
     }
 }

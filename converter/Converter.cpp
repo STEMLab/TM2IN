@@ -5,10 +5,10 @@
 #include "fileio/JSONMaker.h"
 #include "fileio/export/MeshExporter.h"
 
-int Converter::importMesh() {
+int Converter::importMesh(MeshImporter* di) {
     string filePath = paths["resourceDir"] + paths["dataName"] + "." + paths["filetype"];
     this->mesh_list = di->import(filePath.c_str());
-    if (this->mesh_list.size() == 0) return -1;
+
     else return 0;
 }
 
@@ -29,7 +29,7 @@ int Converter::export3DS() {
 
 int Converter::convertTriangleMeshToSpace() {
     for (int space_id = 0 ; space_id < this->mesh_list.size() ; space_id++){
-        Solid* space = new Solid();
+        PolyhedralSurface* space = new PolyhedralSurface();
         space->setName(this->mesh_list[space_id]->name);
         if (space->convertTrianglesToSurfaces(this->mesh_list[space_id]->triangles)){
             cout << "make Surfaces error" << endl;
@@ -45,7 +45,7 @@ int Converter::convertTriangleMeshToSpace() {
 int Converter::convertSpaceToTriangleMesh(){
     this->mesh_list.clear();
     for (int spaceID = 0 ; spaceID < this->spaceList.size() ; spaceID++){
-        Solid* space = this->spaceList[spaceID];
+        PolyhedralSurface* space = this->spaceList[spaceID];
         vector<Triangle*> triangleList = space->getTriangulation();
         for (Triangle* triangle : triangleList){
             vector<HalfEdge*> edges = triangle->getBoundaryEdgesList();
@@ -62,7 +62,7 @@ int Converter::convertSpaceToTriangleMesh(){
     return 0;
 }
 
-int Converter::exportSpace() {
+int Converter::exportSpace(DataExporter* de) {
     string filePath = paths["versionDir"] + paths["outputDataName"];
     if (de->exportSpace(this->spaceList, filePath.c_str())) return 1;
     return 0;
@@ -74,7 +74,7 @@ void Converter::setPaths(map<string, string> _paths) {
 
 void Converter::tagID() {
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
-        Solid *space = this->spaceList[it];
+        PolyhedralSurface *space = this->spaceList[it];
         space->tagID();
     }
 }
@@ -140,7 +140,7 @@ int Converter::remainSelectedMesh(int arch) {
 int Converter::mergeSurfaces() {
     for (ull it = 0 ; it < this->spaceList.size(); it++)
     {
-        Solid* space = this->spaceList[it];
+        PolyhedralSurface* space = this->spaceList[it];
         if (this->generation_writer) this->generation_writer->start(space);
         space->generation++;
 
@@ -161,7 +161,7 @@ int Converter::mergeSurfaces() {
     return 0;
 }
 
-int Converter::processGenerations(Solid *space) {
+int Converter::processGenerations(PolyhedralSurface *space) {
     ll p_size = (ull)space->surfacesList.size();
     while (true){
         assert(p_size > 0);
@@ -202,7 +202,7 @@ int Converter::processGenerations(Solid *space) {
 
 int Converter::checkSelfIntersection() {
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
-        Solid *space = this->spaceList[it];
+        PolyhedralSurface *space = this->spaceList[it];
         space->checkSelfIntersection();
     }
     return 0;
@@ -210,7 +210,7 @@ int Converter::checkSelfIntersection() {
 
 int Converter::simplifyShareEdge() {
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
-        Solid *space = this->spaceList[it];
+        PolyhedralSurface *space = this->spaceList[it];
         cout << "simplify space " << space->name << endl;
         space->simplifySegment();
         // space->removeStraight();
@@ -254,12 +254,12 @@ int Converter::polygonize(Polygonizer *polygonizer) {
     if (polygonizer == NULL) return 0;
 
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
-        Solid *space = this->spaceList[it];
+        PolyhedralSurface *space = this->spaceList[it];
         polygonizer->make(space);
     }
 
 //    vector<Surface*> sf_list;
-//    for (Solid* sp : this->spaceList){
+//    for (PolyhedralSurface* sp : this->spaceList){
 //        sf_list.insert(sf_list.end(), sp->surfacesList.begin(), sp->surfacesList.end());
 //    }
 //    double area = TMIC::getAverageSize(sf_list);
@@ -299,10 +299,11 @@ int Converter::triangulation() {
     cout << "\n\nTriangulationConverter::re-triangulation" << endl;
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
         cout << "space : " << it << endl;
-        Solid *space = this->spaceList[it];
+        PolyhedralSurface *space = this->spaceList[it];
         space->triangulateSurfaces();
     }
     return 0;
 }
+
 
 

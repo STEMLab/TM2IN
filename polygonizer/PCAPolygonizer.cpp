@@ -13,7 +13,7 @@
 #include <SFCGAL/GeometryCollection.h>
 #include <SFCGAL/MultiLineString.h>
 
-void PCAPolygonizer::make(Solid *space) {
+void PCAPolygonizer::make(PolyhedralSurface *space) {
     vector<Surface*> newSurfacesList;
     vector<SFCGAL::Polygon> polygons;
     for (int i = 0 ; i < space->surfacesList.size() ; i++){
@@ -37,19 +37,17 @@ void PCAPolygonizer::make(Solid *space) {
             Vertex* v = new Vertex(projected.x(), projected.y(), projected.z());
             newVertices.push_back(v);
         }
-        newVertices.push_back(newVertices[0]);
-        scale_up(newVertices, 1.2);
-        polygons.push_back(make_sf_polygon(newVertices));
-
         assert(newVertices.size() == sf->getVerticesSize());
         sf->setVertexList(newVertices);
         sf->normal = plane.orthogonal_vector();
 
+        newVertices.push_back(newVertices[0]);
+        scale_up(newVertices, 1.2);
+        polygons.push_back(make_sf_polygon(newVertices));
+
         assert(!SurfaceIntersection::checkSelfIntersection(sf));
-
     }
-
-
+    /*
     // get intersections
     vector<SFCGAL::LineString*> intersection_lines;
     for (int i = 0 ; i < polygons.size() - 1 ; i++){
@@ -75,11 +73,12 @@ void PCAPolygonizer::make(Solid *space) {
 
     // connect intersections
     for (int i = 0 ; i < intersection_lines.size() ; i++){
+
         cout << intersection_lines[i]->asText(5) << endl;
     }
 
     //
-
+*/
 }
 
 
