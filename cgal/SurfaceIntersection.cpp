@@ -59,6 +59,7 @@ std::vector<Surface *> SurfaceIntersection::resolveSelfIntersection(Surface * &p
  */
 
 int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
+    double threshold = 0.0;
     vector<Segment_2> segmentList = SurfaceComputation::makeSegment2List(pSurface, pSurface->getPlaneRef());
     // Intersection Point
     for (int i = 0 ; i < segmentList.size() - 2; i++){
@@ -71,7 +72,7 @@ int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
                         int pj = 0;
                         for (;pj < 2 ; pj++){
                             double distJ = CGAL::squared_distance(*p, segmentList[j][pj]);
-                            if (distJ < Checker::squaredDistanceOfSamePoint2D){
+                            if (distJ < threshold){
                                 break;
                             }
                         }
@@ -90,14 +91,14 @@ int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
                     Vertex* vt = new Vertex(point3.x(), point3.y(), point3.z());
                     for (;pi < 2 ; pi++){
                         double distI = CGAL::squared_distance(*p, segmentList[i][pi]);
-                        if (distI < Checker::squaredDistanceOfSamePoint2D){
+                        if (distI < threshold){
                             break;
                         }
                     }
                     int pj = 0;
                     for (;pj < 2 ; pj++){
                         double distJ = CGAL::squared_distance(*p, segmentList[j][pj]);
-                        if (distJ < Checker::squaredDistanceOfSamePoint2D){
+                        if (distJ < threshold){
                             break;
                         }
                     }
@@ -144,13 +145,13 @@ int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
                     int sourceJ = 0, targetJ = 0;
                     for (; sourceJ < 2 ; sourceJ++){
                         double distJ = CGAL::squared_distance(seg->vertex(0), segmentList[j][sourceJ]);
-                        if (distJ < Checker::squaredDistanceOfSamePoint2D)
+                        if (distJ < threshold)
                             break;
                     }
 
                     for (; targetJ < 2; targetJ++){
                         double distJ = CGAL::squared_distance(seg->vertex(0), segmentList[j][targetJ]);
-                        if (distJ < Checker::squaredDistanceOfSamePoint2D)
+                        if (distJ < threshold)
                             break;
                     }
 
@@ -158,13 +159,13 @@ int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
                     int sourceI = 0, targetI = 0;
                     for (; sourceI < 2 ; sourceI++){
                         double distJ = CGAL::squared_distance(seg->vertex(0), segmentList[j][sourceI]);
-                        if (distJ < Checker::squaredDistanceOfSamePoint2D)
+                        if (distJ < threshold)
                             break;
                     }
 
                     for (; targetI < 2; targetI++){
                         double distJ = CGAL::squared_distance(seg->vertex(0), segmentList[j][targetI]);
-                        if (distJ < Checker::squaredDistanceOfSamePoint2D)
+                        if (distJ < threshold)
                             break;
                     }
 
@@ -243,12 +244,13 @@ int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
 #define GAP_FOR_SNAP 3
 
 void SurfaceIntersection::resolveEasySelfIntersection(Surface *&pSurface) {
+    double threshold = 0.000001;
     vector<Point_2> pointsList = SurfaceComputation::projectTo3DPlane(pSurface, pSurface->getPlaneRef());
     for (int i = 0 ; i < pointsList.size() - 1; i++){
         for (int j = 2 ; j <= GAP_FOR_SNAP ; j++){
             int nextIndex = i + j >= pointsList.size() ? i + j - pointsList.size() : i + j;
             Point_2 next = pointsList[nextIndex];
-            if (CGAL::squared_distance(next, pointsList[i]) <= Checker::squaredDistanceOfSamePoint2D){
+            if (CGAL::squared_distance(next, pointsList[i]) <= threshold){
                 if (nextIndex < i){
                     pointsList.erase(pointsList.begin() + i + 1, pointsList.end());
                     pointsList.erase(pointsList.begin(), pointsList.begin() + nextIndex + 1);
