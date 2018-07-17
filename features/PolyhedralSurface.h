@@ -16,12 +16,12 @@
 
 using namespace std;
 
-class Solid
+class PolyhedralSurface
 {
 public:
-    Solid();
-    Solid(string pname);
-    virtual ~Solid();
+    PolyhedralSurface();
+    PolyhedralSurface(string pname);
+    virtual ~PolyhedralSurface();
 
     std::vector<Surface*> surfacesList;
     vector<Vertex *> vertices;
@@ -46,23 +46,14 @@ public:
     void sortSurfacesByArea();
 
     void tagID();
-
+벽
     void triangulateSurfaces();
 
     int checkSelfIntersection();
 
     vector<Triangle *> getTriangulation();
 
-    double getAverageError();
-
     int removeStraight();
-
-
-    int translateSpaceToOrigin();
-    void rotateSpaceByFloorTo00();
-
-    void resolveIntersectionINTRASurface();
-
 protected:
     void updateMBB();
     void freeSurfaces();

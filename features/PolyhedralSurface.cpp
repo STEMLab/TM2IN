@@ -1,4 +1,4 @@
-#include "features/Solid.h"
+#include "features/PolyhedralSurface.h"
 
 #include "compute/SurfacesListComputation.h"
 #include "compute/VertexComputation.h"
@@ -12,23 +12,23 @@
 #include "cgal/SurfaceIntersection.h"
 #include "HalfEdge.h"
 
-Solid::Solid(){
+PolyhedralSurface::PolyhedralSurface(){
     generation = 0;
 }
 
-Solid::Solid(string pname)
+PolyhedralSurface::PolyhedralSurface(string pname)
 {
     name = pname;
     generation = 0;
 }
 
-Solid::~Solid()
+PolyhedralSurface::~PolyhedralSurface()
 {
     //dtor
 }
 
 
-int Solid::convertTrianglesToSurfaces(vector<Triangle*>& triangles){
+int PolyhedralSurface::convertTrianglesToSurfaces(vector<Triangle*>& triangles){
     vector<Surface*> c_list;
     ull size = triangles.size();
     for (ull i = 0 ; i < size; i++){
@@ -43,7 +43,7 @@ int Solid::convertTrianglesToSurfaces(vector<Triangle*>& triangles){
 }
 
 
-int Solid::mergeSurface() {
+int PolyhedralSurface::mergeSurface() {
     cout << "Combine Surfaces" << endl;
     vector<Surface*> new_poly_list;
     bool hasMerged = TMIC::mergeSurfaces(this->surfacesList, new_poly_list);
@@ -52,7 +52,7 @@ int Solid::mergeSurface() {
     return hasMerged;
 }
 
-int Solid::updateNormal(){
+int PolyhedralSurface::updateNormal(){
     cout << "\n------------updateNormal------------\n" << endl;
     for (ull i = 0 ; i < (int)this->surfacesList.size() ; i++)
     {
@@ -69,7 +69,7 @@ int Solid::updateNormal(){
 }
 
 
-int Solid::simplifySegment(){
+int PolyhedralSurface::simplifySegment(){
     bool hasSimplified = false;
     cout << "\n------------simplifySegment------------\n" << endl;
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareLength);
@@ -114,7 +114,7 @@ int Solid::simplifySegment(){
     return hasSimplified;
 }
 
-int Solid::checkSurfaceValid() {
+int PolyhedralSurface::checkSurfaceValid() {
     cout << "\n------------- check whether surface is valid --------------\n" << endl;
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
     {
@@ -132,7 +132,7 @@ int Solid::checkSurfaceValid() {
 }
 
 
-int Solid::removeStraight(){
+int PolyhedralSurface::removeStraight(){
     cout << "\n------------- removeStraight --------------\n" << endl;
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); ){
         Surface* surface = this->surfacesList[i];
@@ -150,7 +150,7 @@ int Solid::removeStraight(){
     return 0;
 }
 
-int Solid::translateSpaceToOrigin(){
+int PolyhedralSurface::translateSpaceToOrigin(){
     cout << "\n------------- translateSpaceToOrigin --------------\n" << endl;
 
     updateMBB();
@@ -171,11 +171,11 @@ int Solid::translateSpaceToOrigin(){
     return 0;
 }
 
-void Solid::updateMBB(){
+void PolyhedralSurface::updateMBB(){
     mbb = TMIC::getMBB(this->surfacesList);
 }
 
-void Solid::freeSurfaces(){
+void PolyhedralSurface::freeSurfaces(){
     for (ull i = 0 ; i < this->surfacesList.size() ; i++)
     {
         delete(this->surfacesList[i]);
@@ -184,7 +184,7 @@ void Solid::freeSurfaces(){
 }
 
 
-int Solid::checkDuplicateVertexInSurfaces() {
+int PolyhedralSurface::checkDuplicateVertexInSurfaces() {
     for (unsigned int s_i = 0 ; s_i < this->surfacesList.size() ;s_i++){
         if (surfacesList[s_i]->checkDuplicate()){
             cout << "it has duplicate Vertex" << endl;
@@ -194,15 +194,15 @@ int Solid::checkDuplicateVertexInSurfaces() {
     return 0;
 }
 
-void Solid::sortSurfacesByArea() {
+void PolyhedralSurface::sortSurfacesByArea() {
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
 }
 
-void Solid::tagID() {
+void PolyhedralSurface::tagID() {
     SurfacesListComputation::tagID(this->surfacesList);
 }
 
-void Solid::triangulateSurfaces() {
+void PolyhedralSurface::triangulateSurfaces() {
     for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
         Surface* pSurface = this->surfacesList[sfID];
         vector<Triangle*> triangles;
@@ -215,7 +215,7 @@ void Solid::triangulateSurfaces() {
     }
 }
 
-int Solid::checkSelfIntersection() {
+int PolyhedralSurface::checkSelfIntersection() {
     int count = 0;
     for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
         Surface* pSurface = this->surfacesList[sfID];
@@ -231,7 +231,7 @@ int Solid::checkSelfIntersection() {
     return 0;
 }
 
-vector<Triangle *> Solid::getTriangulation() {
+vector<Triangle *> PolyhedralSurface::getTriangulation() {
     vector<Triangle *> triangles;
     for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
         Surface* pSurface = this->surfacesList[sfID];
@@ -245,7 +245,7 @@ vector<Triangle *> Solid::getTriangulation() {
     return triangles;
 }
 
-double Solid::getAverageError() {
+double PolyhedralSurface::getAverageError() {
     double errorSum = 0.0;
     for (Surface* surface : this->surfacesList){
         errorSum += TMIC::computeError(surface);
@@ -257,7 +257,7 @@ double Solid::getAverageError() {
 
 /*
 
-void Solid::rotateSpaceByFloorTo00(){
+void PolyhedralSurface::rotateSpaceByFloorTo00(){
     cout << " ---------- rotate -------------" << endl;
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
     int floor_index = SLC::findFirstSurfaceIndexSimilarWithAxis(this->surfacesList, 2);
