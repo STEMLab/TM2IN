@@ -15,7 +15,6 @@ public:
     vector<Vertex*> vertices;
     TriangleMeshGraph* graph;
 
-
     TriangleMesh(){}
 
     void init();

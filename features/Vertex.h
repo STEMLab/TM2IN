@@ -54,9 +54,9 @@ public:
     void translate(double diff[]);
     void translateTo(std::vector<double> dest);
 
-    std::string toJSONString();
+    std::string asJsonText();
     friend std::ostream& operator<<(std::ostream& ou, Vertex* pVertex){
-        ou << pVertex->toJSONString() << std::endl;
+        ou << pVertex->asJsonText() << std::endl;
         return ou;
     }
     void setIndex(unsigned long i);

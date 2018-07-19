@@ -1,16 +1,17 @@
 #include "features/PolyhedralSurface.h"
 
-#include "compute/SurfacesListComputation.h"
-#include "compute/VertexComputation.h"
-
 #include <cstdio>
 #include <queue>
 #include <climits>
 #include <algorithm>
 #include <cmath>
-#include <compute/SurfaceComputation.h>
+
+#include "compute/SurfacesListComputation.h"
+#include "compute/VertexComputation.h"
+#include "compute/SurfaceComputation.h"
+#include "features/TriangleMesh.h"
 #include "cgal/SurfaceIntersection.h"
-#include "HalfEdge.h"
+#include "features/HalfEdge.h"
 
 PolyhedralSurface::PolyhedralSurface(){
     generation = 0;
@@ -59,7 +60,7 @@ int PolyhedralSurface::updateNormal(){
         Surface* surface = this->surfacesList[i];
         if (!surface->updateNormal())
         {
-            cout << surface->toJSONString() <<endl;
+            cout << surface->asJsonText() <<endl;
             cout << "Cannot make Normal" << endl;
             exit(-1);
         }
@@ -150,27 +151,6 @@ int PolyhedralSurface::removeStraight(){
     return 0;
 }
 
-int PolyhedralSurface::translateSpaceToOrigin(){
-    cout << "\n------------- translateSpaceToOrigin --------------\n" << endl;
-
-    updateMBB();
-    double diff[3];
-    for (int i = 0 ; i < 3 ; i++){
-        diff[i] = -this->mbb.min(i);
-    }
-
-    for (ull i = 0 ; i < this->surfacesList.size() ; i++)
-    {
-        this->surfacesList[i]->translate(diff);
-    }
-
-    for (ull i = 0 ; i < this->vertices.size() ; i++){
-        this->vertices[i]->translate(diff);
-    }
-
-    return 0;
-}
-
 void PolyhedralSurface::updateMBB(){
     mbb = TMIC::getMBB(this->surfacesList);
 }
@@ -221,7 +201,7 @@ int PolyhedralSurface::checkSelfIntersection() {
         Surface* pSurface = this->surfacesList[sfID];
         if (SurfaceIntersection::checkSelfIntersection(pSurface)){
             cerr << "Self Intersection in Surface " << sfID << endl;
-            cerr << pSurface->toJSONString() << endl;
+            cerr << pSurface->asJsonText() << endl;
             count++;
         }
         else {
@@ -243,16 +223,6 @@ vector<Triangle *> PolyhedralSurface::getTriangulation() {
         triangles.insert(triangles.end(),pSurface->triangulation.begin(),pSurface->triangulation.end());
     }
     return triangles;
-}
-
-double PolyhedralSurface::getAverageError() {
-    double errorSum = 0.0;
-    for (Surface* surface : this->surfacesList){
-        errorSum += TMIC::computeError(surface);
-        if (errorSum > 0)
-            cout << errorSum << endl;
-    }
-    return errorSum;
 }
 
 /*

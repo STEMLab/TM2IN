@@ -45,7 +45,7 @@ public:
     Vector_3 getNormal();
     double getArea();
 
-    std::string toJSONString();
+    std::string asJsonText();
     std::string toJSONWithTriangles();
 
     bool isInMBB(Vertex* vt);

@@ -2,22 +2,13 @@
 #include <cgal/Features_to_CGAL_object.h>
 
 #include "features/Vertex.h"
+#include "detail/io/JsonWriter.h"
 
 using namespace std;
 
-std::string Vertex::toJSONString()
+std::string Vertex::asJsonText()
 {
-    std::string ret;
-    ret.append("[");
-    ret.append(to_string(x()));
-    ret.append(",");
-    ret.append(to_string(y()));
-    ret.append(",");
-    ret.append(to_string(z()));
-    ret.append(",");
-    ret.append(to_string(this->index));
-    ret.append("]");
-    return ret;
+    return TM2IN::detail::io::to_json(*this);
 }
 
 void Vertex::translate(double diff[]){

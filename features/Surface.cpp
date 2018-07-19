@@ -112,48 +112,12 @@ bool Surface::checkDuplicate(){
     return VertexListComputation::checkDuplicate(vertexList);
 }
 
-string Surface::toJSONString(){
-    if (this->getVerticesSize() == 0){
-        cerr << "Vertex Length is 0" << endl;
-        return "";
-    }
-    string ret;
-    ret.append("{");
-    ret.append(" \n \"area\" : " + to_string(area) );
-    ret.append(" ,\n \"id\" : \"" + sf_id + "\"" );
-    ret.append(" ,\n \"normal\" : [");
-    ret.append(to_string(this->normal.x()) + ", ");
-    ret.append(to_string(this->normal.y()) + ", ");
-    ret.append(to_string(this->normal.z()));
-    ret.append("], \n");
-    ret.append(" \"coord\" : [");
-    for (unsigned int i = 0 ; i < this->getVerticesSize() ; i++){
-        ret.append(this->vertex(i)->toJSONString());
-        ret.append(",");
-    }
-    ret.append(this->vertex(0)->toJSONString());
-    ret.append("] }");
-    return ret;
+string Surface::asJsonText(){
+    cerr << "asJSONTEXT" <<endl;
 }
 
 std::string Surface::toJSONWithTriangles() {
-    string indent("\t");
 
-    string ret;
-    ret += "{";
-    ret.append(" \n \"area\" : " + to_string(area) );
-    ret.append(" \n, \"id\" : \"" + sf_id + "\"" );
-    ret.append( "\n, \"triangles\" : [\n");
-    for (int i = 0 ; i < (int)this->triangles.size() ; i++){
-        ret += this->triangles[i]->toJSON(indent);
-        if (i != this->triangles.size() - 1)
-            ret += ",";
-        ret += "\n";
-    }
-    ret.append( "]\n");
-    ret.append( "}");
-
-    return ret;
 }
 
 //TODO : move
@@ -351,6 +315,6 @@ void Surface::removeVertexByIndex(int id) {
 }
 
 std::ostream& operator<<(std::ostream &ou, Surface *pSurface) {
-    ou << pSurface->toJSONString() << endl;
+    ou << pSurface->asJsonText() << endl;
     return ou;
 }

@@ -46,7 +46,7 @@ public:
     void sortSurfacesByArea();
 
     void tagID();
-벽
+
     void triangulateSurfaces();
 
     int checkSelfIntersection();

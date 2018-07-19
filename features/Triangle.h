@@ -23,7 +23,7 @@ public:
     Vertex* operator[](int idx);
     Vertex* vertex(int idx);
 
-    std::string toJSON(const std::string &indent);
+    std::string asJsonText();
 
 
 };
