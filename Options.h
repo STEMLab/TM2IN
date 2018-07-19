@@ -7,6 +7,7 @@
 
 #include <cstring>
 #include <string>
+#include "predefine.h"
 
 using namespace std;
 
@@ -19,6 +20,8 @@ public:
 
     string input_file; // "apt3.tvr"
     string output_file; // "ap3.json"
+
+    string file_name;
     string version; // "x.y.z"
 
     double threshold_1 = 1.0;
@@ -29,6 +32,11 @@ public:
 
     bool output_3ds = false;
     bool output_tvr = false;
+
+    bool generator = false;
+
+    int selected = ARCH;
+    bool need_traingulation = false;
 private:
     bool has_input_dir = false;
     bool has_output_dir = false;
@@ -38,6 +46,8 @@ private:
     bool has_no_merge = false;
 
     void check_options();
+
+    void make_file_name();
 };
 
 

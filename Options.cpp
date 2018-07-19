@@ -20,6 +20,8 @@ Options::Options(int argc, char **argv) {
             {"thres2",      1, 0, 'b'},
             {"output-tvr",  0, 0, 'T'},
             {"output-3ds",  0, 0, 'D'},
+            {"write-process",0,0, 'G'},
+            {"select-arch", 1, 0, 'A'},
             {0, 0, 0, 0}
     };
     int index = 0;
@@ -29,15 +31,21 @@ Options::Options(int argc, char **argv) {
             char* stopstring;
             case 'i':
                 assert(optarg != NULL);
-                printf("%s=%s\n", "input_dir", optarg);
                 input_dir = optarg;
+                if (input_dir.back() != '/'){
+                    input_dir.append("/");
+                }
+                printf("%s=%s\n", "input_dir", input_dir);
                 has_input_dir = true;
                 break;
             case 'O':
                 assert(optarg != NULL);
-                printf("%s=%s\n", "output_dir", optarg);
                 output_dir = optarg;
+                if (output_dir.back() != '/'){
+                    output_dir.append("/");
+                }
                 has_output_dir = true;
+                printf("%s=%s\n", "output_dir", output_dir);
                 break;
             case 'r':
                 assert(optarg != NULL);
@@ -77,6 +85,11 @@ Options::Options(int argc, char **argv) {
                 break;
             case 'D':
                 break;
+            case 'G':
+                generator = true;
+                break;
+            case 'A':
+                break;
         }
     }
 
@@ -94,6 +107,31 @@ Options::Options(int argc, char **argv) {
     }
 
     check_options();
+    make_file_name();
+}
+
+void Options::make_file_name(){
+    if (!has_input_type){
+        string file_extension = input_file.substr(input_file.find_last_of(".") + 1);
+        if (file_extension == "tvr" || file_extension == "TVR"){
+            input_type = 1;
+        }
+        else if (file_extension == "3ds" || file_extension == "3DS"){
+            input_type = 2;
+        }
+        else if (file_extension == "dae" || file_extension == "DAE"){
+            input_type = 3;
+        }
+    }
+
+    std::size_t pos = input_file.find_last_of(".");
+    file_name = input_file.substr(0, pos);
+    std::cout << "File name : " << file_name << endl;
+
+    output_dir += file_name;
+    output_dir += "/";
+    output_dir += version;
+    output_dir += "/";
 }
 
 void Options::check_options() {
@@ -108,6 +146,10 @@ void Options::check_options() {
     if (!has_input_type){
         fprintf(stderr, "WARNING : we will detect your file type and covert. Maybe it will be right..\n");
         fprintf(stderr, "IF you can make it sure, define value of --input-type option.\n");
+    }
+
+    if (polygonizer_mode == 2 || polygonizer_mode == 3 || output_3ds || output_tvr){
+        need_traingulation = true;
     }
 }
 
