@@ -31,6 +31,9 @@ file(GLOB LIB_FILES
 file(GLOB DETAIL_FILES
         "detail/io/*.h"
         "detail/io/*.cpp"
+        "detail/feature/*.h"
+        "detail/feature/*.cpp"
+        "detail/cgal_config.h"
         )
 
 file(GLOB SOURCE_FILES
@@ -46,25 +49,22 @@ file(GLOB SOURCE_FILES
         "compute/*.cpp"
         "converter/*.h"
         "converter/*.cpp"
-        "polygonizer/Polygonizer.h"
-        "polygonizer/PCAPolygonizer.cpp"
-        "polygonizer/PCAPolygonizer.h"
-        "polygonizer/TrianglePolygonizer.h"
-        "polygonizer/TrianglePolygonizer.cpp"
-        "polygonizer/DividedPolygonizer.cpp"
-        "polygonizer/DividedPolygonizer.h"
+        "algorithm/*.h"
+        "algorithm/*.cpp"
         predefine.h
         util.cpp
         util.h
         )
 
-add_executable(develop1
+add_executable(TM2IN
         ${SOURCE_FILES}
         ${DETAIL_FILES}
         ${LIB_FILES}
-        main.cpp)
+        Options.h
+        Options.cpp
+        TM2IN.cpp)
 
-TARGET_LINK_LIBRARIES(develop1 LINK_PUBLIC ${Boost_LIBRARIES} Eigen3::Eigen ${SFCGAL_LIBRARIES})
+TARGET_LINK_LIBRARIES(TM2IN LINK_PUBLIC ${Boost_LIBRARIES} Eigen3::Eigen ${SFCGAL_LIBRARIES})
 
 include_directories(
         ../TriangleMeshToClearSolid

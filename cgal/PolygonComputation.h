@@ -5,7 +5,7 @@
 #ifndef TRIANGLEMESHTOCLEARSOLID_POLYGONCOMPUTATION_H
 #define TRIANGLEMESHTOCLEARSOLID_POLYGONCOMPUTATION_H
 
-#include "Types.h"
+#include "detail/cgal_config.h"
 #include "features/Surface.h"
 
 using namespace std;

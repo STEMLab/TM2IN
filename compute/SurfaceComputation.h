@@ -6,7 +6,7 @@
 #define TRIANGLEMESHTOCLEARSOLID_SURFACECOMPUTATION_H
 
 #include "features/Surface.h"
-#include "cgal/Types.h"
+#include "detail/cgal_config.h"
 
 class SurfaceComputation {
 public:

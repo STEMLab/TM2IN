@@ -1,71 +1,36 @@
 
+#include "converter/Converter.h"
+#include "Options.h"
+
 #include <iostream>
 #include <fstream>
 #include <boost/filesystem.hpp>
-#include <polygonizer/TrianglePolygonizer.h>
-#include <polygonizer/DividedPolygonizer.h>
-#include <converter/Converter.h>
-#include <polygonizer/PCAPolygonizer.h>
-#include "predefine.h"
+#include <map>
+
 
 void createAndRemoveDir(const string &version, const string &resultPath, const string &fileName);
 map<string, string> getPaths(int type);
 
 using namespace std;
 
-int main(int argc, const char * argv[]) {
-    Checker::threshold_same_vt_distance = 0.0000001;
-    Checker::threshold_1 = 1.0;
-    Checker::threshold_2 = 10.0;
-    Checker::threshold_collinear = 0.00001;
-    Checker::num_of_straight = 0;
-    Checker::num_of_invalid = 0;
+int main(int argc, char * argv[]) {
+    try{
+        Options options = Options(argc, argv);
+        // createAndRemoveDir(options.version, options.output_dir);
+        Converter converter = Converter(options);
+        converter.start();
 
-    cout << "Input File Path" << endl;
-    string input_file;
-    if (argc < 2){
-        cin >> input_file;
+        converter.run();
+
+        converter.finish();
     }
-    else
-        input_file = argv[1];
+    catch(const std::runtime_error& e){
+        fprintf(stderr, "TM2IN : %s\n", e.what());
+        exit(EXIT_FAILURE);
+    }
 
-    cout << "Result Directory" << endl;
-    string result_dir;
-    if (argc < 3){
-        cin >> result_dir;
-    } else
-        result_dir = argv[2];
-
-    cout << "Version" << endl;
-    string version;
-    if (argc < 4)
-        cin >> version;
-    else
-        version = argv[3];
-
-
-//    map<string, string> paths = getPaths(dataType);
-//    cout << "write file name" << endl;
-//    string dataName; cin >> dataName; // apt3
-//    paths["dataName"] = dataName;
-//    paths["outputDataName"] = dataName + ".json";
-//
-//    cout << "version" << endl;
-//    string version; cin >> version; // x.y.z
-//    cout << version << endl;
-//    paths["version"] = version;
-//    paths["versionDir"] = paths["resultDir"] + paths["dataName"] + "/" + paths["version"] + "/";
-
-    Converter* converter = new Converter();
-    if (dataType == 1)  converter->importTVR(new TVRImporter());
-    else if (dataType == 2) converter->import3DS(new ThreeDSImporter());
-    else if (dataType == 3) converter->importCOLLADA(new COLLADAImporter());
-    else return -1;
-
+/*
     converter->setGenerationWriter(new GenerationWriter(paths["versionDir"]));
-
-
-
     converter->setExporter(new SpaceExporter());
     converter->setPaths(paths);
 
@@ -92,7 +57,7 @@ int main(int argc, const char * argv[]) {
     if (converter->mergeSurfaces()) return -1;
     // if (this->simplifyShareEdge()) return -1;
     converter->makeSurfaceGraph();
-    converter->checkSelfIntersection();
+    converter->doValidation();
 
 
     cout << "TRIANGULATION" << endl;
@@ -116,6 +81,7 @@ int main(int argc, const char * argv[]) {
     std::cout << "End!\n";
     std::cout << "straight vertex : " << Checker::num_of_straight <<endl;
     std::cout << "invalid Surface : " << Checker::num_of_invalid << endl;
+*/
     return 0;
 }
 
@@ -148,21 +114,21 @@ map<string, string> getPaths(int type){
     return paths;
 }
 
-void createAndRemoveDir(const string &version, const string &resultPath, const string &fileName) {
-    if (boost::filesystem::exists(resultPath + fileName)){
-        if (boost::filesystem::exists(resultPath + fileName + "/" + version)){
+void createAndRemoveDir(const string &version, const string &resultPath) {
+    if (boost::filesystem::exists(resultPath)){
+        if (boost::filesystem::exists(resultPath + version)){
             char ans;
             cout << "\n\nThis version " << version << " folder exist. Remove Files in directory? (y/n)" << endl;
             cin >> ans;
             if (ans == 'y' || ans == 'Y')
-                removeFilesInDirectory(resultPath + fileName + "/" + version);
+                boost::filesystem::remove_all(resultPath +version);
         }
         else{
-            boost::filesystem::create_directory(resultPath + fileName + "/" + version);
+            boost::filesystem::create_directory(resultPath + version);
         }
     }
     else{
-        boost::filesystem::create_directory(resultPath + fileName);
-        boost::filesystem::create_directory(resultPath + fileName + "/" + version);
+        boost::filesystem::create_directory(resultPath);
+        boost::filesystem::create_directory(resultPath+ version);
     }
 }

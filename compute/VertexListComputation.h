@@ -6,7 +6,7 @@
 #define TRIANGLEMESHTOCLEARSOLID_VERTEXLISTCOMPUTATION_H
 
 #include "features/Vertex.h"
-#include "cgal/Types.h"
+#include "detail/cgal_config.h"
 
 using namespace std;
 

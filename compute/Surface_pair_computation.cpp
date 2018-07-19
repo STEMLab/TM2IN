@@ -28,8 +28,8 @@ int TMIC::combine(Surface *origin, Surface *piece) {
     ll lastVertex_piece = -1, lastVertex_origin = -1;
     ll firstVertex_piece = -1, firstVertex_origin = -1;
     if (findStartAndEnd(piece_vertex_list, origin_vertex_list, piece_middle, origin_middle, firstVertex_piece, lastVertex_piece, firstVertex_origin, lastVertex_origin)){
-        cerr << "\n" << origin->toJSONString() << endl;
-        cerr << "\n" << piece->toJSONString() <<endl;
+        cerr << "\n" << origin->asJsonText() << endl;
+        cerr << "\n" << piece->asJsonText() <<endl;
         cerr << CGALCalculation::getAngle(origin->normal, piece->normal)  << endl;
         return 1;
     }

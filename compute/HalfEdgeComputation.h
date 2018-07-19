@@ -6,7 +6,7 @@
 #define TRIANGLEMESHTOCLEARSOLID_HALFEDGECOMPUTATION_H
 
 
-#include <cgal/Types.h>
+#include "detail/cgal_config.h"
 #include <features/HalfEdge.h>
 
 class HalfEdgeComputation {

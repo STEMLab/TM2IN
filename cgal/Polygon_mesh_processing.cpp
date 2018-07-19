@@ -7,7 +7,7 @@
 #include <iostream>
 #include "features/Surface.h"
 #include "features/Triangle.h"
-#include "Types.h"
+
 
 typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
 

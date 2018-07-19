@@ -20,6 +20,7 @@ Options::Options(int argc, char **argv) {
             {"thres2",      1, 0, 'b'},
             {"output-tvr",  0, 0, 'T'},
             {"output-3ds",  0, 0, 'D'},
+            {"output-tri",  0, 0, 'L'},
             {"write-process",0,0, 'G'},
             {"select-arch", 1, 0, 'A'},
             {0, 0, 0, 0}
@@ -89,6 +90,8 @@ Options::Options(int argc, char **argv) {
                 generator = true;
                 break;
             case 'A':
+                break;
+            case 'L':
                 break;
         }
     }

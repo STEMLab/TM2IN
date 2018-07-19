@@ -148,7 +148,7 @@ int SurfaceComputation::triangulate(Surface *&pSurface, std::vector<Triangle*>& 
         if (!polygon.is_simple())
         {
             cerr << "polygon is not simple" << endl;
-            cerr << pSurface->toJSONString() << endl;
+            cerr << pSurface->asJsonText() << endl;
             cerr << polygon << endl;
             return 1;
         }

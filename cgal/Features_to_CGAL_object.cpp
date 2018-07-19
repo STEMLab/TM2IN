@@ -14,6 +14,5 @@ Triangle_3 CGAL_User::getCGALTriangle(Triangle *&pTriangle) {
 }
 
 Point_3 CGAL_User::getCGALPoint(Vertex *v) {
-    return Point_3(v->x(),v->y(),v->z());;
 }
 

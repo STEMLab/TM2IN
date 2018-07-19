@@ -8,7 +8,7 @@
 #include <iostream>
 #include <vector>
 #include "predefine.h"
-#include "Types.h"
+#include "detail/cgal_config.h"
 #include "features/Vertex.h"
 #include "features/Triangle.h"
 
