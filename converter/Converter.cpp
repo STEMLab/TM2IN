@@ -1,44 +1,58 @@
-#include <compute/SurfacesListComputation.h>
+#include <io/tvr.h>
+#include <io/max3ds.h>
+#include <io/collada.h>
+#include <io/json.h>
 #include "Converter.h"
 
+#include "compute/SurfacesListComputation.h"
 #include "features/HalfEdge.h"
-#include "fileio/JSONMaker.h"
-#include "fileio/export/MeshExporter.h"
 
-int Converter::importMesh(MeshImporter* di) {
-    string filePath = paths["resourceDir"] + paths["dataName"] + "." + paths["filetype"];
-    this->mesh_list = di->import(filePath.c_str());
+Converter::Converter(Options& op) : options(op) {}
 
-    else return 0;
-}
+int Converter::start() {
+    // import mesh data
+    importMesh();
 
-int Converter::export3DS() {
-    if (this->convertSpaceToTriangleMesh()) return -1;
+    // generation writer
+    if (options.generator) generation_writer = new GenerationWriter(options.output_dir);
 
-    for (int i = 0 ; i < this->mesh_list.size() ; i++){
-        TriangleMesh *&triangleMesh = this->mesh_list[i];
-        triangleMesh->init();
-        cout << "\n\n" << i << "th mesh" << endl;
-        if (triangleMesh->checkClosed())
-            cout << "this mesh is closed\n\n" << endl;
+    // construct graph
+    initTriangleMesh();
+    if (partitionTriangleMeshByComponent()){
+        throw std::runtime_error("Converter : partitionTriangleMeshByComponent error");
     }
 
-    MeshExporter::export3DS(this->mesh_list, (paths["versionDir"] + paths["dataName"] + ".3DS").c_str());
+    // mesh validation
+    // if (handleOpenTriangleMesh()) return -1;
+
+    // remove Furniture
+    if (remainSelectedMesh(options.selected)) return -1;
+
+    // Triangle Mesh to PolyhedralSurface
+    if (convertTriangleMeshToSpace()) return -1;
+
     return 0;
 }
 
-int Converter::convertTriangleMeshToSpace() {
-    for (int space_id = 0 ; space_id < this->mesh_list.size() ; space_id++){
-        PolyhedralSurface* space = new PolyhedralSurface();
-        space->setName(this->mesh_list[space_id]->name);
-        if (space->convertTrianglesToSurfaces(this->mesh_list[space_id]->triangles)){
-            cout << "make Surfaces error" << endl;
-            return -1;
-        }
-        space->vertices = this->mesh_list[space_id]->vertices;
-        this->spaceList.push_back(space);
-    }
-    this->mesh_list.clear();
+int Converter::run() {
+    if (mergeSurfaces()) return -1;
+    // if (simplifyShareEdge()) return -1;
+    makeSurfaceGraph();
+    doValidation();
+
+    if (options.need_traingulation)
+        if (triangulation()) return -1;
+
+    if (options.polygonizer_mode > 0) // 1 or 2 or 3
+        polygonize();
+
+    return 0;
+}
+
+int Converter::finish() {
+    this->tagID();
+    this->exportSpace();
+
     return 0;
 }
 
@@ -62,14 +76,31 @@ int Converter::convertSpaceToTriangleMesh(){
     return 0;
 }
 
-int Converter::exportSpace(DataExporter* de) {
-    string filePath = paths["versionDir"] + paths["outputDataName"];
-    if (de->exportSpace(this->spaceList, filePath.c_str())) return 1;
-    return 0;
-}
+int Converter::exportSpace() {
+    //JSON
+    TM2IN::io::exportJSON(options.output_dir + "surfaces.json", this->spaceList);
 
-void Converter::setPaths(map<string, string> _paths) {
-    this->paths = _paths;
+    if (options.output_3ds || options.output_tvr){
+        convertSpaceToTriangleMesh();
+        initTriangleMesh();
+        for (int i = 0 ; i < this->mesh_list.size() ; i++){
+            TriangleMesh *&triangleMesh = this->mesh_list[i];
+            if (triangleMesh->checkClosed())
+                cout << "this mesh is closed\n\n" << endl;
+        }
+    }
+
+
+    //TVR
+    if (options.output_tvr){
+
+    }
+
+    //3DS
+    if (options.output_3ds){
+        TM2IN::io::export3DS((options.output_dir + options.file_name + ".3DS").c_str(), this->mesh_list);
+    }
+    return 0;
 }
 
 void Converter::tagID() {
@@ -77,145 +108,6 @@ void Converter::tagID() {
         PolyhedralSurface *space = this->spaceList[it];
         space->tagID();
     }
-}
-
-int Converter::partitionTriangleMeshByComponent() {
-    int i = 0;
-    vector<TriangleMesh*> new_mesh_list;
-    while ( i < this->mesh_list.size() ){
-        assert(this->mesh_list[i]->checkClosed());
-
-        int result = this->mesh_list[i]->partitionByComponent(new_mesh_list);
-        if(result == -1) return -1;
-        else
-            i++;
-    }
-    this->mesh_list = new_mesh_list;
-    cout << "The Number of Mesh : " << this->mesh_list.size() << endl;
-
-    return 0;
-}
-
-int Converter::initTriangleMesh() {
-    clock_t begin = clock();
-    for (int i = 0 ; i < this->mesh_list.size() ; i++){
-        this->mesh_list[i]->init();
-    }
-    clock_t end = clock();
-
-    cout << "make graph time : " << double(end - begin) / CLOCKS_PER_SEC << "s" << endl;
-
-    return 0;
-}
-
-int Converter::remainSelectedMesh(int arch) {
-    int i;
-    switch(arch){
-        case ARCH:
-            i = 0;
-            while (i < this->mesh_list.size()){
-                if (this->mesh_list[i]->isFurniture())
-                    this->mesh_list.erase(this->mesh_list.begin() + i);
-                else
-                    i++;
-            }
-            break;
-        case NON_ARCH:
-            i = 0;
-            while (i < this->mesh_list.size()){
-                if (this->mesh_list[i]->isFurniture())
-                    i++;
-                else
-                    this->mesh_list.erase(this->mesh_list.begin() + i);
-            }
-            break;
-        default:
-            break;
-    }
-
-    printf("There are %lu Remaining Meshes.\n\n", this->mesh_list.size());
-    return 0;
-}
-
-int Converter::mergeSurfaces() {
-    for (ull it = 0 ; it < this->spaceList.size(); it++)
-    {
-        PolyhedralSurface* space = this->spaceList[it];
-        if (this->generation_writer) this->generation_writer->start(space);
-        space->generation++;
-
-        // check duplicate coordinates
-        if (this->spaceList[it]->checkDuplicateVertexInSurfaces()) return -1;
-
-        // limit degree of same normal vector angle
-
-        if (processGenerations(space)) return -1;
-
-        Checker::threshold_2 = 10.0;
-        Checker::threshold_1 = 40.0;
-        if (processGenerations(space)) return -1;
-
-        if (space->checkSurfaceValid() == -1){ cout << "Surface is not valid" << endl; return -1; }
-        space->sortSurfacesByArea();
-    }
-    return 0;
-}
-
-int Converter::processGenerations(PolyhedralSurface *space) {
-    ll p_size = (ull)space->surfacesList.size();
-    while (true){
-        assert(p_size > 0);
-        cout << "generation " << space->generation << ": " << space->surfacesList.size()<< endl;
-        cout << "degree  : " << Checker::threshold_1 << endl;
-        int mergeSurface = space->mergeSurface();
-        if (mergeSurface == -1){
-            cerr << "combine error" << endl;
-            return -1;
-        }
-        int simplifySegment = 0;
-        if (!mergeSurface)
-            simplifySegment = space->simplifySegment();
-        if (simplifySegment == -1){
-            return -1;
-        }
-        if (space->checkSurfaceValid() == -1){
-            cerr << "Surface is not valid" << endl;
-            return -1;
-        }
-
-        if (mergeSurface || simplifySegment){
-            p_size = (int)space->surfacesList.size();
-        }
-        else{
-            cout << "generation " << space->generation << " done..\n\n\n"<< endl;
-            break;
-        }
-
-        if (this->generation_writer) this->generation_writer->write();
-        if (Checker::threshold_1 < 40) Checker::threshold_1 += 2.0;
-
-        space->generation++;
-        space->updateNormal();
-    }
-    return 0;
-}
-
-int Converter::checkSelfIntersection() {
-    for (ull it = 0 ; it < this->spaceList.size() ; it++) {
-        PolyhedralSurface *space = this->spaceList[it];
-        space->checkSelfIntersection();
-    }
-    return 0;
-}
-
-int Converter::simplifyShareEdge() {
-    for (ull it = 0 ; it < this->spaceList.size() ; it++) {
-        PolyhedralSurface *space = this->spaceList[it];
-        cout << "simplify space " << space->name << endl;
-        space->simplifySegment();
-        // space->removeStraight();
-    }
-    return 0;
 }
 
 int Converter::handleOpenTriangleMesh() {
@@ -233,41 +125,6 @@ int Converter::handleOpenTriangleMesh() {
     assert(this->mesh_list.size() >= 0);
     return 0;
 }
-
-
-void Converter::makeSurfaceGraph() {
-    for (int i = 0 ; i < spaceList.size() ; i++){
-        cout << "\n\n" << i << "th graph" << endl;
-        spaceList[i]->surfaceGraph = new SurfaceGraph();
-        spaceList[i]->surfaceGraph->makeAdjacentGraph(spaceList[i]->surfacesList);
-        if (spaceList[i]->surfaceGraph->isClosedSurface()){
-            cout << "this is closed" << endl;
-        }
-        else{
-            cout << "not closed" << endl;
-        }
-        cout << "------------\n" << endl;
-    }
-}
-
-int Converter::polygonize(Polygonizer *polygonizer) {
-    if (polygonizer == NULL) return 0;
-
-    for (ull it = 0 ; it < this->spaceList.size() ; it++) {
-        PolyhedralSurface *space = this->spaceList[it];
-        polygonizer->make(space);
-    }
-
-//    vector<Surface*> sf_list;
-//    for (PolyhedralSurface* sp : this->spaceList){
-//        sf_list.insert(sf_list.end(), sp->surfacesList.begin(), sp->surfacesList.end());
-//    }
-//    double area = TMIC::getAverageSize(sf_list);
-//    cout << area << endl;
-
-    return 0;
-}
-
 
 void Converter::printInputDataSpec() {
     vector<Surface*> surfaces;
@@ -287,23 +144,3 @@ void Converter::printInputDataSpec() {
     cout << "Area : " << area << endl;
     cout << "\n\n" << endl;
 }
-
-int Converter::finish() {
-    this->tagID();
-    this->exportSpace();
-
-    return 0;
-}
-
-int Converter::triangulation() {
-    cout << "\n\nTriangulationConverter::re-triangulation" << endl;
-    for (ull it = 0 ; it < this->spaceList.size() ; it++) {
-        cout << "space : " << it << endl;
-        PolyhedralSurface *space = this->spaceList[it];
-        space->triangulateSurfaces();
-    }
-    return 0;
-}
-
-
-
