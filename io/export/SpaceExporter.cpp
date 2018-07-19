@@ -2,9 +2,11 @@
 // Created by dongmin on 18. 3. 13.
 //
 
-#include <fstream>
-#include <fileio/JSONMaker.h>
 #include "SpaceExporter.h"
+
+#include "io/json.h"
+
+#include <fstream>
 
 int SpaceExporter::exportJSON(vector<Solid *> spaceList, const char *filePath) {
     ofstream fout;

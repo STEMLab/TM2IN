@@ -26,5 +26,4 @@ cscope.out
 cmake-build-debug
 
 # develop
-main.cpp
 cleaner.cpp

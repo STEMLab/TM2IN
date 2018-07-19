@@ -3,7 +3,6 @@
 //
 
 #include "MeshExporter.h"
-#include "fileio/import/ThreeDSImporter.h"
 
 int MeshExporter::export3DS(vector<TriangleMesh *> meshList, const char *filePath) {
     FILE* pFile;

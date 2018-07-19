@@ -1,5 +1,5 @@
 #include "GenerationWriter.h"
-#include "fileio/JSONMaker.h"
+#include "io/json.h"
 
 #include <boost/filesystem.hpp>
 #include <compute/SurfacesListComputation.h>
@@ -31,7 +31,7 @@ void GenerationWriter::writeJSON(){
     fout.open(f_path, ios::out|ios::trunc);
 
     if (!fout) return ;
-    if (JSONMaker::printJSON(fout, space))
+    if (json::printJSON(fout, space))
     {
         return ;
     }

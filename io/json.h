@@ -9,15 +9,10 @@
 
 using namespace std;
 
-class JSONMaker{
-public :
-    static int printJSON(ofstream& fout, std::vector<Surface*>& surfacesList);
-    static int printJSON(ofstream& fout, PolyhedralSurface* space);
-    static int printJSON(ofstream& fout, vector<PolyhedralSurface*>& ts);
-
-    static int printTriangleJSON(ofstream& fout, vector<PolyhedralSurface *>& spaces);
-    static int printTriangleJSON(ofstream &fout, PolyhedralSurface *space);
-    static int printTriangleJSON(ofstream &ofstream, std::vector<Surface *> &surfacesList);
+namespace TM2IN{
+    namespace io {
+        int exportJSON(string output_file, vector<PolyhedralSurface *> &ts, bool triangulation_out);
+    }
 };
 
 #endif // JSONMAKER_H_INCLUDED
