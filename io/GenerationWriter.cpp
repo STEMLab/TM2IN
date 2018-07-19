@@ -31,10 +31,7 @@ void GenerationWriter::writeJSON(){
     fout.open(f_path, ios::out|ios::trunc);
 
     if (!fout) return ;
-    if (json::printJSON(fout, space))
-    {
-        return ;
-    }
+    fout << this->space->asJsonText();
     fout.close();
 }
 

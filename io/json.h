@@ -11,7 +11,7 @@ using namespace std;
 
 namespace TM2IN{
     namespace io {
-        int exportJSON(string output_file, vector<PolyhedralSurface *> &ts, bool triangulation_out);
+        int exportJSON(string output_file, vector<PolyhedralSurface *> &ts, bool triangulation_out=false);
     }
 };
 

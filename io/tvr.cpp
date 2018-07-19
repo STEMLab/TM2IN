@@ -21,6 +21,44 @@ namespace TM2IN {
 
 
 /*
+void TriangleMesh::exportTVR(const char *path) {
+    std::cout << "save As TVR" << endl;
+    cout << path;
+    FILE* pFile;
+    pFile= fopen(path, "w");
+    fprintf(pFile, "TVR0\n");
+
+    for (int i = 0 ; i < this->vertices.size() ; i++){
+        ostringstream strStream;
+        strStream << "v ";
+        for (int j = 0 ; j < 3 ; j++){
+            strStream << this->vertices[i]->coords[j] << " ";
+        }
+        strStream << endl;
+        string str = strStream.str();
+        fprintf(pFile, "%s", str.c_str());
+    }
+
+    for (int group_i = 0 ; group_i < this->triangles.size() ; group_i++){
+        fprintf(pFile, "g %s\n", this->triangles[group_i].first.c_str());
+        for (int tri_i = 0 ; tri_i < this->triangles[group_i].second.size(); tri_i++){
+            Triangle* triangle = this->triangles[group_i].second[tri_i];
+            ostringstream strStream;
+            strStream << "f ";
+            for (int j = 0 ; j < 3 ; j++){
+                strStream << triangle->vertex(j)->index << " ";
+            }
+            strStream << endl;
+            fprintf(pFile,"%s", strStream.str().c_str());
+        }
+    }
+
+    fclose(pFile);
+
+}
+*/
+
+/*
  *
  *
 int TVRImporter::extractMINtvr(string fileName){
