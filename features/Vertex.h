@@ -5,6 +5,7 @@
 
 #include "util.h"
 #include "cgal/CGALCalculation.h"
+#include "detail/cgal_config.h"
 
 class Vertex{
 public:
@@ -61,7 +62,7 @@ public:
     }
     void setIndex(unsigned long i);
 
-    Kernel::Point_3 getCGALPoint();
+    Kernel::Point_3 CGAL_point();
 };
 
 /** < for Searching upper_bound and lower_bound */

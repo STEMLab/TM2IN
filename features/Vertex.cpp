@@ -1,5 +1,6 @@
 #include <string>
 #include <cgal/Features_to_CGAL_object.h>
+#include <detail/feature/type_conversion.h>
 
 #include "features/Vertex.h"
 #include "detail/io/JsonWriter.h"
@@ -23,6 +24,6 @@ void Vertex::setIndex(unsigned long i) {
     this->index = i;
 }
 
-Kernel::Point_3 Vertex::getCGALPoint() {
-    return CGAL_User::getCGALPoint(this);
+Kernel::Point_3 Vertex::CGAL_point() {
+    return TM2IN::detail::feature::to_CGAL_Point_3(*this);
 }

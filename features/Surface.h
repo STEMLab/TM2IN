@@ -10,7 +10,7 @@
 #include "logic/check.h"
 #include "util.h"
 #include "predefine.h"
-#include "cgal/Types.h"
+#include "detail/cgal_config.h"
 
 class Surface{
 private:

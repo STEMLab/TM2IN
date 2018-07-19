@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cmath>
 
+#include "detail/io/JsonWriter.h"
 #include "compute/SurfacesListComputation.h"
 #include "compute/VertexComputation.h"
 #include "compute/SurfaceComputation.h"
@@ -225,6 +226,10 @@ vector<Triangle *> PolyhedralSurface::getTriangulation() {
     return triangles;
 }
 
+string PolyhedralSurface::asJsonText() {
+    return TM2IN::detail::io::to_json(this);
+}
+
 /*
 
 void PolyhedralSurface::rotateSpaceByFloorTo00(){
@@ -261,7 +266,7 @@ void PolyhedralSurface::rotateSpaceByFloorTo00(){
                             1);
 
     for (ull i = 0 ; i < this->p_vertexList->size() ; i++){
-        Point_3 p = CGAL_User::getCGALPoint(this->p_vertexList->at(i));
+        Point_3 p = CGAL_User::CGAL_point(this->p_vertexList->at(i));
         p = p.transform(rotateZ);
         this->p_vertexList->at(i)->setCoords(p.x(), p.y(), p.z());
     }

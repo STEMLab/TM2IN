@@ -54,6 +54,8 @@ public:
     vector<Triangle *> getTriangulation();
 
     int removeStraight();
+    string asJsonText();
+
 protected:
     void updateMBB();
     void freeSurfaces();
