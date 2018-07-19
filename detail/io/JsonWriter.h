@@ -16,13 +16,13 @@ namespace TM2IN {
             class JsonWriter {
             public :
                 JsonWriter(std::ofstream& _fout);
-                void write(vector<PolyhedralSurface *> &ts, bool exp_tri);
+                void write(vector<PolyhedralSurface *> &ts, bool exp_tri=false);
             private:
                 std::ofstream& fout;
                 bool exp_tri;
             };
 
-            string to_json(PolyhedralSurface*& ps, bool exp_tri=false);
+            string to_json(PolyhedralSurface* ps, bool exp_tri=false);
             string to_json(Surface*& sf);
             string to_json_with_triangles(Surface *&pSurface);
             string to_json(Triangle& tri);

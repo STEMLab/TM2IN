@@ -9,7 +9,7 @@ namespace TM2IN {
         namespace io {
             JsonWriter::JsonWriter(std::ofstream &_fout) : fout(_fout){}
 
-            void JsonWriter::write(vector<PolyhedralSurface *> &ts, bool exp_tri=false) {
+            void JsonWriter::write(vector<PolyhedralSurface *> &ts, bool exp_tri) {
                 fout << "{ \n";
                 fout << " \"spaces\" : [ \n";
                 for (unsigned int index = 0; index < ts.size(); index++) {
@@ -21,7 +21,7 @@ namespace TM2IN {
                 fout << "}" << endl;
             }
 
-            string to_json(PolyhedralSurface*& ps, bool exp_tri=false){
+            string to_json(PolyhedralSurface* ps, bool exp_tri){
                 string result;
                 result = "{\n";
                 result += " \"name\" : \"" + ps->name + "\", \n";
