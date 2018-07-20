@@ -38,7 +38,7 @@ public:
     int convertTrianglesToSurfaces(vector<Triangle*>& triangles);
     int checkDuplicateVertexInSurfaces();
 
-    int simplifySegment();
+    int clean_merging_result();
     int checkSurfaceValid();
     int updateNormal();
 

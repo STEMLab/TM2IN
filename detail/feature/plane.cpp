@@ -7,7 +7,7 @@
 
 namespace TM2IN {
     namespace detail {
-        namespace ext_feature{
+        namespace feature{
             Plane_3 make_PCA_plane(std::vector < Vertex * > vertices, Vector_3 normal) {
                 std::vector <Point_3> cgal_points;
                 for (int i = 0; i<vertices.size();i++) {

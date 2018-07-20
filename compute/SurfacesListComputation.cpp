@@ -58,51 +58,6 @@ ull SurfacesListComputation::countTriangles(vector<TriangleMesh *> tm) {
     return result;
 }
 
-bool TMIC::mergeSurfaces(vector<Surface *> &surfacesList, vector<Surface*>& result) {
-    result.clear();
-    //deep copy
-    for (ull i = 0 ; i < surfacesList.size() ; i++){
-        result.push_back(new Surface(surfacesList[i]));
-    }
-
-    bool hasMerged = false;
-    bool isMerged = true;
-    ull combined_count = 0;
-    while (isMerged){
-        sort(result.begin(), result.end(), Surface::compareLength);
-        if (result.size() == 1) break;
-        for (ull i = 0 ; i < result.size() - 1 ; i++){
-            ull j = i + 1;
-            isMerged = false;
-            while (j < result.size()){
-                if (TMIC::combine(result[i], result[j]) == 0)
-                {
-                    cout << ".";
-                    combined_count++;
-                    isMerged = true;
-                    hasMerged = true;
-                    result.erase(result.begin() + j);
-                } else
-                    j++;
-            }
-            if (isMerged) i -= 1;
-            printProcess(combined_count, surfacesList.size(), "mergeSurface");
-        }
-    }
-
-    return hasMerged;
-}
-
-bool TMIC::mergeSurfaces(vector<Triangle *> &triangleList, vector<Surface*>& result) {
-    vector<Surface *> surfacesList;
-    for (Triangle* tri : triangleList)
-        surfacesList.push_back(new Surface(tri));
-    bool hasMerged = TMIC::mergeSurfaces(surfacesList, result);
-    for(Surface* sf : surfacesList)
-        delete sf;
-    return hasMerged;
-}
-
 double TMIC::getAverageSize(const vector<Surface *> &surfacesList) {
     double wholeArea = 0.0;
 

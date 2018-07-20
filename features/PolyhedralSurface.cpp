@@ -60,52 +60,6 @@ int PolyhedralSurface::updateNormal(){
     return 0;
 }
 
-
-int PolyhedralSurface::simplifySegment(){
-    bool hasSimplified = false;
-    cout << "\n------------simplifySegment------------\n" << endl;
-    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareLength);
-    ull sizeOfSurfaces = this->surfacesList.size();
-
-    for (ull i = 0 ; i < sizeOfSurfaces; i++)
-        assert((int) this->surfacesList[i]->getVerticesSize() >= 3);
-
-    for (ull i = 0 ; i < sizeOfSurfaces - 1; i++){
-        Surface *&surfaceI = this->surfacesList[i];
-        if (!surfaceI->isValid()) continue;
-        printProcess(i, sizeOfSurfaces, "");
-        for (ull j = i + 1; j < sizeOfSurfaces ; j++){
-            Surface *&surfaceJ = this->surfacesList[j];
-            if (!surfaceI->isValid()) break;
-            if (!surfaceJ->isValid()) continue;
-            if (!CGALCalculation::isIntersect_BBOX(surfaceI, surfaceJ)) continue;
-            while (TMIC::simplifyLineSegment(this->surfacesList[i], this->surfacesList[j]) == 0){
-                cout << "Simplification" << endl;
-                hasSimplified = true;
-                if (!surfaceI->isValid() || !surfaceJ->isValid()) break;
-            }
-        }
-    }
-    sizeOfSurfaces = this->surfacesList.size();
-
-    bool hasRemoved = false;
-    for (int i = sizeOfSurfaces - 1; i >= 0 ; i--){
-        if (this->surfacesList[i]->isValid()){
-        }
-        else{
-            hasRemoved = true;
-            cout << "remove" << endl;
-            delete this->surfacesList[i];
-            this->surfacesList.erase(this->surfacesList.begin() + i);
-        }
-    }
-
-    if (hasRemoved)
-        hasSimplified = (simplifySegment() || hasSimplified);
-
-    return hasSimplified;
-}
-
 int PolyhedralSurface::checkSurfaceValid() {
     cout << "\n------------- check whether surface is valid --------------\n" << endl;
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )

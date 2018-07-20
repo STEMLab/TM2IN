@@ -8,7 +8,8 @@
 #include "features/Triangle.h"
 #include "features/Surface.h"
 #include "Polygonizer.h"
-#include "pca.h"
+#include "detail/feature/plane.h"
+#include "algorithm/merge_surfaces.h"
 
 namespace TM2IN{
     namespace algorithm{
@@ -24,9 +25,8 @@ namespace TM2IN{
         }
 
         void DividedPolygonizer::run(PolyhedralSurface *space) {
-
-            //Checker::threshold_2 = 45.00;
-            //Checker::threshold_1 = 1.0;
+            double thres1 = 1.0;
+            double thres2 = 45.0;
             vector<Surface*> newSurfacesList;
             for (int i = 0 ; i < space->surfacesList.size() ; i++){
                 Surface* sf = space->surfacesList[i];
@@ -34,7 +34,7 @@ namespace TM2IN{
 
                 TMIC::connectOppositeHalfEdges(sf->triangulation);
                 vector<Surface*> newSurfacesInSurface;
-                TMIC::mergeSurfaces(sf->triangulation, newSurfacesInSurface);
+                TM2IN::algorithm::mergeTriangles(sf->triangulation, thres1, thres2, newSurfacesInSurface);
                 newSurfacesList.insert(newSurfacesList.end(), newSurfacesInSurface.begin(), newSurfacesInSurface.end());
             }
             space->surfacesList = newSurfacesList;
@@ -57,7 +57,7 @@ namespace TM2IN{
                     }
                 }
 
-                Plane_3 plane = TM2IN::algorithm::make_PCA_plane(triangle_vertices, sf->normal);
+                Plane_3 plane = TM2IN::detail::feature::make_PCA_plane(triangle_vertices, sf->normal);
 
                 vector<Vertex*> newVertices;
                 for (ull index = 0 ; index < sf->getVerticesSize() ; index++ )

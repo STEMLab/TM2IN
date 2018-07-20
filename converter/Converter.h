@@ -35,7 +35,6 @@ private:
 
     int mergeSurfaces();
     int processGenerations(PolyhedralSurface *space);
-    int simplifyShareEdge();
 
     int convertTriangleMeshToSpace();
     int convertSpaceToTriangleMesh();

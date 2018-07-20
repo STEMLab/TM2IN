@@ -4,6 +4,7 @@
 
 #include <cgal/SurfaceIntersection.h>
 #include <cgal/Features_to_CGAL_object.h>
+#include <detail/feature/plane.h>
 #include "SurfaceComputation.h"
 #include "VertexComputation.h"
 #include "compute/VertexListComputation.h"
@@ -82,18 +83,6 @@ Plane_3 SurfaceComputation::getPlane3WithCenter(Surface *&pSurface){
     return plane;
 }
 
-
-std::vector<Point_2> SurfaceComputation::projectTo3DPlane(Surface *&pSurface, Plane_3 plane) {
-    std::vector<Vertex*> vertexList = pSurface->getVerticesList();
-    std::vector<Point_2> pointList;
-    for (int i = 0 ; i < vertexList.size(); i++){
-        Point_2 point2d = plane.to_2d(CGAL_User::getCGALPoint(vertexList[i]));
-        pointList.push_back(point2d);
-    }
-    return pointList;
-}
-
-
 void SurfaceComputation::removeStraight(Surface*& pSurface){
     if (pSurface->getVerticesSize() < 3) return;
     int removed_count = 0;
@@ -140,8 +129,9 @@ int SurfaceComputation::triangulate(Surface *&pSurface, std::vector<Triangle*>& 
     }
     else{
         // convert 3D point to 2D
-        Plane_3 planeRef = SurfaceComputation::getSimplePlane3WithNormal(pSurface->normal);
-        vector<Point_2> point2dList = projectTo3DPlane(pSurface, planeRef);
+
+        Plane_3 planeRef = TM2IN::detail::feature::make_simple_plane(pSurface->normal);
+        vector<Point_2> point2dList = TM2IN::detail::feature::project_to_plane(pSurface->getVerticesList(), planeRef);
 
         // partition Surface to convex 2D polygons.
         Polygon_2 polygon = PolygonComputation::makePolygon(point2dList);
@@ -212,7 +202,7 @@ std::vector<Segment_3> SurfaceComputation::makeSegment3List(Surface *&pSurface) 
 }
 
 std::vector<Segment_2> SurfaceComputation::makeSegment2List(Surface *&pSurface, Plane_3 plane3) {
-    vector<Point_2> pointsList = SurfaceComputation::projectTo3DPlane(pSurface, plane3);
+    vector<Point_2> pointsList = TM2IN::detail::feature::project_to_plane(pSurface->getVerticesList(), plane3);
     vector<Segment_2> segmentsList;
     for (int i = 0 ; i < pointsList.size() - 1 ; i++){
         Segment_2 seg(pointsList[i], pointsList[i+1]);
@@ -223,13 +213,6 @@ std::vector<Segment_2> SurfaceComputation::makeSegment2List(Surface *&pSurface, 
     return segmentsList;
 }
 
-Plane_3 SurfaceComputation::getSimplePlane3WithNormal(Vector_3 pNormal) {
-    int type = CGALCalculation::findNormalType6(pNormal);
-    Vector_3 normal = CGALCalculation::normal_list6[type];
-    Point_3 origin(0,0,0);
-    Plane_3 plane3(origin, normal);
-    return plane3;
-}
 
 double TMIC::computeError(Surface *&pSurface) {
     double difference = 0.0;

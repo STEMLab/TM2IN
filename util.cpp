@@ -20,10 +20,6 @@ std::vector<std::string> split(const std::string &s, char delim) {
     return elems;
 }
 
-void debug(){
-    std::cout << "Only for Debuggin...remove it later" << std::endl;
-}
-
 void printProcess(ull index, ull size, std::string str){
     std::cout << "\r" << str << " ==========" << (int)((double)index/(double)size * 100) <<"% ========";
 }
@@ -42,15 +38,21 @@ void removeFilesInDirectory(std::string path){
     closedir(theFolder);
 }
 
-
-/**
- * @param a
- * @param b lower case. the answer what I expect.
- * @return
- */
-bool checkAnswer(char a, char b){
-    if (a == b || a == b + 32){
-        return true;
+void createAndRemoveDir(const std::string &version, const std::string &resultPath) {
+    if (boost::filesystem::exists(resultPath)){
+        if (boost::filesystem::exists(resultPath + version)){
+            char ans;
+            std::cout << "\n\nThis version " << version << " folder exist. Remove Files in directory? (y/n)" << std::endl;
+            std::cin >> ans;
+            if (ans == 'y' || ans == 'Y')
+                boost::filesystem::remove_all(resultPath +version);
+        }
+        else{
+            boost::filesystem::create_directory(resultPath + version);
+        }
     }
-    return false;
+    else{
+        boost::filesystem::create_directory(resultPath);
+        boost::filesystem::create_directory(resultPath+ version);
+    }
 }

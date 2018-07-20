@@ -10,7 +10,7 @@
 
 namespace TM2IN{
     namespace detail{
-        namespace ext_feature{
+        namespace feature{
             Kernel::Point_3 to_CGAL_Point_3(Vertex& vt);
         }
     }

@@ -26,10 +26,8 @@ private:
 public:
     static double squaredDistanceOfSamePoint2D;
     static double threshold_same_vt_distance;
-    static double threshold_1;
     static double threshold_collinear;
 
-    static bool isSameDouble(double a, double b);
     static bool isSameX(Vertex* a, Vertex* b);
     static bool isSameY(Vertex* a, Vertex* b);
     static bool isSameZ(Vertex* a, Vertex* b);
@@ -41,15 +39,12 @@ public:
     static bool isSameVertex(Vertex& v1, Vertex& v2);
     static bool isSameVertex(Vertex* v1, Vertex* v2);
 
-    static bool isCoplanar(Vector_3 &big, Vector_3 &small, double degree = -1.0);
     static bool isCollinear(Vertex *start_p, Vertex *check_p, Vertex *end_p);
-    static bool checkMerge(Vector_3 &big, Vector_3 &small, double degree = -1.0);
 
     static int compare_vertex(Vertex* v1, Vertex* v2);
 
     static int num_of_straight;
     static int num_of_invalid;
-    static double threshold_2;
 };
 
 #endif /* check_hpp */

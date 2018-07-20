@@ -6,7 +6,7 @@
 
 namespace TM2IN {
     namespace detail {
-        namespace ext_feature {
+        namespace feature {
             Kernel::Point_3 to_CGAL_Point_3(Vertex &v) {
                 return Point_3(v.x(),v.y(),v.z());;
             }

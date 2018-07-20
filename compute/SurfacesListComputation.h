@@ -16,9 +16,6 @@ public:
 };
 
 namespace TMIC{
-    bool mergeSurfaces(vector<Surface*>& surfacesList, vector<Surface*>& result);
-    bool mergeSurfaces(vector<Triangle*>& triangleList, vector<Surface*>& result);
-
     double getAverageSize(const vector<Surface*>& surfacesList);
     CGAL::Bbox_3 getMBB(vector<Surface *> &surfacesList);
 }

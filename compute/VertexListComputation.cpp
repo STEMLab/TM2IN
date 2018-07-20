@@ -27,13 +27,5 @@ Vertex *VertexListComputation::getCenter(vector<Vertex *> vertices) {
 
 
 bool VertexListComputation::checkDuplicate(vector<Vertex *> vertices) {
-    vector<Vertex*> sorted_v_list(vertices);
 
-    sort(sorted_v_list.begin(), sorted_v_list.end(), VertexComputation::greater);
-    for (ull i = 0 ; i < sorted_v_list.size() - 1; i++){
-        if (sorted_v_list[i] == sorted_v_list[i+1]){
-            return true;
-        }
-    }
-    return false;
 }

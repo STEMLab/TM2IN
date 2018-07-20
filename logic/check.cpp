@@ -15,9 +15,7 @@ using namespace std;
 
 double Checker::threshold_same_vt_distance;
 double Checker::squaredDistanceOfSamePoint2D;
-double Checker::threshold_1;
 double Checker::threshold_collinear;
-double Checker::threshold_2;
 
 int Checker::num_of_invalid = 0;
 int Checker::num_of_straight = 0;
@@ -38,21 +36,9 @@ bool Checker::isSameVertex(Vertex& v1, Vertex& v2){
     return (fabs(v1.z() - v2.z()) < thres && fabs(v1.x() - v2.x()) < thres && fabs(v1.y() - v2.y()) < thres);
 }
 
-bool Checker::isCoplanar(Vector_3 &big, Vector_3 &small, double degree) {
-    double angle = CGALCalculation::getAngle(big, small);
-    if (degree < 0) return angle <= Checker::threshold_1;
-    else return angle <= degree;
-}
 
-bool Checker::checkMerge(Vector_3 &big, Vector_3 &small, double degree) {
-    Vector_3 added = big + small;
-    if (Checker::isCoplanar(big, small)){
-        double addedAngle = CGALCalculation::getAngle(added, big);
-        if (degree < 0) return (addedAngle <= Checker::threshold_2);
-        else return addedAngle <= degree;
-    }
-    return false;
-}
+
+
 
 int Checker::compare_vertex(Vertex* a, Vertex* b)
 {

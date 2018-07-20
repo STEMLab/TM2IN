@@ -8,6 +8,7 @@
 #include "SurfaceIntersection.h"
 #include "PolygonComputation.h"
 #include <bitset>
+#include <detail/feature/plane.h>
 
 using namespace std;
 
@@ -245,7 +246,8 @@ int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
 
 void SurfaceIntersection::resolveEasySelfIntersection(Surface *&pSurface) {
     double threshold = 0.000001;
-    vector<Point_2> pointsList = SurfaceComputation::projectTo3DPlane(pSurface, pSurface->getPlaneRef());
+
+    vector<Point_2> pointsList = TM2IN::detail::feature::project_to_plane(pSurface->getVerticesList(), pSurface->getPlaneRef());
     for (int i = 0 ; i < pointsList.size() - 1; i++){
         for (int j = 2 ; j <= GAP_FOR_SNAP ; j++){
             int nextIndex = i + j >= pointsList.size() ? i + j - pointsList.size() : i + j;

@@ -12,7 +12,7 @@ using namespace std;
 
 namespace TM2IN {
     namespace detail {
-        namespace ext_feature {
+        namespace feature {
             Polygon_2 make_CGAL_polygon(vector<Point_2> surface2D);
         }
     }
