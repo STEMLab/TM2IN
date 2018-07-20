@@ -44,16 +44,6 @@ int PolyhedralSurface::convertTrianglesToSurfaces(vector<Triangle*>& triangles){
     return 0;
 }
 
-
-int PolyhedralSurface::mergeSurface() {
-    cout << "Combine Surfaces" << endl;
-    vector<Surface*> new_poly_list;
-    bool hasMerged = TMIC::mergeSurfaces(this->surfacesList, new_poly_list);
-    freeSurfaces();
-    this->surfacesList = new_poly_list;
-    return hasMerged;
-}
-
 int PolyhedralSurface::updateNormal(){
     cout << "\n------------updateNormal------------\n" << endl;
     for (ull i = 0 ; i < (int)this->surfacesList.size() ; i++)
@@ -228,6 +218,11 @@ vector<Triangle *> PolyhedralSurface::getTriangulation() {
 
 string PolyhedralSurface::asJsonText() {
     return TM2IN::detail::io::to_json(this);
+}
+
+void PolyhedralSurface::setSurfacesList(vector<Surface *> new_list) {
+    freeSurfaces();
+    this->surfacesList = new_list;
 }
 
 /*

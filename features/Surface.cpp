@@ -260,6 +260,9 @@ std::vector<HalfEdge *> Surface::getBoundaryEdgesList() {
 
 void Surface::setBoundaryEdgesList(std::vector<HalfEdge*> edges){
     this->boundaryEdges = edges;
+    for (HalfEdge* edge : edges){
+        edge->setParent(this);
+    }
 }
 
 void Surface::clearTriangleList() {

@@ -38,7 +38,6 @@ public:
     int convertTrianglesToSurfaces(vector<Triangle*>& triangles);
     int checkDuplicateVertexInSurfaces();
 
-    int mergeSurface();
     int simplifySegment();
     int checkSurfaceValid();
     int updateNormal();
@@ -55,6 +54,8 @@ public:
 
     int removeStraight();
     string asJsonText();
+
+    void setSurfacesList(vector<Surface *> new_list);
 
 protected:
     void updateMBB();
