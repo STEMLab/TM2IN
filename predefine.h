@@ -9,9 +9,8 @@
 #include <cassert>
 
 class Vertex;
-class SurfaceGraph;
 class Surface;
-class Space;
+class PolyhedralSurface;
 class Segment;
 class SurfacesListComputation;
 class TriangleMesh;
@@ -19,4 +18,5 @@ class TriangleMeshGraph;
 class Triangle;
 class HalfEdge;
 
+enum ARCHITECTURE {ARCH, NON_ARCH, ALL};
 #endif // PREDEFINE_H_INCLUDED

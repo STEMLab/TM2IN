@@ -11,14 +11,13 @@ class SurfacesListComputation{
 public:
     static int findFirstSurfaceIndexSimilarWithAxis(vector<Surface*>& surfacesList, int axis);
     static void tagID(vector<Surface*>& surfacesList);
-    static vector<vector<double>> getMBB(vector<Surface*>& surfacesList);
     static ull countTriangles(vector<TriangleMesh*> tm);
 
 };
 
 namespace TMIC{
-    vector<Surface*> mergeSurfaces(vector<Surface*>& surfacesList);
-    vector<Surface*> mergeSurfaces(vector<Triangle*>& triangleList);
+    double getAverageSize(const vector<Surface*>& surfacesList);
+    CGAL::Bbox_3 getMBB(vector<Surface *> &surfacesList);
 }
 
 #endif // SURFACESLISTCALCULATION_H_INCLUDED

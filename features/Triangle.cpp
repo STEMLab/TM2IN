@@ -1,5 +1,9 @@
+
+#include <detail/feature/type_conversion.h>
 #include "features/Triangle.h"
+
 #include "features/HalfEdge.h"
+#include "detail/io/JsonWriter.h"
 
 Triangle::Triangle(Vertex* pa, Vertex *pb, Vertex* pc)
 {
@@ -74,43 +78,12 @@ bool Triangle::isOpposite(Triangle* tri){
             exit(-1);
         }
     }
-    if (num_of_opposite <= 1) return false;
-    else return true;
+    return num_of_opposite == 3;
 
 }
 
 Vertex *Triangle::vertex(int idx) {
     return this->boundaryEdges[idx]->vertices[0];
-}
-
-std::string Triangle::toJSON(const std::string &indent) {
-    std::string ret;
-    ret += indent + "{\n";
-
-    //normal
-    ret += indent + "\"normal\" : [";
-    Vector_3 normal = getNormal();
-    ret += indent + std::to_string(normal.x()) + ", " + std::to_string(normal.y()) + ", " + std::to_string(normal.z());
-    ret += indent + "],\n";
-
-    //area
-    ret += indent + "\"area\" : ";
-    double area = getArea();
-    ret += indent + std::to_string(area);
-    ret += "\n";
-
-    //coordinates
-    ret += indent + "\"coord\" : [\n";
-    for (int i = 0 ; i < 3 ; i++){
-        ret += indent + "\t";
-        ret += this->vertex(i)->toJSONString();
-        if (i != 2)
-            ret += ",";
-        ret += "\n";
-    }
-    ret += indent + "]}";
-
-    return ret;
 }
 
 bool Triangle::checkOppositeEdge(Triangle *&tri) {
@@ -122,4 +95,8 @@ bool Triangle::checkOppositeEdge(Triangle *&tri) {
         }
     }
     return false;
+}
+
+Kernel::Triangle_3 Triangle::CGAL_Triangle() {
+    return TM2IN::detail::feature::to_CGAL_Triangle_3(*this);
 }

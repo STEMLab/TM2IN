@@ -5,7 +5,7 @@
 #ifndef TRIANGLEMESHTOCLEARSOLID_VERTEXCOMPUTATION_H
 #define TRIANGLEMESHTOCLEARSOLID_VERTEXCOMPUTATION_H
 
-#include "cgal/Types.h"
+#include "detail/cgal_config.h"
 #include "features/Vertex.h"
 
 class VertexComputation {

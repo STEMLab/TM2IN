@@ -3,71 +3,20 @@
 //
 
 #include <cgal/SurfaceIntersection.h>
-#include <cgal/Features_to_CGAL_object.h>
+#include <detail/feature/plane.h>
 #include "SurfaceComputation.h"
 #include "VertexComputation.h"
 #include "compute/VertexListComputation.h"
 #include "HalfEdgeComputation.h"
-#include "cgal/PolygonComputation.h"
 #include "features/TriangleMeshGraph.h"
 #include "Connect_halfedges.h"
 
 using namespace std;
 
-void SurfaceComputation::removeConsecutiveDuplication(Surface *&pSurface){
-    /*
-    ull v_size = pSurface->v_list.size();
-
-    int removed_count = 0;
-    for (ull i = 0 ; i < v_size - 1; i++){
-        if (Checker::isSameVertex(pSurface->v_list[i] , pSurface->v_list[i+1])){
-            pSurface->v_list.erase(pSurface->v_list.begin() + i + 1);
-            i--;
-            v_size -= 1;
-            removed_count += 1;
-        }
-    }
-
-    if (removed_count) cout << removed_count << " are removed in duplication" << endl;
-    */
-}
-
 void SurfaceComputation::removeConsecutiveDuplicationIndex(Surface *&pSurface){
     cerr << "TODO : SurfaceComputation::removeConsecutiveDuplicationIndex" << endl;
-    /*
-    ull v_size = pSurface->v_list.size();
-    int removed_count = 0;
-    for (ull i = 0 ; i < v_size - 1; i++){
-        if (pSurface->v_list[i] == pSurface->v_list[i+1]){
-            pSurface->v_list.erase(pSurface->v_list.begin() + i + 1);
-            i--;
-            v_size -= 1;
-            removed_count += 1;
-        }
-    }
-
-    if (removed_count) cout << removed_count << " are removed in duplication" << endl;
-     */
 }
 
-void SurfaceComputation::flatten(Surface *&sf) {
-    Plane_3 plane = getPlane3WithPCA(sf);
-
-    vector<Vertex*> newVertices;
-    for (ull index = 0 ; index < sf->getVerticesSize() ; index++ )
-    {
-        Point_3 point = CGAL_User::getCGALPoint(sf->vertex(index));
-        Point_3 projected = plane.projection(point);
-
-        Vertex* v = new Vertex(projected.x(), projected.y(), projected.z());
-        newVertices.push_back(v);
-    }
-
-    assert(newVertices.size() == sf->getVerticesSize());
-    sf->setVertexList(newVertices);
-    sf->setPlaneRef(plane);
-    sf->normal = plane.orthogonal_vector();
-}
 
 Vertex* SurfaceComputation::getCenterPoint(Surface *pSurface) {
     Vertex* center = VertexListComputation::getCenter(pSurface->getVerticesList());
@@ -113,33 +62,10 @@ Plane_3 SurfaceComputation::getPlane3WithMBB(Surface *&pSurface){
 
 Plane_3 SurfaceComputation::getPlane3WithCenter(Surface *&pSurface){
     Vertex* centerV = VertexListComputation::getCenter(pSurface->getVerticesList());
-    Point_3 centerPoint = CGAL_User::getCGALPoint(centerV);
+    Point_3 centerPoint = centerV->CGAL_point();
     Plane_3 plane(centerPoint, pSurface->normal);
     return plane;
 }
-
-Plane_3 SurfaceComputation::getPlane3WithPCA(Surface *&pSurface) {
-    Plane_3 plane = VertexListComputation::getPlane3WithPCA(pSurface->getVerticesList());
-    Vector_3 normal = pSurface->normal;
-    Vector_3 planeVector = plane.orthogonal_vector();
-    if (pSurface->normal == CGAL::NULL_VECTOR) return plane;
-    if (CGALCalculation::getAngle(planeVector, normal) > 90){
-        return plane.opposite();
-    }
-    else
-        return plane;
-}
-
-std::vector<Point_2> SurfaceComputation::projectTo3DPlane(Surface *&pSurface, Plane_3 plane) {
-    std::vector<Vertex*> vertexList = pSurface->getVerticesList();
-    std::vector<Point_2> pointList;
-    for (int i = 0 ; i < vertexList.size(); i++){
-        Point_2 point2d = plane.to_2d(CGAL_User::getCGALPoint(vertexList[i]));
-        pointList.push_back(point2d);
-    }
-    return pointList;
-}
-
 
 void SurfaceComputation::removeStraight(Surface*& pSurface){
     if (pSurface->getVerticesSize() < 3) return;
@@ -170,79 +96,6 @@ void SurfaceComputation::removeStraight(Surface*& pSurface){
 }
 
 
-int SurfaceComputation::triangulate(Surface *&pSurface) {
-    std::vector<Vertex*> vertexList = pSurface->getVerticesList();
-    pSurface->updateNormal();
-
-    if (vertexList.size() == 3) {
-        Triangle* newTriangle = new Triangle(vertexList);
-        pSurface->triangles.clear();
-        pSurface->triangles.push_back(newTriangle);
-    }
-    else{
-        // convert 3D point to 2D
-        Plane_3 planeRef = SurfaceComputation::getSimplePlane3WithNormal(pSurface->normal);
-        vector<Point_2> point2dList = projectTo3DPlane(pSurface, planeRef);
-
-        // partition Surface to convex 2D polygons.
-        Polygon_2 polygon = PolygonComputation::makePolygon(point2dList);
-        if (!polygon.is_simple())
-        {
-            cerr << "polygon is not simple" << endl;
-            cerr << pSurface->toJSONString() << endl;
-            cerr << polygon << endl;
-            return 0;
-        }
-        if (polygon.orientation() == -1){
-            cerr << polygon << endl;
-            cerr << polygon.orientation() << endl;
-            return 0;
-        }
-        vector<Polygon_2> polygonList = PolygonComputation::convexPartition(polygon);
-
-        vector<Triangle* > triangles;
-        for (int i = 0 ; i < polygonList.size() ; i++){
-            CGAL_assertion(polygonList[i].is_simple() && polygonList[i].is_convex());
-
-            Polygon_2 p = polygonList[i];
-            vector<Point_2> points;
-            for (Polygon_2::Vertex_iterator vi = p.vertices_begin(); vi != p.vertices_end(); ++vi){
-                Point_2 point2d(vi->x(), vi->y());
-                points.push_back(point2d);
-            }
-
-            Delaunay T;
-            T.insert(points.begin(),points.end());
-            for(Delaunay::Finite_faces_iterator fit = T.finite_faces_begin();
-                fit != T.finite_faces_end(); ++fit)
-            {
-                vector<Vertex*> localTemp;
-                Delaunay::Face_handle facet = fit;
-
-                for (int j = 0 ; j < 3 ; j++){
-                    Point_2 point2d = facet->vertex(j)->point();
-                    int k;
-                    for (k = 0 ; k < point2dList.size() ; k++){
-                        if (point2d == point2dList[k]) break;
-                    }
-                    if (k == point2dList.size()){
-                        cerr << "new Point" << endl;
-                        exit(-1);
-                    }
-                    localTemp.push_back(vertexList[k]);
-                }
-
-                triangles.push_back(new Triangle(localTemp));
-            }
-        }
-        pSurface->triangles.clear();
-        pSurface->triangles = triangles;
-    }
-//    pSurface->setArea(addWholeArea(pSurface));
-//    pSurface->setNormal(addWholeNormal(pSurface->triangles) * AREA_CONST);
-
-    return 0;
-}
 
 std::vector<Segment_3> SurfaceComputation::makeSegment3List(Surface *&pSurface) {
     vector<Segment_3> result;
@@ -257,7 +110,7 @@ std::vector<Segment_3> SurfaceComputation::makeSegment3List(Surface *&pSurface) 
 }
 
 std::vector<Segment_2> SurfaceComputation::makeSegment2List(Surface *&pSurface, Plane_3 plane3) {
-    vector<Point_2> pointsList = SurfaceComputation::projectTo3DPlane(pSurface, plane3);
+    vector<Point_2> pointsList = TM2IN::detail::feature::project_to_plane(pSurface->getVerticesList(), plane3);
     vector<Segment_2> segmentsList;
     for (int i = 0 ; i < pointsList.size() - 1 ; i++){
         Segment_2 seg(pointsList[i], pointsList[i+1]);
@@ -267,12 +120,3 @@ std::vector<Segment_2> SurfaceComputation::makeSegment2List(Surface *&pSurface, 
     segmentsList.push_back(last_seg);
     return segmentsList;
 }
-
-Plane_3 SurfaceComputation::getSimplePlane3WithNormal(Vector_3 pNormal) {
-    int type = CGALCalculation::findNormalType6(pNormal);
-    Vector_3 normal = CGALCalculation::normal_list6[type];
-    Point_3 origin(0,0,0);
-    Plane_3 plane3(origin, normal);
-    return plane3;
-}
-

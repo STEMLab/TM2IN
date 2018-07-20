@@ -23,9 +23,8 @@ public:
     Vertex* operator[](int idx);
     Vertex* vertex(int idx);
 
-    std::string toJSON(const std::string &indent);
 
-
+    Kernel::Triangle_3 CGAL_Triangle();
 };
 
 

@@ -1,10 +1,7 @@
 #include <features/TriangleMesh.h>
-#include "space_maker/OnlyWallSpaceMaker.h"
 #include "SurfacesListComputation.h"
 
-#include "features/SurfaceGraph.h"
 #include "SurfaceComputation.h"
-#include "Surface_pair_computation.h"
 
 using namespace std;
 
@@ -17,7 +14,7 @@ void SurfacesListComputation::tagID(vector<Surface*>& surfacesList){
     }
 }
 
-vector<vector<double>> SurfacesListComputation::getMBB(vector<Surface*>& surfacesList){
+CGAL::Bbox_3 TMIC::getMBB(vector<Surface *> &surfacesList){
     vector<vector<double>> v_minmax;
     v_minmax.assign(2, vector<double>());
 
@@ -36,7 +33,8 @@ vector<vector<double>> SurfacesListComputation::getMBB(vector<Surface*>& surface
         }
     }
 
-    return v_minmax;
+    CGAL::Bbox_3 bbox_3(v_minmax[0][0],v_minmax[0][1], v_minmax[0][2], v_minmax[1][0], v_minmax[1][1], v_minmax[1][2]);
+    return bbox_3;
 }
 
 int SurfacesListComputation::findFirstSurfaceIndexSimilarWithAxis(vector<Surface*>& surfacesList, int axis){
@@ -57,60 +55,12 @@ ull SurfacesListComputation::countTriangles(vector<TriangleMesh *> tm) {
     return result;
 }
 
-vector<Surface *> TMIC::mergeSurfaces(vector<Surface *> &surfacesList) {
-    vector<Surface*> newSurfacesList;
-    for (ull i = 0 ; i < surfacesList.size() ; i++){
-        newSurfacesList.push_back(new Surface(surfacesList[i]));
+double TMIC::getAverageSize(const vector<Surface *> &surfacesList) {
+    double wholeArea = 0.0;
+
+    for (Surface* sf : surfacesList){
+        wholeArea += sf->getArea();
     }
 
-    bool isMerged = true;
-    ull combined_count = 0;
-    while (isMerged){
-        sort(newSurfacesList.begin(), newSurfacesList.end(), Surface::compareLength);
-        isMerged = false;
-        for (ull i = 0 ; i < newSurfacesList.size() - 1 ; i++){
-            for (ull j = i + 1 ; j < newSurfacesList.size() ;){
-                if (TMIC::combine(newSurfacesList[i], newSurfacesList[j]) == 0)
-                {
-                    cout << ".";
-                    combined_count++;
-                    isMerged = true;
-                    newSurfacesList.erase(newSurfacesList.begin() + j);
-                } else
-                    j++;
-            }
-            printProcess(combined_count, newSurfacesList.size(), "combineSurface");
-        }
-    }
-
-    return newSurfacesList;
-    /*
-    ull p_size = surfacesList.size();
-    bool* checked = (bool*)malloc(sizeof(bool) * p_size);
-    std::fill(checked, checked + p_size, false);
-
-    int combined_count = 0;
-    for (ull i = 0 ; i < surfacesList.size() ; i++)
-    {
-        if (checked[i]) continue;
-        checked[i] = true;
-
-        ll count = -1;
-        Surface* newcp = new Surface(this->surfacesList[i]);
-        while(count != 0){
-            newcp = attachSurfaces(newcp, i + 1, checked, count);
-            if (newcp == NULL) break;
-            printProcess(combined_count, this->surfacesList.size(), "combineSurface");
-            combined_count += count;
-        }
-        if (newcp != NULL) newSurfacesList.push_back(newcp);
-    }
-    */
-}
-
-vector<Surface *> TMIC::mergeSurfaces(vector<Triangle *> &triangleList) {
-    vector<Surface *> surfacesList;
-    for (Triangle* tri : triangleList)
-        surfacesList.push_back(new Surface(tri));
-    return TMIC::mergeSurfaces(surfacesList);
+    return wholeArea / (double)surfacesList.size();
 }

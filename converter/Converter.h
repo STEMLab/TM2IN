@@ -1,66 +1,59 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include <logic/check.h>
-#include <fileio/GenerationWriter.h>
-#include <fileio/export/SpaceExporter.h>
-#include "fileio/import/Importer.h"
+#include "logic/check.h"
+#include "io/GenerationWriter.h"
+#include "Options.h"
 #include "util.h"
-#include "polygonizer/Polygonizer.h"
+#include "algorithm/Polygonizer.h"
 
 class Converter
 {
-
 protected:
+    Options& options;
+public:
+    vector<TriangleMesh*> mesh_list;
+    vector<PolyhedralSurface*> spaceList;
+    GenerationWriter* generation_writer;
+
+    Converter(Options& op);
+    virtual ~Converter(){};
+
+    int start();
+    int run();
+    int finish();
+
+private:
+    int importMesh();
+
     void tagID();
 
-    int checkSelfIntersection();
+    int doValidation();
 
     //Triangle Mesh
     int initTriangleMesh();
 
     int mergeSurfaces();
-    int processGenerations(Space *space);
-    int simplifyShareEdge();
+    int processGenerations(PolyhedralSurface *space);
 
     int convertTriangleMeshToSpace();
     int convertSpaceToTriangleMesh();
 
-    int export3DS(const char *string);
     int exportSpace();
 
     int partitionTriangleMeshByComponent();
-    int remainStructure();
+    int remainSelectedMesh(int arch);
     int handleOpenTriangleMesh();
-
-    void makeSurfaceGraph();
-
-public:
-    Importer* di;
-    SpaceExporter* de;
-    vector<TriangleMesh*> mesh_list;
-    vector<Space*> spaceList;
-    GenerationWriter* generation_writer;
-    map<string, string> paths;
-
-    Converter(){};
-    virtual ~Converter(){};
-
-    int importMesh();
-
-    virtual int pre_process() = 0;
-    virtual int constructSpace() = 0;
-    virtual int finish() = 0;
-
-    void setImporter(Importer* p_di){ di = p_di; }
-    void setGenerationWriter(GenerationWriter * pw){generation_writer = pw;}
-    void setExporter(SpaceExporter* _de){ de = _de;}
-    void setPaths(map<string, string> _paths);
 
     int export3DS();
 
-    int polygonize(Polygonizer *polygonizer);
-    virtual int triangulation(){}
+
+    void printInputDataSpec();
+
+    int triangulation();
+    int polygonize();
+
+    TM2IN::algorithm::Polygonizer *create_polygonizer();
 };
 
 #endif // MANAGER_H

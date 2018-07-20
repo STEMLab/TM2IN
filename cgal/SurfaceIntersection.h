@@ -1,3 +1,4 @@
+// will be removed
 //
 // Created by dongmin on 18. 1. 29.
 //
@@ -5,7 +6,7 @@
 #ifndef TRIANGLEMESHTOCLEARSOLID_SURFACEINTERSECTION_H
 #define TRIANGLEMESHTOCLEARSOLID_SURFACEINTERSECTION_H
 
-#include "Types.h"
+#include "detail/cgal_config.h"
 #include "features/Surface.h"
 
 class SurfaceIntersection {

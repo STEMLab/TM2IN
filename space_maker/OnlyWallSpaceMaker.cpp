@@ -2,9 +2,8 @@
 #include "features/Surface.h"
 #include "logic/check.h"
 #include "OnlyWallSpaceMaker.h"
-#include "features/SurfaceGraph.h"
 #include "compute/SurfacesListComputation.h"
-#include "cgal/Types.h"
+#include "detail/cgal_config.h"
 #include "cgal/CGALCalculation.h"
 /*
 class Segment{

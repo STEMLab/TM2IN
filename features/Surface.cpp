@@ -9,17 +9,16 @@
 #include "features/Surface.h"
 
 #include "logic/check.h"
-#include "compute/Surface_pair_computation.h"
 #include "compute/HalfEdgeComputation.h"
 #include "compute/VertexComputation.h"
 #include "features/Triangle.h"
 #include "features/HalfEdge.h"
-#include "space_maker/OnlyWallSpaceMaker.h"
 
 #include <cstdlib>
 #include <compute/SurfaceComputation.h>
 #include <compute/VertexListComputation.h>
-#include <cgal/Features_to_CGAL_object.h>
+#include <algorithm/triangulation.h>
+#include "detail/io/JsonWriter.h"
 
 
 using namespace std;
@@ -35,6 +34,7 @@ Surface::Surface(Surface* cp){
     }
     this->area = cp->area;
     this->triangles = cp->triangles;
+    this->sf_id = cp->sf_id;
 }
 
 Surface::Surface(std::vector<Vertex*>& pVertices){
@@ -107,52 +107,19 @@ int Surface::getSegmentsNumber(ll si, ll ei) {
 
 // TODO : move validator
 bool Surface::checkDuplicate(){
-    vector<Vertex*> vertexList = this->getVerticesList();
-    return VertexListComputation::checkDuplicate(vertexList);
+    vector<Vertex*> sorted_v_list(this->getVerticesList());
+
+    sort(sorted_v_list.begin(), sorted_v_list.end(), VertexComputation::greater);
+    for (ull i = 0 ; i < sorted_v_list.size() - 1; i++){
+        if (sorted_v_list[i] == sorted_v_list[i+1]){
+            return true;
+        }
+    }
+    return false;
 }
 
-string Surface::toJSONString(){
-    if (this->getVerticesSize() == 0){
-        cerr << "Vertex Length is 0" << endl;
-        return "";
-    }
-    string ret;
-    ret.append("{");
-    ret.append(" \n \"area\" : " + to_string(area) );
-    ret.append(" ,\n \"id\" : \"" + sf_id + "\"" );
-    ret.append(" ,\n \"normal\" : [");
-    ret.append(to_string(this->normal.x()) + ", ");
-    ret.append(to_string(this->normal.y()) + ", ");
-    ret.append(to_string(this->normal.z()));
-    ret.append("], \n");
-    ret.append(" \"coord\" : [");
-    for (unsigned int i = 0 ; i < this->getVerticesSize() ; i++){
-        ret.append(this->vertex(i)->toJSONString());
-        ret.append(",");
-    }
-    ret.append(this->vertex(0)->toJSONString());
-    ret.append("] }");
-    return ret;
-}
-
-std::string Surface::toJSONWithTriangles() {
-    string indent("\t");
-
-    string ret;
-    ret += "{";
-    ret.append(" \n \"area\" : " + to_string(area) );
-    ret.append(" \n, \"id\" : \"" + sf_id + "\"" );
-    ret.append( "\n, \"triangles\" : [\n");
-    for (int i = 0 ; i < (int)this->triangles.size() ; i++){
-        ret += this->triangles[i]->toJSON(indent);
-        if (i != this->triangles.size() - 1)
-            ret += ",";
-        ret += "\n";
-    }
-    ret.append( "]\n");
-    ret.append( "}");
-
-    return ret;
+string Surface::asJsonText(){
+    return TM2IN::detail::io::to_json(this);
 }
 
 //TODO : move
@@ -170,17 +137,22 @@ bool Surface::updateNormal(){
     if (this->getVerticesSize() <= 4){
         this->normal = getSimpleNormal();
     }
+    else{
+        vector<Triangle*> triangles;
+        Surface* thisSurface = this;
+        int triangulate = TM2IN::algorithm::triangulate(thisSurface, triangles);
+        if (triangulate) return true;
 
-    this->normal = this->normal / sqrt(this->normal.squared_length());
-    this->normal = this->normal * this->area * AREA_CONST;
-
-    if (this->normal == CGAL::NULL_VECTOR){
-        cout << "NULLVECTOR" << endl;
-        assert(this->normal != CGAL::NULL_VECTOR);
+        Vector_3 sumNormal(0,0,0);
+        for (Triangle* tri : triangles){
+            sumNormal += tri->normal;
+            delete tri;
+        }
+        this->normal = sumNormal;
     }
 
+    assert(this->normal != CGAL::NULL_VECTOR);
     return true;
-
 }
 
 // TODO : move
@@ -236,7 +208,6 @@ bool Surface::compareArea(Surface* i, Surface* j) {
 // TODO : move
 bool Surface::isValid(){
     if (this->getVerticesSize() < 3) {
-        // cout << "The number of vertexes is "  << this->getVerticesSize() <<endl;
         return false;
     }
     if (this->checkDuplicate()) return false;
@@ -245,13 +216,13 @@ bool Surface::isValid(){
 
 Point_3 Surface::findLowestPoint(){
     Vertex* cent = SurfaceComputation::getCenterPoint(this);
-    Plane_3 plane(CGAL_User::getCGALPoint(cent), this->normal);
+    Plane_3 plane(cent->CGAL_point(), this->normal);
     delete cent;
 
     double max_dist = -1.0;
     int max_index = 0;
     for (ull index= 0 ; index < this->getVerticesSize() ; index++){
-        Point_3 p = CGAL_User::getCGALPoint(this->vertex(index));
+        Point_3 p = this->vertex(index)->CGAL_point();
         if (plane.oriented_side(p) != CGAL::ON_POSITIVE_SIDE){
             double dist = CGAL::squared_distance(plane, p);
             if (dist > max_dist){
@@ -260,7 +231,7 @@ Point_3 Surface::findLowestPoint(){
             }
         }
     }
-    return CGAL_User::getCGALPoint(this->vertex(max_index));
+    return this->vertex(max_index)->CGAL_point();
 }
 
 Plane_3 Surface::getPlaneWithLowest(){
@@ -273,7 +244,13 @@ vector<Vertex *> Surface::getVerticesList() {
 }
 
 void Surface::setVertexList(std::vector<Vertex *> newVertices) {
-    cerr << "setVertexList : TODO" << endl;
+    this->boundaryEdges.clear();
+    for (int i = 0 ; i < newVertices.size() - 1; i++){
+        Vertex* v1 = newVertices[i];
+        Vertex* v2 = newVertices[i+1];
+        this->boundaryEdges.push_back(new HalfEdge(v1, v2, this));
+    }
+    this->boundaryEdges.push_back(new HalfEdge(newVertices[newVertices.size() - 1], newVertices[0], this));
 }
 
 std::vector<HalfEdge *> Surface::getBoundaryEdgesList() {
@@ -283,6 +260,11 @@ std::vector<HalfEdge *> Surface::getBoundaryEdgesList() {
 
 void Surface::setBoundaryEdgesList(std::vector<HalfEdge*> edges){
     this->boundaryEdges = edges;
+    /*
+    for (HalfEdge* edge : edges){
+        edge->setParent(this);
+    }
+     */
 }
 
 void Surface::clearTriangleList() {
@@ -309,7 +291,7 @@ void Surface::setVertex(int index, Vertex *vt) {
 
 void Surface::insertVertex(int index, Vertex *vt) {
     // this->v_list.insert(this->v_list.begin() + index, vt);
-    cerr << "TODO" << endl;
+    cerr << "TODO : insertVertex" << endl;
 }
 
 void Surface::setPlaneRef(Plane_3 pl) {
@@ -338,6 +320,15 @@ void Surface::removeVertexByIndex(int id) {
 }
 
 std::ostream& operator<<(std::ostream &ou, Surface *pSurface) {
-    ou << pSurface->toJSONString() << endl;
+    ou << pSurface->asJsonText() << endl;
     return ou;
+}
+
+std::vector<Triangle *> Surface::getTriangulation() {
+    
+    if (this->triangulation.size() == 0) {
+        vector<Triangle*> triList;
+        TM2IN::algorithm::triangulate(this, triList);
+    }
+    return this->triangulation;
 }
