@@ -17,7 +17,6 @@ private:
     Plane_3 planeRef;
 public:
     std::string sf_id;
-    // std::vector<Vertex*> v_list;
     std::vector<HalfEdge* > innerEdges;
     std::vector<HalfEdge* > boundaryEdges;
 
@@ -46,7 +45,7 @@ public:
     double getArea();
 
     std::string asJsonText();
-    std::string toJSONWithTriangles();
+    std::vector<Triangle*> getTriangulation();
 
     bool isInMBB(Vertex* vt);
     bool isOpposite(Surface* sf);

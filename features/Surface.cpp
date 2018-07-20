@@ -9,7 +9,6 @@
 #include "features/Surface.h"
 
 #include "logic/check.h"
-#include "compute/Surface_pair_computation.h"
 #include "compute/HalfEdgeComputation.h"
 #include "compute/VertexComputation.h"
 #include "features/Triangle.h"
@@ -20,6 +19,7 @@
 #include <compute/SurfaceComputation.h>
 #include <compute/VertexListComputation.h>
 #include <cgal/Features_to_CGAL_object.h>
+#include <algorithm/triangulation.h>
 
 
 using namespace std;
@@ -116,10 +116,6 @@ string Surface::asJsonText(){
     cerr << "asJSONTEXT" <<endl;
 }
 
-std::string Surface::toJSONWithTriangles() {
-
-}
-
 //TODO : move
 Vector_3 Surface::getSimpleNormal(){
     Vector_3 normal = Vector_3(0,0,0);
@@ -138,7 +134,7 @@ bool Surface::updateNormal(){
     else{
         vector<Triangle*> triangles;
         Surface* thisSurface = this;
-        int triangulate = SurfaceComputation::triangulate(thisSurface, triangles);
+        int triangulate = TM2IN::algorithm::triangulate(thisSurface, triangles);
         if (triangulate) return true;
 
         Vector_3 sumNormal(0,0,0);
@@ -148,8 +144,6 @@ bool Surface::updateNormal(){
         }
         this->normal = sumNormal;
     }
-//    this->normal = this->normal / sqrt(this->normal.squared_length());
-//    this->normal = this->normal * this->area * AREA_CONST;
 
     assert(this->normal != CGAL::NULL_VECTOR);
     return true;
@@ -320,4 +314,10 @@ void Surface::removeVertexByIndex(int id) {
 std::ostream& operator<<(std::ostream &ou, Surface *pSurface) {
     ou << pSurface->asJsonText() << endl;
     return ou;
+}
+
+std::vector<Triangle *> Surface::getTriangulation() {
+    if (this->triangulation.size() == 0)
+        TM2IN::algorithm::triangulate(this, this->triangulation);
+    return this->triangulation;
 }

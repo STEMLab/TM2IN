@@ -9,11 +9,8 @@
 
 #include "predefine.h"
 
-#include "features/SurfaceGraph.h"
 #include "features/Triangle.h"
 #include "features/Surface.h"
-#include "compute/Surface_pair_computation.h"
-
 using namespace std;
 
 class PolyhedralSurface
@@ -25,7 +22,6 @@ public:
 
     std::vector<Surface*> surfacesList;
     vector<Vertex *> vertices;
-    SurfaceGraph* surfaceGraph;
 
     CGAL::Bbox_3 mbb;
     string name;
@@ -38,25 +34,22 @@ public:
     int convertTrianglesToSurfaces(vector<Triangle*>& triangles);
     int checkDuplicateVertexInSurfaces();
 
-    int clean_merging_result();
     int checkSurfaceValid();
+
+    /**
+     * Check whether PolyhedralSurface is closed or not by bfs.
+     * @return Boolean
+     */
+    bool isClosed();
+
     int updateNormal();
-
     void sortSurfacesByArea();
-
     void tagID();
-
-    void triangulateSurfaces();
-
     int checkSelfIntersection();
-
-    vector<Triangle *> getTriangulation();
-
-    int removeStraight();
     string asJsonText();
-
     void setSurfacesList(vector<Surface *> new_list);
 
+    int removeStraight();
 protected:
     void updateMBB();
     void freeSurfaces();

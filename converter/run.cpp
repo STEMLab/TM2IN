@@ -14,9 +14,7 @@ int Converter::mergeSurfaces() {
         space->generation++;
 
         // check duplicate coordinates
-        if (this->spaceList[it]->checkDuplicateVertexInSurfaces()) return -1;
-
-        // limit degree of same normal vector angle
+        if (space->checkDuplicateVertexInSurfaces()) return -1;
 
         if (processGenerations(space)) return -1;
 /*
@@ -30,41 +28,16 @@ int Converter::mergeSurfaces() {
     return 0;
 }
 
-
-void Converter::makeSurfaceGraph() {
-    for (int i = 0 ; i < spaceList.size() ; i++){
-        cout << "\n\n" << i << "th graph" << endl;
-        spaceList[i]->surfaceGraph = new SurfaceGraph();
-        spaceList[i]->surfaceGraph->makeAdjacentGraph(spaceList[i]->surfacesList);
-        if (spaceList[i]->surfaceGraph->isClosedSurface()){
-            cout << "this is closed" << endl;
-        }
-        else{
-            cout << "not closed" << endl;
-        }
-        cout << "------------\n" << endl;
-    }
-}
-
-
 int Converter::doValidation() {
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
         PolyhedralSurface *space = this->spaceList[it];
+        if (!space->isClosed())
+            cerr << "space " << space->name << " is not closed" << endl;
         space->checkSelfIntersection();
     }
     return 0;
 }
 
-
-int Converter::triangulation() {
-    cout << "\n\nTriangulationConverter::re-triangulation" << endl;
-    for (ull it = 0 ; it < this->spaceList.size() ; it++) {
-        cout << "space : " << it << endl;
-        PolyhedralSurface *space = this->spaceList[it];
-        space->triangulateSurfaces();
-    }
-    return 0;
-}
 
 
 int Converter::processGenerations(PolyhedralSurface *space) {

@@ -2,9 +2,7 @@
 #include "space_maker/OnlyWallSpaceMaker.h"
 #include "SurfacesListComputation.h"
 
-#include "features/SurfaceGraph.h"
 #include "SurfaceComputation.h"
-#include "Surface_pair_computation.h"
 
 using namespace std;
 

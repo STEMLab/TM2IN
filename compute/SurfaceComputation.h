@@ -15,8 +15,6 @@ public:
     static Plane_3 getPlane3WithCenter(Surface *&pSurface);
     static Plane_3 getPlane3WithMBB(Surface *&pSurface);
 
-    static int triangulate(Surface *&pSurface, std::vector<Triangle*>& result);
-
     static void removeStraight(Surface *&pSurface);
 
     static void removeConsecutiveDuplicationIndex(Surface *&pSurface);

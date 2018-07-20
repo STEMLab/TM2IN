@@ -16,6 +16,12 @@ namespace TM2IN {
                 }
                 return polygon;
             }
+
+            vector<Polygon_2> convexPartition(Polygon_2 polygon) {
+                vector<Polygon_2> partitionPolygon;
+                CGAL::approx_convex_partition_2(polygon.vertices_begin(), polygon.vertices_end(), std::back_inserter(partitionPolygon));
+                return partitionPolygon;
+            }
         }
     }
 }

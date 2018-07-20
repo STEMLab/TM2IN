@@ -14,7 +14,13 @@
 namespace TM2IN{
     namespace algorithm{
         void TrianglePolygonizer::run(PolyhedralSurface *space) {
-            vector<Triangle*> triangleList = space->getTriangulation();
+            vector<Triangle*> triangleList;
+            for (unsigned int sfID = 0 ; sfID < space->surfacesList.size(); sfID++) {
+                Surface* pSurface = space->surfacesList[sfID];
+                vector<Triangle*> triangulation = pSurface->getTriangulation();
+                triangleList.insert(triangleList.end(),triangulation.begin(),triangulation.end());
+            }
+
             vector<Surface*> newSurfaceList;
 
             for (int i = 0 ; i < triangleList.size() ; i++){
@@ -30,11 +36,11 @@ namespace TM2IN{
             vector<Surface*> newSurfacesList;
             for (int i = 0 ; i < space->surfacesList.size() ; i++){
                 Surface* sf = space->surfacesList[i];
-                assert(sf->triangulation.size());
+                vector<Triangle*> triangulation = sf->getTriangulation();
 
-                TMIC::connectOppositeHalfEdges(sf->triangulation);
+                TMIC::connectOppositeHalfEdges(triangulation);
                 vector<Surface*> newSurfacesInSurface;
-                TM2IN::algorithm::mergeTriangles(sf->triangulation, thres1, thres2, newSurfacesInSurface);
+                TM2IN::algorithm::mergeTriangles(triangulation, thres1, thres2, newSurfacesInSurface);
                 newSurfacesList.insert(newSurfacesList.end(), newSurfacesInSurface.begin(), newSurfacesInSurface.end());
             }
             space->surfacesList = newSurfacesList;

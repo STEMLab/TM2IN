@@ -61,7 +61,7 @@ int PolyhedralSurface::updateNormal(){
 }
 
 int PolyhedralSurface::checkSurfaceValid() {
-    cout << "\n------------- check whether surface is valid --------------\n" << endl;
+    cout << "\n------------- check whether surfaces are valid --------------\n" << endl;
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
     {
         Surface* surface = this->surfacesList[i];
@@ -127,19 +127,6 @@ void PolyhedralSurface::tagID() {
     SurfacesListComputation::tagID(this->surfacesList);
 }
 
-void PolyhedralSurface::triangulateSurfaces() {
-    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
-        Surface* pSurface = this->surfacesList[sfID];
-        vector<Triangle*> triangles;
-        if (SurfaceComputation::triangulate(pSurface, triangles)){
-            cerr << "Triangulation Error" << endl;
-            exit(-1);
-        }
-        assert(triangles.size());
-        pSurface->triangulation = triangles;
-    }
-}
-
 int PolyhedralSurface::checkSelfIntersection() {
     int count = 0;
     for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
@@ -156,20 +143,6 @@ int PolyhedralSurface::checkSelfIntersection() {
     return 0;
 }
 
-vector<Triangle *> PolyhedralSurface::getTriangulation() {
-    vector<Triangle *> triangles;
-    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
-        Surface* pSurface = this->surfacesList[sfID];
-        assert(pSurface->triangulation.size());
-        int index = 0;
-        for (Triangle* triangle : pSurface->triangulation){
-            triangle->sf_id = to_string(sfID) + "_" + to_string(index++);
-        }
-        triangles.insert(triangles.end(),pSurface->triangulation.begin(),pSurface->triangulation.end());
-    }
-    return triangles;
-}
-
 string PolyhedralSurface::asJsonText() {
     return TM2IN::detail::io::to_json(this);
 }
@@ -179,8 +152,40 @@ void PolyhedralSurface::setSurfacesList(vector<Surface *> new_list) {
     this->surfacesList = new_list;
 }
 
-/*
+bool PolyhedralSurface::isClosed(){
+    map<Surface*, bool> checked;
+    for (Surface* sf : this->surfacesList)
+        checked[sf] = false;
 
+    queue<Surface*> wait_queue;
+    wait_queue.push(this->surfacesList[0]);
+    checked[this->surfacesList[0]] = true;
+
+    int surfaceCount = 0;
+
+    while (wait_queue.size() > 0){
+        Surface* current = wait_queue.front();
+        wait_queue.pop();
+
+        surfaceCount += 1;
+        for (unsigned int nb = 0 ; nb < current->boundaryEdges.size() ; nb++){
+            Surface* next_surface = current->boundaryEdges[nb]->getOppositeEdge()->parent;
+            if (checked[next_surface]) continue;
+            else{
+                checked[next_surface] = true;
+                wait_queue.push(next_surface);
+            }
+        }
+    }
+
+    if (surfaceCount != this->surfacesList.size()){
+        return false;
+    } else
+        return true;
+
+}
+
+/*
 void PolyhedralSurface::rotateSpaceByFloorTo00(){
     cout << " ---------- rotate -------------" << endl;
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);

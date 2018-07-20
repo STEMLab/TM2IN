@@ -8,11 +8,12 @@
 namespace TM2IN{
     namespace detail{
         namespace algorithm{
-            bool isNeighbor(Surface *origin, Surface *piece) {
+            int isNeighbor(Surface *origin, Surface *piece) {
+                int share_count = 0;
                 for (HalfEdge* he : origin->getBoundaryEdgesList()){
-                    if (he->oppositeEdge != NULL && he->oppositeEdge->parent == piece) return true;
+                    if (he->oppositeEdge != NULL && he->oppositeEdge->parent == piece) share_count++;
                 }
-                return false;
+                return share_count;
             }
 
             bool findShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj, ll& middle_i, ll& middle_j){

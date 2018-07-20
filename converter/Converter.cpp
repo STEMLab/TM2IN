@@ -36,12 +36,7 @@ int Converter::start() {
 
 int Converter::run() {
     if (mergeSurfaces()) return -1;
-    // if (simplifyShareEdge()) return -1;
-    makeSurfaceGraph();
     doValidation();
-
-    if (options.need_traingulation)
-        if (triangulation()) return -1;
 
     if (options.polygonizer_mode > 0) // 1 or 2 or 3
         polygonize();
@@ -56,11 +51,45 @@ int Converter::finish() {
     return 0;
 }
 
+int Converter::exportSpace() {
+    //JSON
+    TM2IN::io::exportJSON(options.output_dir + "surfaces.json", this->spaceList);
+
+    if (options.output_3ds || options.output_tvr){
+        convertSpaceToTriangleMesh();
+        initTriangleMesh();
+        for (int i = 0 ; i < this->mesh_list.size() ; i++){
+            TriangleMesh *&triangleMesh = this->mesh_list[i];
+            if (triangleMesh->checkClosed())
+                cout << "this mesh is closed\n\n" << endl;
+            else
+                cerr << "this mesh is not closed\n\n" << endl;
+        }
+    }
+
+    //TVR
+    if (options.output_tvr){
+
+    }
+
+    //3DS
+    if (options.output_3ds){
+        TM2IN::io::export3DS((options.output_dir + options.file_name + ".3DS").c_str(), this->mesh_list);
+    }
+    return 0;
+}
+
 int Converter::convertSpaceToTriangleMesh(){
     this->mesh_list.clear();
     for (int spaceID = 0 ; spaceID < this->spaceList.size() ; spaceID++){
         PolyhedralSurface* space = this->spaceList[spaceID];
-        vector<Triangle*> triangleList = space->getTriangulation();
+        vector<Triangle*> triangleList;
+        for (unsigned int sfID = 0 ; sfID < space->surfacesList.size(); sfID++) {
+            Surface* pSurface = space->surfacesList[sfID];
+            vector<Triangle*> triangulation = pSurface->getTriangulation();
+            triangleList.insert(triangleList.end(), triangulation.begin(), triangulation.end());
+        }
+
         for (Triangle* triangle : triangleList){
             vector<HalfEdge*> edges = triangle->getBoundaryEdgesList();
             for (HalfEdge* he : edges){
@@ -76,32 +105,6 @@ int Converter::convertSpaceToTriangleMesh(){
     return 0;
 }
 
-int Converter::exportSpace() {
-    //JSON
-    TM2IN::io::exportJSON(options.output_dir + "surfaces.json", this->spaceList);
-
-    if (options.output_3ds || options.output_tvr){
-        convertSpaceToTriangleMesh();
-        initTriangleMesh();
-        for (int i = 0 ; i < this->mesh_list.size() ; i++){
-            TriangleMesh *&triangleMesh = this->mesh_list[i];
-            if (triangleMesh->checkClosed())
-                cout << "this mesh is closed\n\n" << endl;
-        }
-    }
-
-
-    //TVR
-    if (options.output_tvr){
-
-    }
-
-    //3DS
-    if (options.output_3ds){
-        TM2IN::io::export3DS((options.output_dir + options.file_name + ".3DS").c_str(), this->mesh_list);
-    }
-    return 0;
-}
 
 void Converter::tagID() {
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {

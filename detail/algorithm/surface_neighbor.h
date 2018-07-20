@@ -20,7 +20,7 @@ namespace TM2IN{
                 ll firstVertex_origin = -1;
             };
 
-            bool isNeighbor(Surface* , Surface* );
+            int isNeighbor(Surface *, Surface *);
             int constructNeighborInfo(Surface* , Surface* , neighbor_info&);
 
             int findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj, ll middle_i, ll middle_j, ll& start_i, ll& end_i, ll& start_j, ll& end_j);
