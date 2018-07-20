@@ -13,13 +13,13 @@
 #include "compute/VertexComputation.h"
 #include "features/Triangle.h"
 #include "features/HalfEdge.h"
-#include "space_maker/OnlyWallSpaceMaker.h"
 
 #include <cstdlib>
 #include <compute/SurfaceComputation.h>
 #include <compute/VertexListComputation.h>
 #include <cgal/Features_to_CGAL_object.h>
 #include <algorithm/triangulation.h>
+#include "detail/io/JsonWriter.h"
 
 
 using namespace std;
@@ -108,12 +108,19 @@ int Surface::getSegmentsNumber(ll si, ll ei) {
 
 // TODO : move validator
 bool Surface::checkDuplicate(){
-    vector<Vertex*> vertexList = this->getVerticesList();
-    return VertexListComputation::checkDuplicate(vertexList);
+    vector<Vertex*> sorted_v_list(this->getVerticesList());
+
+    sort(sorted_v_list.begin(), sorted_v_list.end(), VertexComputation::greater);
+    for (ull i = 0 ; i < sorted_v_list.size() - 1; i++){
+        if (sorted_v_list[i] == sorted_v_list[i+1]){
+            return true;
+        }
+    }
+    return false;
 }
 
 string Surface::asJsonText(){
-    cerr << "asJSONTEXT" <<endl;
+    return TM2IN::detail::io::to_json(this);
 }
 
 //TODO : move
@@ -210,13 +217,13 @@ bool Surface::isValid(){
 
 Point_3 Surface::findLowestPoint(){
     Vertex* cent = SurfaceComputation::getCenterPoint(this);
-    Plane_3 plane(CGAL_User::getCGALPoint(cent), this->normal);
+    Plane_3 plane(cent->CGAL_point(), this->normal);
     delete cent;
 
     double max_dist = -1.0;
     int max_index = 0;
     for (ull index= 0 ; index < this->getVerticesSize() ; index++){
-        Point_3 p = CGAL_User::getCGALPoint(this->vertex(index));
+        Point_3 p = this->vertex(index)->CGAL_point();
         if (plane.oriented_side(p) != CGAL::ON_POSITIVE_SIDE){
             double dist = CGAL::squared_distance(plane, p);
             if (dist > max_dist){
@@ -225,7 +232,7 @@ Point_3 Surface::findLowestPoint(){
             }
         }
     }
-    return CGAL_User::getCGALPoint(this->vertex(max_index));
+    return this->vertex(max_index)->CGAL_point();
 }
 
 Plane_3 Surface::getPlaneWithLowest(){
@@ -254,9 +261,11 @@ std::vector<HalfEdge *> Surface::getBoundaryEdgesList() {
 
 void Surface::setBoundaryEdgesList(std::vector<HalfEdge*> edges){
     this->boundaryEdges = edges;
+    /*
     for (HalfEdge* edge : edges){
         edge->setParent(this);
     }
+     */
 }
 
 void Surface::clearTriangleList() {
@@ -317,7 +326,10 @@ std::ostream& operator<<(std::ostream &ou, Surface *pSurface) {
 }
 
 std::vector<Triangle *> Surface::getTriangulation() {
-    if (this->triangulation.size() == 0)
-        TM2IN::algorithm::triangulate(this, this->triangulation);
+    
+    if (this->triangulation.size() == 0) {
+        vector<Triangle*> triList;
+        TM2IN::algorithm::triangulate(this, triList);
+    }
     return this->triangulation;
 }

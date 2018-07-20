@@ -36,7 +36,6 @@ public:
     bool generator = false;
 
     int selected = ARCH;
-    bool need_traingulation = false;
 private:
     bool has_input_dir = false;
     bool has_output_dir = false;

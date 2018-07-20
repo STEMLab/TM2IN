@@ -22,10 +22,6 @@ public:
 
     Vertex* operator[](int idx);
     Vertex* vertex(int idx);
-
-    std::string asJsonText();
-
-
 };
 
 

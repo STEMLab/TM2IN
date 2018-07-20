@@ -13,7 +13,6 @@ namespace TM2IN {
             }
 
             std::vector<TriangleMesh *> TVRReader::read() {
-
                 string inputstr;
                 getline(this->ifs, inputstr);
                 if (inputstr.find("TVR0") == string::npos){

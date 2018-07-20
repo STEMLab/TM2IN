@@ -1,5 +1,4 @@
 #include <features/TriangleMesh.h>
-#include "space_maker/OnlyWallSpaceMaker.h"
 #include "SurfacesListComputation.h"
 
 #include "SurfaceComputation.h"

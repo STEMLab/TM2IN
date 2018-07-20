@@ -22,7 +22,7 @@ template<typename Out>
 void split(const std::string &s, char delim, Out result);
 void printProcess(ull index, ull size, std::string str);
 void removeFilesInDirectory(std::string path);
-void createAndRemoveDir(const std::string &version, const std::string &resultPath, const std::string &fileName);
+void createAndRemoveDir(const std::string &version, const std::string &resultPath);
 
 
 #endif // UTIL_H_INCLUDED

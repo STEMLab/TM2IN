@@ -24,8 +24,3 @@ Vertex *VertexListComputation::getCenter(vector<Vertex *> vertices) {
     Vertex* newVertex = new Vertex(x/ vertices.size(), y / vertices.size(), z / vertices.size());
     return newVertex;
 }
-
-
-bool VertexListComputation::checkDuplicate(vector<Vertex *> vertices) {
-
-}

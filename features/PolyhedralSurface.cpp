@@ -112,8 +112,7 @@ void PolyhedralSurface::freeSurfaces(){
 int PolyhedralSurface::checkDuplicateVertexInSurfaces() {
     for (unsigned int s_i = 0 ; s_i < this->surfacesList.size() ;s_i++){
         if (surfacesList[s_i]->checkDuplicate()){
-            cout << "it has duplicate Vertex" << endl;
-            return -1;
+            throw std::runtime_error("it has duplicate Vertex\n");
         }
     }
     return 0;

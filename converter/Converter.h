@@ -45,8 +45,6 @@ private:
     int remainSelectedMesh(int arch);
     int handleOpenTriangleMesh();
 
-    void makeSurfaceGraph();
-
     int export3DS();
 
 

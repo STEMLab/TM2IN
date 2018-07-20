@@ -4,7 +4,6 @@
 
 #include "features/Vertex.h"
 #include "features/Surface.h"
-#include "space_maker/OnlyWallSpaceMaker.h"
 #include "Features_to_CGAL_object.h"
 
 using namespace std;
@@ -47,13 +46,13 @@ double CGALCalculation::getAngle(Vector_2& nv1, Vector_2& nv2){
 }
 
 Vector_3 CGALCalculation::getVector(Vertex* va, Vertex* vb){
-    return Vector_3(CGAL_User::getCGALPoint(va),CGAL_User::getCGALPoint(vb));
+    return Vector_3(va->CGAL_point(),vb->CGAL_point());
 }
 
 
 double CGALCalculation::getSquaredDistance(Vertex* v1, Vertex* v2){
     return CGAL::squared_distance(
-            CGAL_User::getCGALPoint(v1), CGAL_User::getCGALPoint(v2));
+            v1->CGAL_point(), v2->CGAL_point());
 }
 
 Vector_3 CGALCalculation::getUnitNormal(Vertex* va, Vertex* vb, Vertex* vc){

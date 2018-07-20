@@ -9,7 +9,6 @@
 #include "VertexComputation.h"
 #include "compute/VertexListComputation.h"
 #include "HalfEdgeComputation.h"
-#include "cgal/PolygonComputation.h"
 #include "features/TriangleMeshGraph.h"
 #include "Connect_halfedges.h"
 
@@ -17,20 +16,6 @@ using namespace std;
 
 void SurfaceComputation::removeConsecutiveDuplicationIndex(Surface *&pSurface){
     cerr << "TODO : SurfaceComputation::removeConsecutiveDuplicationIndex" << endl;
-    /*
-    ull v_size = pSurface->v_list.size();
-    int removed_count = 0;
-    for (ull i = 0 ; i < v_size - 1; i++){
-        if (pSurface->v_list[i] == pSurface->v_list[i+1]){
-            pSurface->v_list.erase(pSurface->v_list.begin() + i + 1);
-            i--;
-            v_size -= 1;
-            removed_count += 1;
-        }
-    }
-
-    if (removed_count) cout << removed_count << " are removed in duplication" << endl;
-     */
 }
 
 
@@ -78,7 +63,7 @@ Plane_3 SurfaceComputation::getPlane3WithMBB(Surface *&pSurface){
 
 Plane_3 SurfaceComputation::getPlane3WithCenter(Surface *&pSurface){
     Vertex* centerV = VertexListComputation::getCenter(pSurface->getVerticesList());
-    Point_3 centerPoint = CGAL_User::getCGALPoint(centerV);
+    Point_3 centerPoint = centerV->CGAL_point();
     Plane_3 plane(centerPoint, pSurface->normal);
     return plane;
 }
@@ -135,11 +120,4 @@ std::vector<Segment_2> SurfaceComputation::makeSegment2List(Surface *&pSurface, 
     Segment_2 last_seg(pointsList[pointsList.size() - 1], pointsList[0]);
     segmentsList.push_back(last_seg);
     return segmentsList;
-}
-
-
-double TMIC::computeError(Surface *&pSurface) {
-    double difference = 0.0;
-    cerr << "TODO : computeError" << endl;
-    return difference;
 }

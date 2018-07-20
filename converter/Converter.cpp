@@ -15,6 +15,7 @@ int Converter::start() {
 
     // generation writer
     if (options.generator) generation_writer = new GenerationWriter(options.output_dir);
+    else generation_writer = NULL;
 
     // construct graph
     initTriangleMesh();
@@ -35,7 +36,7 @@ int Converter::start() {
 }
 
 int Converter::run() {
-    if (mergeSurfaces()) return -1;
+    mergeSurfaces();
     doValidation();
 
     if (options.polygonizer_mode > 0) // 1 or 2 or 3

@@ -50,6 +50,8 @@ namespace TM2IN{
 
 
         void PCAPolygonizer::run(PolyhedralSurface *space) {
+            throw std::runtime_error("PCAPolygonizer run not yey");
+            /*
             vector<Surface*> newSurfacesList;
             vector<SFCGAL::Polygon> polygons;
             for (int i = 0 ; i < space->surfacesList.size() ; i++){
@@ -83,6 +85,8 @@ namespace TM2IN{
 
                 // assert(!SurfaceIntersection::checkSelfIntersection(sf));
             }
+            */
+
             /*
             // get intersections
             vector<SFCGAL::LineString*> intersection_lines;
@@ -140,7 +144,7 @@ namespace TM2IN{
                 vertices[index]->translate(center);
             }
         }
-
+        /*
         SFCGAL::Polygon PCAPolygonizer::make_sf_polygon(vector<Vertex *> vertices) {
             vector<SFCGAL::Point> sf_points;
             for (ull index = 0 ; index < vertices.size() ; index++) {
@@ -151,5 +155,6 @@ namespace TM2IN{
             SFCGAL::Polygon sf_pl(sf_ls);
             return sf_pl;
         }
+        */
     }
 }

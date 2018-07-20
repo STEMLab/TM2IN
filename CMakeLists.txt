@@ -22,7 +22,7 @@ FIND_PACKAGE( Boost 1.40 REQUIRED COMPONENTS filesystem REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
-find_package(SFCGAL REQUIRED )
+# find_package(SFCGAL REQUIRED )
 
 file(GLOB LIB_FILES
         "lib/rapidxml/*.hpp"
@@ -66,7 +66,9 @@ add_executable(TM2IN
         Options.cpp
         TM2IN.cpp)
 
-TARGET_LINK_LIBRARIES(TM2IN LINK_PUBLIC ${Boost_LIBRARIES} Eigen3::Eigen ${SFCGAL_LIBRARIES})
+TARGET_LINK_LIBRARIES(TM2IN LINK_PUBLIC ${Boost_LIBRARIES} Eigen3::Eigen
+        #${SFCGAL_LIBRARIES}
+        )
 
 include_directories(
         ../TriangleMeshToClearSolid

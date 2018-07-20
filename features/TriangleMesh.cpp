@@ -148,7 +148,7 @@ bool TriangleMesh::isFurniture() {
             innerCount++;
         }
         else{
-            assert(0);
+            throw std::runtime_error("is Furniture Error");
         }
     }
     if (innerCount > 0 && outerCount > 0){

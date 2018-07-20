@@ -7,7 +7,6 @@
 
 #include "features/PolyhedralSurface.h"
 
-#include <SFCGAL/Polygon.h>
 #include <vector>
 
 using namespace std;
@@ -34,7 +33,7 @@ namespace TM2IN {
             void run(PolyhedralSurface* space);
         private:
             void scale_up(vector<Vertex *> &vertices, double scale);
-            SFCGAL::Polygon make_sf_polygon(vector<Vertex *> vertices);
+            // SFCGAL::Polygon make_sf_polygon(vector<Vertex *> vertices);
         };
     }
 }

@@ -4,6 +4,7 @@
 
 #include <detail/feature/plane.h>
 #include <compute/VertexComputation.h>
+#include <compute/HalfEdgeComputation.h>
 #include "merge_surfaces.h"
 
 #include "detail/algorithm/surface_neighbor.h"
@@ -13,26 +14,9 @@ namespace TM2IN {
     namespace detail {
         namespace algorithm {
             bool merging_invalid_test(vector<HalfEdge *> new_edges, Vector_3 newNormal){
-
-                // TODO : HalfEdgeString
-                vector<Vertex*> newVertexList;
-                for (int i = 0 ; i < new_edges.size() ; i++){
-                    newVertexList.push_back(new_edges[i]->vertices[0]);
-                }
-                // = HalfEdgeComputation::getFirstVertexList(new_edges);
-
-                // TODO : HalfEdgeString.is_simple()
-                vector<Vertex*> sorted_v_list(newVertexList);
-                sort(sorted_v_list.begin(), sorted_v_list.end(), VertexComputation::greater);
-                for (ull i = 0 ; i < sorted_v_list.size() - 1; i++){
-                    if (sorted_v_list[i] == sorted_v_list[i+1]){
-                        return 1;
-                    }
-                }
-
-                // check polygon after merging
                 Surface* pSurface = new Surface();
                 pSurface->setBoundaryEdgesList(new_edges);
+                if (!pSurface->isValid()) return 1;
                 Plane_3 planeRef = TM2IN::detail::feature::make_simple_plane(newNormal);
                 vector<Point_2> point2dList = TM2IN::detail::feature::project_to_plane(pSurface->getVerticesList(), planeRef);
                 Polygon_2 polygon = TM2IN::detail::feature::make_CGAL_polygon(point2dList);
@@ -158,6 +142,9 @@ namespace TM2IN {
                 }
 
                 if (merging_invalid_test(new_edges, origin->normal + piece->normal)) return 1;
+
+
+                HalfEdgeComputation::setParent(new_edges, origin);
 
                 origin->setBoundaryEdgesList(new_edges);
                 origin->normal = origin->normal + piece->normal;

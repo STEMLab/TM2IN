@@ -77,16 +77,12 @@ bool Triangle::isOpposite(Triangle* tri){
             exit(-1);
         }
     }
-    return num_of_opposite <= 1;
+    return num_of_opposite == 3;
 
 }
 
 Vertex *Triangle::vertex(int idx) {
     return this->boundaryEdges[idx]->vertices[0];
-}
-
-std::string Triangle::asJsonText() {
-    return TM2IN::detail::io::to_json(*this);
 }
 
 bool Triangle::checkOppositeEdge(Triangle *&tri) {

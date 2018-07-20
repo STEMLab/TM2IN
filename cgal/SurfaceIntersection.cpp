@@ -6,7 +6,6 @@
 #include <compute/VertexListComputation.h>
 
 #include "SurfaceIntersection.h"
-#include "PolygonComputation.h"
 #include <bitset>
 #include <detail/feature/plane.h>
 

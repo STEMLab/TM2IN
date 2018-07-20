@@ -28,15 +28,14 @@ Options::Options(int argc, char **argv) {
     int index = 0;
     int c;
     while (-1 != (c = getopt_long(argc, argv, short_opts, long_opts, &index))){
+        string type_name;
         switch (c){
-            char* stopstring;
             case 'i':
                 assert(optarg != NULL);
                 input_dir = optarg;
                 if (input_dir.back() != '/'){
                     input_dir.append("/");
                 }
-                printf("%s=%s\n", "input_dir", input_dir);
                 has_input_dir = true;
                 break;
             case 'O':
@@ -46,18 +45,18 @@ Options::Options(int argc, char **argv) {
                     output_dir.append("/");
                 }
                 has_output_dir = true;
-                printf("%s=%s\n", "output_dir", output_dir);
                 break;
             case 'r':
                 assert(optarg != NULL);
+                type_name = optarg;
                 has_input_type = true;
-                if (optarg == "tvr" || optarg == "TVR"){
+                if (type_name == "tvr" || type_name == "TVR"){
                     input_type = 1;
                 }
-                else if (optarg == "3ds" || optarg == "3DS"){
+                else if (type_name == "3ds" || type_name == "3DS"){
                     input_type = 2;
                 }
-                else if (optarg == "collada" || optarg == "dae" || optarg == "DAE" || optarg == "COLLADA"){
+                else if (type_name == "dae" || type_name == "DAE" || type_name == "collada" || type_name == "COLLADA"){
                     input_type = 3;
                 }
                 else{
@@ -76,11 +75,11 @@ Options::Options(int argc, char **argv) {
                 break;
             case 'a':
                 assert(optarg != NULL);
-                threshold_1 = strtod(optarg, &stopstring);
+                threshold_1 = strtod(optarg, NULL);
                 break;
             case 'b':
                 assert(optarg != NULL);
-                threshold_2 = strtod(optarg, &stopstring);
+                threshold_2 = strtod(optarg, NULL);
                 break;
             case 'T':
                 break;
@@ -129,7 +128,7 @@ void Options::make_file_name(){
 
     std::size_t pos = input_file.find_last_of(".");
     file_name = input_file.substr(0, pos);
-    std::cout << "File name : " << file_name << endl;
+    fprintf(stdout, "File name : %s\n",file_name.c_str());
 
     output_dir += file_name;
     output_dir += "/";
@@ -148,11 +147,7 @@ void Options::check_options() {
 
     if (!has_input_type){
         fprintf(stderr, "WARNING : we will detect your file type and covert. Maybe it will be right..\n");
-        fprintf(stderr, "IF you can make it sure, define value of --input-type option.\n");
-    }
-
-    if (polygonizer_mode == 2 || polygonizer_mode == 3 || output_3ds || output_tvr){
-        need_traingulation = true;
+        fprintf(stderr, "IF you can make it sure, define value of --input-type option.\n\n");
     }
 }
 

@@ -2,20 +2,15 @@
 // Created by dongmin on 18. 7. 20.
 //
 
-#include <detail/algorithm/triangulate_surface.h>
 #include "triangulation.h"
 
-#include "features/Surface.h"
-#include "features/Triangle.h"
-#include "detail/cgal_config.h"
-#include "detail/feature/plane.h"
-#include "detail/feature/polygon.h"
+#include "detail/algorithm/triangulate_surface.h"
 
 using namespace std;
 
 namespace TM2IN {
     namespace algorithm {
-        int triangulate(Surface *&pSurface, std::vector<Triangle*>& result) {
+        int triangulate(Surface *pSurface, std::vector<Triangle*>& result) {
             result.clear();
 
             std::vector<Vertex*> vertexList = pSurface->getVerticesList();

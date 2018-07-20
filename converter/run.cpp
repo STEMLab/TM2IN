@@ -14,7 +14,7 @@ int Converter::mergeSurfaces() {
         space->generation++;
 
         // check duplicate coordinates
-        if (space->checkDuplicateVertexInSurfaces()) return -1;
+        space->checkDuplicateVertexInSurfaces();
 
         if (processGenerations(space)) return -1;
 /*

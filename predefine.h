@@ -9,7 +9,6 @@
 #include <cassert>
 
 class Vertex;
-class SurfaceGraph;
 class Surface;
 class PolyhedralSurface;
 class Segment;

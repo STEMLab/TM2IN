@@ -14,6 +14,7 @@ namespace TM2IN {
                 fout << " \"spaces\" : [ \n";
                 for (unsigned int index = 0; index < ts.size(); index++) {
                     string ts_str = TM2IN::detail::io::to_json(ts[index], exp_tri);
+                    fout << ts_str;
                     if (index != ts.size() - 1) fout << ", \n";
                     else fout << "\n";
                 }
@@ -40,10 +41,10 @@ namespace TM2IN {
                 }
                 result += "] \n";
                 result += "}";
-                return 0;
+                return result;
             }
 
-            string to_json_with_triangles(Surface *&pSurface) {
+            string to_json_with_triangles(Surface* pSurface) {
                 assert(pSurface->triangles.size() > 0);
 
                 string ret;
@@ -63,7 +64,7 @@ namespace TM2IN {
                 return ret;
             }
 
-            string to_json(Surface*& sf){
+            string to_json(Surface* sf){
                 if (sf->getVerticesSize() == 0){
                     throw std::runtime_error("string to_json(Surface) : Vertex size is 0");
                 }
@@ -85,20 +86,20 @@ namespace TM2IN {
                 ret.append("] }");
                 return ret;
             }
-
-            string to_json(Triangle& tri){
+/*
+            string to_json(Triangle* tri){
                 std::string ret;
                 ret += "{\n";
 
                 //normal
                 ret += "\"normal\" : [";
-                Vector_3 normal = tri.getNormal();
+                Vector_3 normal = tri->getNormal();
                 ret += std::to_string(normal.x()) + ", " + std::to_string(normal.y()) + ", " + std::to_string(normal.z());
                 ret += "],\n";
 
                 //area
                 ret += "\"area\" : ";
-                double area = tri.getArea();
+                double area = tri->getArea();
                 ret += std::to_string(area);
                 ret += "\n";
 
@@ -106,7 +107,7 @@ namespace TM2IN {
                 ret += "\"coord\" : [\n";
                 for (int i = 0 ; i < 3 ; i++){
                     ret += "\t";
-                    ret += tri.vertex(i)->asJsonText();
+                    ret += tri->vertex(i)->asJsonText();
                     if (i != 2)
                         ret += ",";
                     ret += "\n";
@@ -115,7 +116,7 @@ namespace TM2IN {
 
                 return ret;
             }
-
+*/
             string to_json(Vertex& vt){
                 std::string ret;
                 ret.append("[");
