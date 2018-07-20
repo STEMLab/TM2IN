@@ -117,7 +117,7 @@ namespace TM2IN {
                 return ret;
             }
 */
-            string to_json(Vertex& vt){
+            string to_json(Vertex& vt, int index){
                 std::string ret;
                 ret.append("[");
                 ret.append(to_string(vt.x()));
@@ -126,7 +126,7 @@ namespace TM2IN {
                 ret.append(",");
                 ret.append(to_string(vt.z()));
                 ret.append(",");
-                ret.append(to_string(vt.index));
+                ret.append(to_string(index));
                 ret.append("]");
                 return ret;
             }

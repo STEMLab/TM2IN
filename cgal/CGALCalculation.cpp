@@ -4,7 +4,6 @@
 
 #include "features/Vertex.h"
 #include "features/Surface.h"
-#include "Features_to_CGAL_object.h"
 
 using namespace std;
 

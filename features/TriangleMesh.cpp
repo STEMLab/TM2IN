@@ -10,7 +10,6 @@
 #include <iostream>
 #include <logic/check.h>
 #include <compute/Connect_halfedges.h>
-#include <cgal/Features_to_CGAL_object.h>
 #include "features/HalfEdge.h"
 #include <time.h>
 #include <random>
@@ -87,7 +86,7 @@ void TriangleMesh::updateVertexByTriangleList() {
 bool TriangleMesh::isFurniture() {
     vector<Triangle_3> cgal_triangles;
     for (int i = 0 ; i < this->triangles.size() ; i++){
-        cgal_triangles.push_back(CGAL_User::getCGALTriangle(this->triangles[i]));
+        cgal_triangles.push_back(this->triangles[i]->CGAL_triangle());
     }
 
     int innerCount = 0, outerCount = 0;

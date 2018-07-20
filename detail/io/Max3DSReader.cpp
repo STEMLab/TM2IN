@@ -119,7 +119,6 @@ namespace TM2IN {
                                 vt->setY(temp);
                                 fread (&temp, sizeof(float), 1, this->fp);
                                 vt->setZ(temp);
-                                vt->index = i + v_count;
                                 currentMesh->vertices.push_back(vt);
                             }
                             v_count += l_qty;

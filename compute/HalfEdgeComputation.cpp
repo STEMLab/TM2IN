@@ -2,7 +2,6 @@
 // Created by dongmin on 18. 1. 19.
 //
 
-#include <cgal/Features_to_CGAL_object.h>
 #include "HalfEdgeComputation.h"
 #include "VertexComputation.h"
 

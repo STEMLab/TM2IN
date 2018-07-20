@@ -9,6 +9,10 @@
 
 using namespace std;
 
+/**
+ * @todo will be removed
+ *
+ */
 namespace CGAL_User{
     vector<Vertex *> fillHole(vector<Vertex*>& vertices, vector<Surface *>& surfaces);
     void fillHole(TriangleMesh* tm);

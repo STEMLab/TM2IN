@@ -25,7 +25,7 @@ namespace TM2IN {
             string to_json(PolyhedralSurface* ps, bool exp_tri=false);
             string to_json(Surface* sf);
             string to_json_with_triangles(Surface *pSurface);
-            string to_json(Vertex& vt);
+            string to_json(Vertex& vt, int index = 0);
         }
     }
 }

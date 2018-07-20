@@ -17,7 +17,6 @@
 #include <cstdlib>
 #include <compute/SurfaceComputation.h>
 #include <compute/VertexListComputation.h>
-#include <cgal/Features_to_CGAL_object.h>
 #include <algorithm/triangulation.h>
 #include "detail/io/JsonWriter.h"
 

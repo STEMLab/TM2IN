@@ -22,6 +22,9 @@ public:
 
     Vertex* operator[](int idx);
     Vertex* vertex(int idx);
+
+
+    Kernel::Triangle_3 CGAL_Triangle();
 };
 
 

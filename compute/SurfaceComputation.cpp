@@ -3,7 +3,6 @@
 //
 
 #include <cgal/SurfaceIntersection.h>
-#include <cgal/Features_to_CGAL_object.h>
 #include <detail/feature/plane.h>
 #include "SurfaceComputation.h"
 #include "VertexComputation.h"

@@ -1,4 +1,5 @@
 
+#include <detail/feature/type_conversion.h>
 #include "features/Triangle.h"
 
 #include "features/HalfEdge.h"
@@ -94,4 +95,8 @@ bool Triangle::checkOppositeEdge(Triangle *&tri) {
         }
     }
     return false;
+}
+
+Kernel::Triangle_3 Triangle::CGAL_Triangle() {
+    return TM2IN::detail::feature::to_CGAL_Triangle_3(*this);
 }

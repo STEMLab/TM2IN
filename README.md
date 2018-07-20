@@ -36,4 +36,4 @@ For example,
 TM2IN --input-dir=../../input/ --output-dir=../../result --version=0.4.2 inputfile.tvr
 ```
 
-[More information about options.](https://github.com)
+[More information about options.](https://github.com/STEMLab/TM2IN/tree/master/doc/usage-manual.md)

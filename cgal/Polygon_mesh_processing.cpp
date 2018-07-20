@@ -42,9 +42,11 @@ public:
 
         cout << coords.size() << " , " << triangleSize << endl;
 
+        map<Vertex*, int> vertex_index;
         // add the polyhedron vertices
         for( int i=0; i<(int)coords.size(); i++ ){
             B.add_vertex( Point( coords[i]->coords[0], coords[i]->coords[1], coords[i]->coords[2] ) );
+            vertex_index[coords[i]] = i;
         }
 
         // add the polyhedron triangles
@@ -53,7 +55,7 @@ public:
             for ( int tri = 0 ; tri < (int)surfaces[i]->triangles.size() ; tri++){
                 B.begin_facet();
                 for (int vt = 0 ; vt < 3; vt++){
-                    int index = surfaces[i]->triangles[tri]->vertex(vt)->index;
+                    size_t index = vertex_index[surfaces[i]->triangles[tri]->vertex(vt)];
                     B.add_vertex_to_facet(index);
                 }
                 B.end_facet();
