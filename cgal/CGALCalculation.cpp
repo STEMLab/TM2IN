@@ -26,47 +26,6 @@ double CGALCalculation::getAngle(Vector_3& nv1, Vector_3& nv2){
     return angle;
 }
 
-double CGALCalculation::getAngle(Vector_2& nv1, Vector_2& nv2){
-    assert(nv1.squared_length() > 0 && nv2.squared_length() > 0);
-    double nv1_length = sqrt(nv1.squared_length());
-    double nv2_length = sqrt(nv2.squared_length());
-
-    Vector_2 unit_nv1 = nv1 / nv1_length;
-    Vector_2 unit_nv2 = nv2 / nv2_length;
-
-    double inner = (unit_nv1 * unit_nv2);
-    double cos = inner;
-    //cout << " cos : " << cos <<endl;
-    if (cos > 0.99999) cos = 1;
-    else if (cos < -0.99999) cos = -1;
-    double angle = acos(cos) * 180.0/PI;
-
-    return angle;
-}
-
-Vector_3 CGALCalculation::getVector(Vertex* va, Vertex* vb){
-    return Vector_3(va->CGAL_point(),vb->CGAL_point());
-}
-
-
-double CGALCalculation::getSquaredDistance(Vertex* v1, Vertex* v2){
-    return CGAL::squared_distance(
-            v1->CGAL_point(), v2->CGAL_point());
-}
-
-Vector_3 CGALCalculation::getUnitNormal(Vertex* va, Vertex* vb, Vertex* vc){
-    Point_3 p3a(va->x(),va->y(),va->z());
-    Point_3 p3b(vb->x(),vb->y(),vb->z());
-    Point_3 p3c(vc->x(),vc->y(),vc->z());
-
-    if (CGAL::collinear(p3a, p3b, p3c)){
-        return CGAL::NULL_VECTOR;
-    }
-    else{
-        return CGAL::unit_normal(p3a,p3b,p3c);
-    }
-}
-
 Vector_3 CGALCalculation::getCrossProduct(Vertex* va, Vertex* vb, Vertex* vc){
     Point_3 p3a(va->x(),va->y(),va->z());
     Point_3 p3b(vb->x(),vb->y(),vb->z());
@@ -92,12 +51,6 @@ double CGALCalculation::getSquaredArea(Point_3& p1, Point_3& p2, Point_3& p3){
     return tri.squared_area();
 }
 
-
-bool CGALCalculation::isIntersect_BBOX(Surface* s1, Surface* s2){
-    CGAL::Bbox_3 b1(s1->min_coords[0],s1->min_coords[1],s1->min_coords[2],s1->max_coords[0],s1->max_coords[1],s1->max_coords[2]);
-    CGAL::Bbox_3 b2(s2->min_coords[0],s2->min_coords[1],s2->min_coords[2],s2->max_coords[0],s2->max_coords[1],s2->max_coords[2]);
-    return CGAL::do_intersect(b1,b2);
-}
 
 
 bool CGALCalculation::isAngleLowerThan(Vector_3& nv1, Vector_3& nv2, double degree){

@@ -5,6 +5,7 @@
 #include "algorithm/merge_surfaces.h"
 #include "detail/algorithm/simplify_share_edges.h"
 #include <features/PolyhedralSurface.h>
+#include <detail/feature/geometry.h>
 
 using namespace TM2IN::detail::algorithm;
 
@@ -35,7 +36,7 @@ namespace TM2IN{
                     Surface *&surfaceJ = ps->surfacesList[j];
                     if (!surfaceI->easy_validation()) break;
                     if (!surfaceJ->easy_validation()) continue;
-                    if (!CGALCalculation::isIntersect_BBOX(surfaceI, surfaceJ)) continue;
+                    if (!TM2IN::detail::feature::has_bbox_intersect(surfaceI, surfaceJ)) continue;
                     while (simplify_share_edges(ps->surfacesList[i], ps->surfacesList[j]) == 0){
                         hasSimplified = true;
                         if (!surfaceI->easy_validation() || !surfaceJ->easy_validation()) break;

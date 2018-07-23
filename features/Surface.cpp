@@ -202,17 +202,6 @@ bool Surface::isOpposite(Surface* sf){
     return false;
 }
 
-bool Surface::isInMBB(Vertex* vt){
-    if (vt->x() >= this->min_coords[0] && vt->x() <= this->max_coords[0]){
-        if (vt->y() >= this->min_coords[1] && vt->y() <= this->max_coords[1]){
-            if (vt->z() >= this->min_coords[2] && vt->z() <= this->max_coords[2]){
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
 /**
  * For Sorting.
  *

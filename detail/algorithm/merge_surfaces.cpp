@@ -9,6 +9,7 @@
 
 #include "detail/algorithm/surface_neighbor.h"
 #include "detail/feature/polygon.h"
+#include "detail/feature/geometry.h"
 
 namespace TM2IN {
     namespace detail {
@@ -71,7 +72,7 @@ namespace TM2IN {
 
             int SurfaceMerger::merge(Surface *origin, Surface *piece) {
                 // check Polygon is in near polygon or not
-                if (!CGALCalculation::isIntersect_BBOX(origin, piece)) return 1;
+                if (!TM2IN::detail::feature::has_bbox_intersect(origin, piece)) return 1;
 
                 // check They are neighbor
                 if (!isNeighbor(origin, piece)) return 1;

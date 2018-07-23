@@ -45,7 +45,6 @@ public:
     std::string asJsonText();
     std::vector<Triangle*> getTriangulation();
 
-    bool isInMBB(Vertex* vt);
     bool isOpposite(Surface* sf);
 
     void setMBB(Surface* pl);
