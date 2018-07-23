@@ -1,14 +1,14 @@
 #ifndef TriangleMeshGraph_h
 #define TriangleMeshGraph_h
 
-#include "features/TriangleMesh.h"
+#include "features/Geometry.h"
 #include "util.h"
+
 #include <queue>
 #include <utility>
 #include <map>
 
 using namespace std;
-
 
 class TriangleMeshGraph{
 private:

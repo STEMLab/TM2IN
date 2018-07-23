@@ -6,6 +6,7 @@
 #include "Options.h"
 #include "util.h"
 #include "algorithm/Polygonizer.h"
+#include "features/Geometry.h"
 
 class Converter
 {

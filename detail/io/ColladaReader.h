@@ -5,9 +5,12 @@
 #ifndef TM2IN_COLLADAREADER_H
 #define TM2IN_COLLADAREADER_H
 
-#include <features/TriangleMesh.h>
-#include <fstream>
 #include <lib/rapidxml/rapidxml.hpp>
+#include "features/Geometry.h"
+
+#include <fstream>
+
+using namespace std;
 
 namespace TM2IN {
     namespace detail {

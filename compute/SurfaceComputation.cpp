@@ -28,7 +28,7 @@ Plane_3 SurfaceComputation::getPlane3WithMBB(Surface *&pSurface){
     double mindist = 100000000;
     int minaxis = 0;
     for (int i = 0 ; i < 3 ; i ++){
-        double dist = pSurface->max_coords[i] - pSurface->min_coords[i];
+        double dist = pSurface->getMax_coords()[i] - pSurface->getMin_coords()[i];
         if (dist < mindist){
             minaxis = i;
             mindist = dist;
@@ -48,12 +48,12 @@ Plane_3 SurfaceComputation::getPlane3WithMBB(Surface *&pSurface){
             break;
     }
     if (newNormal[minaxis] > 0){
-        Point_3 point3(pSurface->min_coords[0], pSurface->min_coords[1], pSurface->min_coords[2]);
+        Point_3 point3(pSurface->getMin_coords()[0], pSurface->getMin_coords()[1], pSurface->getMin_coords()[2]);
         Plane_3 plane3(point3, newNormal);
         return plane3;
     }
     else{
-        Point_3 point3(pSurface->max_coords[0], pSurface->max_coords[1], pSurface->max_coords[2]);
+        Point_3 point3(pSurface->getMax_coords()[0], pSurface->getMax_coords()[1], pSurface->getMax_coords()[2]);
         Plane_3 plane3(point3, newNormal);
         return plane3;
     }
@@ -91,7 +91,7 @@ void SurfaceComputation::removeStraight(Surface*& pSurface){
     }
 
     pSurface->setVertexList(vertexList);
-
+    pSurface->updateMBB();
     if (removed_count) cout << removed_count << " are removed in straight" << endl;
 }
 

@@ -2,14 +2,16 @@
 // Created by dongmin on 18. 7. 19.
 //
 
+#include "merge_surfaces.h"
+
 #include <detail/feature/plane.h>
 #include <compute/VertexComputation.h>
 #include <compute/HalfEdgeComputation.h>
-#include "merge_surfaces.h"
 
 #include "detail/algorithm/surface_neighbor.h"
 #include "detail/feature/polygon.h"
 #include "detail/feature/geometry.h"
+#include "features/Surface.h"
 
 namespace TM2IN {
     namespace detail {
@@ -129,14 +131,14 @@ namespace TM2IN {
                 vector<HalfEdge*> new_edges;
 
                 for (ll j = ni.lastVertex_origin; ; ){
-                    new_edges.push_back(origin->boundary_edges(j));
+                    new_edges.push_back(origin->exterior_boundary_edge(j));
                     j++;
                     if (j == origin_size) j = 0;
                     if (j == ni.firstVertex_origin) break;
                 }
 
                 for (ll i = ni.lastVertex_piece; ;){
-                    new_edges.push_back(piece->boundary_edges(i));
+                    new_edges.push_back(piece->exterior_boundary_edge(i));
                     i++;
                     if (i == piece_size) i = 0;
                     if (i == ni.firstVertex_piece) break;
@@ -148,9 +150,9 @@ namespace TM2IN {
                 HalfEdgeComputation::setParent(new_edges, origin);
 
                 origin->setExteriorBoundary(new_edges);
+                origin->updateMBB(piece);
                 origin->normal = origin->normal + piece->normal;
-                origin->area += piece->area;
-                origin->setMBB(piece);
+                origin->setArea(origin->getArea() + piece->getArea());
                 origin->triangles.insert(origin->triangles.end(), piece->triangles.begin(), piece->triangles.end());
 
                 return 0;

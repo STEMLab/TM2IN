@@ -5,7 +5,6 @@
 #ifndef TM2IN_MAX3DSWRITER_H
 #define TM2IN_MAX3DSWRITER_H
 
-
 #include <cstdio>
 #include <features/TriangleMesh.h>
 

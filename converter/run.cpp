@@ -9,6 +9,8 @@
 int Converter::mergeSurfaces() {
     for (ull it = 0 ; it < this->spaceList.size(); it++)
     {
+        clock_t begin = clock();
+
         PolyhedralSurface* space = this->spaceList[it];
         if (this->generation_writer) this->generation_writer->start(space);
         space->generation++;
@@ -21,6 +23,9 @@ int Converter::mergeSurfaces() {
 */
         if (space->surface_easy_validation() == -1){ cout << "Surface is not valid" << endl; return -1; }
         space->sortSurfacesByArea();
+
+        clock_t end = clock();
+        cout << "merge Surfaces time : " << double(end - begin) / CLOCKS_PER_SEC << "s" << endl;
     }
     return 0;
 }

@@ -6,7 +6,7 @@
 #include "detail/cgal_config.h"
 #include <iostream>
 
-
+class Vertex;
 class CGALCalculation
 {
 public:

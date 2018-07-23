@@ -70,7 +70,8 @@ bool Triangle::setNeighbor(Triangle*& tri){
 bool Triangle::isOpposite(Triangle* tri){
     int num_of_opposite = 0;
     for (int i = 0 ; i < 3 ; i++){
-        if (this->boundary_edges(i)->getOppositeEdge() != NULL && this->boundary_edges(i)->oppositeEdge->parent == tri){
+        if (this->exterior_boundary_edge(i)->getOppositeEdge() != NULL &&
+                this->exterior_boundary_edge(i)->oppositeEdge->parent == tri){
             num_of_opposite++;
         }
         if (num_of_opposite == 2){

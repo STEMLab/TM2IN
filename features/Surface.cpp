@@ -36,6 +36,7 @@ Surface::Surface(Surface* cp){
     this->area = cp->area;
     this->triangles = cp->triangles;
     this->sf_id = cp->sf_id;
+    this->type = TM2IN::GEOM_TYPE::Surface;
 }
 
 Surface::Surface(Triangle& pl){
@@ -47,6 +48,7 @@ Surface::Surface(Triangle& pl){
 
     this->updateMBB();
     this->triangles.push_back(&pl);
+    this->type = TM2IN::GEOM_TYPE::Surface;
 }
 
 
@@ -55,37 +57,27 @@ Vector_3 Surface::getNormal()
     return this->normal;
 }
 
-double Surface::getArea(){
-    return this->area;
-}
 
-void Surface::updateMBB(){
-    for (int i = 0 ; i < 3 ; i++)
-    {
-        this->max_coords[i] = -10000000.000;
-        this->min_coords[i] = 10000000.00;
-    }
+void Surface::updateMBB(Geometry *gm){
+    if (gm == NULL){
+        for (int i = 0 ; i < 3 ; i++)
+        {
+            this->max_coords[i] = -10000000.000;
+            this->min_coords[i] = 10000000.00;
+        }
 
-    for (unsigned int i = 0 ; i < this->getVerticesSize() ; i++){
-        for (int j = 0 ; j < 3 ; j++){
-            this->max_coords[j] = max(this->max_coords[j], this->vertex(i)->coords[j]);
-            this->min_coords[j] = min(this->min_coords[j], this->vertex(i)->coords[j]);
+        for (unsigned int i = 0 ; i < this->getVerticesSize() ; i++){
+            for (int j = 0 ; j < 3 ; j++){
+                this->max_coords[j] = max(this->max_coords[j], this->vertex(i)->coords[j]);
+                this->min_coords[j] = min(this->min_coords[j], this->vertex(i)->coords[j]);
+            }
         }
     }
-}
-
-void Surface::setMBB(Surface* cp){
-    for (int j = 0 ; j < 3 ; j++){
-        this->max_coords[j] = max(this->max_coords[j], cp->max_coords[j]);
-        this->min_coords[j] = min(this->min_coords[j], cp->min_coords[j]);
-    }
-
-}
-
-void Surface::translate(double diff[]){
-    for (int j = 0 ; j < 3 ; j++){
-        this->max_coords[j] += diff[j];
-        this->min_coords[j] += diff[j];
+    else{
+        for (int j = 0 ; j < 3 ; j++){
+            this->max_coords[j] = max(this->max_coords[j], gm->getMax_coords()[j]);
+            this->min_coords[j] = min(this->min_coords[j], gm->getMin_coords()[j]);
+        }
     }
 }
 
@@ -210,36 +202,7 @@ bool Surface::compareLength(Surface* i, Surface* j) {
      return (i->getVerticesSize() > j->getVerticesSize());
 }
 
-bool Surface::compareArea(Surface* i, Surface* j) {
-     return (i->area > j->area);
-}
 
-
-
-Point_3 Surface::findLowestPoint(){
-    Vertex* cent = SurfaceComputation::getCenterPoint(this);
-    Plane_3 plane(cent->CGAL_point(), this->normal);
-    delete cent;
-
-    double max_dist = -1.0;
-    int max_index = 0;
-    for (ull index= 0 ; index < this->getVerticesSize() ; index++){
-        Point_3 p = this->vertex(index)->CGAL_point();
-        if (plane.oriented_side(p) != CGAL::ON_POSITIVE_SIDE){
-            double dist = CGAL::squared_distance(plane, p);
-            if (dist > max_dist){
-                max_dist = dist;
-                max_index = index;
-            }
-        }
-    }
-    return this->vertex(max_index)->CGAL_point();
-}
-
-Plane_3 Surface::getPlaneWithLowest(){
-    Point_3 point = findLowestPoint();
-    return Plane_3(point, this->normal);
-}
 
 vector<Vertex *> Surface::getVerticesList() {
     return HalfEdgeComputation::getFirstVertexList(this->exteriorBoundary);
@@ -253,6 +216,7 @@ void Surface::setVertexList(std::vector<Vertex *> newVertices) {
         this->exteriorBoundary.push_back(new HalfEdge(v1, v2, this));
     }
     this->exteriorBoundary.push_back(new HalfEdge(newVertices[newVertices.size() - 1], newVertices[0], this));
+
 }
 
 std::vector<HalfEdge *> Surface::getExteriorBoundary() {
@@ -261,26 +225,13 @@ std::vector<HalfEdge *> Surface::getExteriorBoundary() {
 }
 
 void Surface::setExteriorBoundary(std::vector<HalfEdge *> edges){
+    this->exteriorBoundary.clear();
     this->exteriorBoundary = edges;
     /*
     for (HalfEdge* edge : edges){
         edge->setParent(this);
     }
      */
-}
-
-void Surface::clearTriangleList() {
-    this->triangles.clear();
-}
-
-/**
- * remove [startIndex, endIndex) in Vertex List.
- * @param startIndex
- * @param endIndex
- */
-void Surface::removeVertexByIndex(int startIndex, int endIndex) {
-    // this->v_list.erase(this->v_list.begin() + startIndex, this->v_list.begin() + endIndex);
-    cerr << "TODO" << endl;
 }
 
 void Surface::setVertex(int index, Vertex *vt) {
@@ -300,21 +251,17 @@ Vertex *Surface::vertex(int index) {
     return this->exteriorBoundary[index]->vertices[0];
 }
 
-HalfEdge *Surface::boundary_edges(int i) {
+HalfEdge *Surface::exterior_boundary_edge(int i) {
     return this->exteriorBoundary[i];
 }
 
-int Surface::indexBoundaryEdge(HalfEdge *pEdge) {
+int Surface::index_of_exterior_boundary_edge(HalfEdge *pEdge) {
     int i = 0;
     for (HalfEdge* he : this->exteriorBoundary){
         if (pEdge == he) return i;
         i++;
     }
     return -1;
-}
-
-void Surface::removeVertexByIndex(int id) {
-    cerr << "TODO : remove Surface::removeVertexByIndex" << endl;
 }
 
 std::ostream& operator<<(std::ostream &ou, Surface *pSurface) {

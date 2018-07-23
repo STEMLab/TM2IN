@@ -11,6 +11,8 @@
 
 using namespace std;
 
+enum ARCHITECTURE {ARCH, NON_ARCH, ALL};
+
 class Options {
 public:
     Options(int argc, char **argv);

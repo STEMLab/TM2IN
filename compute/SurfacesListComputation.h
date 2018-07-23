@@ -7,6 +7,7 @@
 
 using namespace std;
 
+class TriangleMesh;
 class SurfacesListComputation{
 public:
     static int findFirstSurfaceIndexSimilarWithAxis(vector<Surface*>& surfacesList, int axis);

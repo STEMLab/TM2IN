@@ -69,7 +69,7 @@ namespace TM2IN {
                 vector < HalfEdge * > newHalfEdgeList_origin;
 
                 for (ll j = lastVertex_origin;;) {
-                    newHalfEdgeList_origin.push_back(origin->boundary_edges(j));
+                    newHalfEdgeList_origin.push_back(origin->exterior_boundary_edge(j));
                     j++;
                     if (j == origin_size) j = 0;
                     if (j == firstVertex_origin) break;
@@ -77,7 +77,7 @@ namespace TM2IN {
                 newHalfEdgeList_origin.push_back(newEdge_origin);
 
                 for (ll j = lastVertex_piece;;) {
-                    newHalfEdgeList_piece.push_back(piece->boundary_edges(j));
+                    newHalfEdgeList_piece.push_back(piece->exterior_boundary_edge(j));
                     j++;
                     if (j == piece_size) j = 0;
                     if (j == firstVertex_piece) break;
@@ -95,11 +95,10 @@ namespace TM2IN {
                     return 1;
                 }
 
-                origin->exteriorBoundary.clear();
-                piece->exteriorBoundary.clear();
-
                 origin->setExteriorBoundary(newHalfEdgeList_origin);
+                origin->updateMBB();
                 piece->setExteriorBoundary(newHalfEdgeList_piece);
+                piece->updateMBB();
 
                 return 0;
             }

@@ -3,7 +3,12 @@
 //
 
 #include "Max3DSReader.h"
+
 #include <sys/stat.h>
+
+#include "features/TriangleMesh.h"
+#include "features/Vertex.h"
+#include "features/Triangle.h"
 
 namespace TM2IN {
     namespace detail {
@@ -24,8 +29,6 @@ namespace TM2IN {
                 unsigned short l_qty; //Number of elements in each chunk
 
                 unsigned short l_face_flags; //Flag that stores some face information
-
-
 
                 vector<TriangleMesh*> meshList;
                 TriangleMesh* currentMesh = new TriangleMesh();

@@ -7,7 +7,7 @@ using namespace std;
 int main(int argc, char * argv[]) {
     try{
         Options options = Options(argc, argv);
-        createAndRemoveDir(options.version, options.output_dir);
+        createAndRemoveDir(options.output_dir);
 
         Converter converter = Converter(options);
         converter.start();

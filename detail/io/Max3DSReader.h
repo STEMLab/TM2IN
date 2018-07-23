@@ -5,8 +5,10 @@
 #ifndef TM2IN_MAX3DSREADER_H
 #define TM2IN_MAX3DSREADER_H
 
-#include <features/TriangleMesh.h>
+#include <features/Geometry.h>
 #include <fstream>
+
+using namespace std;
 
 namespace TM2IN {
     namespace detail {

@@ -1,20 +1,15 @@
 #ifndef SPACE_H
 #define SPACE_H
 
-#include <string>
-#include <vector>
-#include <bitset>
-#include <map>
-#include <queue>
+#include "features/Geometry.h"
 
-#include "predefine.h"
-
-#include "features/Triangle.h"
-#include "features/Surface.h"
 using namespace std;
 
 class PolyhedralSurface
 {
+protected:
+    double min_coords[3];
+    double max_coords[3];
 public:
     PolyhedralSurface();
     PolyhedralSurface(string pname);
@@ -25,7 +20,6 @@ public:
 
     CGAL::Bbox_3 mbb;
     string name;
-    double whole_area = 0;
     int generation;
 
     void setName(string _name){

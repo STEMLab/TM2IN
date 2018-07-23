@@ -4,6 +4,11 @@
 
 #include "JsonWriter.h"
 
+#include "features/Surface.h"
+#include "features/PolyhedralSurface.h"
+#include "features/Vertex.h"
+#include "features/Triangle.h"
+
 namespace TM2IN {
     namespace detail {
         namespace io {
@@ -49,7 +54,7 @@ namespace TM2IN {
 
                 string ret;
                 ret += "{";
-                ret.append(" \n \"area\" : " + to_string(pSurface->area) );
+                ret.append(" \n \"area\" : " + to_string(pSurface->getArea()) );
                 ret.append(" \n, \"id\" : \"" + pSurface->sf_id + "\"" );
                 ret.append( "\n, \"triangles\" : [\n");
                 for (int i = 0 ; i < (int)pSurface->triangles.size() ; i++){
@@ -70,7 +75,7 @@ namespace TM2IN {
                 }
                 string ret;
                 ret.append("{");
-                ret.append(" \n \"area\" : " + to_string(sf->area) );
+                ret.append(" \n \"area\" : " + to_string(sf->getArea()) );
                 ret.append(" ,\n \"id\" : \"" + sf->sf_id + "\"" );
                 ret.append(" ,\n \"normal\" : [");
                 ret.append(to_string(sf->normal.x()) + ", ");

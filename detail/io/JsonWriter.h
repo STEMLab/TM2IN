@@ -7,8 +7,9 @@
 
 #include <fstream>
 
-#include "features/PolyhedralSurface.h"
+#include "features/Geometry.h"
 
+using namespace std;
 
 namespace TM2IN {
     namespace detail {

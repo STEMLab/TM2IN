@@ -3,7 +3,7 @@
 //
 
 #include "features/TriangleMeshGraph.h"
-#include <iostream>
+#include "features/Triangle.h"
 
 using namespace std;
 

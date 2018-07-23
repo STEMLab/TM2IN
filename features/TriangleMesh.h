@@ -3,9 +3,8 @@
 
 #include <vector>
 #include <string>
-#include "predefine.h"
-#include "features/Triangle.h"
-#include "features/TriangleMeshGraph.h"
+
+#include "features/Geometry.h"
 using namespace std;
 
 class TriangleMesh{

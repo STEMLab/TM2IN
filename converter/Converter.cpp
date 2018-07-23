@@ -6,6 +6,7 @@
 
 #include "compute/SurfacesListComputation.h"
 #include "features/HalfEdge.h"
+#include "features/Triangle.h"
 
 Converter::Converter(Options& op) : options(op) {}
 

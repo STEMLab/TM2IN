@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include "features/Geometry.h"
 #include "util.h"
 #include "cgal/CGALCalculation.h"
 #include "detail/cgal_config.h"

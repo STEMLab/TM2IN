@@ -5,6 +5,10 @@
 #include "Max3DSWriter.h"
 #include "Max3DSReader.h"
 
+#include "features/TriangleMesh.h"
+#include "features/Vertex.h"
+#include "features/Triangle.h"
+
 namespace TM2IN{
     namespace detail{
         namespace io{
@@ -121,4 +125,5 @@ namespace TM2IN{
         }
     }
 }
+
 

@@ -128,7 +128,7 @@ void PolyhedralSurface::freeSurfaces(){
 
 
 void PolyhedralSurface::sortSurfacesByArea() {
-    sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
+    sort(this->surfacesList.begin(), this->surfacesList.end(), Geometry::compareArea);
 }
 
 void PolyhedralSurface::tagID() {
@@ -160,8 +160,8 @@ bool PolyhedralSurface::isClosed(){
         wait_queue.pop();
 
         surfaceCount += 1;
-        for (unsigned int nb = 0 ; nb < current->exteriorBoundary.size() ; nb++){
-            Surface* next_surface = current->exteriorBoundary[nb]->getOppositeEdge()->parent;
+        for (unsigned int nb = 0 ; nb < current->getVerticesSize() ; nb++){
+            Surface* next_surface = current->exterior_boundary_edge(nb)->getOppositeEdge()->parent;
             if (checked[next_surface]) continue;
             else{
                 checked[next_surface] = true;

@@ -5,7 +5,7 @@
 #ifndef TRIANGLEMESHCLEANER_HALFEDGE_H
 #define TRIANGLEMESHCLEANER_HALFEDGE_H
 
-#include "features/Triangle.h"
+#include "features/Geometry.h"
 
 class HalfEdge {
 private :

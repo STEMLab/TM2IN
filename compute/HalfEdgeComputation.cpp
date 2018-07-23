@@ -4,6 +4,7 @@
 
 #include "HalfEdgeComputation.h"
 #include "VertexComputation.h"
+#include "features/Vertex.h"
 
 using namespace std;
 

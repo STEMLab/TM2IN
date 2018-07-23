@@ -9,9 +9,8 @@
 
 #include <iostream>
 #include <vector>
-#include "predefine.h"
 
-
+class Triangle;
 namespace TMIC {
     void connectOppositeHalfEdges(std::vector<Triangle*>& triangleList);
 }

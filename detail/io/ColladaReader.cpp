@@ -2,8 +2,13 @@
 // Created by dongmin on 18. 7. 16.
 //
 
-#include <detail/io/ColladaReader.h>
-#include <lib/rapidxml/rapidxml.hpp>
+#include "detail/io/ColladaReader.h"
+#include "lib/rapidxml/rapidxml.hpp"
+#include "features/Vertex.h"
+#include "features/Triangle.h"
+#include "features/TriangleMesh.h"
+#include "util.h"
+
 #include <string>
 
 namespace TM2IN {

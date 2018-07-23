@@ -5,8 +5,7 @@
 #ifndef TM2IN_DETAIL_MERGE_SURFACES_H
 #define TM2IN_DETAIL_MERGE_SURFACES_H
 
-#include "features/Surface.h"
-#include <vector>
+#include "features/Geometry.h"
 
 using namespace std;
 

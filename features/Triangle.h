@@ -1,9 +1,8 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
-#include "features/Vertex.h"
+#include "features/Geometry.h"
 #include "features/Surface.h"
-#include "predefine.h"
 #include "cgal/CGALCalculation.h"
 
 class Triangle : public Surface {

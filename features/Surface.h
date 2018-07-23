@@ -9,26 +9,24 @@
 
 #include "logic/check.h"
 #include "util.h"
-#include "predefine.h"
+#include "features/Geometry.h"
 #include "detail/cgal_config.h"
 
-class Surface{
-private:
-public:
-    std::string sf_id;
+class Surface : public Geometry{
+protected:
     std::vector<HalfEdge* > innerEdges;
     std::vector<HalfEdge* > exteriorBoundary;
+public:
+    std::string sf_id;
 
     Vector_3 normal = CGAL::NULL_VECTOR;
 
     std::vector<Triangle*> triangles;
     std::vector<Triangle *> triangulation;
 
-    double min_coords[3];
-    double max_coords[3];
-    double area = 0.0;
-
-    Surface(){}
+    Surface(){
+        type = TM2IN::GEOM_TYPE::Surface;
+    }
     Surface(Triangle& pl);
     Surface(Triangle* pl) : Surface(*pl) {}
     Surface(Surface* cp);
@@ -40,48 +38,34 @@ public:
 
     void setNormal(Vector_3 _normal){ this->normal = _normal; }
     Vector_3 getNormal();
-    double getArea();
+    Vector_3 getSimpleNormal();
 
     std::string asJsonText();
     std::vector<Triangle*> getTriangulation();
 
-    bool isOpposite(Surface* sf);
+    virtual bool isOpposite(Surface* sf);
 
-    void setMBB(Surface* pl);
-    void updateMBB();
+    void updateMBB(Geometry *gm = NULL);
+
     int getSegmentsNumber(ll start_index, ll end_index);
 
     //compare vector size
     static bool compareLength(Surface* i, Surface* j);
-    static bool compareArea(Surface* i, Surface* j);
 
-    void translate(double diff[]);
-
-    Vector_3 getSimpleNormal();
     bool updateNormal();
     bool strict_validation();
     bool easy_validation();
     bool has_duplicate_vertex();
     bool is_simple();
 
-    Point_3 findLowestPoint();
-    Plane_3 getPlaneWithLowest();
-
     std::vector<Vertex *> getVerticesList();
-
     void setVertexList(std::vector<Vertex *> vector);
 
     std::vector<HalfEdge *> getExteriorBoundary();
     void setExteriorBoundary(std::vector<HalfEdge *> edges);
 
-    void removeVertexByIndex(int id);
-    void clearTriangleList();
-
-    void removeVertexByIndex(int startIndex, int endIndex);
-
-    HalfEdge *boundary_edges(int i);
-
-    int indexBoundaryEdge(HalfEdge *pEdge);
+    HalfEdge *exterior_boundary_edge(int i);
+    int index_of_exterior_boundary_edge(HalfEdge *pEdge);
 
     friend std::ostream& operator<<(std::ostream& ou, Surface* pSurface);
 

@@ -4,6 +4,8 @@
 
 #include "VertexComputation.h"
 #include "predefine.h"
+#include "features/Vertex.h"
+#include "util.h"
 
 int VertexComputation::compare(Vertex* a, Vertex* b){
     ll multiple = pow(10, DECIMAL);

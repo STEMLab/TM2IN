@@ -8,6 +8,9 @@
 #include "detail/io/Max3DSWriter.h"
 #include "max3ds.h"
 
+#include <iostream>
+
+using namespace std;
 
 namespace TM2IN{
     namespace io{

@@ -4,6 +4,9 @@
 
 #include "TVRReader.h"
 
+#include "features/TriangleMesh.h"
+#include "features/Vertex.h"
+#include "features/Triangle.h"
 
 namespace TM2IN {
     namespace detail {

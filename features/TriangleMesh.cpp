@@ -10,13 +10,15 @@
 #include <iostream>
 #include <logic/check.h>
 #include <compute/Connect_halfedges.h>
-#include "features/HalfEdge.h"
 #include <time.h>
 #include <random>
+#include "features/HalfEdge.h"
+#include "features/Triangle.h"
+#include "features/TriangleMeshGraph.h"
 
 void TriangleMesh::init() {
     for (int i = 0 ; i < this->triangles.size() ; i++){
-        for (HalfEdge* he : this->triangles[i]->exteriorBoundary){
+        for (HalfEdge* he : this->triangles[i]->getExteriorBoundary()){
             assert(he->getOppositeEdge() == NULL);
         }
     }

@@ -6,7 +6,7 @@
 #define TRIANGLEMESHTOCLEARSOLID_VERTEXCOMPUTATION_H
 
 #include "detail/cgal_config.h"
-#include "features/Vertex.h"
+#include "features/Geometry.h"
 
 class VertexComputation {
 public:

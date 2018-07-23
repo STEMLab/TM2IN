@@ -3,11 +3,10 @@
 //
 
 #include "Polygon_mesh_processing.h"
-#include <algorithm>
-#include <iostream>
 #include "features/Surface.h"
 #include "features/Triangle.h"
 
+#include <algorithm>
 
 typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
 
