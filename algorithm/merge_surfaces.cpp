@@ -29,16 +29,16 @@ namespace TM2IN{
 
             for (ull i = 0 ; i < sizeOfSurfaces - 1; i++){
                 Surface *&surfaceI = ps->surfacesList[i];
-                if (!surfaceI->isValid()) continue;
+                if (!surfaceI->easy_validation()) continue;
                 printProcess(i, sizeOfSurfaces, "");
                 for (ull j = i + 1; j < sizeOfSurfaces ; j++){
                     Surface *&surfaceJ = ps->surfacesList[j];
-                    if (!surfaceI->isValid()) break;
-                    if (!surfaceJ->isValid()) continue;
+                    if (!surfaceI->easy_validation()) break;
+                    if (!surfaceJ->easy_validation()) continue;
                     if (!CGALCalculation::isIntersect_BBOX(surfaceI, surfaceJ)) continue;
                     while (simplify_share_edges(ps->surfacesList[i], ps->surfacesList[j]) == 0){
                         hasSimplified = true;
-                        if (!surfaceI->isValid() || !surfaceJ->isValid()) break;
+                        if (!surfaceI->easy_validation() || !surfaceJ->easy_validation()) break;
                     }
                 }
             }
@@ -46,7 +46,7 @@ namespace TM2IN{
 
             bool hasRemoved = false;
             for (int i = sizeOfSurfaces - 1; i >= 0 ; i--){
-                if (ps->surfacesList[i]->isValid()){
+                if (ps->surfacesList[i]->strict_validation()){
                 }
                 else{
                     hasRemoved = true;

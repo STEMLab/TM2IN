@@ -4,6 +4,8 @@
 
 #include "type_conversion.h"
 
+#include "features/HalfEdge.h"
+
 namespace TM2IN {
     namespace detail {
         namespace feature {
@@ -18,6 +20,13 @@ namespace TM2IN {
 
                 Triangle_3 cgal_triangle(p1,p2,p3);
                 return cgal_triangle;
+            }
+
+            Segment_3 to_CGAL_Segment_3(HalfEdge *he) {
+                Point_3 p1 = he->vertices[0]->CGAL_point();
+                Point_3 p2 = he->vertices[1]->CGAL_point();
+                Segment_3 seg(p1, p2);
+                return  seg;
             }
         }
     }

@@ -32,10 +32,9 @@ public:
         name = _name;
     }
     int convertTrianglesToSurfaces(vector<Triangle*>& triangles);
-    int checkDuplicateVertexInSurfaces();
 
-    int checkSurfaceValid();
-
+    int surface_strict_validation();
+    int surface_easy_validation();
     /**
      * Check whether PolyhedralSurface is closed or not by bfs.
      * @return Boolean
@@ -45,7 +44,6 @@ public:
     int updateNormal();
     void sortSurfacesByArea();
     void tagID();
-    int checkSelfIntersection();
     string asJsonText();
     void setSurfacesList(vector<Surface *> new_list);
 

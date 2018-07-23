@@ -13,31 +13,30 @@ int Converter::mergeSurfaces() {
         if (this->generation_writer) this->generation_writer->start(space);
         space->generation++;
 
-        // check duplicate coordinates
-        space->checkDuplicateVertexInSurfaces();
-
         if (processGenerations(space)) return -1;
 /*
         Checker::threshold_2 = 10.0;
         Checker::threshold_1 = 40.0;
         if (processGenerations(space)) return -1;
 */
-        if (space->checkSurfaceValid() == -1){ cout << "Surface is not valid" << endl; return -1; }
+        if (space->surface_easy_validation() == -1){ cout << "Surface is not valid" << endl; return -1; }
         space->sortSurfacesByArea();
     }
     return 0;
 }
 
-int Converter::doValidation() {
+int Converter::validate() {
     for (ull it = 0 ; it < this->spaceList.size() ; it++) {
         PolyhedralSurface *space = this->spaceList[it];
-        if (!space->isClosed())
-            cerr << "space " << space->name << " is not closed" << endl;
-        space->checkSelfIntersection();
+        if (!space->isClosed()){
+            throw std::runtime_error("space " + space->name + " is not closed");
+        }
+        if (space->surface_strict_validation()){
+            throw std::runtime_error("space " + space->name + "'s surfaces are not valid");
+        }
     }
     return 0;
 }
-
 
 
 int Converter::processGenerations(PolyhedralSurface *space) {
@@ -59,9 +58,8 @@ int Converter::processGenerations(PolyhedralSurface *space) {
             }
         }
 
-        if (space->checkSurfaceValid() == -1){
-            cerr << "Surface is not valid" << endl;
-            return -1;
+        if (space->surface_easy_validation() == -1){
+            throw std::runtime_error("Surface is not valid\n");
         }
 
         if (hasMerged || simplifySegment){

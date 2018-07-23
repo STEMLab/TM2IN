@@ -14,11 +14,10 @@
 
 class Surface{
 private:
-    Plane_3 planeRef;
 public:
     std::string sf_id;
     std::vector<HalfEdge* > innerEdges;
-    std::vector<HalfEdge* > boundaryEdges;
+    std::vector<HalfEdge* > exteriorBoundary;
 
     Vector_3 normal = CGAL::NULL_VECTOR;
 
@@ -33,9 +32,8 @@ public:
     Surface(Triangle& pl);
     Surface(Triangle* pl) : Surface(*pl) {}
     Surface(Surface* cp);
-    Surface(std::vector<Vertex*>& pVertices);
 
-    ull getVerticesSize(){ return boundaryEdges.size(); }
+    ull getVerticesSize(){ return exteriorBoundary.size(); }
     void setVertex(int index, Vertex* vt);
     virtual Vertex* vertex(int index);
     void insertVertex(int index, Vertex* vt);
@@ -59,11 +57,13 @@ public:
     static bool compareArea(Surface* i, Surface* j);
 
     void translate(double diff[]);
-    bool checkDuplicate();
 
     Vector_3 getSimpleNormal();
     bool updateNormal();
-    bool isValid();
+    bool strict_validation();
+    bool easy_validation();
+    bool has_duplicate_vertex();
+    bool is_simple();
 
     Point_3 findLowestPoint();
     Plane_3 getPlaneWithLowest();
@@ -72,18 +72,13 @@ public:
 
     void setVertexList(std::vector<Vertex *> vector);
 
-    std::vector<HalfEdge *> getBoundaryEdgesList();
-    void setBoundaryEdgesList(std::vector<HalfEdge*> edges);
+    std::vector<HalfEdge *> getExteriorBoundary();
+    void setExteriorBoundary(std::vector<HalfEdge *> edges);
 
     void removeVertexByIndex(int id);
     void clearTriangleList();
 
     void removeVertexByIndex(int startIndex, int endIndex);
-
-    Plane_3 getPlaneRef(){
-        return planeRef;
-    }
-    void setPlaneRef(Plane_3 plane);
 
     HalfEdge *boundary_edges(int i);
 

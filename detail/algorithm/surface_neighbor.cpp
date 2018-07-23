@@ -10,7 +10,7 @@ namespace TM2IN{
         namespace algorithm{
             int isNeighbor(Surface *origin, Surface *piece) {
                 int share_count = 0;
-                for (HalfEdge* he : origin->getBoundaryEdgesList()){
+                for (HalfEdge* he : origin->getExteriorBoundary()){
                     if (he->oppositeEdge != NULL && he->oppositeEdge->parent == piece) share_count++;
                 }
                 return share_count;

@@ -15,8 +15,8 @@ namespace TM2IN {
         namespace algorithm {
             bool merging_invalid_test(vector<HalfEdge *> new_edges, Vector_3 newNormal){
                 Surface* pSurface = new Surface();
-                pSurface->setBoundaryEdgesList(new_edges);
-                if (!pSurface->isValid()) return 1;
+                pSurface->setExteriorBoundary(new_edges);
+                if (!pSurface->easy_validation()) return 1;
                 Plane_3 planeRef = TM2IN::detail::feature::make_simple_plane(newNormal);
                 vector<Point_2> point2dList = TM2IN::detail::feature::project_to_plane(pSurface->getVerticesList(), planeRef);
                 Polygon_2 polygon = TM2IN::detail::feature::make_CGAL_polygon(point2dList);
@@ -146,17 +146,11 @@ namespace TM2IN {
 
                 HalfEdgeComputation::setParent(new_edges, origin);
 
-                origin->setBoundaryEdgesList(new_edges);
+                origin->setExteriorBoundary(new_edges);
                 origin->normal = origin->normal + piece->normal;
                 origin->area += piece->area;
                 origin->setMBB(piece);
                 origin->triangles.insert(origin->triangles.end(), piece->triangles.begin(), piece->triangles.end());
-
-                // assert (!origin->checkDuplicate());
-
-                //TODO : delete old edges
-
-                // delete piece;
 
                 return 0;
             }

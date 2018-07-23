@@ -16,7 +16,7 @@
 
 void TriangleMesh::init() {
     for (int i = 0 ; i < this->triangles.size() ; i++){
-        for (HalfEdge* he : this->triangles[i]->boundaryEdges){
+        for (HalfEdge* he : this->triangles[i]->exteriorBoundary){
             assert(he->getOppositeEdge() == NULL);
         }
     }

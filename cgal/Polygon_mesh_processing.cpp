@@ -29,8 +29,8 @@ public:
     vector<Surface*> &surfaces;
     polyhedron_builder(vector<Vertex*> & _vertices, vector<Surface*> & _surfaces ) : coords(_vertices), surfaces(_surfaces) {}
     void operator()( HDS& hds) {
-        typedef typename HDS::Vertex   Vertex;
-        typedef typename Vertex::Point Point;
+        typedef typename HDS::Vertex   HDS_Vertex;
+        typedef typename HDS_Vertex::Point Point;
 
         // create a cgal incremental builder
         CGAL::Polyhedron_incremental_builder_3<HDS> B( hds, true);
@@ -46,7 +46,8 @@ public:
         // add the polyhedron vertices
         for( int i=0; i<(int)coords.size(); i++ ){
             B.add_vertex( Point( coords[i]->coords[0], coords[i]->coords[1], coords[i]->coords[2] ) );
-            vertex_index[coords[i]] = i;
+            Vertex* pVertex = coords[i];
+            vertex_index[pVertex] = i;
         }
 
         // add the polyhedron triangles

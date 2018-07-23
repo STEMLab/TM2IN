@@ -19,13 +19,14 @@
 #include <compute/VertexListComputation.h>
 #include <algorithm/triangulation.h>
 #include "detail/io/JsonWriter.h"
+#include "detail/algorithm/self_intersect.h"
 
 
 using namespace std;
 
 Surface::Surface(Surface* cp){
-    this->boundaryEdges = cp->boundaryEdges;
-    HalfEdgeComputation::setParent(this->boundaryEdges, this);
+    this->exteriorBoundary = cp->exteriorBoundary;
+    HalfEdgeComputation::setParent(this->exteriorBoundary, this);
 
     this->normal = cp->normal;
     for (int i = 0 ; i < 3 ; i++){
@@ -37,13 +38,9 @@ Surface::Surface(Surface* cp){
     this->sf_id = cp->sf_id;
 }
 
-Surface::Surface(std::vector<Vertex*>& pVertices){
-    cerr << "TODO" << endl;
-}
-
 Surface::Surface(Triangle& pl){
-    this->boundaryEdges = pl.boundaryEdges;
-    HalfEdgeComputation::setParent(this->boundaryEdges, this);
+    this->exteriorBoundary = pl.exteriorBoundary;
+    HalfEdgeComputation::setParent(this->exteriorBoundary, this);
 
     area = pl.getArea();
     normal = pl.getNormal();
@@ -105,10 +102,37 @@ int Surface::getSegmentsNumber(ll si, ll ei) {
     }
 }
 
-// TODO : move validator
-bool Surface::checkDuplicate(){
-    vector<Vertex*> sorted_v_list(this->getVerticesList());
 
+
+/**
+*  Check that Surface is not valid. Straight Line or Point.
+*/
+bool Surface::strict_validation(){
+    if (!easy_validation()) {
+        return false;
+    }
+    return this->is_simple();
+}
+
+bool Surface::easy_validation(){
+    if (this->getVerticesSize() < 3) {
+        return false;
+    }
+    return !this->has_duplicate_vertex();
+}
+
+/**
+ * Check surface simple (existence of self-intersection).
+ * @return Is this surface simple?
+ */
+bool Surface::is_simple(){
+    if (has_duplicate_vertex()) return false;
+    return !TM2IN::detail::algorithm::has_self_intersection(this->getExteriorBoundary());
+}
+
+
+bool Surface::has_duplicate_vertex(){
+    vector<Vertex*> sorted_v_list(this->getVerticesList());
     sort(sorted_v_list.begin(), sorted_v_list.end(), VertexComputation::greater);
     for (ull i = 0 ; i < sorted_v_list.size() - 1; i++){
         if (sorted_v_list[i] == sorted_v_list[i+1]){
@@ -202,17 +226,6 @@ bool Surface::compareArea(Surface* i, Surface* j) {
 }
 
 
-/**
-*  Check that Surface is not valid. Straight Line or Point.
-*/
-// TODO : move
-bool Surface::isValid(){
-    if (this->getVerticesSize() < 3) {
-        return false;
-    }
-    if (this->checkDuplicate()) return false;
-    return true;
-}
 
 Point_3 Surface::findLowestPoint(){
     Vertex* cent = SurfaceComputation::getCenterPoint(this);
@@ -240,26 +253,26 @@ Plane_3 Surface::getPlaneWithLowest(){
 }
 
 vector<Vertex *> Surface::getVerticesList() {
-    return HalfEdgeComputation::getFirstVertexList(this->boundaryEdges);
+    return HalfEdgeComputation::getFirstVertexList(this->exteriorBoundary);
 }
 
 void Surface::setVertexList(std::vector<Vertex *> newVertices) {
-    this->boundaryEdges.clear();
+    this->exteriorBoundary.clear();
     for (int i = 0 ; i < newVertices.size() - 1; i++){
         Vertex* v1 = newVertices[i];
         Vertex* v2 = newVertices[i+1];
-        this->boundaryEdges.push_back(new HalfEdge(v1, v2, this));
+        this->exteriorBoundary.push_back(new HalfEdge(v1, v2, this));
     }
-    this->boundaryEdges.push_back(new HalfEdge(newVertices[newVertices.size() - 1], newVertices[0], this));
+    this->exteriorBoundary.push_back(new HalfEdge(newVertices[newVertices.size() - 1], newVertices[0], this));
 }
 
-std::vector<HalfEdge *> Surface::getBoundaryEdgesList() {
-    if (boundaryEdges.size() == 0) cerr << "no boundary" << endl;
-    return boundaryEdges;
+std::vector<HalfEdge *> Surface::getExteriorBoundary() {
+    if (exteriorBoundary.size() == 0) cerr << "no boundary" << endl;
+    return exteriorBoundary;
 }
 
-void Surface::setBoundaryEdgesList(std::vector<HalfEdge*> edges){
-    this->boundaryEdges = edges;
+void Surface::setExteriorBoundary(std::vector<HalfEdge *> edges){
+    this->exteriorBoundary = edges;
     /*
     for (HalfEdge* edge : edges){
         edge->setParent(this);
@@ -282,11 +295,11 @@ void Surface::removeVertexByIndex(int startIndex, int endIndex) {
 }
 
 void Surface::setVertex(int index, Vertex *vt) {
-    this->boundaryEdges[index]->setVertex(0, vt);
+    this->exteriorBoundary[index]->setVertex(0, vt);
     if (index == 0)
-        this->boundaryEdges[this->getVerticesSize() - 1]->setVertex(1, vt);
+        this->exteriorBoundary[this->getVerticesSize() - 1]->setVertex(1, vt);
     else
-        this->boundaryEdges[index - 1]->setVertex(1, vt);
+        this->exteriorBoundary[index - 1]->setVertex(1, vt);
 }
 
 void Surface::insertVertex(int index, Vertex *vt) {
@@ -294,21 +307,17 @@ void Surface::insertVertex(int index, Vertex *vt) {
     cerr << "TODO : insertVertex" << endl;
 }
 
-void Surface::setPlaneRef(Plane_3 pl) {
-    this->planeRef = pl;
-}
-
 Vertex *Surface::vertex(int index) {
-    return this->boundaryEdges[index]->vertices[0];
+    return this->exteriorBoundary[index]->vertices[0];
 }
 
 HalfEdge *Surface::boundary_edges(int i) {
-    return this->boundaryEdges[i];
+    return this->exteriorBoundary[i];
 }
 
 int Surface::indexBoundaryEdge(HalfEdge *pEdge) {
     int i = 0;
-    for (HalfEdge* he : this->boundaryEdges){
+    for (HalfEdge* he : this->exteriorBoundary){
         if (pEdge == he) return i;
         i++;
     }

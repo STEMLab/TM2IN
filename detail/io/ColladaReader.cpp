@@ -62,7 +62,6 @@ namespace TM2IN {
                         int float_array_count=atoi(float_array_node->first_attribute("count")->value());
                         for (int i = 0 ; i < float_array_count / 3; i++){
                             Vertex* vertex = new Vertex(stof(float_array_strings[i * 3 + 0]), stof(float_array_strings[i * 3 + 1]), stof(float_array_strings[i * 3 + 2]));
-                            vertex->setIndex(i);
                             currentMesh->vertices.push_back(vertex);
                         }
                         assert(num_of_vertices == currentMesh->vertices.size());

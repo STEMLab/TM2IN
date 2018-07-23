@@ -12,7 +12,6 @@
 class HalfEdgeComputation {
 public:
     static Line_3 getCGALLine_3(HalfEdge *he);
-    static Segment_3 getCGALSegment_3(HalfEdge *he);
 
     static void setParent(std::vector<HalfEdge *> edges, Surface *pSurface);
     static std::vector<Vertex*> getFirstVertexList(std::vector<HalfEdge*> halfEdges);

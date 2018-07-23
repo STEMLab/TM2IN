@@ -37,7 +37,7 @@ int Converter::start() {
 
 int Converter::run() {
     mergeSurfaces();
-    doValidation();
+    validate();
 
     if (options.polygonizer_mode > 0) // 1 or 2 or 3
         polygonize();
@@ -92,7 +92,7 @@ int Converter::convertSpaceToTriangleMesh(){
         }
 
         for (Triangle* triangle : triangleList){
-            vector<HalfEdge*> edges = triangle->getBoundaryEdgesList();
+            vector<HalfEdge*> edges = triangle->getExteriorBoundary();
             for (HalfEdge* he : edges){
                 he->oppositeEdge = NULL;
             }

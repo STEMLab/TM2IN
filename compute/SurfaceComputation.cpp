@@ -97,18 +97,6 @@ void SurfaceComputation::removeStraight(Surface*& pSurface){
 
 
 
-std::vector<Segment_3> SurfaceComputation::makeSegment3List(Surface *&pSurface) {
-    vector<Segment_3> result;
-    vector<HalfEdge*> edges = pSurface->getBoundaryEdgesList();
-
-    for (int i = 0 ; i < edges.size() ; i++){
-        Segment_3  seg = HalfEdgeComputation::getCGALSegment_3(edges[i]);
-        result.push_back(seg);
-    }
-
-    return result;
-}
-
 std::vector<Segment_2> SurfaceComputation::makeSegment2List(Surface *&pSurface, Plane_3 plane3) {
     vector<Point_2> pointsList = TM2IN::detail::feature::project_to_plane(pSurface->getVerticesList(), plane3);
     vector<Segment_2> segmentsList;

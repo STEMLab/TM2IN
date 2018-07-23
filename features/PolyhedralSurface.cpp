@@ -60,30 +60,48 @@ int PolyhedralSurface::updateNormal(){
     return 0;
 }
 
-int PolyhedralSurface::checkSurfaceValid() {
-    cout << "\n------------- check whether surfaces are valid --------------\n" << endl;
+int PolyhedralSurface::surface_easy_validation() {
+    cout << "\n------------- check whether surfaces are valid (easy) --------------\n" << endl;
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
     {
-        Surface* surface = this->surfacesList[i];
-        surface->updateMBB();
+        Surface* pSurface = this->surfacesList[i];
+        pSurface->updateMBB();
 
-        if (surface->isValid()){
+        if (pSurface->easy_validation()){
             i++;
         }
         else{
+            cerr << pSurface->asJsonText() << endl;
             return -1;
         }
     }
     return 0;
 }
 
+int PolyhedralSurface::surface_strict_validation() {
+    cout << "\n------------- check whether surfaces are valid --------------\n" << endl;
+    for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
+    {
+        Surface* pSurface = this->surfacesList[i];
+        pSurface->updateMBB();
+
+        if (pSurface->strict_validation()){
+            i++;
+        }
+        else{
+            cerr << pSurface->asJsonText() << endl;
+            return -1;
+        }
+    }
+    return 0;
+}
 
 int PolyhedralSurface::removeStraight(){
     cout << "\n------------- removeStraight --------------\n" << endl;
     for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); ){
         Surface* surface = this->surfacesList[i];
         SurfaceComputation::removeStraight(surface);
-        if (surface->isValid()){
+        if (surface->strict_validation()){
             i++;
         }
         else{
@@ -109,37 +127,12 @@ void PolyhedralSurface::freeSurfaces(){
 }
 
 
-int PolyhedralSurface::checkDuplicateVertexInSurfaces() {
-    for (unsigned int s_i = 0 ; s_i < this->surfacesList.size() ;s_i++){
-        if (surfacesList[s_i]->checkDuplicate()){
-            throw std::runtime_error("it has duplicate Vertex\n");
-        }
-    }
-    return 0;
-}
-
 void PolyhedralSurface::sortSurfacesByArea() {
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);
 }
 
 void PolyhedralSurface::tagID() {
     SurfacesListComputation::tagID(this->surfacesList);
-}
-
-int PolyhedralSurface::checkSelfIntersection() {
-    int count = 0;
-    for (unsigned int sfID = 0 ; sfID < this->surfacesList.size(); sfID++) {
-        Surface* pSurface = this->surfacesList[sfID];
-        if (SurfaceIntersection::checkSelfIntersection(pSurface)){
-            cerr << "Self Intersection in Surface " << sfID << endl;
-            cerr << pSurface->asJsonText() << endl;
-            count++;
-        }
-        else {
-        }
-    }
-    cout << this->name << " Self Intersection Count : " << count << endl;
-    return 0;
 }
 
 string PolyhedralSurface::asJsonText() {
@@ -167,8 +160,8 @@ bool PolyhedralSurface::isClosed(){
         wait_queue.pop();
 
         surfaceCount += 1;
-        for (unsigned int nb = 0 ; nb < current->boundaryEdges.size() ; nb++){
-            Surface* next_surface = current->boundaryEdges[nb]->getOppositeEdge()->parent;
+        for (unsigned int nb = 0 ; nb < current->exteriorBoundary.size() ; nb++){
+            Surface* next_surface = current->exteriorBoundary[nb]->getOppositeEdge()->parent;
             if (checked[next_surface]) continue;
             else{
                 checked[next_surface] = true;

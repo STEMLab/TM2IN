@@ -24,7 +24,7 @@ public:
     Vertex* vertex(int idx);
 
 
-    Kernel::Triangle_3 CGAL_Triangle();
+    Kernel::Triangle_3 CGAL_triangle();
 };
 
 

@@ -42,6 +42,8 @@ public:
             exit(-1);
         }
     };
+
+    Kernel::Segment_3 to_CGAL_segment();
 };
 
 

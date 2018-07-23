@@ -83,7 +83,7 @@ namespace TM2IN{
                 scale_up(newVertices, 1.2);
                 polygons.push_back(make_sf_polygon(newVertices));
 
-                // assert(!SurfaceIntersection::checkSelfIntersection(sf));
+                // assert(!SurfaceIntersection::check_surface_is_simple(sf));
             }
             */
 

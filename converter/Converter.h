@@ -28,7 +28,7 @@ private:
 
     void tagID();
 
-    int doValidation();
+    int validate();
 
     //Triangle Mesh
     int initTriangleMesh();

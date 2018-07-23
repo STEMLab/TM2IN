@@ -86,7 +86,7 @@ namespace TM2IN {
 
                 // check polygon after simplification
                 Surface* pSurface = new Surface();
-                pSurface->setBoundaryEdgesList(newHalfEdgeList_piece);
+                pSurface->setExteriorBoundary(newHalfEdgeList_piece);
                 Plane_3 planeRef = TM2IN::detail::feature::make_simple_plane(piece->normal);
                 vector<Point_2> point2dList = TM2IN::detail::feature::project_to_plane(pSurface->getVerticesList(), planeRef);
                 Polygon_2 polygon = TM2IN::detail::feature::make_CGAL_polygon(point2dList);
@@ -95,11 +95,11 @@ namespace TM2IN {
                     return 1;
                 }
 
-                origin->boundaryEdges.clear();
-                piece->boundaryEdges.clear();
+                origin->exteriorBoundary.clear();
+                piece->exteriorBoundary.clear();
 
-                origin->setBoundaryEdgesList(newHalfEdgeList_origin);
-                piece->setBoundaryEdgesList(newHalfEdgeList_piece);
+                origin->setExteriorBoundary(newHalfEdgeList_origin);
+                piece->setExteriorBoundary(newHalfEdgeList_piece);
 
                 return 0;
             }
