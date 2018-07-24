@@ -11,7 +11,7 @@
 
 namespace TM2IN{
     namespace detail{
-        namespace feature{
+        namespace cgal{
             Kernel::Point_3 to_CGAL_Point_3(Vertex& vt);
             Kernel::Triangle_3 to_CGAL_Triangle_3(Triangle& tri);
             Segment_3 to_CGAL_Segment_3(HalfEdge* he);

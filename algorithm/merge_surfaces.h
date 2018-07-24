@@ -6,7 +6,6 @@
 #define TM2IN_MERGE_SURFACES_H
 
 #include "features/PolyhedralSurface.h"
-#include "detail/algorithm/merge_surfaces.h"
 
 namespace TM2IN{
     namespace algorithm{

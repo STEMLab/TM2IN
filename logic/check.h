@@ -39,8 +39,6 @@ public:
     static bool isSameVertex(Vertex& v1, Vertex& v2);
     static bool isSameVertex(Vertex* v1, Vertex* v2);
 
-    static bool isCollinear(Vertex *start_p, Vertex *check_p, Vertex *end_p);
-
     static int compare_vertex(Vertex* v1, Vertex* v2);
 
     static int num_of_straight;

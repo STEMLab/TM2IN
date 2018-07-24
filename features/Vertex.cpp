@@ -1,5 +1,5 @@
 #include <string>
-#include <detail/feature/type_conversion.h>
+#include <detail/cgal/type_conversion.h>
 
 #include "features/Vertex.h"
 #include "detail/io/JsonWriter.h"
@@ -21,7 +21,7 @@ void Vertex::translateTo(vector<double> dest){
 
 
 Kernel::Point_3 Vertex::CGAL_point() {
-    return TM2IN::detail::feature::to_CGAL_Point_3(*this);
+    return TM2IN::detail::cgal::to_CGAL_Point_3(*this);
 }
 
 

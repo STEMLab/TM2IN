@@ -7,7 +7,7 @@
 
 namespace TM2IN {
     namespace detail {
-        namespace feature {
+        namespace cgal {
             Polygon_2 make_CGAL_polygon(vector<Point_2> surface2D) {
                 Polygon_2 polygon;
                 for (int i = 0 ; i < surface2D.size() ; i++){

@@ -11,11 +11,11 @@ namespace TM2IN {
             int triangulate_surface(Surface *pSurface, vector<Triangle *> &result) {
                 std::vector<Vertex*> vertexList = pSurface->getVerticesList();
                 // convert 3D point to 2D
-                Plane_3 planeRef = TM2IN::detail::feature::make_simple_plane(pSurface->normal);
-                vector<Point_2> point2dList = TM2IN::detail::feature::project_to_plane(pSurface->getVerticesList(), planeRef);
+                Plane_3 planeRef = TM2IN::detail::cgal::make_simple_plane(pSurface->normal);
+                vector<Point_2> point2dList = TM2IN::detail::cgal::project_to_plane(pSurface->getVerticesList(), planeRef);
 
                 // partition Surface to convex 2D polygons.
-                Polygon_2 polygon = TM2IN::detail::feature::make_CGAL_polygon(point2dList);
+                Polygon_2 polygon = TM2IN::detail::cgal::make_CGAL_polygon(point2dList);
                 if (!polygon.is_simple())
                 {
                     cerr << "polygon is not simple" << endl;
@@ -29,7 +29,7 @@ namespace TM2IN {
                     return 1;
                 }
 
-                vector<Polygon_2> polygonList = TM2IN::detail::feature::convexPartition(polygon);
+                vector<Polygon_2> polygonList = TM2IN::detail::cgal::convexPartition(polygon);
 
                 vector<Triangle* > triangles;
                 for (int i = 0 ; i < polygonList.size() ; i++){

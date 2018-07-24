@@ -2,8 +2,8 @@
 // Created by dongmin on 18. 7. 20.
 //
 
-#include <detail/feature/polygon.h>
-#include <detail/feature/plane.h>
+#include <detail/cgal/polygon.h>
+#include <detail/cgal/plane.h>
 #include "simplify_share_edges.h"
 #include "surface_neighbor.h"
 
@@ -87,9 +87,9 @@ namespace TM2IN {
                 // check polygon after simplification
                 Surface* pSurface = new Surface();
                 pSurface->setExteriorBoundary(newHalfEdgeList_piece);
-                Plane_3 planeRef = TM2IN::detail::feature::make_simple_plane(piece->normal);
-                vector<Point_2> point2dList = TM2IN::detail::feature::project_to_plane(pSurface->getVerticesList(), planeRef);
-                Polygon_2 polygon = TM2IN::detail::feature::make_CGAL_polygon(point2dList);
+                Plane_3 planeRef = TM2IN::detail::cgal::make_simple_plane(piece->normal);
+                vector<Point_2> point2dList = TM2IN::detail::cgal::project_to_plane(pSurface->getVerticesList(), planeRef);
+                Polygon_2 polygon = TM2IN::detail::cgal::make_CGAL_polygon(point2dList);
                 if (!polygon.is_simple() || polygon.orientation() == -1) {
                     cerr << "cannot be simplified" << endl;
                     return 1;

@@ -1,4 +1,5 @@
 #include <features/TriangleMesh.h>
+#include <cgal/vector_angle.h>
 #include "SurfacesListComputation.h"
 
 #include "SurfaceComputation.h"
@@ -40,7 +41,7 @@ CGAL::Bbox_3 TMIC::getMBB(vector<Surface *> &surfacesList){
 int SurfacesListComputation::findFirstSurfaceIndexSimilarWithAxis(vector<Surface*>& surfacesList, int axis){
     for (ull i = 0 ; i < surfacesList.size() ; i++){
         Surface* sf = surfacesList[i];
-        if (CGALCalculation::findNormalType6(sf->normal) == axis){
+        if (TM2IN::cgal::findNormalType6(sf->normal) == axis){
             return i;
         }
     }

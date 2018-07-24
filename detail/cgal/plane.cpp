@@ -4,10 +4,11 @@
 
 #include "plane.h"
 #include "features/Surface.h"
+#include "cgal/vector_angle.h"
 
 namespace TM2IN {
     namespace detail {
-        namespace feature{
+        namespace cgal{
             Plane_3 make_PCA_plane(std::vector < Vertex * > vertices, Vector_3 normal) {
                 std::vector <Point_3> cgal_points;
                 for (int i = 0; i<vertices.size();i++) {
@@ -18,7 +19,7 @@ namespace TM2IN {
 
                 Vector_3 planeVector = plane.orthogonal_vector();
                 CGAL_assertion(normal!= CGAL::NULL_VECTOR);
-                if (CGALCalculation::getAngle(planeVector, normal) > 90) {
+                if (TM2IN::cgal::getAngle(planeVector, normal) > 90) {
                     return plane.opposite();
                 }
                 else
@@ -26,8 +27,8 @@ namespace TM2IN {
             }
 
             Plane_3 make_simple_plane(Vector_3 pNormal) {
-                int type = CGALCalculation::findNormalType6(pNormal);
-                Vector_3 normal = CGALCalculation::normal_list6[type];
+                int type = TM2IN::cgal::findNormalType6(pNormal);
+                Vector_3 normal = TM2IN::cgal::simple_normal_vector_list6[type];
                 Point_3 origin(0,0,0);
                 Plane_3 plane3(origin, normal);
                 return plane3;

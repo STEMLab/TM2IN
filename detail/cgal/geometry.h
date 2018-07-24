@@ -9,7 +9,7 @@
 
 namespace TM2IN {
     namespace detail {
-        namespace feature {
+        namespace cgal {
             bool has_bbox_intersect(Surface *s1, Surface *s2);
         }
     }

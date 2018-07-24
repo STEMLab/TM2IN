@@ -4,13 +4,14 @@
 
 #include "merge_surfaces.h"
 
-#include <detail/feature/plane.h>
+#include <detail/cgal/plane.h>
 #include <compute/VertexComputation.h>
 #include <compute/HalfEdgeComputation.h>
+#include <cgal/vector_angle.h>
 
 #include "detail/algorithm/surface_neighbor.h"
-#include "detail/feature/polygon.h"
-#include "detail/feature/geometry.h"
+#include "detail/cgal/polygon.h"
+#include "detail/cgal/geometry.h"
 #include "features/Surface.h"
 
 namespace TM2IN {
@@ -20,9 +21,9 @@ namespace TM2IN {
                 Surface* pSurface = new Surface();
                 pSurface->setExteriorBoundary(new_edges);
                 if (!pSurface->easy_validation()) return 1;
-                Plane_3 planeRef = TM2IN::detail::feature::make_simple_plane(newNormal);
-                vector<Point_2> point2dList = TM2IN::detail::feature::project_to_plane(pSurface->getVerticesList(), planeRef);
-                Polygon_2 polygon = TM2IN::detail::feature::make_CGAL_polygon(point2dList);
+                Plane_3 planeRef = TM2IN::detail::cgal::make_simple_plane(newNormal);
+                vector<Point_2> point2dList = TM2IN::detail::cgal::project_to_plane(pSurface->getVerticesList(), planeRef);
+                Polygon_2 polygon = TM2IN::detail::cgal::make_CGAL_polygon(point2dList);
                 if (!polygon.is_simple() || polygon.orientation() == -1){
                     return 1;
                 }
@@ -74,11 +75,11 @@ namespace TM2IN {
 
             int SurfaceMerger::merge(Surface *origin, Surface *piece) {
                 // check Polygon is in near polygon or not
-                if (!TM2IN::detail::feature::has_bbox_intersect(origin, piece)) return 1;
+                if (!TM2IN::detail::cgal::has_bbox_intersect(origin, piece)) return 1;
 
                 // check They are neighbor
                 if (!isNeighbor(origin, piece)) return 1;
-                if (CGALCalculation::getAngle(origin->normal, piece->normal) > 179.999999){
+                if (TM2IN::cgal::getAngle(origin->normal, piece->normal) > 179.999999){
                     return 1;
                 }
 
@@ -89,7 +90,7 @@ namespace TM2IN {
                 if (constructNeighborInfo(piece, origin, ni)){
                     cerr << "\n" << origin->asJsonText() << endl;
                     cerr << "\n" << piece->asJsonText() <<endl;
-                    cerr << CGALCalculation::getAngle(origin->normal, piece->normal)  << endl;
+                    cerr << TM2IN::cgal::getAngle(origin->normal, piece->normal)  << endl;
                     return 1;
                 }
 
@@ -101,7 +102,7 @@ namespace TM2IN {
                 if (findStartAndEnd(piece_vertex_list, origin_vertex_list, piece_middle, origin_middle, firstVertex_piece, lastVertex_piece, firstVertex_origin, lastVertex_origin)){
                     cerr << "\n" << origin->asJsonText() << endl;
                     cerr << "\n" << piece->asJsonText() <<endl;
-                    cerr << CGALCalculation::getAngle(origin->normal, piece->normal)  << endl;
+                    cerr << TM2IN::cgal::getAngle(origin->normal, piece->normal)  << endl;
                     return 1;
                 }
                 */
@@ -161,7 +162,7 @@ namespace TM2IN {
             bool SurfaceMerger::check_merge_condition(Vector_3 &big, Vector_3 &small) {
                 Vector_3 added = big + small;
                 if (is_coplanar(big, small)){
-                    double addedAngle = CGALCalculation::getAngle(added, big);
+                    double addedAngle = TM2IN::cgal::getAngle(added, big);
                     return addedAngle <= thres2;
                 }
                 return false;
@@ -173,7 +174,7 @@ namespace TM2IN {
              * @return is it co-planar
              */
             bool SurfaceMerger::is_coplanar(Vector_3 &big, Vector_3 &small) {
-                double angle = CGALCalculation::getAngle(big, small);
+                double angle = TM2IN::cgal::getAngle(big, small);
                 return angle <= thres1;
             }
 

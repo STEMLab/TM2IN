@@ -3,7 +3,8 @@
 //
 
 #include <cgal/SurfaceIntersection.h>
-#include <detail/feature/plane.h>
+#include <detail/cgal/plane.h>
+#include <algorithm/collinear.h>
 #include "SurfaceComputation.h"
 #include "VertexComputation.h"
 #include "compute/VertexListComputation.h"
@@ -80,7 +81,7 @@ void SurfaceComputation::removeStraight(Surface*& pSurface){
         Vertex* check_p = vertexList[secondIndex];
         ll thirdIndex = i + 1 == vertexList.size()? 0 : i+1;
         Vertex* end_p = vertexList[thirdIndex];
-        if (Checker::isCollinear(start_p, check_p, end_p)){
+        if (TM2IN::algorithm::isCollinear(start_p, check_p, end_p)){
             vertexList.erase(vertexList.begin() + i);
             removed_count++;
             Checker::num_of_straight += 1;
@@ -98,7 +99,7 @@ void SurfaceComputation::removeStraight(Surface*& pSurface){
 
 
 std::vector<Segment_2> SurfaceComputation::makeSegment2List(Surface *&pSurface, Plane_3 plane3) {
-    vector<Point_2> pointsList = TM2IN::detail::feature::project_to_plane(pSurface->getVerticesList(), plane3);
+    vector<Point_2> pointsList = TM2IN::detail::cgal::project_to_plane(pSurface->getVerticesList(), plane3);
     vector<Segment_2> segmentsList;
     for (int i = 0 ; i < pointsList.size() - 1 ; i++){
         Segment_2 seg(pointsList[i], pointsList[i+1]);

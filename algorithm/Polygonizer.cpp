@@ -2,13 +2,15 @@
 // Created by dongmin on 18. 7. 19.
 //
 
+#include "Polygonizer.h"
+
 #include <compute/Connect_halfedges.h>
 #include <compute/SurfacesListComputation.h>
 
 #include "features/Triangle.h"
+#include "features/PolyhedralSurface.h"
 #include "features/Surface.h"
-#include "Polygonizer.h"
-#include "detail/feature/plane.h"
+#include "detail/cgal/plane.h"
 #include "algorithm/merge_surfaces.h"
 
 namespace TM2IN{
@@ -65,7 +67,7 @@ namespace TM2IN{
                     }
                 }
 
-                Plane_3 plane = TM2IN::detail::feature::make_PCA_plane(triangle_vertices, sf->normal);
+                Plane_3 plane = TM2IN::detail::cgal::make_PCA_plane(triangle_vertices, sf->normal);
 
                 vector<Vertex*> newVertices;
                 for (ull index = 0 ; index < sf->getVerticesSize() ; index++ )

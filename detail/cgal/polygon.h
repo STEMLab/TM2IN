@@ -12,7 +12,7 @@ using namespace std;
 
 namespace TM2IN {
     namespace detail {
-        namespace feature {
+        namespace cgal {
             Polygon_2 make_CGAL_polygon(vector<Point_2> surface2D);
             vector<Polygon_2> convexPartition(Polygon_2 polygon);
         }

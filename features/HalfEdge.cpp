@@ -2,7 +2,7 @@
 // Created by dongmin on 18. 1. 12.
 //
 
-#include <detail/feature/type_conversion.h>
+#include <detail/cgal/type_conversion.h>
 #include "HalfEdge.h"
 
 bool HalfEdge::isSame(HalfEdge* he){
@@ -42,5 +42,5 @@ void HalfEdge::setVertex(int i, Vertex *vt) {
 }
 
 Kernel::Segment_3 HalfEdge::to_CGAL_segment() {
-    return TM2IN::detail::feature::to_CGAL_Segment_3(this);
+    return TM2IN::detail::cgal::to_CGAL_Segment_3(this);
 }

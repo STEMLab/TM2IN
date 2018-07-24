@@ -7,7 +7,7 @@
 
 namespace TM2IN {
     namespace detail {
-        namespace feature {
+        namespace cgal {
             bool has_bbox_intersect(Surface *s1, Surface *s2){
                 CGAL::Bbox_3 b1(s1->getMin_coords()[0],s1->getMin_coords()[1],s1->getMin_coords()[2],
                                 s1->getMax_coords()[0],s1->getMax_coords()[1],s1->getMax_coords()[2]);

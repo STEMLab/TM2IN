@@ -188,7 +188,7 @@ void PolyhedralSurface::rotateSpaceByFloorTo00(){
     //floor->makePlanar(plane);
 
     Vector_3 vector_z(0,0,1);
-    double angle = -CGALCalculation::getAngle(floor->normal, vector_z);
+    double angle = -TM2IN::cgal::getAngle(floor->normal, vector_z);
     if (angle == 0.0){
         cout << "angle is 0.0" << endl;
         return;

@@ -1,7 +1,12 @@
 #ifndef SPACE_H
 #define SPACE_H
 
-#include "features/Geometry.h"
+#include <vector>
+#include <string>
+
+#include "features/Surface.h"
+#include "features/Vertex.h"
+#include "features/Triangle.h"
 
 using namespace std;
 

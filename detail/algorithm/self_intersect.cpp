@@ -2,7 +2,7 @@
 // Created by dongmin on 18. 7. 23.
 //
 
-#include "detail/feature/type_conversion.h"
+#include "detail/cgal/type_conversion.h"
 #include "self_intersect.h"
 
 namespace TM2IN {
@@ -11,7 +11,7 @@ namespace TM2IN {
             bool has_self_intersection(vector<HalfEdge *> edges) {
                 vector<Segment_3> segmentList;
                 for (int i = 0 ; i < edges.size() ; i++){
-                    segmentList.push_back(TM2IN::detail::feature::to_CGAL_Segment_3(edges[i]));
+                    segmentList.push_back(TM2IN::detail::cgal::to_CGAL_Segment_3(edges[i]));
                 }
                 for (int i = 0 ; i < segmentList.size() - 2; i++) {
                     for (int j = i + 2; j < segmentList.size(); j++) {

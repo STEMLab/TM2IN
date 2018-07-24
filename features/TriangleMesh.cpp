@@ -12,6 +12,7 @@
 #include <compute/Connect_halfedges.h>
 #include <time.h>
 #include <random>
+#include <cgal/vector_angle.h>
 #include "features/HalfEdge.h"
 #include "features/Triangle.h"
 #include "features/TriangleMeshGraph.h"
@@ -138,7 +139,7 @@ bool TriangleMesh::isFurniture() {
         vector_coords[index % 3] = index % 6 >= 3? -1 : 1;
         Vector_3 vector_to_min_plane(vector_coords[0], vector_coords[1], vector_coords[2]);
 
-        double angle = CGALCalculation::getAngle(normal_of_triangle, vector_to_min_plane);
+        double angle = TM2IN::cgal::getAngle(normal_of_triangle, vector_to_min_plane);
         assert(angle != 90.0);
         if (angle > 90 && angle <= 180){
             //direction to outside

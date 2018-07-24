@@ -7,10 +7,10 @@
 
 #include "SurfaceIntersection.h"
 #include <bitset>
-#include <detail/feature/plane.h>
+#include <detail/cgal/plane.h>
 
 using namespace std;
-
+/*
 std::vector<Surface *> SurfaceIntersection::resolveSelfIntersection(Surface * &pSurface) {
     int rec = 0;
     vector<Surface*> newSurfaceList;
@@ -49,14 +49,13 @@ std::vector<Surface *> SurfaceIntersection::resolveSelfIntersection(Surface * &p
 }
 
 
-/**
- *
- * @param pSurface
- * @return
- * 0 : made New Vertex.
- * 1 : no special Intersection
- * 2 : special case.
- */
+//
+// @param pSurface
+// @return
+// 0 : made New Vertex.
+// 1 : no special Intersection
+// 2 : special case.
+//
 
 int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
     double threshold = 0.0;
@@ -269,3 +268,4 @@ void SurfaceIntersection::resolveEasySelfIntersection(Surface *&pSurface) {
     }
 
 }
+*/
