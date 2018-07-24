@@ -2,9 +2,9 @@
 #include <io/max3ds.h>
 #include <io/collada.h>
 #include <io/json.h>
+#include <algorithm/mbb.h>
 #include "Converter.h"
 
-#include "compute/SurfacesListComputation.h"
 #include "features/HalfEdge.h"
 #include "features/Triangle.h"
 
@@ -134,18 +134,20 @@ int Converter::handleOpenTriangleMesh() {
 void Converter::printInputDataSpec() {
     vector<Surface*> surfaces;
 
+    double area_sum = 0.0;
     for (ull it = 0 ; it <this->mesh_list.size() ; it++){
-        for (Triangle* triangle : this->mesh_list[it]->triangles)
+        for (Triangle* triangle : this->mesh_list[it]->triangles){
             surfaces.push_back(triangle);
+            area_sum += triangle->getArea();
+        }
     }
 
     int trianglesCount = surfaces.size();
-    double area = TMIC::getAverageSize(surfaces);
     CGAL::Bbox_3 mbb;
-    mbb = TMIC::getMBB(surfaces);
+    mbb = TM2IN::algorithm::getMBB(surfaces);
 
     cout << "\n\nTriangles : " << trianglesCount << endl;
     cout << "Bbox : " << mbb << endl;
-    cout << "Area : " << area << endl;
+    cout << "Area : " << area_sum / (double)trianglesCount << endl;
     cout << "\n\n" << endl;
 }

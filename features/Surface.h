@@ -40,7 +40,7 @@ public:
     Vector_3 getNormal();
     Vector_3 getSimpleNormal();
 
-    std::string asJsonText();
+    virtual std::string asJsonText();
     std::vector<Triangle*> getTriangulation();
 
     virtual bool isOpposite(Surface* sf);

@@ -9,10 +9,10 @@
 #include <fstream>
 #include <iostream>
 #include <logic/check.h>
-#include <compute/Connect_halfedges.h>
 #include <time.h>
 #include <random>
 #include <cgal/vector_angle.h>
+#include <detail/features/halfedge_string.h>
 #include "features/HalfEdge.h"
 #include "features/Triangle.h"
 #include "features/TriangleMeshGraph.h"
@@ -23,7 +23,7 @@ void TriangleMesh::init() {
             assert(he->getOppositeEdge() == NULL);
         }
     }
-    TMIC::connectOppositeHalfEdges(this->triangles);
+    TM2IN::detail::HalfEdgeString::connectOppositeHalfEdges(this->triangles);
     this->makeGraph();
 }
 

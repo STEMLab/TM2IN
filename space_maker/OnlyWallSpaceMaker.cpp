@@ -1,8 +1,7 @@
-#include <compute/SurfaceComputation.h>
+#include <compute/unused.h>
 #include "features/Surface.h"
 #include "logic/check.h"
 #include "OnlyWallSpaceMaker.h"
-#include "compute/SurfacesListComputation.h"
 #include "detail/cgal_config.h"
 #include "cgal/CGALCalculation.h"
 /*

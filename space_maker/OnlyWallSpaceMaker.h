@@ -2,7 +2,6 @@
 #define ONLYWALLSPACEMAKER_H_INCLUDED
 
 #include "predefine.h"
-#include "compute/SurfacesListComputation.h"
 
 using namespace std;
 

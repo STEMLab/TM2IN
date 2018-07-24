@@ -5,9 +5,8 @@
 #include "merge_surfaces.h"
 
 #include <detail/cgal/plane.h>
-#include <compute/VertexComputation.h>
-#include <compute/HalfEdgeComputation.h>
 #include <cgal/vector_angle.h>
+#include <detail/features/halfedge_string.h>
 
 #include "detail/algorithm/surface_neighbor.h"
 #include "detail/cgal/polygon.h"
@@ -148,7 +147,7 @@ namespace TM2IN {
                 if (merging_invalid_test(new_edges, origin->normal + piece->normal)) return 1;
 
 
-                HalfEdgeComputation::setParent(new_edges, origin);
+                TM2IN::detail::HalfEdgeString::setParent(new_edges, origin);
 
                 origin->setExteriorBoundary(new_edges);
                 origin->updateMBB(piece);

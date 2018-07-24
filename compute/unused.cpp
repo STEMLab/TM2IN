@@ -1,17 +1,66 @@
 //
-// Created by dongmin on 18. 1. 29.
+// Created by dongmin on 18. 1. 18.
 //
 
-#include <compute/SurfaceComputation.h>
-#include <compute/VertexListComputation.h>
-
-#include "SurfaceIntersection.h"
-#include <bitset>
 #include <detail/cgal/plane.h>
+#include <algorithm/collinear.h>
+#include "unused.h"
+#include "features/TriangleMeshGraph.h"
+
+#define GAP_FOR_SNAP 3
+
 
 using namespace std;
+
+namespace TM2IN{
+    namespace unused{
+        void removeStraight(Surface*& pSurface){
+            if (pSurface->getVerticesSize() < 3) return;
+            int removed_count = 0;
+
+            vector<Vertex*> vertexList = pSurface->getVerticesList();
+            for (ll i = 0 ; i < vertexList.size(); ){
+                if (vertexList.size() < 3) return;
+                ll firstIndex = i == 0? vertexList.size() - 1: i-1;
+                Vertex* start_p = vertexList[firstIndex];
+                ll secondIndex = i;
+                Vertex* check_p = vertexList[secondIndex];
+                ll thirdIndex = i + 1 == vertexList.size()? 0 : i+1;
+                Vertex* end_p = vertexList[thirdIndex];
+                if (TM2IN::algorithm::isCollinear(start_p, check_p, end_p)){
+                    vertexList.erase(vertexList.begin() + i);
+                    removed_count++;
+                    Checker::num_of_straight += 1;
+                }
+                else{
+                    i++;
+                }
+            }
+
+            pSurface->setVertexList(vertexList);
+            pSurface->updateMBB();
+            if (removed_count) cout << removed_count << " are removed in straight" << endl;
+        }
+
+
+        std::vector<Segment_2> makeSegment2List(Surface *&pSurface, Plane_3 plane3) {
+            vector<Point_2> pointsList = TM2IN::detail::cgal::project_to_plane(pSurface->getVerticesList(), plane3);
+            vector<Segment_2> segmentsList;
+            for (int i = 0 ; i < pointsList.size() - 1 ; i++){
+                Segment_2 seg(pointsList[i], pointsList[i+1]);
+                segmentsList.push_back(seg);
+            }
+            Segment_2 last_seg(pointsList[pointsList.size() - 1], pointsList[0]);
+            segmentsList.push_back(last_seg);
+            return segmentsList;
+        }
+
+    }
+}
+
 /*
-std::vector<Surface *> SurfaceIntersection::resolveSelfIntersection(Surface * &pSurface) {
+ *
+std::vector<Surface *> resolveSelfIntersection(Surface * &pSurface) {
     int rec = 0;
     vector<Surface*> newSurfaceList;
 
@@ -57,9 +106,10 @@ std::vector<Surface *> SurfaceIntersection::resolveSelfIntersection(Surface * &p
 // 2 : special case.
 //
 
-int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
+int makeNewIntersectionVertex(Surface *&pSurface){
     double threshold = 0.0;
-    vector<Segment_2> segmentList = SurfaceComputation::makeSegment2List(pSurface, pSurface->getPlaneRef());
+    Plane_3 pl = TM2IN::detail::cgal::make_PCA_plane(pSurface->getVerticesList(), pSurface->normal);
+    vector<Segment_2> segmentList = SurfaceComputation::makeSegment2List(pSurface, pl);
     // Intersection Point
     for (int i = 0 ; i < segmentList.size() - 2; i++){
         for (int j = i + 2 ; j < segmentList.size() ; j++){
@@ -240,12 +290,10 @@ int SurfaceIntersection::makeNewIntersectionVertex(Surface *&pSurface){
     return 1;
 }
 
-#define GAP_FOR_SNAP 3
-
-void SurfaceIntersection::resolveEasySelfIntersection(Surface *&pSurface) {
+void resolveEasySelfIntersection(Surface *&pSurface) {
     double threshold = 0.000001;
 
-    vector<Point_2> pointsList = TM2IN::detail::feature::project_to_plane(pSurface->getVerticesList(), pSurface->getPlaneRef());
+    vector<Point_2> pointsList = TM2IN::detail::cgal::project_to_plane(pSurface->getVerticesList(), pSurface->getPlaneRef());
     for (int i = 0 ; i < pointsList.size() - 1; i++){
         for (int j = 2 ; j <= GAP_FOR_SNAP ; j++){
             int nextIndex = i + j >= pointsList.size() ? i + j - pointsList.size() : i + j;
@@ -268,4 +316,8 @@ void SurfaceIntersection::resolveEasySelfIntersection(Surface *&pSurface) {
     }
 
 }
-*/
+
+ */
+
+
+

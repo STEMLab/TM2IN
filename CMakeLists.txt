@@ -36,6 +36,8 @@ file(GLOB DETAIL_FILES
         "detail/cgal_config.h"
         "detail/algorithm/*.h"
         "detail/algorithm/*.cpp"
+        "detail/features/*.h"
+        "detail/features/*.cpp"
         )
 
 file(GLOB SOURCE_FILES

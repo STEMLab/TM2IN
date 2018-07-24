@@ -14,7 +14,6 @@ class Geometry;
 class Vertex;
 class Surface;
 class PolyhedralSurface;
-class SurfacesListComputation;
 class TriangleMesh;
 class TriangleMeshGraph;
 class Triangle;
@@ -49,6 +48,7 @@ public:
     const double *getMin_coords() const;
     const double *getMax_coords() const;
     virtual void updateMBB(Geometry* gm) = 0;
+    virtual std::string asJsonText() = 0;
 };
 
 #endif //TM2IN_FEATURES_GEOMETRY_H

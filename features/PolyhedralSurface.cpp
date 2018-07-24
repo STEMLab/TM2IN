@@ -5,13 +5,11 @@
 #include <climits>
 #include <algorithm>
 #include <cmath>
+#include <algorithm/mbb.h>
 
 #include "detail/io/JsonWriter.h"
-#include "compute/SurfacesListComputation.h"
-#include "compute/VertexComputation.h"
-#include "compute/SurfaceComputation.h"
+#include "compute/unused.h"
 #include "features/TriangleMesh.h"
-#include "cgal/SurfaceIntersection.h"
 #include "features/HalfEdge.h"
 
 PolyhedralSurface::PolyhedralSurface(){
@@ -96,26 +94,8 @@ int PolyhedralSurface::surface_strict_validation() {
     return 0;
 }
 
-int PolyhedralSurface::removeStraight(){
-    cout << "\n------------- removeStraight --------------\n" << endl;
-    for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); ){
-        Surface* surface = this->surfacesList[i];
-        SurfaceComputation::removeStraight(surface);
-        if (surface->strict_validation()){
-            i++;
-        }
-        else{
-            delete surface;
-            this->surfacesList.erase(this->surfacesList.begin() + i);
-            Checker::num_of_invalid += 1;
-            cout << "Erase invalid surface" << endl;
-        }
-    }
-    return 0;
-}
-
 void PolyhedralSurface::updateMBB(){
-    mbb = TMIC::getMBB(this->surfacesList);
+    mbb = TM2IN::algorithm::getMBB(this->surfacesList);
 }
 
 void PolyhedralSurface::freeSurfaces(){
@@ -132,7 +112,10 @@ void PolyhedralSurface::sortSurfacesByArea() {
 }
 
 void PolyhedralSurface::tagID() {
-    SurfacesListComputation::tagID(this->surfacesList);
+    for (ull i = 0 ; i < (ull)surfacesList.size() ; i++)
+    {
+        surfacesList[i]->sf_id = this->name + "_" + to_string(i);
+    }
 }
 
 string PolyhedralSurface::asJsonText() {
@@ -178,6 +161,26 @@ bool PolyhedralSurface::isClosed(){
 }
 
 /*
+ *
+ *
+int PolyhedralSurface::removeStraight(){
+    cout << "\n------------- removeStraight --------------\n" << endl;
+    for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); ){
+        Surface* surface = this->surfacesList[i];
+        SurfaceComputation::removeStraight(surface);
+        if (surface->strict_validation()){
+            i++;
+        }
+        else{
+            delete surface;
+            this->surfacesList.erase(this->surfacesList.begin() + i);
+            Checker::num_of_invalid += 1;
+            cout << "Erase invalid surface" << endl;
+        }
+    }
+    return 0;
+}
+
 void PolyhedralSurface::rotateSpaceByFloorTo00(){
     cout << " ---------- rotate -------------" << endl;
     sort(this->surfacesList.begin(), this->surfacesList.end(), Surface::compareArea);

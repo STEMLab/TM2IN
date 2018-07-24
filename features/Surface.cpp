@@ -9,15 +9,14 @@
 #include "features/Surface.h"
 
 #include "logic/check.h"
-#include "compute/HalfEdgeComputation.h"
-#include "compute/VertexComputation.h"
 #include "features/Triangle.h"
 #include "features/HalfEdge.h"
 
 #include <cstdlib>
-#include <compute/SurfaceComputation.h>
-#include <compute/VertexListComputation.h>
+#include <compute/unused.h>
 #include <algorithm/triangulation.h>
+#include <algorithm/compare.h>
+#include <detail/features/halfedge_string.h>
 #include "detail/io/JsonWriter.h"
 #include "detail/algorithm/self_intersect.h"
 
@@ -26,7 +25,7 @@ using namespace std;
 
 Surface::Surface(Surface* cp){
     this->exteriorBoundary = cp->exteriorBoundary;
-    HalfEdgeComputation::setParent(this->exteriorBoundary, this);
+    TM2IN::detail::HalfEdgeString::setParent(this->exteriorBoundary, this);
 
     this->normal = cp->normal;
     for (int i = 0 ; i < 3 ; i++){
@@ -41,7 +40,7 @@ Surface::Surface(Surface* cp){
 
 Surface::Surface(Triangle& pl){
     this->exteriorBoundary = pl.exteriorBoundary;
-    HalfEdgeComputation::setParent(this->exteriorBoundary, this);
+    TM2IN::detail::HalfEdgeString::setParent(this->exteriorBoundary, this);
 
     area = pl.getArea();
     normal = pl.getNormal();
@@ -125,7 +124,7 @@ bool Surface::is_simple(){
 
 bool Surface::has_duplicate_vertex(){
     vector<Vertex*> sorted_v_list(this->getVerticesList());
-    sort(sorted_v_list.begin(), sorted_v_list.end(), VertexComputation::greater);
+    sort(sorted_v_list.begin(), sorted_v_list.end(), TM2IN::algorithm::greater);
     for (ull i = 0 ; i < sorted_v_list.size() - 1; i++){
         if (sorted_v_list[i] == sorted_v_list[i+1]){
             return true;
@@ -205,7 +204,7 @@ bool Surface::compareLength(Surface* i, Surface* j) {
 
 
 vector<Vertex *> Surface::getVerticesList() {
-    return HalfEdgeComputation::getFirstVertexList(this->exteriorBoundary);
+    return TM2IN::detail::HalfEdgeString::getFirstVertexList(this->exteriorBoundary);
 }
 
 void Surface::setVertexList(std::vector<Vertex *> newVertices) {

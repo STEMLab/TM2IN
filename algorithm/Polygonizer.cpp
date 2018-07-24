@@ -4,8 +4,7 @@
 
 #include "Polygonizer.h"
 
-#include <compute/Connect_halfedges.h>
-#include <compute/SurfacesListComputation.h>
+#include <detail/features/halfedge_string.h>
 
 #include "features/Triangle.h"
 #include "features/PolyhedralSurface.h"
@@ -40,7 +39,7 @@ namespace TM2IN{
                 Surface* sf = space->surfacesList[i];
                 vector<Triangle*> triangulation = sf->getTriangulation();
 
-                TMIC::connectOppositeHalfEdges(triangulation);
+                TM2IN::detail::HalfEdgeString::connectOppositeHalfEdges(triangulation);
                 vector<Surface*> newSurfacesInSurface;
                 TM2IN::algorithm::mergeTriangles(triangulation, thres1, thres2, newSurfacesInSurface);
                 newSurfacesList.insert(newSurfacesList.end(), newSurfacesInSurface.begin(), newSurfacesInSurface.end());
