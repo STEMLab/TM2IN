@@ -6,6 +6,7 @@
 #define TM2IN_JSONWRITER_H
 
 #include <fstream>
+#include <features/PolyhedralSurface.h>
 
 #include "features/Geometry.h"
 
@@ -23,10 +24,10 @@ namespace TM2IN {
                 bool exp_tri;
             };
 
-            string to_json(PolyhedralSurface* ps, bool exp_tri=false);
-            string to_json(Surface* sf);
-            string to_json_with_triangles(Surface *pSurface);
-            string to_json(Vertex& vt, int index = 0);
+            string polyhedral_surface_to_json(PolyhedralSurface& ps, bool exp_tri=false);
+            string surface_to_json(Surface& sf);
+            string surface_to_json_with_triangles(Surface &pSurface);
+            string vertex_to_json(Vertex& vt, int index = 0);
         }
     }
 }

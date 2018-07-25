@@ -1,21 +1,20 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include "logic/check.h"
-#include "io/GenerationWriter.h"
 #include "Options.h"
 #include "util.h"
 #include "algorithm/Polygonizer.h"
 #include "features/Geometry.h"
+
+using namespace TM2IN;
 
 class Converter
 {
 protected:
     Options& options;
 public:
-    vector<TriangleMesh*> mesh_list;
-    vector<PolyhedralSurface*> spaceList;
-    GenerationWriter* generation_writer;
+    vector<TM2IN::TriangleMesh*> mesh_list;
+    vector<TM2IN::PolyhedralSurface*> spaceList;
 
     Converter(Options& op);
     virtual ~Converter(){};
@@ -35,7 +34,7 @@ private:
     int initTriangleMesh();
 
     int mergeSurfaces();
-    int processGenerations(PolyhedralSurface *space);
+    int processGenerations(TM2IN::PolyhedralSurface *space);
 
     int convertTriangleMeshToSpace();
     int convertSpaceToTriangleMesh();
@@ -46,12 +45,8 @@ private:
     int remainSelectedMesh(int arch);
     int handleOpenTriangleMesh();
 
-    int export3DS();
-
-
     void printInputDataSpec();
 
-    int triangulation();
     int polygonize();
 
     TM2IN::algorithm::Polygonizer *create_polygonizer();

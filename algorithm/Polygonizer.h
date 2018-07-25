@@ -6,11 +6,9 @@
 #define TM2IN_POLYGONIZER_H
 
 #include <vector>
+#include "features/PolyhedralSurface.h"
 
 using namespace std;
-
-class PolyhedralSurface;
-class Vertex;
 
 namespace TM2IN {
     namespace algorithm {

@@ -15,8 +15,10 @@ int Converter::start() {
     importMesh();
 
     // generation writer
+    /*
     if (options.generator) generation_writer = new GenerationWriter(options.output_dir);
     else generation_writer = NULL;
+    */
 
     // construct graph
     initTriangleMesh();

@@ -12,7 +12,6 @@ int Converter::mergeSurfaces() {
         clock_t begin = clock();
 
         PolyhedralSurface* space = this->spaceList[it];
-        if (this->generation_writer) this->generation_writer->start(space);
         space->generation++;
 
         if (processGenerations(space)) return -1;
@@ -74,8 +73,6 @@ int Converter::processGenerations(PolyhedralSurface *space) {
             cout << "generation " << space->generation << " done..\n\n\n"<< endl;
             break;
         }
-
-        if (this->generation_writer) this->generation_writer->write();
         if (thres1 < 40) thres1 += 2.0;
 
         space->generation++;

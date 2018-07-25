@@ -3,7 +3,9 @@
 //
 
 #include <predefine.h>
+
 #include "compare.h"
+#include "features/Geometry.h"
 
 namespace TM2IN{
     namespace algorithm{
@@ -42,6 +44,10 @@ namespace TM2IN{
                         return false;
                 }
             }
+        }
+
+        bool compareArea(Geometry *i, Geometry *j) {
+            return (i->getArea() > j->getArea());
         }
     }
 }

@@ -47,8 +47,6 @@ file(GLOB SOURCE_FILES
         "io/*.cpp"
         "cgal/*.h"
         "cgal/*.cpp"
-        "logic/*.h"
-        "logic/*.cpp"
         "compute/*.h"
         "compute/*.cpp"
         "converter/*.h"

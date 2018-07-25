@@ -6,11 +6,7 @@
 #define TM2IN_HALFEDGE_STRING_H
 
 #include <vector>
-
-class Triangle;
-class Surface;
-class HalfEdge;
-class Vertex;
+#include "features/Triangle.h"
 
 namespace TM2IN{
     namespace detail{

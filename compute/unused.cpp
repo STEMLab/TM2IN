@@ -30,7 +30,6 @@ namespace TM2IN{
                 if (TM2IN::algorithm::isCollinear(start_p, check_p, end_p)){
                     vertexList.erase(vertexList.begin() + i);
                     removed_count++;
-                    Checker::num_of_straight += 1;
                 }
                 else{
                     i++;

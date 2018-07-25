@@ -13,7 +13,7 @@
 
 namespace TM2IN {
     namespace algorithm {
-        int triangulate(Surface *pSurface, std::vector<Triangle*>& result);
+        int triangulate(TM2IN::Surface *pSurface, std::vector<TM2IN::Triangle*>& result);
     }
 }
 

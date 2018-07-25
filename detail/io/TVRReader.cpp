@@ -30,7 +30,7 @@ namespace TM2IN {
                 vector<TriangleMesh*> meshList;
                 TriangleMesh* currentMesh = new TriangleMesh();
 
-                vector<Vertex*> vertices;
+                vector<TM2IN::Vertex*> vertices;
 
                 while(!this->ifs.eof()){
                     getline(this->ifs, inputstr);
@@ -40,7 +40,7 @@ namespace TM2IN {
                             break;
                         }
                         case 'v':{
-                            Vertex* pt_v = this->makeVertex(v_count, inputstr);
+                            TM2IN::Vertex* pt_v = this->makeVertex(v_count, inputstr);
                             vertices.push_back(pt_v);
 
                             v_count++;
@@ -66,7 +66,7 @@ namespace TM2IN {
                             f_count++;
                             if (f_count % 5000 == 0) cout << "Loaded faces : " << f_count << endl;
 
-                            Triangle* tri = this->makeTriangle(inputstr, vertices);
+                            TM2IN::Triangle* tri = this->makeTriangle(inputstr, vertices);
                             currentMesh->triangles.push_back(tri);
 
                             break;
@@ -86,14 +86,17 @@ namespace TM2IN {
                 return x_1;
             }
 
-            Triangle* TVRReader::makeTriangle(string& input, vector<Vertex*>& vertex){
+            TM2IN::Triangle* TVRReader::makeTriangle(string& input, vector<TM2IN::Vertex*>& vertex){
                 std::vector<std::string> x = split(input, ' ');
 
                 ll a = stol(x[1]);
                 ll b = stol(x[2]);
                 ll c = stol(x[3]);
 
-                Triangle* newTriangle = new Triangle(vertex[a], vertex[b], vertex[c]);
+                TM2IN::Vertex* va = vertex[a];
+                TM2IN::Vertex* vb = vertex[b];
+                TM2IN::Vertex* vc = vertex[c];
+                Triangle* newTriangle = new Triangle(va, vb, vc);
 
                 x.clear();
                 return newTriangle;
@@ -108,7 +111,6 @@ namespace TM2IN {
                 std::vector<std::string> strings = split(line, ' ');
 
                 Vertex* vt = new Vertex(stod(strings[1]), stod(strings[2]), stod(strings[3]));
-                vt->index = id;
                 strings.clear();
 
                 return vt;

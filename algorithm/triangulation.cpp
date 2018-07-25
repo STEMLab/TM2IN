@@ -7,6 +7,7 @@
 #include "detail/algorithm/triangulate_surface.h"
 
 using namespace std;
+using namespace TM2IN;
 
 namespace TM2IN {
     namespace algorithm {

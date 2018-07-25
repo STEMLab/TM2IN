@@ -22,8 +22,8 @@ namespace TM2IN{
                 Surface* cp = surfacesList[i];
                 cp->updateMBB();
                 for (int j = 0 ; j < 3 ; j++){
-                    v_minmax[1][j] = max(v_minmax[1][j], cp->getMax_coords()[j]);
-                    v_minmax[0][j] = min(v_minmax[0][j], cp->getMin_coords()[j]);
+                    v_minmax[1][j] = max(v_minmax[1][j], cp->getMBB()->max(j));
+                    v_minmax[0][j] = min(v_minmax[0][j], cp->getMBB()->min(j));
                 }
             }
 

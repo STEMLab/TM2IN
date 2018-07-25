@@ -7,15 +7,17 @@
 
 #include <iostream>
 #include <vector>
+#include "features/Vertex.h"
+#include "features/Surface.h"
+#include "features/TriangleMesh.h"
+
 using namespace std;
+using namespace TM2IN;
 
 /**
  * @todo will be removed
  *
  */
-class Surface;
-class TriangleMesh;
-class Vertex;
 
 namespace CGAL_User{
     vector<Vertex *> fillHole(vector<Vertex*>& vertices, vector<Surface *>& surfaces);

@@ -1,9 +1,7 @@
 #include <compute/unused.h>
 #include "features/Surface.h"
-#include "logic/check.h"
 #include "OnlyWallSpaceMaker.h"
 #include "detail/cgal_config.h"
-#include "cgal/CGALCalculation.h"
 /*
 class Segment{
 public :

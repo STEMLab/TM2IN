@@ -6,6 +6,7 @@
 #include <fstream>
 
 using namespace std;
+using namespace TM2IN;
 
 class GenerationWriter{
 public:

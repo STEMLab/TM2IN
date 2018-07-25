@@ -5,6 +5,8 @@
 #include "type_conversion.h"
 
 #include "features/HalfEdge.h"
+#include "features/Vertex.h"
+#include "features/Triangle.h"
 
 namespace TM2IN {
     namespace detail {
@@ -27,6 +29,10 @@ namespace TM2IN {
                 Point_3 p2 = he->vertices[1]->CGAL_point();
                 Segment_3 seg(p1, p2);
                 return  seg;
+            }
+
+            Bbox_3 to_CGAL_bbox3(MinimumBoundingBox &box) {
+                return Bbox_3(box.min(0), box.min(1), box.min(2), box.max(0), box.max(1), box.max(2));
             }
         }
     }

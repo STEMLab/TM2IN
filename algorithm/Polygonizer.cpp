@@ -14,15 +14,15 @@
 
 namespace TM2IN{
     namespace algorithm{
-        void TrianglePolygonizer::run(PolyhedralSurface *space) {
-            vector<Triangle*> triangleList;
+        void TrianglePolygonizer::run(TM2IN::PolyhedralSurface *space) {
+            vector<TM2IN::Triangle*> triangleList;
             for (unsigned int sfID = 0 ; sfID < space->surfacesList.size(); sfID++) {
-                Surface* pSurface = space->surfacesList[sfID];
-                vector<Triangle*> triangulation = pSurface->getTriangulation();
+                TM2IN::Surface* pSurface = space->surfacesList[sfID];
+                vector<TM2IN::Triangle*> triangulation = pSurface->getTriangulation();
                 triangleList.insert(triangleList.end(),triangulation.begin(),triangulation.end());
             }
 
-            vector<Surface*> newSurfaceList;
+            vector<TM2IN::Surface*> newSurfaceList;
 
             for (int i = 0 ; i < triangleList.size() ; i++){
                 newSurfaceList.push_back(triangleList[i]);
@@ -31,16 +31,16 @@ namespace TM2IN{
             space->surfacesList = newSurfaceList;
         }
 
-        void DividedPolygonizer::run(PolyhedralSurface *space) {
+        void DividedPolygonizer::run(TM2IN::PolyhedralSurface *space) {
             double thres1 = 1.0;
             double thres2 = 45.0;
-            vector<Surface*> newSurfacesList;
+            vector<TM2IN::Surface*> newSurfacesList;
             for (int i = 0 ; i < space->surfacesList.size() ; i++){
-                Surface* sf = space->surfacesList[i];
-                vector<Triangle*> triangulation = sf->getTriangulation();
+                TM2IN::Surface* sf = space->surfacesList[i];
+                vector<TM2IN::Triangle*> triangulation = sf->getTriangulation();
 
                 TM2IN::detail::HalfEdgeString::connectOppositeHalfEdges(triangulation);
-                vector<Surface*> newSurfacesInSurface;
+                vector<TM2IN::Surface*> newSurfacesInSurface;
                 TM2IN::algorithm::mergeTriangles(triangulation, thres1, thres2, newSurfacesInSurface);
                 newSurfacesList.insert(newSurfacesList.end(), newSurfacesInSurface.begin(), newSurfacesInSurface.end());
             }
@@ -50,7 +50,7 @@ namespace TM2IN{
         }
 
 
-        void PCAPolygonizer::run(PolyhedralSurface *space) {
+        void PCAPolygonizer::run(TM2IN::PolyhedralSurface *space) {
             throw std::runtime_error("PCAPolygonizer run not yey");
             /*
             vector<Surface*> newSurfacesList;

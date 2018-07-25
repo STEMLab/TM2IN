@@ -8,6 +8,7 @@
 #include "detail/cgal_config.h"
 #include "features/Vertex.h"
 
+class Geometry;
 namespace TM2IN {
     namespace algorithm {
         /**
@@ -17,6 +18,8 @@ namespace TM2IN {
          * @return
          */
         bool greater(Vertex * a, Vertex * b);
+
+        bool compareArea(Geometry* i, Geometry* j);
     }
 }
 
