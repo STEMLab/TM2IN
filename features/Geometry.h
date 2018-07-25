@@ -41,7 +41,8 @@ namespace TM2IN{
 
         MinimumBoundingBox *getMBB();
         void setMBB(MinimumBoundingBox* _mbb) ;
-        virtual void updateMBB(Geometry* gm);
+        virtual void updateMBB();
+        virtual void mergeMBB(Geometry* gm);
         virtual std::string asJsonText();
     };
 

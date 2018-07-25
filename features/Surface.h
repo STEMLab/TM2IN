@@ -43,7 +43,7 @@ namespace TM2IN{
 
         virtual bool isOpposite(Surface* sf);
 
-        void updateMBB(Geometry *gm = NULL);
+        void updateMBB();
 
         int getSegmentsNumber(ll start_index, ll end_index);
 

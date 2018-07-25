@@ -51,7 +51,7 @@ namespace TM2IN {
 
         void setSurfacesList(vector<Surface *> new_list);
 
-        void updateMBB(Geometry* gm = NULL);
+        void updateMBB();
     protected:
 
         void freeSurfaces();

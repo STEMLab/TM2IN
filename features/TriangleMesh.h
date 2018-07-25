@@ -27,6 +27,7 @@ namespace TM2IN{
         bool isFurniture();
 
         std::string asJsonText();
+        void updateMBB();
     private:
         void makeGraph();
 

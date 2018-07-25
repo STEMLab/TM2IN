@@ -27,7 +27,7 @@ namespace TM2IN{
         this->exteriorBoundary = cp->exteriorBoundary;
         TM2IN::detail::HalfEdgeString::setParent(this->exteriorBoundary, this);
         this->normal = cp->normal;
-        this->mbb = cp->mbb;
+        this->mbb = new MinimumBoundingBox(cp->mbb);
         this->area = cp->area;
         this->triangles = cp->triangles;
         this->sf_id = cp->sf_id;
@@ -52,27 +52,19 @@ namespace TM2IN{
         return this->normal;
     }
 
-    void Surface::updateMBB(Geometry *gm){
+    void Surface::updateMBB() {
         double max_coords[3] = {0};
         double min_coords[3] = {0};
-        if (gm == NULL){
-            for (int i = 0 ; i < 3 ; i++)
-            {
-                max_coords[i] = -10000000.000;
-                min_coords[i] = 10000000.00;
-            }
-
-            for (unsigned int i = 0 ; i < this->getVerticesSize() ; i++){
-                for (int j = 0 ; j < 3 ; j++){
-                    max_coords[j] = max(max_coords[j], this->vertex(i)->coords[j]);
-                    min_coords[j] = min(min_coords[j], this->vertex(i)->coords[j]);
-                }
-            }
+        for (int i = 0 ; i < 3 ; i++)
+        {
+            max_coords[i] = -10000000.000;
+            min_coords[i] = 10000000.00;
         }
-        else{
+
+        for (unsigned int i = 0 ; i < this->getVerticesSize() ; i++){
             for (int j = 0 ; j < 3 ; j++){
-                max_coords[j] = max(max_coords[j], gm->getMBB()->max(j));
-                min_coords[j] = min(min_coords[j], gm->getMBB()->min(j));
+                max_coords[j] = max(max_coords[j], this->vertex(i)->coords[j]);
+                min_coords[j] = min(min_coords[j], this->vertex(i)->coords[j]);
             }
         }
         this->mbb->set_min_coords(min_coords);

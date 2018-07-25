@@ -7,6 +7,10 @@
 #include "MinimumBoundingBox.h"
 
 namespace TM2IN {
+    MinimumBoundingBox::MinimumBoundingBox() {
+        this->cgal_bbox3 = CGAL::Bbox_3();
+    }
+
     MinimumBoundingBox::MinimumBoundingBox(double x1, double y1, double z1, double x2, double y2, double z2) {
         minx = x1;
         miny = y1;
@@ -14,6 +18,15 @@ namespace TM2IN {
         maxx = x2;
         maxy = y2;
         maxz = z2;
+        this->cgal_bbox3 = CGAL::Bbox_3(minx,miny,minz,maxx,maxy,maxz);
+    }
+
+
+    MinimumBoundingBox::MinimumBoundingBox(MinimumBoundingBox *pBox) {
+        if (pBox->cgal_bbox3 == CGAL::Bbox_3())
+            this->cgal_bbox3 = CGAL::Bbox_3();
+        else
+            this->update(pBox->cgal_bbox3);
     }
 
     double MinimumBoundingBox::operator[](int index) {
@@ -56,24 +69,38 @@ namespace TM2IN {
         minx = pDouble[0];
         miny = pDouble[1];
         minz = pDouble[2];
+        this->cgal_bbox3 = CGAL::Bbox_3();
     }
 
     void MinimumBoundingBox::set_max_coords(double *pDouble) {
         maxx = pDouble[0];
         maxy = pDouble[1];
         maxz = pDouble[2];
+        this->cgal_bbox3 = CGAL::Bbox_3();
     }
 
-    void MinimumBoundingBox::update(CGAL::Bbox_3 bbox3) {
+    void MinimumBoundingBox::update(CGAL::Bbox_3& bbox3) {
         maxx = bbox3.xmax();
         maxy = bbox3.ymax();
         maxz = bbox3.zmax();
         minx = bbox3.xmin();
         miny = bbox3.ymin();
         minz = bbox3.zmin();
+        this->cgal_bbox3 = bbox3;
     }
 
     CGAL::Bbox_3 MinimumBoundingBox::CGAL_bbox3() {
-        return TM2IN::detail::cgal::to_CGAL_bbox3(*this);
+        if (this->cgal_bbox3 == CGAL::Bbox_3()) // need update
+            this->cgal_bbox3 = TM2IN::detail::cgal::to_CGAL_bbox3(*this);
+        return this->cgal_bbox3;
     }
+
+    void MinimumBoundingBox::merge(CGAL::Bbox_3& _bbox3) {
+        if (this->cgal_bbox3 == CGAL::Bbox_3()) // need update
+            this->cgal_bbox3 = TM2IN::detail::cgal::to_CGAL_bbox3(*this);
+        this->cgal_bbox3 += _bbox3;
+        update(this->cgal_bbox3);
+    }
+
+
 }

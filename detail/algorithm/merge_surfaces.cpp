@@ -4,6 +4,7 @@
 
 #include "merge_surfaces.h"
 
+#include "features/Surface.h"
 #include <detail/cgal/plane.h>
 #include <cgal/vector_angle.h>
 #include <detail/features/halfedge_string.h>
@@ -11,7 +12,6 @@
 #include "detail/algorithm/surface_neighbor.h"
 #include "detail/cgal/polygon.h"
 #include "detail/cgal/geometry.h"
-#include "features/Surface.h"
 
 namespace TM2IN {
     namespace detail {
@@ -150,7 +150,7 @@ namespace TM2IN {
                 TM2IN::detail::HalfEdgeString::setParent(new_edges, origin);
 
                 origin->setExteriorBoundary(new_edges);
-                origin->updateMBB(piece);
+                origin->mergeMBB(piece);
                 origin->normal = origin->normal + piece->normal;
                 origin->setArea(origin->getArea() + piece->getArea());
                 origin->triangles.insert(origin->triangles.end(), piece->triangles.begin(), piece->triangles.end());

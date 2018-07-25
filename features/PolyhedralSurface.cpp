@@ -87,14 +87,9 @@ namespace TM2IN {
         return 0;
     }
 
-    void PolyhedralSurface::updateMBB(Geometry* gm) {
-        if (gm == NULL){
-            CGAL::Bbox_3 bbox3 = TM2IN::algorithm::getMBB(this->surfacesList);
-            this->mbb->update(bbox3);
-        }
-        else{
-            cerr << "PolyhedralSurface::updateMBB(Geometry* gm) no implemented" << endl;
-        }
+    void PolyhedralSurface::updateMBB() {
+        CGAL::Bbox_3 bbox3 = TM2IN::algorithm::getMBB(this->surfacesList);
+        this->mbb->update(bbox3);
     }
 
     void PolyhedralSurface::freeSurfaces() {

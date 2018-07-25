@@ -18,15 +18,17 @@ namespace TM2IN{
         this->mbb = new MinimumBoundingBox();
     }
 
-    void Geometry::updateMBB(Geometry *gm) {
-        if (gm == NULL)
-            mbb = new MinimumBoundingBox();
-        else
-            mbb = gm->mbb;
+    void Geometry::updateMBB() {
+        mbb = new MinimumBoundingBox();
     }
 
     std::string Geometry::asJsonText() {
         return std::__cxx11::string();
+    }
+
+    void Geometry::mergeMBB(Geometry *gm) {
+        CGAL::Bbox_3 bbox = gm->getMBB()->CGAL_bbox3();
+        mbb->merge(bbox);
     }
 }
 

@@ -158,6 +158,16 @@ namespace TM2IN{
     }
 
     std::string TriangleMesh::asJsonText() {
+        cerr << "TODO std::string TriangleMesh::asJsonText() " << endl;
         return std::__cxx11::string();
+    }
+
+    void TriangleMesh::updateMBB() {
+        vector<Triangle_3> cgal_triangles;
+        for (int i = 0 ; i < this->triangles.size(); i++){
+            cgal_triangles.push_back(this->triangles[i]->CGAL_triangle());
+        }
+        CGAL::Bbox_3 bbox3 = CGAL::bbox_3(cgal_triangles.begin(), cgal_triangles.end());
+        this->mbb->update(bbox3);
     }
 }
