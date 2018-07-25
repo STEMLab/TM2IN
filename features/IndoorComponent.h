@@ -12,24 +12,28 @@
 #include "MinimumBoundingBox.h"
 
 namespace TM2IN{
+    class Room;
+    class TriangleMesh;
+    class TriangulatedSurfaceMesh;
+    class PolygonMesh;
+
     class PolyhedralSurface;
     class Surface;
     class Triangle;
     class Vertex;
     class HalfEdge;
-    class TriangleMesh;
 
-    enum class GEOM_TYPE {
-        Geometry, PolyhedralSurface, Surface, Triangle, HalfEdge, Vertex
+    enum class IND_TYPE {
+        IndoorComponent, PolyhedralSurface, Surface, Triangle, HalfEdge, Vertex
     };
 
-    class Geometry {
+    class IndoorComponent {
     protected:
         MinimumBoundingBox* mbb;
-        TM2IN::GEOM_TYPE type;
+        TM2IN::IND_TYPE type;
         double area = 0.0;
     public:
-        Geometry();
+        IndoorComponent();
 
         double getArea(){
             return this->area;
@@ -42,7 +46,7 @@ namespace TM2IN{
         MinimumBoundingBox *getMBB();
         void setMBB(MinimumBoundingBox* _mbb) ;
         virtual void updateMBB();
-        virtual void mergeMBB(Geometry* gm);
+        virtual void mergeMBB(IndoorComponent* gm);
         virtual std::string asJsonText();
     };
 

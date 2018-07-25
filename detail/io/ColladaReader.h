@@ -6,7 +6,7 @@
 #define TM2IN_COLLADAREADER_H
 
 #include <lib/rapidxml/rapidxml.hpp>
-#include "features/Geometry.h"
+#include "features/IndoorComponent.h"
 
 #include <fstream>
 

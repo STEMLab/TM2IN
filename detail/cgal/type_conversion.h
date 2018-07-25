@@ -5,7 +5,7 @@
 #ifndef TM2IN_TYPE_CONVERSION_H
 #define TM2IN_TYPE_CONVERSION_H
 
-#include "features/Geometry.h"
+#include "features/IndoorComponent.h"
 #include "detail/cgal_config.h"
 
 namespace TM2IN{

@@ -6,10 +6,10 @@ using namespace std;
 
 int main(int argc, char * argv[]) {
     try{
-        Options options = Options(argc, argv);
-        createAndRemoveDir(options.output_dir);
+        options = new Options(argc, argv);
+        createAndRemoveDir();
 
-        Converter converter = Converter(options);
+        Converter converter = Converter();
         converter.start();
 
         converter.run();

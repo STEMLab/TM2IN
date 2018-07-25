@@ -30,7 +30,7 @@ namespace TM2IN {
         coords[1] = CGAL::to_double(py);
         coords[2] = CGAL::to_double(pz);
         mbb = NULL;
-        type = TM2IN::GEOM_TYPE::Vertex;
+        type = TM2IN::IND_TYPE::Vertex;
     }
 
     Vertex::Vertex(Vertex &vt) : Vertex(vt.x(), vt.y(), vt.z()) {

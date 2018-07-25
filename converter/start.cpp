@@ -10,21 +10,21 @@
 #include "io/collada.h"
 #include "io/max3ds.h"
 
-int Converter::importMesh() {
-    switch(options.input_type){
+int Converter::importData() {
+    switch(options->input_type){
         case 1:
-            this->mesh_list = TM2IN::io::importTVR((options.input_dir + options.input_file).c_str());
+            this->rooms = TM2IN::io::importTVR((options->input_dir + options->input_file).c_str());
             break;
         case 2:
-            this->mesh_list = TM2IN::io::import3DS((options.input_dir + options.input_file).c_str());
+            this->rooms = TM2IN::io::import3DS((options->input_dir + options->input_file).c_str());
             break;
         case 3:
-            this->mesh_list = TM2IN::io::importDAE((options.input_dir + options.input_file).c_str());
+            this->rooms = TM2IN::io::importDAE((options->input_dir + options->input_file).c_str());
             break;
         default:
             throw std::runtime_error("\n\nImport Mesh has some problem\n\n");
     }
-    if (this->mesh_list.size() == 0){
+    if (this->rooms.size() == 0){
         throw std::runtime_error("\n\nImport Mesh has some problem\n\n");
     }
     return 0;
@@ -60,29 +60,7 @@ int Converter::initTriangleMesh() {
 }
 
 int Converter::remainSelectedMesh(int arch) {
-    int i;
-    switch(arch){
-        case ARCH:
-            i = 0;
-            while (i < this->mesh_list.size()){
-                if (this->mesh_list[i]->isFurniture())
-                    this->mesh_list.erase(this->mesh_list.begin() + i);
-                else
-                    i++;
-            }
-            break;
-        case NON_ARCH:
-            i = 0;
-            while (i < this->mesh_list.size()){
-                if (this->mesh_list[i]->isFurniture())
-                    i++;
-                else
-                    this->mesh_list.erase(this->mesh_list.begin() + i);
-            }
-            break;
-        default:
-            break;
-    }
+
 
     printf("There are %lu Remaining Meshes.\n\n", this->mesh_list.size());
     return 0;

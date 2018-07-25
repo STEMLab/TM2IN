@@ -10,7 +10,7 @@
 
 namespace TM2IN{
     namespace io{
-        vector<TriangleMesh*> importDAE(const char *filePath);
+        vector<Room*> importDAE(const char *filePath);
 
     }
 }

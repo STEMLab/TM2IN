@@ -5,7 +5,7 @@
 #ifndef TM2IN_DETAIL_MERGE_SURFACES_H
 #define TM2IN_DETAIL_MERGE_SURFACES_H
 
-#include "features/Geometry.h"
+#include "features/IndoorComponent.h"
 
 using namespace std;
 

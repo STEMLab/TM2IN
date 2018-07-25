@@ -2,10 +2,10 @@
 // Created by dongmin on 18. 7. 24.
 //
 
-#include <predefine.h>
+#include <config.h>
 
 #include "compare.h"
-#include "features/Geometry.h"
+#include "features/IndoorComponent.h"
 
 namespace TM2IN{
     namespace algorithm{
@@ -46,7 +46,7 @@ namespace TM2IN{
             }
         }
 
-        bool compareArea(Geometry *i, Geometry *j) {
+        bool compareArea(IndoorComponent *i, IndoorComponent *j) {
             return (i->getArea() > j->getArea());
         }
     }

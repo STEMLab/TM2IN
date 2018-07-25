@@ -4,15 +4,15 @@
 #include <vector>
 #include <string>
 
-#include "features/Geometry.h"
+#include "features/IndoorComponent.h"
 #include "TriangleMeshGraph.h"
 #include "Vertex.h"
 #include "Triangle.h"
 
 using namespace std;
-
+/*
 namespace TM2IN{
-    class TriangleMesh : public Geometry{
+    class TriangleMesh : public IndoorComponent{
     public:
         string name;
         vector<Triangle*> triangles;
@@ -35,5 +35,5 @@ namespace TM2IN{
     };
 
 }
-
+*/
 #endif // TRIANGLEMESH_H_INCLUDED

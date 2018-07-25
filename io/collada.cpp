@@ -14,7 +14,7 @@ using namespace rapidxml;
 
 namespace TM2IN{
     namespace io{
-        std::vector<TriangleMesh *> importDAE(const char *filePath) {
+        std::vector<Room *> importDAE(const char *filePath) {
             ifstream pFile(filePath);
 
             TM2IN::detail::io::ColladaReader cr(pFile);

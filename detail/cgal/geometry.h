@@ -10,7 +10,7 @@
 namespace TM2IN {
     namespace detail {
         namespace cgal {
-            bool has_bbox_intersect(Surface *s1, Surface *s2);
+            bool has_bbox_intersect(IndoorComponent *s1, IndoorComponent *s2);
         }
     }
 }

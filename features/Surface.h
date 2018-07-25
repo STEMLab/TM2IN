@@ -8,11 +8,11 @@
 #include <cassert>
 
 #include "util.h"
-#include "features/Geometry.h"
+#include "features/IndoorComponent.h"
 #include "detail/cgal_config.h"
 
 namespace TM2IN{
-    class Surface : public Geometry{
+    class Surface : public IndoorComponent{
     protected:
         std::vector<HalfEdge* > innerEdges;
         std::vector<HalfEdge* > exteriorBoundary;

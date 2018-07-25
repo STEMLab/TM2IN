@@ -7,7 +7,7 @@
 
 #include <cstring>
 #include <string>
-#include "predefine.h"
+#include "config.h"
 
 using namespace std;
 

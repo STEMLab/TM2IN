@@ -11,7 +11,7 @@
 using namespace std;
 
 namespace TM2IN {
-    class PolyhedralSurface : public Geometry{
+    class PolyhedralSurface : public IndoorComponent{
     public:
         PolyhedralSurface();
 

@@ -31,7 +31,7 @@ namespace TM2IN{
         this->area = cp->area;
         this->triangles = cp->triangles;
         this->sf_id = cp->sf_id;
-        this->type = TM2IN::GEOM_TYPE::Surface;
+        this->type = TM2IN::IND_TYPE::Surface;
     }
 
     Surface::Surface(Triangle& pl){
@@ -43,7 +43,7 @@ namespace TM2IN{
 
         this->updateMBB();
         this->triangles.push_back(&pl);
-        this->type = TM2IN::GEOM_TYPE::Surface;
+        this->type = TM2IN::IND_TYPE::Surface;
     }
 
 
@@ -263,7 +263,7 @@ namespace TM2IN{
     }
 
     Surface::Surface() {
-        type = TM2IN::GEOM_TYPE ::Surface;
+        type = TM2IN::IND_TYPE ::Surface;
     }
 
 }

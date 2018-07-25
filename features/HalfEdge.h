@@ -5,10 +5,10 @@
 #ifndef TRIANGLEMESHCLEANER_HALFEDGE_H
 #define TRIANGLEMESHCLEANER_HALFEDGE_H
 
-#include "features/Geometry.h"
+#include "features/IndoorComponent.h"
 
 namespace TM2IN {
-    class HalfEdge : public Geometry {
+    class HalfEdge : public IndoorComponent {
     private :
 
     public:
@@ -20,7 +20,7 @@ namespace TM2IN {
         }
 
         HalfEdge(Vertex *pa, Vertex *pb, Surface *pSurface){
-            type = TM2IN::GEOM_TYPE::HalfEdge;
+            type = TM2IN::IND_TYPE::HalfEdge;
             vertices.push_back(pa);
             vertices.push_back(pb);
             parent = pSurface;

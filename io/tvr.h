@@ -9,7 +9,7 @@
 
 namespace TM2IN{
     namespace io{
-        vector<TriangleMesh*> importTVR(const char *filePath);
+        vector<Room*> importTVR(const char *filePath);
     }
 }
 

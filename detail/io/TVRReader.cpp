@@ -4,7 +4,8 @@
 
 #include "TVRReader.h"
 
-#include "features/TriangleMesh.h"
+#include "features/Room.h"
+#include "detail/features/RoomFactory.h"
 #include "features/Vertex.h"
 #include "features/Triangle.h"
 
@@ -15,22 +16,20 @@ namespace TM2IN {
 
             }
 
-            std::vector<TriangleMesh *> TVRReader::read() {
+            std::vector<Room*> TVRReader::read() {
                 string inputstr;
                 getline(this->ifs, inputstr);
                 if (inputstr.find("TVR0") == string::npos){
-                    cout << "different version : " <<  inputstr << endl;
-                    return vector<TriangleMesh*>();
+                     std::runtime_error("different version : " + inputstr);
                 }
 
                 string group_name;
                 int v_count = 0;
                 int f_count = 0;
 
-                vector<TriangleMesh*> meshList;
-                TriangleMesh* currentMesh = new TriangleMesh();
-
-                vector<TM2IN::Vertex*> vertices;
+                vector<Room*> rooms;
+                RoomFactory factory;
+                factory.keep_vertices = true;
 
                 while(!this->ifs.eof()){
                     getline(this->ifs, inputstr);
@@ -40,8 +39,8 @@ namespace TM2IN {
                             break;
                         }
                         case 'v':{
-                            TM2IN::Vertex* pt_v = this->makeVertex(v_count, inputstr);
-                            vertices.push_back(pt_v);
+                            Vertex* pt_v = this->makeVertex(v_count, inputstr);
+                            factory.pushVertex(pt_v);
 
                             v_count++;
                             if (v_count % 5000 == 0) cout << "Loaded vertices : " << v_count << endl;
@@ -50,32 +49,30 @@ namespace TM2IN {
                         }
                         case 'g':{
                             if (f_count != 0){
-                                currentMesh->vertices = vertices;
-                                meshList.push_back(currentMesh);
-                                currentMesh = new TriangleMesh();
-                                f_count = 0;
+                                vector<Room*> curr_rooms = factory.make();
+                                rooms.insert(rooms.end(), curr_rooms.begin(), curr_rooms.end());
                             }
                             group_name = this->getGroupName(inputstr);
                             if (group_name.find('\r') != string::npos) group_name.erase(group_name.find('\r'));
-                            currentMesh->name = group_name;
+                            factory.setRoomName(group_name);
                             break;
                         }
                         case 'f':{
-                            assert(vertices.size() > 0);
+                            assert(v_count != 0);
+
+                            Triangle* tri = this->makeTriangle(inputstr, factory.getVerticesList());
+                            factory.pushTriangle(tri);
 
                             f_count++;
                             if (f_count % 5000 == 0) cout << "Loaded faces : " << f_count << endl;
-
-                            TM2IN::Triangle* tri = this->makeTriangle(inputstr, vertices);
-                            currentMesh->triangles.push_back(tri);
 
                             break;
                         }
                     }
                 }
-                currentMesh->vertices = vertices;
-                meshList.push_back(currentMesh);
-                return meshList;
+                vector<Room*> curr_rooms = factory.make();
+                rooms.insert(rooms.end(), curr_rooms.begin(), curr_rooms.end());
+                return rooms;
             }
 
 
@@ -86,16 +83,16 @@ namespace TM2IN {
                 return x_1;
             }
 
-            TM2IN::Triangle* TVRReader::makeTriangle(string& input, vector<TM2IN::Vertex*>& vertex){
+            Triangle* TVRReader::makeTriangle(string& input, vector<TM2IN::Vertex*>& vertex){
                 std::vector<std::string> x = split(input, ' ');
 
                 ll a = stol(x[1]);
                 ll b = stol(x[2]);
                 ll c = stol(x[3]);
 
-                TM2IN::Vertex* va = vertex[a];
-                TM2IN::Vertex* vb = vertex[b];
-                TM2IN::Vertex* vc = vertex[c];
+                Vertex* va = vertex[a];
+                Vertex* vb = vertex[b];
+                Vertex* vc = vertex[c];
                 Triangle* newTriangle = new Triangle(va, vb, vc);
 
                 x.clear();

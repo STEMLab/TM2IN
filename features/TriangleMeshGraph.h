@@ -1,7 +1,7 @@
 #ifndef TriangleMeshGraph_h
 #define TriangleMeshGraph_h
 
-#include "features/Geometry.h"
+#include "features/IndoorComponent.h"
 #include "util.h"
 #include "Triangle.h"
 

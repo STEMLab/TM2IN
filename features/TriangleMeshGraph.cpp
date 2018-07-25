@@ -16,25 +16,7 @@ namespace TM2IN {
     }
 
     int TriangleMeshGraph::makeAdjacentGraph() {
-        vector<Triangle *> &triangleList = this->triangles;
-        this->sizeOfTriangles = triangleList.size();
-        adjList.assign(triangleList.size(), vector<ull>());
-        for (ull i = 0; i < triangleList.size() - 1; i++) {
-            if (i % 10 == 0) printProcess(i, triangleList.size(), "make Graph");
-            for (ull j = i + 1; j < triangleList.size(); j++) {
-                if (triangleList[i]->checkNeighbor(triangleList[j])) {
-                    if (!triangleList[i]->isOpposite(triangleList[j])) {
-                        adjList[i].push_back(j);
-                        adjList[j].push_back(i);
-                    } else {
-                        cerr << "Opposite Triangle" << endl;
-                        return -1;
-                    }
-                }
-            }
-        }
-        cout << endl;
-        return 0;
+
     }
 
     bool TriangleMeshGraph::isClosedTriangleMesh() {

@@ -43,6 +43,8 @@ file(GLOB DETAIL_FILES
 file(GLOB SOURCE_FILES
         "features/*.h"
         "features/*.cpp"
+        "features/RoomBoundary/*.h"
+        "features/RoomBoundary/*.cpp"
         "io/*.h"
         "io/*.cpp"
         "cgal/*.h"
@@ -53,7 +55,7 @@ file(GLOB SOURCE_FILES
         "converter/*.cpp"
         "algorithm/*.h"
         "algorithm/*.cpp"
-        predefine.h
+        config.h
         util.cpp
         util.h
         )

@@ -14,7 +14,7 @@ namespace TM2IN{
             class TVRReader {
             public:
                 TVRReader(std::ifstream& _ifs);
-                std::vector<TriangleMesh *> read();
+                std::vector<Room*> read();
             private:
                 std::ifstream& ifs;
 

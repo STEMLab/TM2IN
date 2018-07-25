@@ -16,7 +16,7 @@
 namespace TM2IN {
     PolyhedralSurface::PolyhedralSurface() {
         generation = 0;
-        type = TM2IN::GEOM_TYPE ::PolyhedralSurface;
+        type = TM2IN::IND_TYPE ::PolyhedralSurface;
     }
 
     PolyhedralSurface::PolyhedralSurface(string pname) :PolyhedralSurface() {

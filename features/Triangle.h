@@ -1,7 +1,7 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
-#include "features/Geometry.h"
+#include "features/IndoorComponent.h"
 #include "features/Surface.h"
 
 namespace TM2IN {

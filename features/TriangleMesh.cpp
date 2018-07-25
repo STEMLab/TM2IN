@@ -15,7 +15,7 @@
 #include "features/HalfEdge.h"
 #include "features/Triangle.h"
 #include "features/TriangleMeshGraph.h"
-
+/*
 namespace TM2IN{
     void TriangleMesh::init() {
         for (int i = 0 ; i < this->triangles.size() ; i++){
@@ -171,3 +171,4 @@ namespace TM2IN{
         this->mbb->update(bbox3);
     }
 }
+*/

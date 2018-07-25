@@ -4,26 +4,27 @@
 #include "Options.h"
 #include "util.h"
 #include "algorithm/Polygonizer.h"
-#include "features/Geometry.h"
+#include "features/IndoorComponent.h"
 
 using namespace TM2IN;
+
 
 class Converter
 {
 protected:
-    Options& options;
 public:
+    vector<Room> rooms;
     vector<TM2IN::TriangleMesh*> mesh_list;
     vector<TM2IN::PolyhedralSurface*> spaceList;
 
-    Converter(Options& op);
+    Converter();
     virtual ~Converter(){};
 
     int start();
     int run();
     int finish();
 private:
-    int importMesh();
+    int importData();
 
     void tagID();
 

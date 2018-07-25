@@ -14,7 +14,7 @@ using namespace std;
 
 namespace TM2IN{
     namespace io{
-        std::vector<TriangleMesh *> import3DS(const char *filePath) {
+        std::vector<Room *> import3DS(const char *filePath) {
             FILE *l_file;
             assert( (l_file=fopen (filePath, "rb") ) != NULL);
 

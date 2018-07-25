@@ -8,7 +8,7 @@
 #include <fstream>
 #include <features/PolyhedralSurface.h>
 
-#include "features/Geometry.h"
+#include "features/IndoorComponent.h"
 
 using namespace std;
 

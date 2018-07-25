@@ -8,7 +8,7 @@
 
 namespace TM2IN{
     namespace io{
-        vector<TriangleMesh*> import3DS(const char *filePath);
+        vector<Room*> import3DS(const char *filePath);
         int export3DS(const char *filePath, vector<TriangleMesh*> mesh_list);
     }
 }

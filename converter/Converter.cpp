@@ -3,21 +3,23 @@
 #include <io/collada.h>
 #include <io/json.h>
 #include <algorithm/mbb.h>
-#include "Converter.h"
 
+#include "config.h"
 #include "features/HalfEdge.h"
 #include "features/Triangle.h"
 
-Converter::Converter(Options& op) : options(op) {}
+#include "Converter.h"
+
+Converter::Converter(){}
 
 int Converter::start() {
-    // import mesh data
-    importMesh();
+    assert(options != NULL);
 
-    // generation writer
+    // import mesh data
+    importData();
     /*
+    // generation writer
     if (options.generator) generation_writer = new GenerationWriter(options.output_dir);
-    else generation_writer = NULL;
     */
 
     // construct graph
@@ -30,7 +32,7 @@ int Converter::start() {
     // if (handleOpenTriangleMesh()) return -1;
 
     // remove Furniture
-    if (remainSelectedMesh(options.selected)) return -1;
+    if (remainSelectedMesh(options->selected)) return -1;
 
     // Triangle Mesh to PolyhedralSurface
     if (convertTriangleMeshToSpace()) return -1;
@@ -42,7 +44,7 @@ int Converter::run() {
     mergeSurfaces();
     validate();
 
-    if (options.polygonizer_mode > 0) // 1 or 2 or 3
+    if (options->polygonizer_mode > 0) // 1 or 2 or 3
         polygonize();
 
     return 0;
@@ -57,9 +59,9 @@ int Converter::finish() {
 
 int Converter::exportSpace() {
     //JSON
-    TM2IN::io::exportJSON(options.output_dir + "surfaces.json", this->spaceList);
+    TM2IN::io::exportJSON(options->output_dir + "surfaces.json", this->spaceList);
 
-    if (options.output_3ds || options.output_tvr){
+    if (options->output_3ds || options->output_tvr){
         convertSpaceToTriangleMesh();
         initTriangleMesh();
         for (int i = 0 ; i < this->mesh_list.size() ; i++){
@@ -72,13 +74,13 @@ int Converter::exportSpace() {
     }
 
     //TVR
-    if (options.output_tvr){
+    if (options->output_tvr){
 
     }
 
     //3DS
-    if (options.output_3ds){
-        TM2IN::io::export3DS((options.output_dir + options.file_name + ".3DS").c_str(), this->mesh_list);
+    if (options->output_3ds){
+        TM2IN::io::export3DS((options->output_dir + options->file_name + ".3DS").c_str(), this->mesh_list);
     }
     return 0;
 }

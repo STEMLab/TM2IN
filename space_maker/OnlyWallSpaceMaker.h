@@ -1,7 +1,7 @@
 #ifndef ONLYWALLSPACEMAKER_H_INCLUDED
 #define ONLYWALLSPACEMAKER_H_INCLUDED
 
-#include "predefine.h"
+#include "config.h"
 
 using namespace std;
 

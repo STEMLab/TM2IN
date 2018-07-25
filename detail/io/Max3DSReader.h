@@ -5,7 +5,7 @@
 #ifndef TM2IN_MAX3DSREADER_H
 #define TM2IN_MAX3DSREADER_H
 
-#include <features/Geometry.h>
+#include <features/IndoorComponent.h>
 #include <fstream>
 
 using namespace std;

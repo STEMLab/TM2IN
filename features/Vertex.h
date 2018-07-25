@@ -5,10 +5,10 @@
 
 #include "util.h"
 #include "detail/cgal_config.h"
-#include "features/Geometry.h"
+#include "IndoorComponent.h"
 
 namespace TM2IN {
-    class Vertex : public Geometry {
+    class Vertex : public IndoorComponent {
     public:
         double coords[3];
 

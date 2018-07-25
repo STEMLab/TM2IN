@@ -45,8 +45,8 @@ int Converter::validate() {
 
 int Converter::processGenerations(PolyhedralSurface *space) {
     ll p_size = (ull)space->surfacesList.size();
-    double thres1 = options.threshold_1;
-    double thres2 = options.threshold_2;
+    double thres1 = options->threshold_1;
+    double thres2 = options->threshold_2;
 
     while (true){
         assert(p_size > 0);
@@ -92,7 +92,7 @@ int Converter::polygonize() {
 
 
 TM2IN::algorithm::Polygonizer *Converter::create_polygonizer() {
-    switch(options.polygonizer_mode){
+    switch(options->polygonizer_mode){
         case 1:
             return new TM2IN::algorithm::PCAPolygonizer();
         case 2:
