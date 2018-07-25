@@ -5,29 +5,34 @@
 #include <string>
 
 #include "features/Geometry.h"
+#include "TriangleMeshGraph.h"
+#include "Vertex.h"
+#include "Triangle.h"
+
 using namespace std;
 
-class TriangleMesh{
-public:
-    string name;
-    vector<Triangle*> triangles;
-    vector<Vertex*> vertices;
-    TriangleMeshGraph* graph;
+namespace TM2IN{
+    class TriangleMesh : public Geometry{
+    public:
+        string name;
+        vector<Triangle*> triangles;
+        vector<Vertex*> vertices;
+        TriangleMeshGraph* graph;
 
-    TriangleMesh(){}
+        TriangleMesh(){}
 
-    void init();
+        void init();
+        bool checkClosed();
+        int partitionByComponent(vector<TriangleMesh *> &new_mesh_list);
+        bool isFurniture();
 
-    bool checkClosed();
+        std::string asJsonText();
+    private:
+        void makeGraph();
 
-    int partitionByComponent(vector<TriangleMesh *> &new_mesh_list);
+        void updateVertexByTriangleList();
+    };
 
-    void clear();
-
-    void updateVertexByTriangleList();
-    bool isFurniture();
-    void makeGraph();
-private:
-};
+}
 
 #endif // TRIANGLEMESH_H_INCLUDED

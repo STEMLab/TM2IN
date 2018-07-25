@@ -6,160 +6,157 @@
 #include <algorithm>
 #include <cmath>
 #include <algorithm/mbb.h>
+#include <algorithm/compare.h>
 
 #include "detail/io/JsonWriter.h"
 #include "compute/unused.h"
 #include "features/TriangleMesh.h"
 #include "features/HalfEdge.h"
 
-PolyhedralSurface::PolyhedralSurface(){
-    generation = 0;
-}
-
-PolyhedralSurface::PolyhedralSurface(string pname)
-{
-    name = pname;
-    generation = 0;
-}
-
-PolyhedralSurface::~PolyhedralSurface()
-{
-    //dtor
-}
-
-
-int PolyhedralSurface::convertTrianglesToSurfaces(vector<Triangle*>& triangles){
-    vector<Surface*> c_list;
-    ull size = triangles.size();
-    for (ull i = 0 ; i < size; i++){
-        Surface* newcp = new Surface(*triangles[i]);
-        c_list.push_back(newcp);
+namespace TM2IN {
+    PolyhedralSurface::PolyhedralSurface() {
+        generation = 0;
+        type = TM2IN::GEOM_TYPE ::PolyhedralSurface;
     }
 
-    this->surfacesList.insert(this->surfacesList.end(), c_list.begin(), c_list.end());
+    PolyhedralSurface::PolyhedralSurface(string pname) :PolyhedralSurface() {
+        name = pname;
+    }
 
-    cout << "\ndone make Surfaces" << endl;
-    return 0;
-}
+    PolyhedralSurface::~PolyhedralSurface() {
+        //dtor
+    }
 
-int PolyhedralSurface::updateNormal(){
-    cout << "\n------------updateNormal------------\n" << endl;
-    for (ull i = 0 ; i < (int)this->surfacesList.size() ; i++)
-    {
-        Surface* surface = this->surfacesList[i];
-        if (!surface->updateNormal())
-        {
-            cout << surface->asJsonText() <<endl;
-            cout << "Cannot make Normal" << endl;
-            exit(-1);
+    int PolyhedralSurface::convertTrianglesToSurfaces(vector<Triangle *> &triangles) {
+        vector<Surface *> c_list;
+        ull size = triangles.size();
+        for (ull i = 0; i < size; i++) {
+            TM2IN::Surface * newcp = new Surface(*triangles[i]);
+            c_list.push_back(newcp);
         }
 
+        this->surfacesList.insert(this->surfacesList.end(), c_list.begin(), c_list.end());
+
+        cout << "\ndone make Surfaces" << endl;
+        return 0;
     }
-    return 0;
-}
 
-int PolyhedralSurface::surface_easy_validation() {
-    cout << "\n------------- check whether surfaces are valid (easy) --------------\n" << endl;
-    for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
-    {
-        Surface* pSurface = this->surfacesList[i];
-        pSurface->updateMBB();
+    int PolyhedralSurface::updateNormal() {
+        cout << "\n------------updateNormal------------\n" << endl;
+        for (ull i = 0; i < (int) this->surfacesList.size(); i++) {
+            Surface * surface = this->surfacesList[i];
+            if (!surface->updateNormal()) {
+                cout << surface->asJsonText() << endl;
+                cout << "Cannot make Normal" << endl;
+                exit(-1);
+            }
 
-        if (pSurface->easy_validation()){
-            i++;
         }
-        else{
-            cerr << pSurface->asJsonText() << endl;
-            return -1;
-        }
+        return 0;
     }
-    return 0;
-}
 
-int PolyhedralSurface::surface_strict_validation() {
-    cout << "\n------------- check whether surfaces are valid --------------\n" << endl;
-    for (vector<Surface*>::size_type i = 0 ; i < this->surfacesList.size(); )
-    {
-        Surface* pSurface = this->surfacesList[i];
-        pSurface->updateMBB();
+    int PolyhedralSurface::surface_easy_validation() {
+        cout << "\n------------- check whether surfaces are valid (easy) --------------\n" << endl;
+        for (vector<Surface *>::size_type i = 0; i < this->surfacesList.size();) {
+            Surface * pSurface = this->surfacesList[i];
+            pSurface->updateMBB();
 
-        if (pSurface->strict_validation()){
-            i++;
-        }
-        else{
-            cerr << pSurface->asJsonText() << endl;
-            return -1;
-        }
-    }
-    return 0;
-}
-
-void PolyhedralSurface::updateMBB(){
-    mbb = TM2IN::algorithm::getMBB(this->surfacesList);
-}
-
-void PolyhedralSurface::freeSurfaces(){
-    for (ull i = 0 ; i < this->surfacesList.size() ; i++)
-    {
-        delete(this->surfacesList[i]);
-    }
-    this->surfacesList.clear();
-}
-
-
-void PolyhedralSurface::sortSurfacesByArea() {
-    sort(this->surfacesList.begin(), this->surfacesList.end(), Geometry::compareArea);
-}
-
-void PolyhedralSurface::tagID() {
-    for (ull i = 0 ; i < (ull)surfacesList.size() ; i++)
-    {
-        surfacesList[i]->sf_id = this->name + "_" + to_string(i);
-    }
-}
-
-string PolyhedralSurface::asJsonText() {
-    return TM2IN::detail::io::to_json(this);
-}
-
-void PolyhedralSurface::setSurfacesList(vector<Surface *> new_list) {
-    freeSurfaces();
-    this->surfacesList = new_list;
-}
-
-bool PolyhedralSurface::isClosed(){
-    map<Surface*, bool> checked;
-    for (Surface* sf : this->surfacesList)
-        checked[sf] = false;
-
-    queue<Surface*> wait_queue;
-    wait_queue.push(this->surfacesList[0]);
-    checked[this->surfacesList[0]] = true;
-
-    int surfaceCount = 0;
-
-    while (wait_queue.size() > 0){
-        Surface* current = wait_queue.front();
-        wait_queue.pop();
-
-        surfaceCount += 1;
-        for (unsigned int nb = 0 ; nb < current->getVerticesSize() ; nb++){
-            Surface* next_surface = current->exterior_boundary_edge(nb)->getOppositeEdge()->parent;
-            if (checked[next_surface]) continue;
-            else{
-                checked[next_surface] = true;
-                wait_queue.push(next_surface);
+            if (pSurface->easy_validation()) {
+                i++;
+            } else {
+                cerr << pSurface->asJsonText() << endl;
+                return -1;
             }
         }
+        return 0;
     }
 
-    if (surfaceCount != this->surfacesList.size()){
-        return false;
-    } else
-        return true;
+    int PolyhedralSurface::surface_strict_validation() {
+        cout << "\n------------- check whether surfaces are valid --------------\n" << endl;
+        for (vector<Surface *>::size_type i = 0; i < this->surfacesList.size();) {
+            Surface * pSurface = this->surfacesList[i];
+            pSurface->updateMBB();
 
+            if (pSurface->strict_validation()) {
+                i++;
+            } else {
+                cerr << pSurface->asJsonText() << endl;
+                return -1;
+            }
+        }
+        return 0;
+    }
+
+    void PolyhedralSurface::updateMBB(Geometry* gm) {
+        if (gm == NULL){
+            CGAL::Bbox_3 bbox3 = TM2IN::algorithm::getMBB(this->surfacesList);
+            this->mbb->update(bbox3);
+        }
+        else{
+            cerr << "PolyhedralSurface::updateMBB(Geometry* gm) no implemented" << endl;
+        }
+    }
+
+    void PolyhedralSurface::freeSurfaces() {
+        for (ull i = 0; i < this->surfacesList.size(); i++) {
+            delete (this->surfacesList[i]);
+        }
+        this->surfacesList.clear();
+    }
+
+
+    void PolyhedralSurface::sortSurfacesByArea() {
+        sort(this->surfacesList.begin(), this->surfacesList.end(), TM2IN::algorithm::compareArea);
+    }
+
+    void PolyhedralSurface::tagID() {
+        for (ull i = 0; i < (ull) surfacesList.size(); i++) {
+            surfacesList[i]->sf_id = this->name + "_" + to_string(i);
+        }
+    }
+
+    string PolyhedralSurface::asJsonText() {
+        return TM2IN::detail::io::polyhedral_surface_to_json(*this);
+    }
+
+    void PolyhedralSurface::setSurfacesList(vector<Surface *> new_list) {
+        freeSurfaces();
+        this->surfacesList = new_list;
+    }
+
+    bool PolyhedralSurface::isClosed() {
+        map<Surface *, bool> checked;
+        for (Surface *sf : this->surfacesList)
+            checked[sf] = false;
+
+        queue<Surface *> wait_queue;
+        wait_queue.push(this->surfacesList[0]);
+        checked[this->surfacesList[0]] = true;
+
+        int surfaceCount = 0;
+
+        while (wait_queue.size() > 0) {
+            Surface * current = wait_queue.front();
+            wait_queue.pop();
+
+            surfaceCount += 1;
+            for (unsigned int nb = 0; nb < current->getVerticesSize(); nb++) {
+                Surface * next_surface = current->exterior_boundary_edge(nb)->getOppositeEdge()->parent;
+                if (checked[next_surface]) continue;
+                else {
+                    checked[next_surface] = true;
+                    wait_queue.push(next_surface);
+                }
+            }
+        }
+
+        if (surfaceCount != this->surfacesList.size()) {
+            return false;
+        } else
+            return true;
+
+    }
 }
-
 /*
  *
  *

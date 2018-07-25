@@ -10,48 +10,53 @@
 
 using namespace std;
 
-class PolyhedralSurface
-{
-protected:
-    double min_coords[3];
-    double max_coords[3];
-public:
-    PolyhedralSurface();
-    PolyhedralSurface(string pname);
-    virtual ~PolyhedralSurface();
+namespace TM2IN {
+    class PolyhedralSurface : public Geometry{
+    public:
+        PolyhedralSurface();
 
-    std::vector<Surface*> surfacesList;
-    vector<Vertex *> vertices;
+        PolyhedralSurface(string pname);
 
-    CGAL::Bbox_3 mbb;
-    string name;
-    int generation;
+        virtual ~PolyhedralSurface();
 
-    void setName(string _name){
-        name = _name;
-    }
-    int convertTrianglesToSurfaces(vector<Triangle*>& triangles);
+        std::vector<Surface *> surfacesList;
+        vector<Vertex *> vertices;
 
-    int surface_strict_validation();
-    int surface_easy_validation();
-    /**
-     * Check whether PolyhedralSurface is closed or not by bfs.
-     * @return Boolean
-     */
-    bool isClosed();
+        string name;
+        int generation;
 
-    int updateNormal();
-    void sortSurfacesByArea();
-    void tagID();
-    string asJsonText();
-    void setSurfacesList(vector<Surface *> new_list);
+        void setName(string _name) {
+            name = _name;
+        }
 
-    int removeStraight();
-protected:
-    void updateMBB();
-    void freeSurfaces();
+        int convertTrianglesToSurfaces(vector<Triangle *> &triangles);
 
-};
+        int surface_strict_validation();
 
+        int surface_easy_validation();
+
+        /**
+         * Check whether PolyhedralSurface is closed or not by bfs.
+         * @return Boolean
+         */
+        bool isClosed();
+
+        int updateNormal();
+
+        void sortSurfacesByArea();
+
+        void tagID();
+
+        string asJsonText();
+
+        void setSurfacesList(vector<Surface *> new_list);
+
+        void updateMBB(Geometry* gm = NULL);
+    protected:
+
+        void freeSurfaces();
+
+    };
+}
 
 #endif // SPACE_H
