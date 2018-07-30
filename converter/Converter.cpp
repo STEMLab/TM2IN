@@ -7,151 +7,87 @@
 #include "config.h"
 #include "features/HalfEdge.h"
 #include "features/Triangle.h"
+#include "features/Room.h"
+#include "features/RoomBoundary/TriangleMesh.h"
+#include "features/RoomBoundary/PolygonMesh.h"
 
 #include "Converter.h"
+
+using namespace TM2IN;
 
 Converter::Converter(){}
 
 int Converter::start() {
-    assert(options != NULL);
+    importData(); // import mesh data
 
-    // import mesh data
-    importData();
     /*
-    // generation writer
-    if (options.generator) generation_writer = new GenerationWriter(options.output_dir);
+    if (options.generator) generation_writer = new GenerationWriter(options.output_dir); // generation writer
     */
 
-    // construct graph
-    initTriangleMesh();
-    if (partitionTriangleMeshByComponent()){
-        throw std::runtime_error("Converter : partitionTriangleMeshByComponent error");
-    }
-
-    // mesh validation
-    // if (handleOpenTriangleMesh()) return -1;
-
-    // remove Furniture
-    if (remainSelectedMesh(options->selected)) return -1;
-
-    // Triangle Mesh to PolyhedralSurface
-    if (convertTriangleMeshToSpace()) return -1;
-
+    // if (handleOpenTriangleMesh()) return -1; // mesh validation
     return 0;
 }
 
 int Converter::run() {
     mergeSurfaces();
-    validate();
+    validate_tsm();
 
-    if (options->polygonizer_mode > 0) // 1 or 2 or 3
+    if (Options::getInstance()->polygonizer_mode > 0) // 1 or 2 or 3
         polygonize();
 
     return 0;
 }
 
 int Converter::finish() {
-    this->tagID();
-    this->exportSpace();
+    this->tag_pm_ID();
+    this->exportRoomBoundary();
 
     return 0;
 }
 
-int Converter::exportSpace() {
+int Converter::exportRoomBoundary() {
     //JSON
-    TM2IN::io::exportJSON(options->output_dir + "surfaces.json", this->spaceList);
+    TM2IN::io::exportRoomBoundaryJSON(Options::getInstance()->output_dir + "surfaces.json", this->rooms, false);
 
-    if (options->output_3ds || options->output_tvr){
-        convertSpaceToTriangleMesh();
-        initTriangleMesh();
-        for (int i = 0 ; i < this->mesh_list.size() ; i++){
-            TriangleMesh *&triangleMesh = this->mesh_list[i];
-            if (triangleMesh->checkClosed())
-                cout << "this mesh is closed\n\n" << endl;
-            else
-                cerr << "this mesh is not closed\n\n" << endl;
-        }
+    if (Options::getInstance()->output_3ds || Options::getInstance()->output_tvr){
+        convert_pm_to_tm();
     }
 
     //TVR
-    if (options->output_tvr){
+    if (Options::getInstance()->output_tvr){
 
     }
 
     //3DS
-    if (options->output_3ds){
-        TM2IN::io::export3DS((options->output_dir + options->file_name + ".3DS").c_str(), this->mesh_list);
+    if (Options::getInstance()->output_3ds){
+        TM2IN::io::export3DS((Options::getInstance()->output_dir + Options::getInstance()->file_name + ".3DS").c_str(), this->rooms);
     }
     return 0;
 }
 
-int Converter::convertSpaceToTriangleMesh(){
-    this->mesh_list.clear();
-    for (int spaceID = 0 ; spaceID < this->spaceList.size() ; spaceID++){
-        PolyhedralSurface* space = this->spaceList[spaceID];
-        vector<Triangle*> triangleList;
-        for (unsigned int sfID = 0 ; sfID < space->surfacesList.size(); sfID++) {
-            Surface* pSurface = space->surfacesList[sfID];
-            vector<Triangle*> triangulation = pSurface->getTriangulation();
-            triangleList.insert(triangleList.end(), triangulation.begin(), triangulation.end());
-        }
+int Converter::convert_pm_to_tm(){
+    for (int room_id = 0 ; room_id < this->rooms.size() ; room_id++){
+        Room* room = this->rooms[room_id];
 
-        for (Triangle* triangle : triangleList){
-            vector<HalfEdge*> edges = triangle->getExteriorBoundary();
-            for (HalfEdge* he : edges){
-                he->oppositeEdge = NULL;
-            }
-        }
-        TriangleMesh* mesh = new TriangleMesh();
-        mesh->triangles = triangleList;
-        mesh->vertices = space->vertices;
-        mesh->name = space->name;
-        this->mesh_list.push_back(mesh);
+        RoomBoundary::TriangleMesh* tm = room->getPm_boundary()->to_triangle_mesh();
+        room->setTm_boundary(tm);
     }
     return 0;
 }
 
 
-void Converter::tagID() {
-    for (ull it = 0 ; it < this->spaceList.size() ; it++) {
-        PolyhedralSurface *space = this->spaceList[it];
-        space->tagID();
+void Converter::tag_pm_ID() {
+    for (ull it = 0 ; it < this->rooms.size() ; it++) {
+        Room *room = this->rooms[it];
+        room->getPm_boundary()->tag_ID(room->name);
     }
 }
 
+/**
+ * @todo Implementation
+ * @return
+ */
 int Converter::handleOpenTriangleMesh() {
-    cerr << "TODO : handleOpenTriangleMesh" << endl;
-    int i = 0, count = 0;
-    while ( i < this->mesh_list.size() ) {
-        if (!this->mesh_list[i]->checkClosed()) {
-            count++;
-            this->mesh_list.erase(this->mesh_list.begin() + i);
-            continue;
-        }
-        i++;
-    }
-    printf("\n\n%d meshes have been removed because it is open.\n", count);
-    assert(this->mesh_list.size() >= 0);
-    return 0;
-}
-
-void Converter::printInputDataSpec() {
-    vector<Surface*> surfaces;
-
-    double area_sum = 0.0;
-    for (ull it = 0 ; it <this->mesh_list.size() ; it++){
-        for (Triangle* triangle : this->mesh_list[it]->triangles){
-            surfaces.push_back(triangle);
-            area_sum += triangle->getArea();
-        }
-    }
-
-    int trianglesCount = surfaces.size();
-    CGAL::Bbox_3 mbb;
-    mbb = TM2IN::algorithm::getMBB(surfaces);
-
-    cout << "\n\nTriangles : " << trianglesCount << endl;
-    cout << "Bbox : " << mbb << endl;
-    cout << "Area : " << area_sum / (double)trianglesCount << endl;
-    cout << "\n\n" << endl;
+    throw std::runtime_error("TODO : handleOpenTriangleMesh");
+    // printf("\n\n%d meshes have been removed because it is open.\n", count);
 }

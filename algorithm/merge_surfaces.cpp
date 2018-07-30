@@ -5,67 +5,68 @@
 #include "algorithm/merge_surfaces.h"
 
 #include <detail/cgal/geometry.h>
-#include <features/PolyhedralSurface.h>
 #include "detail/algorithm/merge_surfaces.h"
 #include "detail/algorithm/simplify_share_edges.h"
+#include "features/RoomBoundary/TriangulatedSurfaceMesh.h"
 
 using namespace TM2IN::detail::algorithm;
+using namespace TM2IN::RoomBoundary;
 
 namespace TM2IN{
     namespace algorithm{
-        bool mergeSurfaces(PolyhedralSurface *ps, double thres1, double thres2) {
+        bool mergeSurfaces(TriangulatedSurfaceMesh *tsm, double thres1, double thres2) {
             vector<Surface*> new_poly_list;
             SurfaceMerger sm(thres1, thres2);
-            bool hasMerged = sm.mergeSurfaces(ps->surfacesList, new_poly_list);
-            ps->setSurfacesList(new_poly_list);
+            bool hasMerged = sm.mergeSurfaces(tsm->surface_list(), new_poly_list);
+            tsm->setSurfacesList(new_poly_list);
             return hasMerged;
         }
 
-        int cleanMergedSurfaces(PolyhedralSurface *ps) {
+        int cleanMergedSurfaces(TriangulatedSurfaceMesh *tsm) {
             bool hasSimplified = false;
             cout << "\n------------clean_merging_result------------\n" << endl;
-            sort(ps->surfacesList.begin(), ps->surfacesList.end(), Surface::compareLength);
-            ull sizeOfSurfaces = ps->surfacesList.size();
+            sort(tsm->surfaces.begin(), tsm->surfaces.end(), Surface::compareLength);
+            ull sizeOfSurfaces = tsm->surfaces.size();
 
             for (ull i = 0 ; i < sizeOfSurfaces; i++)
-                assert((int) ps->surfacesList[i]->getVerticesSize() >= 3);
+                assert((int) tsm->surfaces[i]->getVerticesSize() >= 3);
 
             for (ull i = 0 ; i < sizeOfSurfaces - 1; i++){
-                Surface *&surfaceI = ps->surfacesList[i];
+                Surface *&surfaceI = tsm->surfaces[i];
                 if (!surfaceI->easy_validation()) continue;
                 printProcess(i, sizeOfSurfaces, "");
                 for (ull j = i + 1; j < sizeOfSurfaces ; j++){
-                    Surface *&surfaceJ = ps->surfacesList[j];
+                    Surface *&surfaceJ = tsm->surfaces[j];
                     if (!surfaceI->easy_validation()) break;
                     if (!surfaceJ->easy_validation()) continue;
                     if (!TM2IN::detail::cgal::has_bbox_intersect(surfaceI, surfaceJ)) continue;
-                    while (simplify_share_edges(ps->surfacesList[i], ps->surfacesList[j]) == 0){
+                    while (simplify_share_edges(tsm->surfaces[i], tsm->surfaces[j]) == 0){
                         hasSimplified = true;
                         if (!surfaceI->easy_validation() || !surfaceJ->easy_validation()) break;
                     }
                 }
             }
-            sizeOfSurfaces = ps->surfacesList.size();
+            sizeOfSurfaces = tsm->surfaces.size();
 
             bool hasRemoved = false;
             for (int i = sizeOfSurfaces - 1; i >= 0 ; i--){
-                if (ps->surfacesList[i]->strict_validation()){
+                if (tsm->surfaces[i]->strict_validation()){
                 }
                 else{
                     hasRemoved = true;
                     cout << "remove" << endl;
-                    delete ps->surfacesList[i];
-                    ps->surfacesList.erase(ps->surfacesList.begin() + i);
+                    delete tsm->surfaces[i];
+                    tsm->surfaces.erase(tsm->surfaces.begin() + i);
                 }
             }
 
             if (hasRemoved)
-                hasSimplified = (cleanMergedSurfaces(ps) || hasSimplified);
+                hasSimplified = (cleanMergedSurfaces(tsm) || hasSimplified);
 
             return hasSimplified;
         }
 
-        bool mergeSurfaces(vector<Surface *>& surfaceList, double thres1, double thres2, vector<Surface*>& newSurfaceList) {
+        bool mergeSurfaces(std::vector<Surface *>& surfaceList, double thres1, double thres2, vector<Surface*>& newSurfaceList) {
             SurfaceMerger sm(thres1, thres2);
             bool hasMerged = sm.mergeSurfaces(surfaceList, newSurfaceList);
             return hasMerged;

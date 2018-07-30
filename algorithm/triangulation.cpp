@@ -21,7 +21,7 @@ namespace TM2IN {
 
             if (vertexList.size() == 3) {
                 Triangle* newTriangle = new Triangle(vertexList);
-                newTriangle->sf_id = pSurface->sf_id + "_0";
+                newTriangle->geom_id = pSurface->geom_id + "_0";
                 result.push_back(newTriangle);
                 return 0;
             }

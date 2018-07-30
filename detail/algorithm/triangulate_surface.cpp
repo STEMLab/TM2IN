@@ -63,7 +63,7 @@ namespace TM2IN {
                             localTemp.push_back(vertexList[k]);
                         }
                         Triangle* new_tri = new Triangle(localTemp);
-                        new_tri->sf_id = pSurface->sf_id + "_" + to_string(triangles.size());
+                        new_tri->geom_id = pSurface->geom_id + "_" + to_string(triangles.size());
                         triangles.push_back(new_tri);
                     }
                 }

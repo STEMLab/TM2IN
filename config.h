@@ -7,8 +7,6 @@
 #define DECIMAL 6
 
 #include <cassert>
-#include "Options.h"
-
-Options* options = NULL;
+#include <cstdlib>
 
 #endif // PREDEFINE_H_INCLUDED

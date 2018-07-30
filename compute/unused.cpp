@@ -5,7 +5,6 @@
 #include <detail/cgal/plane.h>
 #include <algorithm/collinear.h>
 #include "unused.h"
-#include "features/TriangleMeshGraph.h"
 
 #define GAP_FOR_SNAP 3
 

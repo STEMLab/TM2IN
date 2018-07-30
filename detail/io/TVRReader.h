@@ -6,7 +6,9 @@
 #define TM2IN_TVRREADER_H
 
 #include <fstream>
-#include <features/TriangleMesh.h>
+#include <features/Room.h>
+
+using namespace std;
 
 namespace TM2IN{
     namespace detail{

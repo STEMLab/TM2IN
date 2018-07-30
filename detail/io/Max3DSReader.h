@@ -16,7 +16,7 @@ namespace TM2IN {
             class Max3DSReader {
                 public:
                     Max3DSReader(FILE* _fp);
-                    std::vector<TriangleMesh *> read();
+                    std::vector<Room *> read();
                 private:
                     FILE* fp;
                     long filelength(int f);

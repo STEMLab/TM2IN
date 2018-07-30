@@ -6,7 +6,8 @@ using namespace std;
 
 int main(int argc, char * argv[]) {
     try{
-        options = new Options(argc, argv);
+        Options* opt = Options::getInstance();
+        opt->make(argc, argv);
         createAndRemoveDir();
 
         Converter converter = Converter();

@@ -5,14 +5,17 @@
 #include "Max3DSWriter.h"
 #include "Max3DSReader.h"
 
-#include "features/TriangleMesh.h"
+#include "features/Room.h"
+#include "features/RoomBoundary/TriangleMesh.h"
 #include "features/Vertex.h"
 #include "features/Triangle.h"
+
+using namespace std;
 
 namespace TM2IN{
     namespace detail{
         namespace io{
-            int Max3DSWriter::write(vector<TriangleMesh *> meshList) {
+            int Max3DSWriter::write(vector<Room*> rooms) {
 
                 unsigned short chunk_id = 0x4D4D;
                 unsigned int chunk_length = 0;
@@ -25,19 +28,23 @@ namespace TM2IN{
                 fwrite(&chunk_length, 4, 1, pFile);
                 unsigned int wholeLength = 0;
 
-                for (int groupI = 0 ; groupI < meshList.size(); groupI++){
+                for (int groupI = 0 ; groupI < rooms.size(); groupI++){
+                    Room* room = rooms[groupI];
+                    RoomBoundary::TriangleMesh* tm = room->getTm_boundary();
+                    vector<Triangle*> triangles = tm->getTriangleList();
+                    vector<Vertex*> vertices = tm->extractVerticesList();
                     vector<vector<int>> triangleIndicies;
-                    for (int triI = 0 ; triI < meshList[groupI]->triangles.size(); triI++){
-                        Triangle* triangle = meshList[groupI]->triangles[triI];
+                    for (int triI = 0 ; triI < triangles.size(); triI++){
+                        Triangle* triangle = triangles[triI];
                         vector<int> triangleIndex;
                         for (int vi = 0 ; vi < 3 ; vi++){
                             Vertex* vt = triangle->vertex(vi);
                             int index = 0;
-                            for (; index < meshList[groupI]->vertices.size(); index++){
-                                if (meshList[groupI]->vertices[index] == vt)
+                            for (; index < vertices.size(); index++){
+                                if (vertices[index] == vt)
                                     break;
                             }
-                            assert (meshList[groupI]->vertices.size() != index);
+                            assert (vertices.size() != index);
                             triangleIndex.push_back(index);
                         }
                         triangleIndicies.push_back(triangleIndex);
@@ -45,7 +52,7 @@ namespace TM2IN{
 
                     unsigned int VERTICES_LIST_LENGTH = sizeof(unsigned short) + sizeof(unsigned int) + // Vertex : chunk_id and chunk_length
                                                         sizeof(unsigned short) + // Vertices number
-                                                        sizeof(float) * 3 * meshList[groupI]->vertices.size(); // Vertices List
+                                                        sizeof(float) * 3 * vertices.size(); // Vertices List
                     unsigned int FACES_DESCRIPTION_LENGTH = sizeof(unsigned short) + sizeof(unsigned int) + // Polygon : chunk_id and chunk_length
                                                             sizeof(unsigned short) + // Polygons number
                                                             sizeof(unsigned short) * 4 * triangleIndicies.size(); // Polygons List
@@ -54,7 +61,7 @@ namespace TM2IN{
 
                     chunk_id = EDIT_OBJECT;
                     chunk_length = sizeof(unsigned short) + sizeof(unsigned int) +
-                                   (unsigned short)meshList[groupI]->name.size() + 1 +
+                                   (unsigned short)room->name.size() + 1 +
                                    // Triangle Mesh : chunk_id and chunk_length
                                    TRIANGULAR_MESH_LENGTH;
                     wholeLength += chunk_length;
@@ -62,7 +69,7 @@ namespace TM2IN{
                     fwrite(&chunk_id, 2, 1, pFile);
                     fwrite(&chunk_length, 4, 1, pFile);
 
-                    const char* name = meshList[groupI]->name.c_str();
+                    const char* name = room->name.c_str();
                     for (int i = 0 ; name[i] != 0 ; i++){
                         fwrite(&name[i], sizeof(char), 1, pFile);
                     }
@@ -80,12 +87,12 @@ namespace TM2IN{
                     chunk_length = VERTICES_LIST_LENGTH;
                     fwrite(&chunk_id, 2, 1, pFile);
                     fwrite(&chunk_length, 4, 1, pFile);
-                    unsigned short sizeOfVertices = (unsigned short)meshList[groupI]->vertices.size();
+                    unsigned short sizeOfVertices = (unsigned short)vertices.size();
                     fwrite(&sizeOfVertices, sizeof(unsigned short), 1, pFile);
-                    for (int vi = 0 ; vi < meshList[groupI]->vertices.size(); vi++){
-                        float x = (float)meshList[groupI]->vertices[vi]->x();
-                        float y = (float)meshList[groupI]->vertices[vi]->y();
-                        float z = (float)meshList[groupI]->vertices[vi]->z();
+                    for (int vi = 0 ; vi < vertices.size(); vi++){
+                        float x = (float)vertices[vi]->x();
+                        float y = (float)vertices[vi]->y();
+                        float z = (float)vertices[vi]->z();
                         fwrite(&x, sizeof(float), 1, pFile);
                         fwrite(&y, sizeof(float), 1, pFile);
                         fwrite(&z, sizeof(float), 1, pFile);

@@ -17,8 +17,6 @@ namespace TM2IN{
         std::vector<HalfEdge* > innerEdges;
         std::vector<HalfEdge* > exteriorBoundary;
     public:
-        std::string sf_id;
-
         Vector_3 normal = CGAL::NULL_VECTOR;
 
         std::vector<Triangle*> triangles;

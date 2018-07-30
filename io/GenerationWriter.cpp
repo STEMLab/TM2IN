@@ -3,7 +3,8 @@
 
 #include <boost/filesystem.hpp>
 
-void GenerationWriter::start(PolyhedralSurface* p_space){
+/*
+void GenerationWriter::start(Room* p_space){
     this->space = p_space;
 
     //Create Generation directory
@@ -44,3 +45,4 @@ void GenerationWriter::writeStat(){
     statout.close();
 }
 
+*/

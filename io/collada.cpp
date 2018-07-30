@@ -5,7 +5,6 @@
 #include "collada.h"
 
 #include <vector>
-#include <features/TriangleMesh.h>
 #include <lib/rapidxml/rapidxml.hpp>
 #include <fstream>
 #include <detail/io/ColladaReader.h>

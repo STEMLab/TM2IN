@@ -26,7 +26,7 @@ namespace TM2IN {
         if (pBox->cgal_bbox3 == CGAL::Bbox_3())
             this->cgal_bbox3 = CGAL::Bbox_3();
         else
-            this->update(pBox->cgal_bbox3);
+            this->set(pBox->cgal_bbox3);
     }
 
     double MinimumBoundingBox::operator[](int index) {
@@ -79,7 +79,7 @@ namespace TM2IN {
         this->cgal_bbox3 = CGAL::Bbox_3();
     }
 
-    void MinimumBoundingBox::update(CGAL::Bbox_3& bbox3) {
+    void MinimumBoundingBox::set(CGAL::Bbox_3 &bbox3) {
         maxx = bbox3.xmax();
         maxy = bbox3.ymax();
         maxz = bbox3.zmax();
@@ -99,7 +99,7 @@ namespace TM2IN {
         if (this->cgal_bbox3 == CGAL::Bbox_3()) // need update
             this->cgal_bbox3 = TM2IN::detail::cgal::to_CGAL_bbox3(*this);
         this->cgal_bbox3 += _bbox3;
-        update(this->cgal_bbox3);
+        set(this->cgal_bbox3);
     }
 
 

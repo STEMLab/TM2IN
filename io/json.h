@@ -5,13 +5,12 @@
 #include <string>
 
 #include "features/Surface.h"
-#include "features/PolyhedralSurface.h"
 
 using namespace std;
 
 namespace TM2IN{
     namespace io {
-        int exportJSON(string output_file, vector<PolyhedralSurface *> &ts, bool triangulation_out=false);
+        int exportRoomBoundaryJSON(string output_file, vector<Room *> &rooms, int boundary_mode=0);
     }
 };
 

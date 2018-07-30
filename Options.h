@@ -14,8 +14,19 @@ using namespace std;
 enum ARCHITECTURE {ARCH, NON_ARCH, ALL};
 
 class Options {
+private:
+    Options(){}
+
+    static Options* instance;
 public:
-    Options(int argc, char **argv);
+    static Options* getInstance(){
+        if(!instance){
+            instance = new Options();
+        }
+        return instance;
+    }
+
+    void make(int argc, char **argv);
 
     string input_dir;
     string output_dir;

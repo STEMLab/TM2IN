@@ -50,7 +50,9 @@ namespace TM2IN {
                         case 'g':{
                             if (f_count != 0){
                                 vector<Room*> curr_rooms = factory.make();
-                                rooms.insert(rooms.end(), curr_rooms.begin(), curr_rooms.end());
+                                if (curr_rooms.size() != 0)
+                                    rooms.insert(rooms.end(), curr_rooms.begin(), curr_rooms.end());
+                                f_count = 0;
                             }
                             group_name = this->getGroupName(inputstr);
                             if (group_name.find('\r') != string::npos) group_name.erase(group_name.find('\r'));
@@ -71,7 +73,8 @@ namespace TM2IN {
                     }
                 }
                 vector<Room*> curr_rooms = factory.make();
-                rooms.insert(rooms.end(), curr_rooms.begin(), curr_rooms.end());
+                if (curr_rooms.size() != 0)
+                    rooms.insert(rooms.end(), curr_rooms.begin(), curr_rooms.end());
                 return rooms;
             }
 

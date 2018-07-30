@@ -26,7 +26,7 @@ namespace TM2IN {
         void set_min_coords(double pDouble[3]);
         void set_max_coords(double pDouble[3]);
 
-        void update(CGAL::Bbox_3& bbox3);
+        void set(CGAL::Bbox_3 &bbox3);
         void merge(CGAL::Bbox_3& _bbox3);
         CGAL::Bbox_3 CGAL_bbox3();
 

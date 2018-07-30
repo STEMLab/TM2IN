@@ -30,7 +30,7 @@ namespace TM2IN{
         this->mbb = new MinimumBoundingBox(cp->mbb);
         this->area = cp->area;
         this->triangles = cp->triangles;
-        this->sf_id = cp->sf_id;
+        this->geom_id = cp->geom_id;
         this->type = TM2IN::IND_TYPE::Surface;
     }
 
@@ -254,10 +254,10 @@ namespace TM2IN{
     }
 
     std::vector<Triangle *> Surface::getTriangulation() {
-
         if (this->triangulation.size() == 0) {
             vector<Triangle*> triList;
             TM2IN::algorithm::triangulate(this, triList);
+            this->triangulation = triList;
         }
         return this->triangulation;
     }

@@ -18,7 +18,7 @@ namespace TM2IN {
             class ColladaReader{
             public:
                 ColladaReader(ifstream& _ifs);
-                std::vector<TriangleMesh *> read();
+                std::vector<Room *> read();
             private:
                 ifstream& ifs;
 

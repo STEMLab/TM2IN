@@ -13,43 +13,45 @@ class Converter
 {
 protected:
 public:
-    vector<Room> rooms;
-    vector<TM2IN::TriangleMesh*> mesh_list;
-    vector<TM2IN::PolyhedralSurface*> spaceList;
+    vector<Room*> rooms;
 
     Converter();
     virtual ~Converter(){};
 
+    /**
+     * starting to convert data. Triangle Mesh data -> TM2IN::TriangleMesh Class Objects
+     */
     int start();
+
+    /**
+     * converting data. TM2IN::TriangleMesh -> TM2IN::TriangulatedSurfaceMesh
+     * @return
+     */
     int run();
+
+    /**
+     * finish and export data. TM2IN::TriangulatedSurfaceMesh -> TM2IN::PolygonMesh
+     * @return
+     */
     int finish();
 private:
+    // start
     int importData();
-
-    void tagID();
-
-    int validate();
-
-    //Triangle Mesh
-    int initTriangleMesh();
-
-    int mergeSurfaces();
-    int processGenerations(TM2IN::PolyhedralSurface *space);
-
-    int convertTriangleMeshToSpace();
-    int convertSpaceToTriangleMesh();
-
-    int exportSpace();
-
-    int partitionTriangleMeshByComponent();
-    int remainSelectedMesh(int arch);
+    void print_input_spec();
     int handleOpenTriangleMesh();
 
-    void printInputDataSpec();
-
+    // run
+    int mergeSurfaces();
+    RoomBoundary::TriangulatedSurfaceMesh *make_tri_surface_mesh(RoomBoundary::TriangleMesh *tm);
+    int validate_tsm();
     int polygonize();
-
     TM2IN::algorithm::Polygonizer *create_polygonizer();
+
+    // finish
+    void tag_pm_ID();
+    int convert_pm_to_tm();
+    int exportRoomBoundary();
+
 };
 
 #endif // MANAGER_H

@@ -5,8 +5,8 @@
 #include "Max3DSReader.h"
 
 #include <sys/stat.h>
-
-#include "features/TriangleMesh.h"
+#include <detail/features/RoomFactory.h>
+#include "features/Room.h"
 #include "features/Vertex.h"
 #include "features/Triangle.h"
 
@@ -17,7 +17,7 @@ namespace TM2IN {
 
             }
 
-            std::vector<TriangleMesh *> Max3DSReader::read() {
+            std::vector<Room *> Max3DSReader::read() {
                 int i; //Index variable
 
                 char name[BUFSIZ];
@@ -30,8 +30,8 @@ namespace TM2IN {
 
                 unsigned short l_face_flags; //Flag that stores some face information
 
-                vector<TriangleMesh*> meshList;
-                TriangleMesh* currentMesh = new TriangleMesh();
+                vector<Room*> rooms;
+                RoomFactory factory;
 
                 string group_name;
                 int f_count =0, v_count = 0;
@@ -70,8 +70,9 @@ namespace TM2IN {
                         case EDIT_OBJECT:
                             cout << "\t\t0x4000 : " << l_chunk_length << endl;
                             if (f_count != 0){
-                                meshList.push_back(currentMesh);
-                                currentMesh = new TriangleMesh();
+                                vector<Room*> curr_rooms = factory.make();
+                                if (curr_rooms.size() != 0)
+                                    rooms.insert(rooms.end(), curr_rooms.begin(), curr_rooms.end());
                                 f_count = 0;
                             }
                             i=0;
@@ -81,8 +82,8 @@ namespace TM2IN {
                                 name[i] = l_char;
                                 i++;
                             }while(l_char != '\0');
-                            currentMesh->name = name;
 
+                            factory.setRoomName(name);
                             if (strstr(name, "FC")){
                                 cout << "skip furniture" << endl;
                                 fseek(this->fp, l_chunk_length -i -6, SEEK_CUR);
@@ -122,7 +123,7 @@ namespace TM2IN {
                                 vt->setY(temp);
                                 fread (&temp, sizeof(float), 1, this->fp);
                                 vt->setZ(temp);
-                                currentMesh->vertices.push_back(vt);
+                                factory.pushVertex(vt);
                             }
                             v_count += l_qty;
                             break;
@@ -147,11 +148,11 @@ namespace TM2IN {
                                 fread (&b, sizeof (unsigned short), 1, this->fp);
                                 fread (&c, sizeof (unsigned short), 1, this->fp);
                                 fread (&l_face_flags, sizeof (unsigned short), 1, this->fp);
-                                Vertex* va = currentMesh->vertices[a];
-                                Vertex* vb = currentMesh->vertices[b];
-                                Vertex* vc = currentMesh->vertices[c];
+                                Vertex* va = factory.getVerticesList()[a];
+                                Vertex* vb = factory.getVerticesList()[b];
+                                Vertex* vc = factory.getVerticesList()[c];
                                 Triangle* tri = new Triangle(va, vb, vc);
-                                currentMesh->triangles.push_back(tri);
+                                factory.pushTriangle(tri);
                             }
                             break;
                             /*
@@ -170,10 +171,12 @@ namespace TM2IN {
                     }
                 }
                 if (f_count != 0){
-                    meshList.push_back(currentMesh);
+                    vector<Room*> curr_rooms = factory.make();
+                    if (curr_rooms.size() != 0)
+                        rooms.insert(rooms.end(), curr_rooms.begin(), curr_rooms.end());
                 }
                 fclose (this->fp); // Closes the file stream
-                return meshList;
+                return rooms;
             }
 
             long Max3DSReader::filelength(int f) {

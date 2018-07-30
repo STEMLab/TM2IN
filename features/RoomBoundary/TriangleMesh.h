@@ -12,12 +12,20 @@ namespace TM2IN{
         class TriangleMesh : public IndoorComponent {
         private:
             std::vector<Triangle*> triangles;
-            std::map<Triangle*, std::vector<Triangle*>> adjMap;
+            TriangleMesh *bfs(Triangle *&pTriangle, std::map<Triangle *, bool> &checked);
         public:
             TriangleMesh(std::vector<Triangle *> _triangles);
             void makeGraph();
-
             bool is_closed_triangle_mesh();
+
+            std::vector<TriangleMesh *> disjoint_meshes();
+            std::vector<Triangle*> getTriangleList();
+
+            std::vector<Vertex*> extractVerticesList();
+
+            std::string asJsonText() override;
+
+            void updateMBB() override;
         };
     }
 }

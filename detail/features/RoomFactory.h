@@ -7,6 +7,8 @@
 
 #include "features/IndoorComponent.h"
 
+using namespace TM2IN::RoomBoundary;
+using namespace std;
 
 namespace TM2IN {
     namespace detail {
@@ -27,7 +29,7 @@ namespace TM2IN {
 
             void setRoomName(std::string str);
 
-            vector<TriangleMesh *> paritionRoom(TriangleMesh *pMesh);
+            std::vector<TriangleMesh *> paritionRoom(TriangleMesh *pMesh);
 
             bool is_furniture(TriangleMesh *&tm);
         };

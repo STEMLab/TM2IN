@@ -6,7 +6,7 @@
 #define TM2IN_MAX3DSWRITER_H
 
 #include <cstdio>
-#include <features/TriangleMesh.h>
+#include "features/IndoorComponent.h"
 
 namespace TM2IN {
     namespace detail {
@@ -14,7 +14,7 @@ namespace TM2IN {
             class Max3DSWriter {
             public:
                 Max3DSWriter(FILE* pFile);
-                int write(vector<TriangleMesh*> meshes);
+                int write(std::vector<Room*> rooms);
             private:
                 FILE* pFile;
             };

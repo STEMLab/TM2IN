@@ -12,19 +12,21 @@
 #include "MinimumBoundingBox.h"
 
 namespace TM2IN{
+    namespace RoomBoundary{
+        class TriangleMesh;
+        class TriangulatedSurfaceMesh;
+        class PolygonMesh;
+    }
     class Room;
-    class TriangleMesh;
-    class TriangulatedSurfaceMesh;
-    class PolygonMesh;
 
-    class PolyhedralSurface;
     class Surface;
     class Triangle;
     class Vertex;
     class HalfEdge;
+    class Poylgon;
 
     enum class IND_TYPE {
-        IndoorComponent, PolyhedralSurface, Surface, Triangle, HalfEdge, Vertex
+        IndoorComponent, Room, RoomBoundary, Surface, Triangle, HalfEdge, Vertex
     };
 
     class IndoorComponent {
@@ -33,6 +35,8 @@ namespace TM2IN{
         TM2IN::IND_TYPE type;
         double area = 0.0;
     public:
+        std::string geom_id;
+
         IndoorComponent();
 
         double getArea(){

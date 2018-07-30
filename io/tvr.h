@@ -5,11 +5,11 @@
 #ifndef TM2IN_TVR_H
 #define TM2IN_TVR_H
 
-#include <features/TriangleMesh.h>
+#include "features/IndoorComponent.h"
 
 namespace TM2IN{
     namespace io{
-        vector<Room*> importTVR(const char *filePath);
+        std::vector<Room*> importTVR(const char *filePath);
     }
 }
 
