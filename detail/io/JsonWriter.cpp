@@ -4,57 +4,104 @@
 
 #include "JsonWriter.h"
 
+#include "features/Surface.h"
+#include "features/Room.h"
+#include "features/RoomBoundary/PolygonMesh.h"
+#include "features/RoomBoundary/TriangleMesh.h"
+#include "features/RoomBoundary/TriangulatedSurfaceMesh.h"
+#include "features/Vertex.h"
+#include "features/Triangle.h"
+
 namespace TM2IN {
     namespace detail {
         namespace io {
             JsonWriter::JsonWriter(std::ofstream &_fout) : fout(_fout){}
 
-            void JsonWriter::write(vector<PolyhedralSurface *> &ts, bool exp_tri) {
+            void JsonWriter::write(vector<Room *> &rooms, int boundary_mode) {
                 fout << "{ \n";
                 fout << " \"spaces\" : [ \n";
-                for (unsigned int index = 0; index < ts.size(); index++) {
-                    string ts_str = TM2IN::detail::io::to_json(ts[index], exp_tri);
+                for (unsigned int index = 0; index < rooms.size(); index++) {
+                    string ts_str = TM2IN::detail::io::room_to_json(*rooms[index], boundary_mode);
                     fout << ts_str;
-                    if (index != ts.size() - 1) fout << ", \n";
+                    if (index != rooms.size() - 1) fout << ", \n";
                     else fout << "\n";
                 }
                 fout << "]" << endl;
                 fout << "}" << endl;
             }
 
-            string to_json(PolyhedralSurface* ps, bool exp_tri){
+            string room_to_json(Room& room, int boundary_mode){
                 string result;
                 result = "{\n";
-                result += " \"name\" : \"" + ps->name + "\", \n";
+                result += " \"name\" : \"" + room.name + "\", \n";
                 result += " \"Surfaces\" : [ \n";
-                for (unsigned int id = 0; id < ps->surfacesList.size(); id++) {
-                    if (exp_tri)
-                        result += to_json_with_triangles(ps->surfacesList[id]);
-                    else
-                        result += to_json(ps->surfacesList[id]);
+                if (boundary_mode == 0) // PM
+                {
+                    RoomBoundary::PolygonMesh* pm = room.getPm_boundary();
+                    vector<Surface*>& polygons = pm->polygons;
+                    for (unsigned int id = 0; id < polygons.size(); id++) {
+                            result += surface_to_json(*(polygons[id]));
 
-                    if (id != ps->surfacesList.size() - 1) {
-                        result += ", \n";
-                    } else {
-                        result += " \n";
+                        if (id != polygons.size() - 1) {
+                            result += ", \n";
+                        } else {
+                            result += " \n";
+                        }
                     }
                 }
+                else if (boundary_mode == 1) // TM
+                {
+                    RoomBoundary::TriangleMesh* tm = room.getTm_boundary();
+                    vector<Triangle*> triangles = tm->getTriangleList();
+                    for (unsigned int id = 0; id < triangles.size(); id++) {
+                        result += surface_to_json(*(triangles[id]));
+
+                        if (id != triangles.size() - 1) {
+                            result += ", \n";
+                        } else {
+                            result += " \n";
+                        }
+                    }
+                }
+                else if (boundary_mode == 2){ // TSM and with Triangle
+                    RoomBoundary::TriangulatedSurfaceMesh* tsm = room.getTsm_boundary();
+                    for (unsigned int id = 0; id < tsm->surfaces.size(); id++) {
+                        result += surface_to_json_with_triangles(*(tsm->surfaces[id]));
+                        if (id != tsm->surfaces.size() - 1) {
+                            result += ", \n";
+                        } else {
+                            result += " \n";
+                        }
+                    }
+                }
+                else{ // TSM
+                    RoomBoundary::TriangulatedSurfaceMesh* tsm = room.getTsm_boundary();
+                    for (unsigned int id = 0; id < tsm->surfaces.size(); id++) {
+                        result += surface_to_json(*(tsm->surfaces[id]));
+                        if (id != tsm->surfaces.size() - 1) {
+                            result += ", \n";
+                        } else {
+                            result += " \n";
+                        }
+                    }
+                }
+
                 result += "] \n";
                 result += "}";
                 return result;
             }
 
-            string to_json_with_triangles(Surface* pSurface) {
-                assert(pSurface->triangles.size() > 0);
+            string surface_to_json_with_triangles(Surface& pSurface) {
+                assert(pSurface.triangles.size() > 0);
 
                 string ret;
                 ret += "{";
-                ret.append(" \n \"area\" : " + to_string(pSurface->area) );
-                ret.append(" \n, \"id\" : \"" + pSurface->sf_id + "\"" );
+                ret.append(" \n \"area\" : " + to_string(pSurface.getArea()) );
+                ret.append(" \n, \"id\" : \"" + pSurface.geom_id + "\"" );
                 ret.append( "\n, \"triangles\" : [\n");
-                for (int i = 0 ; i < (int)pSurface->triangles.size() ; i++){
-                    ret += pSurface->triangles[i]->asJsonText();
-                    if (i != pSurface->triangles.size() - 1)
+                for (int i = 0 ; i < (int)pSurface.triangles.size() ; i++){
+                    ret += pSurface.triangles[i]->asJsonText();
+                    if (i != pSurface.triangles.size() - 1)
                         ret += ",";
                     ret += "\n";
                 }
@@ -64,60 +111,30 @@ namespace TM2IN {
                 return ret;
             }
 
-            string to_json(Surface* sf){
-                if (sf->getVerticesSize() == 0){
+            string surface_to_json(Surface& sf){
+                if (sf.getVerticesSize() == 0){
                     throw std::runtime_error("string to_json(Surface) : Vertex size is 0");
                 }
                 string ret;
                 ret.append("{");
-                ret.append(" \n \"area\" : " + to_string(sf->area) );
-                ret.append(" ,\n \"id\" : \"" + sf->sf_id + "\"" );
+                ret.append(" \n \"area\" : " + to_string(sf.getArea()) );
+                ret.append(" ,\n \"id\" : \"" + sf.geom_id + "\"" );
                 ret.append(" ,\n \"normal\" : [");
-                ret.append(to_string(sf->normal.x()) + ", ");
-                ret.append(to_string(sf->normal.y()) + ", ");
-                ret.append(to_string(sf->normal.z()));
+                ret.append(to_string(sf.normal.x()) + ", ");
+                ret.append(to_string(sf.normal.y()) + ", ");
+                ret.append(to_string(sf.normal.z()));
                 ret.append("], \n");
                 ret.append(" \"coord\" : [");
-                for (unsigned int i = 0 ; i < sf->getVerticesSize() ; i++){
-                    ret.append(sf->vertex(i)->asJsonText());
+                for (unsigned int i = 0 ; i < sf.getVerticesSize() ; i++){
+                    ret.append(sf.vertex(i)->asJsonText());
                     ret.append(",");
                 }
-                ret.append(sf->vertex(0)->asJsonText());
+                ret.append(sf.vertex(0)->asJsonText());
                 ret.append("] }");
                 return ret;
             }
-/*
-            string to_json(Triangle* tri){
-                std::string ret;
-                ret += "{\n";
 
-                //normal
-                ret += "\"normal\" : [";
-                Vector_3 normal = tri->getNormal();
-                ret += std::to_string(normal.x()) + ", " + std::to_string(normal.y()) + ", " + std::to_string(normal.z());
-                ret += "],\n";
-
-                //area
-                ret += "\"area\" : ";
-                double area = tri->getArea();
-                ret += std::to_string(area);
-                ret += "\n";
-
-                //coordinates
-                ret += "\"coord\" : [\n";
-                for (int i = 0 ; i < 3 ; i++){
-                    ret += "\t";
-                    ret += tri->vertex(i)->asJsonText();
-                    if (i != 2)
-                        ret += ",";
-                    ret += "\n";
-                }
-                ret += "]}";
-
-                return ret;
-            }
-*/
-            string to_json(Vertex& vt, int index){
+            string vertex_to_json(Vertex& vt, int index){
                 std::string ret;
                 ret.append("[");
                 ret.append(to_string(vt.x()));

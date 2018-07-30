@@ -2,9 +2,14 @@
 // Created by dongmin on 18. 7. 16.
 //
 
-#include <detail/io/ColladaReader.h>
-#include <lib/rapidxml/rapidxml.hpp>
+#include "detail/io/ColladaReader.h"
+#include "lib/rapidxml/rapidxml.hpp"
+#include "features/Vertex.h"
+#include "features/Triangle.h"
+#include "util.h"
+
 #include <string>
+#include <detail/features/RoomFactory.h>
 
 namespace TM2IN {
     namespace detail {
@@ -13,8 +18,8 @@ namespace TM2IN {
 
             }
 
-            std::vector<TriangleMesh *> ColladaReader::read() {
-                vector<TriangleMesh*> meshList;
+            std::vector<Room *> ColladaReader::read() {
+                vector<Room*> rooms;
 
                 rapidxml::xml_document<> doc;
                 rapidxml::xml_node<> * root_node;
@@ -25,14 +30,14 @@ namespace TM2IN {
                 root_node = doc.first_node("COLLADA");
                 string collada_version = root_node->first_attribute("version")->value();
 
+                RoomFactory factory;
                 for (rapidxml::xml_node<>* library_geometries_node = root_node->first_node("library_geometries") ; library_geometries_node;
                      library_geometries_node = library_geometries_node->next_sibling("library_geometries")){
                     for (rapidxml::xml_node<>* geometry_node = library_geometries_node->first_node("geometry") ; geometry_node; geometry_node = geometry_node->next_sibling("geometry")){
                         rapidxml::xml_node<>* mesh_node = geometry_node->first_node("mesh");
                         if (mesh_node == NULL) exit(-1);
 
-                        TriangleMesh* currentMesh = new TriangleMesh();
-                        currentMesh->name = geometry_node->first_attribute("id")->value();
+                        factory.setRoomName(geometry_node->first_attribute("id")->value());
 
                         rapidxml::xml_node<>* triangles_node = mesh_node->first_node("triangles");
                         if (triangles_node == NULL) continue; //lines
@@ -62,10 +67,9 @@ namespace TM2IN {
                         int float_array_count=atoi(float_array_node->first_attribute("count")->value());
                         for (int i = 0 ; i < float_array_count / 3; i++){
                             Vertex* vertex = new Vertex(stof(float_array_strings[i * 3 + 0]), stof(float_array_strings[i * 3 + 1]), stof(float_array_strings[i * 3 + 2]));
-                            vertex->setIndex(i);
-                            currentMesh->vertices.push_back(vertex);
+                            factory.pushVertex(vertex);
                         }
-                        assert(num_of_vertices == currentMesh->vertices.size());
+                        assert(num_of_vertices == factory.getVerticesList().size());
 
                         int num_of_triangles = atoi(triangles_node->first_attribute("count")->value());
                         int num_of_input_nodes = 0, vertex_offset;
@@ -85,14 +89,17 @@ namespace TM2IN {
                             int a = atoi(triangle_index_string[a_index].c_str());
                             int b = atoi(triangle_index_string[b_index].c_str());
                             int c = atoi(triangle_index_string[c_index].c_str());
-                            Triangle* triangle = new Triangle(currentMesh->vertices[a], currentMesh->vertices[b], currentMesh->vertices[c]);
-                            currentMesh->triangles.push_back(triangle);
+                            vector<Vertex*>& vertices = factory.getVerticesList();
+                            TM2IN::Triangle* triangle = new Triangle(vertices[a], vertices[b], vertices[c]);
+                            factory.pushTriangle(triangle);
                         }
-                        meshList.push_back(currentMesh);
+                        vector<Room*> curr_rooms = factory.make();
+                        if (curr_rooms.size() != 0)
+                            rooms.insert(rooms.end(), curr_rooms.begin(), curr_rooms.end());
                     }
 
                 }
-                return meshList;
+                return rooms;
             }
 
             std::string ColladaReader::queryAttributeValueInNodes(rapidxml::xml_node<> *pNode, const char *childNodeName,

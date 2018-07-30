@@ -1,5 +1,8 @@
 #include "util.h"
 
+#include "config.h"
+#include "Options.h"
+
 #include <iostream>
 #include <cmath>
 #include <dirent.h>
@@ -38,21 +41,15 @@ void removeFilesInDirectory(std::string path){
     closedir(theFolder);
 }
 
-void createAndRemoveDir(const std::string &version, const std::string &resultPath) {
+void createAndRemoveDir() {
+    std::string resultPath = Options::getInstance()->output_dir;
     if (boost::filesystem::exists(resultPath)){
-        if (boost::filesystem::exists(resultPath + version)){
-            char ans;
-            std::cout << "\n\nThis version " << version << " folder exist. Remove Files in directory? (y/n)" << std::endl;
-            std::cin >> ans;
-            if (ans == 'y' || ans == 'Y')
-                boost::filesystem::remove_all(resultPath +version);
-        }
-        else{
-            boost::filesystem::create_directory(resultPath + version);
-        }
+        char ans;
+        std::cout << "\n\nThis folder exist. Remove Files in directory? (y/n)" << std::endl;
+        std::cin >> ans;
+        if (ans == 'y' || ans == 'Y')
+            boost::filesystem::remove_all(resultPath);
     }
-    else{
-        boost::filesystem::create_directory(resultPath);
-        boost::filesystem::create_directory(resultPath+ version);
-    }
+    boost::filesystem::create_directory(resultPath);
+
 }

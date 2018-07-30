@@ -2,9 +2,9 @@
 #include "io/json.h"
 
 #include <boost/filesystem.hpp>
-#include <compute/SurfacesListComputation.h>
 
-void GenerationWriter::start(PolyhedralSurface* p_space){
+/*
+void GenerationWriter::start(Room* p_space){
     this->space = p_space;
 
     //Create Generation directory
@@ -41,9 +41,8 @@ void GenerationWriter::writeStat(){
     statout.open(process_path + this->space->name + "/gs" + ".txt", ios::app);
     statout << this->space->generation;
     statout << " , " << space->surfacesList.size();
-    statout << " , " << TMIC::getAverageSize(space->surfacesList);
-    // statout << " , " << space->getAverageError();
     statout << "\n";
     statout.close();
 }
 
+*/

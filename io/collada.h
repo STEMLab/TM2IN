@@ -6,11 +6,11 @@
 #define TM2IN_IO_COLLADA_H
 
 #include <lib/rapidxml/rapidxml.hpp>
-#include "features/TriangleMesh.h"
+#include "features/Room.h"
 
 namespace TM2IN{
     namespace io{
-        vector<TriangleMesh*> importDAE(const char *filePath);
+        std::vector<Room*> importDAE(const char *filePath);
 
     }
 }

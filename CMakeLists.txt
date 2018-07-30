@@ -31,29 +31,31 @@ file(GLOB LIB_FILES
 file(GLOB DETAIL_FILES
         "detail/io/*.h"
         "detail/io/*.cpp"
-        "detail/feature/*.h"
-        "detail/feature/*.cpp"
+        "detail/cgal/*.h"
+        "detail/cgal/*.cpp"
         "detail/cgal_config.h"
         "detail/algorithm/*.h"
         "detail/algorithm/*.cpp"
+        "detail/features/*.h"
+        "detail/features/*.cpp"
         )
 
 file(GLOB SOURCE_FILES
         "features/*.h"
         "features/*.cpp"
+        "features/RoomBoundary/*.h"
+        "features/RoomBoundary/*.cpp"
         "io/*.h"
         "io/*.cpp"
         "cgal/*.h"
         "cgal/*.cpp"
-        "logic/*.h"
-        "logic/*.cpp"
         "compute/*.h"
         "compute/*.cpp"
         "converter/*.h"
         "converter/*.cpp"
         "algorithm/*.h"
         "algorithm/*.cpp"
-        predefine.h
+        config.h
         util.cpp
         util.h
         )

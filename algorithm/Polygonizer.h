@@ -5,9 +5,8 @@
 #ifndef TM2IN_POLYGONIZER_H
 #define TM2IN_POLYGONIZER_H
 
-#include "features/PolyhedralSurface.h"
-
 #include <vector>
+#include <features/RoomBoundary/TriangulatedSurfaceMesh.h>
 
 using namespace std;
 
@@ -15,22 +14,22 @@ namespace TM2IN {
     namespace algorithm {
         class Polygonizer {
         public:
-            virtual void run(PolyhedralSurface* space) = 0;
+            virtual TM2IN::RoomBoundary::PolygonMesh* run(TM2IN::RoomBoundary::TSM* space) = 0;
         };
 
         class TrianglePolygonizer : public Polygonizer{
         public:
-            void run(PolyhedralSurface* space);
+            TM2IN::RoomBoundary::PolygonMesh* run(TM2IN::RoomBoundary::TSM* space);
         };
 
         class DividedPolygonizer : public Polygonizer {
         public:
-            void run(PolyhedralSurface* space);
+            TM2IN::RoomBoundary::PolygonMesh* run(TM2IN::RoomBoundary::TSM* space);
         };
 
         class PCAPolygonizer : public Polygonizer {
         public:
-            void run(PolyhedralSurface* space);
+            TM2IN::RoomBoundary::PolygonMesh* run(TM2IN::RoomBoundary::TSM* space);
         private:
             void scale_up(vector<Vertex *> &vertices, double scale);
             // SFCGAL::Polygon make_sf_polygon(vector<Vertex *> vertices);

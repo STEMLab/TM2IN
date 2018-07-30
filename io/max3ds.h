@@ -5,11 +5,12 @@
 #ifndef TM2IN_MAX3DS_H
 #define TM2IN_MAX3DS_H
 
+#include "features/Room.h"
 
 namespace TM2IN{
     namespace io{
-        vector<TriangleMesh*> import3DS(const char *filePath);
-        int export3DS(const char *filePath, vector<TriangleMesh*> mesh_list);
+        std::vector<Room*> import3DS(const char *filePath);
+        int export3DS(const char *filePath, std::vector<Room*> rooms);
     }
 }
 

@@ -2,16 +2,18 @@
 // Created by dongmin on 18. 7. 16.
 //
 
-#include "features/TriangleMesh.h"
 #include "detail/io/ColladaReader.h"
 #include "detail/io/Max3DSReader.h"
 #include "detail/io/Max3DSWriter.h"
 #include "max3ds.h"
 
+#include <iostream>
+
+using namespace std;
 
 namespace TM2IN{
     namespace io{
-        std::vector<TriangleMesh *> import3DS(const char *filePath) {
+        std::vector<Room *> import3DS(const char *filePath) {
             FILE *l_file;
             assert( (l_file=fopen (filePath, "rb") ) != NULL);
 
@@ -20,7 +22,7 @@ namespace TM2IN{
         }
 
 
-        int export3DS(const char *filePath, vector<TriangleMesh *> meshList) {
+        int export3DS(const char *filePath, vector<Room*> rooms) {
             FILE* pFile;
             pFile= fopen(filePath, "w");
             if (!pFile) {
@@ -29,7 +31,7 @@ namespace TM2IN{
             }
 
             TM2IN::detail::io::Max3DSWriter writer(pFile);
-            return writer.write(meshList);
+            return writer.write(rooms);
         }
 
     }

@@ -2,8 +2,8 @@
 // Created by dongmin on 18. 7. 20.
 //
 
-#include <detail/feature/polygon.h>
-#include <detail/feature/plane.h>
+#include <detail/cgal/polygon.h>
+#include <detail/cgal/plane.h>
 #include "simplify_share_edges.h"
 #include "surface_neighbor.h"
 
@@ -69,7 +69,7 @@ namespace TM2IN {
                 vector < HalfEdge * > newHalfEdgeList_origin;
 
                 for (ll j = lastVertex_origin;;) {
-                    newHalfEdgeList_origin.push_back(origin->boundary_edges(j));
+                    newHalfEdgeList_origin.push_back(origin->exterior_boundary_edge(j));
                     j++;
                     if (j == origin_size) j = 0;
                     if (j == firstVertex_origin) break;
@@ -77,7 +77,7 @@ namespace TM2IN {
                 newHalfEdgeList_origin.push_back(newEdge_origin);
 
                 for (ll j = lastVertex_piece;;) {
-                    newHalfEdgeList_piece.push_back(piece->boundary_edges(j));
+                    newHalfEdgeList_piece.push_back(piece->exterior_boundary_edge(j));
                     j++;
                     if (j == piece_size) j = 0;
                     if (j == firstVertex_piece) break;
@@ -86,20 +86,19 @@ namespace TM2IN {
 
                 // check polygon after simplification
                 Surface* pSurface = new Surface();
-                pSurface->setBoundaryEdgesList(newHalfEdgeList_piece);
-                Plane_3 planeRef = TM2IN::detail::feature::make_simple_plane(piece->normal);
-                vector<Point_2> point2dList = TM2IN::detail::feature::project_to_plane(pSurface->getVerticesList(), planeRef);
-                Polygon_2 polygon = TM2IN::detail::feature::make_CGAL_polygon(point2dList);
+                pSurface->setExteriorBoundary(newHalfEdgeList_piece);
+                Plane_3 planeRef = TM2IN::detail::cgal::make_simple_plane(piece->normal);
+                vector<Point_2> point2dList = TM2IN::detail::cgal::project_to_plane(pSurface->getVerticesList(), planeRef);
+                Polygon_2 polygon = TM2IN::detail::cgal::make_CGAL_polygon(point2dList);
                 if (!polygon.is_simple() || polygon.orientation() == -1) {
                     cerr << "cannot be simplified" << endl;
                     return 1;
                 }
 
-                origin->boundaryEdges.clear();
-                piece->boundaryEdges.clear();
-
-                origin->setBoundaryEdgesList(newHalfEdgeList_origin);
-                piece->setBoundaryEdgesList(newHalfEdgeList_piece);
+                origin->setExteriorBoundary(newHalfEdgeList_origin);
+                origin->updateMBB();
+                piece->setExteriorBoundary(newHalfEdgeList_piece);
+                piece->updateMBB();
 
                 return 0;
             }

@@ -2,15 +2,15 @@
 #include "converter/Converter.h"
 #include "Options.h"
 
-
 using namespace std;
 
 int main(int argc, char * argv[]) {
     try{
-        Options options = Options(argc, argv);
-        createAndRemoveDir(options.version, options.output_dir);
+        Options* opt = Options::getInstance();
+        opt->make(argc, argv);
+        createAndRemoveDir();
 
-        Converter converter = Converter(options);
+        Converter converter = Converter();
         converter.start();
 
         converter.run();

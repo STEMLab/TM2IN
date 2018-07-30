@@ -1,10 +1,3 @@
-//
-//  check.hpp
-//  TriMeshToGeom
-//
-//  Created by Dong's MacBook Pro on 2017. 6. 9..
-//  Copyright © 2017년 Dong's MacBook Pro. All rights reserved.
-//
 
 #ifndef check_hpp
 #define check_hpp
@@ -13,7 +6,6 @@
 #include <vector>
 
 #include "features/Vertex.h"
-#include "cgal/CGALCalculation.h"
 
 #include <CGAL/Vector_3.h>
 #include <CGAL/Point_3.h>
@@ -38,8 +30,6 @@ public:
 
     static bool isSameVertex(Vertex& v1, Vertex& v2);
     static bool isSameVertex(Vertex* v1, Vertex* v2);
-
-    static bool isCollinear(Vertex *start_p, Vertex *check_p, Vertex *end_p);
 
     static int compare_vertex(Vertex* v1, Vertex* v2);
 

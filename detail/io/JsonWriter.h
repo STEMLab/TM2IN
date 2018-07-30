@@ -6,9 +6,9 @@
 #define TM2IN_JSONWRITER_H
 
 #include <fstream>
+#include "features/IndoorComponent.h"
 
-#include "features/PolyhedralSurface.h"
-
+using namespace std;
 
 namespace TM2IN {
     namespace detail {
@@ -16,16 +16,16 @@ namespace TM2IN {
             class JsonWriter {
             public :
                 JsonWriter(std::ofstream& _fout);
-                void write(vector<PolyhedralSurface *> &ts, bool exp_tri=false);
+                void write(vector<Room *> &ts, int boundary_mode);
             private:
                 std::ofstream& fout;
                 bool exp_tri;
             };
 
-            string to_json(PolyhedralSurface* ps, bool exp_tri=false);
-            string to_json(Surface* sf);
-            string to_json_with_triangles(Surface *pSurface);
-            string to_json(Vertex& vt, int index = 0);
+            string room_to_json(Room &ps, int boundary_mode);
+            string surface_to_json(Surface& sf);
+            string surface_to_json_with_triangles(Surface &pSurface);
+            string vertex_to_json(Vertex& vt, int index = 0);
         }
     }
 }

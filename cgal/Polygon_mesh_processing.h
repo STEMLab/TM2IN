@@ -2,21 +2,23 @@
 // Created by dongmin on 18. 1. 17.
 //
 
-#ifndef TRIANGLEMESHTOCLEARSOLID_SURFACEHOLECOVER_H
-#define TRIANGLEMESHTOCLEARSOLID_SURFACEHOLECOVER_H
+#ifndef POLYGON_MESH_PROCESSING_H
+#define POLYGON_MESH_PROCESSING_H
 
-#include <features/Vertex.h>
+#include <iostream>
+#include <vector>
+#include "features/Vertex.h"
+#include "features/Surface.h"
 
 using namespace std;
+using namespace TM2IN;
 
-/**
- * @todo will be removed
- *
- */
-namespace CGAL_User{
-    vector<Vertex *> fillHole(vector<Vertex*>& vertices, vector<Surface *>& surfaces);
-    void fillHole(TriangleMesh* tm);
+namespace TM2IN{
+    namespace unused{
+        vector<Vertex *> fillHole(vector<Vertex*>& vertices, vector<Surface *>& surfaces);
+
+    }
 };
 
 
-#endif //TRIANGLEMESHTOCLEARSOLID_SURFACEHOLECOVER_H
+#endif //POLYGON_MESH_PROCESSING_H

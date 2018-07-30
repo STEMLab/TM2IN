@@ -3,102 +3,57 @@
 //
 
 
+#include <algorithm/mbb.h>
 #include "converter/Converter.h"
 
-#include "features/TriangleMesh.h"
 #include "io/tvr.h"
 #include "io/collada.h"
 #include "io/max3ds.h"
+#include "features/Triangle.h"
+#include "features/Room.h"
+#include "features/RoomBoundary/TriangleMesh.h"
 
-int Converter::importMesh() {
-    switch(options.input_type){
+int Converter::importData() {
+    switch(Options::getInstance()->input_type){
         case 1:
-            this->mesh_list = TM2IN::io::importTVR((options.input_dir + options.input_file).c_str());
+            this->rooms = TM2IN::io::importTVR((Options::getInstance()->input_dir + Options::getInstance()->input_file).c_str());
             break;
         case 2:
-            this->mesh_list = TM2IN::io::import3DS((options.input_dir + options.input_file).c_str());
+            this->rooms = TM2IN::io::import3DS((Options::getInstance()->input_dir + Options::getInstance()->input_file).c_str());
             break;
         case 3:
-            this->mesh_list = TM2IN::io::importDAE((options.input_dir + options.input_file).c_str());
+            this->rooms = TM2IN::io::importDAE((Options::getInstance()->input_dir + Options::getInstance()->input_file).c_str());
             break;
         default:
             throw std::runtime_error("\n\nImport Mesh has some problem\n\n");
     }
-    if (this->mesh_list.size() == 0){
+    if (this->rooms.size() == 0){
         throw std::runtime_error("\n\nImport Mesh has some problem\n\n");
     }
+    print_input_spec();
     return 0;
 }
 
-int Converter::partitionTriangleMeshByComponent() {
-    int i = 0;
-    vector<TriangleMesh*> new_mesh_list;
-    while ( i < this->mesh_list.size() ){
-        assert(this->mesh_list[i]->checkClosed());
 
-        int result = this->mesh_list[i]->partitionByComponent(new_mesh_list);
-        if(result == -1) return -1;
-        else
-            i++;
-    }
-    this->mesh_list = new_mesh_list;
-    cout << "The Number of Mesh : " << this->mesh_list.size() << endl;
-
-    return 0;
-}
-
-int Converter::initTriangleMesh() {
-    clock_t begin = clock();
-    for (int i = 0 ; i < this->mesh_list.size() ; i++){
-        this->mesh_list[i]->init();
-    }
-    clock_t end = clock();
-
-    cout << "make graph time : " << double(end - begin) / CLOCKS_PER_SEC << "s" << endl;
-
-    return 0;
-}
-
-int Converter::remainSelectedMesh(int arch) {
-    int i;
-    switch(arch){
-        case ARCH:
-            i = 0;
-            while (i < this->mesh_list.size()){
-                if (this->mesh_list[i]->isFurniture())
-                    this->mesh_list.erase(this->mesh_list.begin() + i);
-                else
-                    i++;
-            }
-            break;
-        case NON_ARCH:
-            i = 0;
-            while (i < this->mesh_list.size()){
-                if (this->mesh_list[i]->isFurniture())
-                    i++;
-                else
-                    this->mesh_list.erase(this->mesh_list.begin() + i);
-            }
-            break;
-        default:
-            break;
-    }
-
-    printf("There are %lu Remaining Meshes.\n\n", this->mesh_list.size());
-    return 0;
-}
-
-int Converter::convertTriangleMeshToSpace() {
-    for (int space_id = 0 ; space_id < this->mesh_list.size() ; space_id++){
-        PolyhedralSurface* space = new PolyhedralSurface();
-        space->setName(this->mesh_list[space_id]->name);
-        if (space->convertTrianglesToSurfaces(this->mesh_list[space_id]->triangles)){
-            cout << "make Surfaces error" << endl;
-            return -1;
+/**
+ * Print Data speciation
+ */
+void Converter::print_input_spec() {
+    double area_sum = 0.0;
+    vector<Surface*> surfaces;
+    for (ull it = 0 ; it < this->rooms.size() ; it++){
+        for (Triangle* triangle : this->rooms[it]->getTm_boundary()->getTriangleList()){
+            surfaces.push_back((Surface*)triangle);
+            area_sum += triangle->getArea();
         }
-        space->vertices = this->mesh_list[space_id]->vertices;
-        this->spaceList.push_back(space);
     }
-    this->mesh_list.clear();
-    return 0;
+
+    int trianglesCount = surfaces.size();
+    CGAL::Bbox_3 mbb;
+    mbb = TM2IN::algorithm::getMBB(surfaces);
+
+    cout << "\n\nTriangles : " << trianglesCount << endl;
+    cout << "Bbox : " << mbb << endl;
+    cout << "Area : " << area_sum / (double)trianglesCount << endl;
+    cout << "\n\n" << endl;
 }

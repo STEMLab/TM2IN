@@ -2,54 +2,56 @@
 // Created by dongmin on 18. 7. 19.
 //
 
-#include <compute/Connect_halfedges.h>
-#include <compute/SurfacesListComputation.h>
+#include "Polygonizer.h"
+
+#include <detail/features/halfedge_string.h>
 
 #include "features/Triangle.h"
 #include "features/Surface.h"
-#include "Polygonizer.h"
-#include "detail/feature/plane.h"
+#include "detail/cgal/plane.h"
 #include "algorithm/merge_surfaces.h"
+#include "features/RoomBoundary/PolygonMesh.h"
 
 namespace TM2IN{
     namespace algorithm{
-        void TrianglePolygonizer::run(PolyhedralSurface *space) {
-            vector<Triangle*> triangleList;
-            for (unsigned int sfID = 0 ; sfID < space->surfacesList.size(); sfID++) {
-                Surface* pSurface = space->surfacesList[sfID];
-                vector<Triangle*> triangulation = pSurface->getTriangulation();
+        TM2IN::RoomBoundary::PolygonMesh* TrianglePolygonizer::run(TM2IN::RoomBoundary::TSM *space) {
+            vector<TM2IN::Triangle*> triangleList;
+            for (unsigned int sfID = 0 ; sfID < space->surfaces.size(); sfID++) {
+                TM2IN::Surface* pSurface = space->surfaces[sfID];
+                vector<TM2IN::Triangle*> triangulation = pSurface->getTriangulation();
                 triangleList.insert(triangleList.end(),triangulation.begin(),triangulation.end());
             }
 
-            vector<Surface*> newSurfaceList;
+            vector<TM2IN::Surface*> newSurfaceList;
 
             for (int i = 0 ; i < triangleList.size() ; i++){
                 newSurfaceList.push_back(triangleList[i]);
             }
-
-            space->surfacesList = newSurfaceList;
+            TM2IN::RoomBoundary::PolygonMesh* pm = new TM2IN::RoomBoundary::PolygonMesh(newSurfaceList);
+            return pm;
+            //space->surfaces = newSurfaceList;
         }
 
-        void DividedPolygonizer::run(PolyhedralSurface *space) {
+        TM2IN::RoomBoundary::PolygonMesh* DividedPolygonizer::run(TM2IN::RoomBoundary::TSM *space) {
             double thres1 = 1.0;
             double thres2 = 45.0;
-            vector<Surface*> newSurfacesList;
-            for (int i = 0 ; i < space->surfacesList.size() ; i++){
-                Surface* sf = space->surfacesList[i];
-                vector<Triangle*> triangulation = sf->getTriangulation();
+            vector<TM2IN::Surface*> newSurfaceList;
+            for (int i = 0 ; i < space->surfaces.size() ; i++){
+                TM2IN::Surface* sf = space->surfaces[i];
+                vector<TM2IN::Triangle*> triangulation = sf->getTriangulation();
 
-                TMIC::connectOppositeHalfEdges(triangulation);
-                vector<Surface*> newSurfacesInSurface;
+                TM2IN::detail::HalfEdgeString::connectOppositeHalfEdges(triangulation);
+                vector<TM2IN::Surface*> newSurfacesInSurface;
                 TM2IN::algorithm::mergeTriangles(triangulation, thres1, thres2, newSurfacesInSurface);
-                newSurfacesList.insert(newSurfacesList.end(), newSurfacesInSurface.begin(), newSurfacesInSurface.end());
+                newSurfaceList.insert(newSurfaceList.end(), newSurfacesInSurface.begin(), newSurfacesInSurface.end());
             }
-            space->surfacesList = newSurfacesList;
-            cout << "Surfaces : " << space->surfacesList.size() << endl;
-            return ;
+            cout << "Surfaces : " << space->surfaces.size() << endl;
+            TM2IN::RoomBoundary::PolygonMesh* pm = new TM2IN::RoomBoundary::PolygonMesh(newSurfaceList);
+            return pm;
         }
 
 
-        void PCAPolygonizer::run(PolyhedralSurface *space) {
+        TM2IN::RoomBoundary::PolygonMesh* PCAPolygonizer::run(TM2IN::RoomBoundary::TSM *space) {
             throw std::runtime_error("PCAPolygonizer run not yey");
             /*
             vector<Surface*> newSurfacesList;
@@ -65,7 +67,7 @@ namespace TM2IN{
                     }
                 }
 
-                Plane_3 plane = TM2IN::detail::feature::make_PCA_plane(triangle_vertices, sf->normal);
+                Plane_3 plane = TM2IN::detail::cgal::make_PCA_plane(triangle_vertices, sf->normal);
 
                 vector<Vertex*> newVertices;
                 for (ull index = 0 ; index < sf->getVerticesSize() ; index++ )
@@ -83,7 +85,7 @@ namespace TM2IN{
                 scale_up(newVertices, 1.2);
                 polygons.push_back(make_sf_polygon(newVertices));
 
-                // assert(!SurfaceIntersection::checkSelfIntersection(sf));
+                // assert(!SurfaceIntersection::check_surface_is_simple(sf));
             }
             */
 

@@ -5,8 +5,10 @@
 #ifndef TM2IN_MAX3DSREADER_H
 #define TM2IN_MAX3DSREADER_H
 
-#include <features/TriangleMesh.h>
+#include <features/IndoorComponent.h>
 #include <fstream>
+
+using namespace std;
 
 namespace TM2IN {
     namespace detail {
@@ -14,7 +16,7 @@ namespace TM2IN {
             class Max3DSReader {
                 public:
                     Max3DSReader(FILE* _fp);
-                    std::vector<TriangleMesh *> read();
+                    std::vector<Room *> read();
                 private:
                     FILE* fp;
                     long filelength(int f);

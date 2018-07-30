@@ -7,12 +7,12 @@
 
 namespace TM2IN {
     namespace io {
-        int exportJSON(string output_file, vector<PolyhedralSurface *> &ts, bool triangulation_out) {
+        int exportRoomBoundaryJSON(string output_file, vector<Room *> &rooms, int boundary_mode) {
             ofstream fout;
             fout.open(output_file);
 
             TM2IN::detail::io::JsonWriter writer(fout);
-            writer.write(ts, triangulation_out);
+            writer.write(rooms, boundary_mode);
             fout.close();
             return 0;
         }

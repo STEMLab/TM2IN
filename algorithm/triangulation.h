@@ -8,12 +8,12 @@
 #include "features/Surface.h"
 #include "features/Triangle.h"
 #include "detail/cgal_config.h"
-#include "detail/feature/plane.h"
-#include "detail/feature/polygon.h"
+#include "detail/cgal/plane.h"
+#include "detail/cgal/polygon.h"
 
 namespace TM2IN {
     namespace algorithm {
-        int triangulate(Surface *pSurface, std::vector<Triangle*>& result);
+        int triangulate(TM2IN::Surface *pSurface, std::vector<TM2IN::Triangle*>& result);
     }
 }
 

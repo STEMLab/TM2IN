@@ -7,7 +7,49 @@
 #include <iostream>
 #include <cassert>
 
-Options::Options(int argc, char **argv) {
+
+Options* Options::instance = NULL;
+
+void Options::make_file_name(){
+    if (!has_input_type){
+        string file_extension = input_file.substr(input_file.find_last_of(".") + 1);
+        if (file_extension == "tvr" || file_extension == "TVR"){
+            input_type = 1;
+        }
+        else if (file_extension == "3ds" || file_extension == "3DS"){
+            input_type = 2;
+        }
+        else if (file_extension == "dae" || file_extension == "DAE"){
+            input_type = 3;
+        }
+    }
+
+    std::size_t pos = input_file.find_last_of(".");
+    file_name = input_file.substr(0, pos);
+    fprintf(stdout, "File name : %s\n",file_name.c_str());
+
+    output_dir += file_name;
+    output_dir += "/";
+    output_dir += version;
+    output_dir += "/";
+}
+
+void Options::check_options() {
+    if (!has_input_dir){
+        throw std::runtime_error("--input-dir is missing..;\n");
+    }
+
+    if (!has_output_dir){
+        throw std::runtime_error("--output-dir missing : where can I store..\n");
+    }
+
+    if (!has_input_type){
+        fprintf(stderr, "WARNING : we will detect your file type and covert. Maybe it will be right..\n");
+        fprintf(stderr, "IF you can make it sure, define value of --input-type option.\n\n");
+    }
+}
+
+void Options::make(int argc, char **argv) {
     const char *short_opts = "I:E:r:t";
     const option long_opts[] = {
             {"input-dir",   1, 0, 'i'},
@@ -72,6 +114,7 @@ Options::Options(int argc, char **argv) {
                 break;
             case 'p':
                 has_polygonizer = true;
+                polygonizer_mode = stoi(optarg);
                 break;
             case 'a':
                 assert(optarg != NULL);
@@ -110,45 +153,6 @@ Options::Options(int argc, char **argv) {
 
     check_options();
     make_file_name();
-}
-
-void Options::make_file_name(){
-    if (!has_input_type){
-        string file_extension = input_file.substr(input_file.find_last_of(".") + 1);
-        if (file_extension == "tvr" || file_extension == "TVR"){
-            input_type = 1;
-        }
-        else if (file_extension == "3ds" || file_extension == "3DS"){
-            input_type = 2;
-        }
-        else if (file_extension == "dae" || file_extension == "DAE"){
-            input_type = 3;
-        }
-    }
-
-    std::size_t pos = input_file.find_last_of(".");
-    file_name = input_file.substr(0, pos);
-    fprintf(stdout, "File name : %s\n",file_name.c_str());
-
-    output_dir += file_name;
-    output_dir += "/";
-    output_dir += version;
-    output_dir += "/";
-}
-
-void Options::check_options() {
-    if (!has_input_dir){
-        throw std::runtime_error("--input-dir is missing..;\n");
-    }
-
-    if (!has_output_dir){
-        throw std::runtime_error("--output-dir missing : where can I store..\n");
-    }
-
-    if (!has_input_type){
-        fprintf(stderr, "WARNING : we will detect your file type and covert. Maybe it will be right..\n");
-        fprintf(stderr, "IF you can make it sure, define value of --input-type option.\n\n");
-    }
 }
 
 
