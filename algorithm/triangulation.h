@@ -13,6 +13,10 @@
 
 namespace TM2IN {
     namespace algorithm {
+        /**
+         * @brief Triangulate one TM2IN::Surface to multiple TM2IN::Triangle objects.
+         * @ingroup public_api
+         */
         int triangulate(TM2IN::Surface *pSurface, std::vector<TM2IN::Triangle*>& result);
     }
 }

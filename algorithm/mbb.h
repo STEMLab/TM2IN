@@ -10,6 +10,10 @@
 
 namespace TM2IN{
     namespace algorithm{
+        /**
+         * @ingroup public_api
+         * @brief Gets CGAL::Bbox_3 for Surface list.
+         */
         CGAL::Bbox_3 getMBB(std::vector<Surface *> &surfacesList);
     }
 }

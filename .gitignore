@@ -1,16 +1,9 @@
+# Documents
+doc/html/
+
 # Xcode
 *.xcodeproj
 DerivedData/
-
-# data
-*.3DS
-*.tvr
-**/pano8K_images
-*.json
-Resource/
-
-# Result
-Result/
 
 # Code Blocks
 *.cbp

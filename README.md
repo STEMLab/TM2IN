@@ -1,15 +1,14 @@
 # TM2IN
 Generate appropriate Solid geometry for Indoor Map from Triangle Mesh data such as TVR, COLLADA, 3DS. 
 
+## Geometric Models
+
+
 ## Author
 Dongmin Kim, Pusan National University
 
 ## Dependencies
-CGAL
-SFCGAL
-Eigen3
-Boost
-rapidxml
+
 
 ## Building
 
@@ -36,4 +35,7 @@ For example,
 TM2IN --input-dir=../../input/ --output-dir=../../result --version=0.4.2 inputfile.tvr
 ```
 
-[More information about options.](https://github.com/STEMLab/TM2IN/tree/master/doc/usage-manual.md)
+
+There are more informations about options. (http://github.com/STEMLab/TM2IN/tree/master/doc/usage-manual.md) 
+
+
