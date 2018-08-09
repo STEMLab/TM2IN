@@ -10,6 +10,10 @@
 namespace TM2IN {
     namespace detail {
         namespace cgal {
+            /**
+             * @ingroup imp_details
+             * @brief Returns cosine value
+             */
             double getCosineValue(Vector_3& nv1,Vector_3& nv2);
         }
     }

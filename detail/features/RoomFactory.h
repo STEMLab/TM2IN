@@ -12,6 +12,10 @@ using namespace std;
 
 namespace TM2IN {
     namespace detail {
+        /**
+         * @ingroup imp_details
+         * @brief Input vertices and triangles and make TM2IN::Room
+         */
         class RoomFactory {
         private:
             std::vector<Vertex*> raw_vertices;

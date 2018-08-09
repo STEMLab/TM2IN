@@ -10,6 +10,10 @@
 
 namespace TM2IN{
     namespace io{
+        /**
+         * @ingroup public_api
+         * @brief Imports COLLADA(dae) file and returns a vector of Room.
+         */
         std::vector<Room*> importDAE(const char *filePath);
 
     }

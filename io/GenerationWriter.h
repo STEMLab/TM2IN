@@ -8,6 +8,10 @@
 using namespace std;
 using namespace TM2IN;
 
+/**
+ * @ingroup unused
+ * @todo
+ */
 class GenerationWriter{
 public:
     string process_path;

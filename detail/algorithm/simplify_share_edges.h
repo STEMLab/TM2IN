@@ -13,6 +13,9 @@ using namespace std;
 namespace TM2IN{
     namespace detail{
         namespace algorithm{
+            /**
+             * @ingroup imp_details
+             */
             int simplify_share_edges(Surface* sf1, Surface* sf2);
         }
     }

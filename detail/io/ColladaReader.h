@@ -15,6 +15,9 @@ using namespace std;
 namespace TM2IN {
     namespace detail {
         namespace io {
+            /**
+             * @ingroup imp_details
+             */
             class ColladaReader{
             public:
                 ColladaReader(ifstream& _ifs);

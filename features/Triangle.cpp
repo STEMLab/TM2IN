@@ -58,7 +58,7 @@ namespace TM2IN {
         bool isAdjacent = false;
         for (int v1 = 0; v1 < 3; v1++) {
             for (int v2 = 0; v2 < 3; v2++) {
-                if (this->exteriorBoundary[v1]->hasOppositeTwoVertex(tri->exteriorBoundary[v2])) {
+                if (this->exteriorBoundary[v1]->can_be_opposite_edge(tri->exteriorBoundary[v2])) {
                     isAdjacent = true;
                     assert(this->exteriorBoundary[v1]->getOppositeEdge() == NULL);
                     assert(tri->exteriorBoundary[v2]->getOppositeEdge() == NULL);
@@ -93,7 +93,7 @@ namespace TM2IN {
     bool Triangle::checkOppositeEdge(Triangle *&tri) {
         for (int v1 = 0; v1 < 3; v1++) {
             for (int v2 = 0; v2 < 3; v2++) {
-                if (this->exteriorBoundary[v1]->hasOppositeTwoVertex(tri->exteriorBoundary[v2])) {
+                if (this->exteriorBoundary[v1]->can_be_opposite_edge(tri->exteriorBoundary[v2])) {
                     return true;
                 }
             }

@@ -20,10 +20,22 @@ namespace TM2IN{
                 ll firstVertex_origin = -1;
             };
 
+            /**
+             * @ingroup imp_details
+             */
             int isNeighbor(Surface *, Surface *);
+            /**
+             * @ingroup imp_details
+             */
             int constructNeighborInfo(Surface* , Surface* , neighbor_info&);
 
+            /**
+             * @ingroup imp_details
+             */
             int findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj, ll middle_i, ll middle_j, ll& start_i, ll& end_i, ll& start_j, ll& end_j);
+            /**
+             * @ingroup imp_details
+             */
             bool findShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj, ll& middle_i, ll& middle_j);
         }
     }

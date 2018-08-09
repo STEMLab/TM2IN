@@ -15,8 +15,11 @@ using namespace TM2IN;
 
 namespace TM2IN{
     namespace unused{
+        /**
+         * @brief Fills hole in surfaces
+         * @ingroup unused
+         */
         vector<Vertex *> fillHole(vector<Vertex*>& vertices, vector<Surface *>& surfaces);
-
     }
 };
 

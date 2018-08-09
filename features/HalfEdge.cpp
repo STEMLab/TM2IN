@@ -31,7 +31,7 @@ namespace TM2IN {
         HalfEdge::oppositeEdge = oppositeEdge;
     }
 
-    bool HalfEdge::hasOppositeTwoVertex(HalfEdge *he) {
+    bool HalfEdge::can_be_opposite_edge(HalfEdge *he) {
         if (this->vertices[0] == he->vertices[1]) {
             if (this->vertices[1] == he->vertices[0])
                 return true;

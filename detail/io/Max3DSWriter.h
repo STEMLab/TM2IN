@@ -11,6 +11,9 @@
 namespace TM2IN {
     namespace detail {
         namespace io {
+            /**
+             * @ingroup imp_details
+             */
             class Max3DSWriter {
             public:
                 Max3DSWriter(FILE* pFile);

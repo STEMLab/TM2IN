@@ -12,6 +12,9 @@ using namespace std;
 namespace TM2IN{
     namespace detail{
         namespace algorithm{
+            /**
+             * @ingroup imp_details
+             */
             class SurfaceMerger{
             public:
                 SurfaceMerger(double t1, double t2);
@@ -24,7 +27,9 @@ namespace TM2IN{
                 bool check_merge_condition(Vector_3 &big, Vector_3 &small);
                 bool is_coplanar(Vector_3 &big, Vector_3 &small);
             };
-
+            /**
+             * @ingroup imp_details
+             */
             bool merging_invalid_test(vector<HalfEdge *> new_edges, Vector_3 newNormal);
         }
     }

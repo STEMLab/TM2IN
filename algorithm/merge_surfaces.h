@@ -18,12 +18,12 @@ namespace TM2IN{
         bool mergeSurfaces(TM2IN::RoomBoundary::TriangulatedSurfaceMesh* tsm, double thres1, double thres2);
         /**
          *  @ingroup public_api
-         * @brief Merges the list of Surfaces. Result will be stored in 4th parameter.
+         * @brief Merges the list of Surface. Result will be stored in 4th parameter.
          */
         bool mergeSurfaces(vector<Surface*>& surfaceList, double thres1, double thres2, vector<Surface*>& newSurfaceList);
         /**
          * @ingroup public_api
-         * @brief Merges the list of Triangles. Result will be stored in 4th parameter.
+         * @brief Merges the list of Triangle. Result will be stored in 4th parameter.
          */
         bool mergeTriangles(vector<Triangle*>& triangleList, double thres1, double thres2, vector<Surface*>& newSurfaceList);
         /**
