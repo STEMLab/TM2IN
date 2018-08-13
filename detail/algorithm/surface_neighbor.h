@@ -5,10 +5,11 @@
 #ifndef TM2IN_SURFACE_NEIGHBOR_H
 #define TM2IN_SURFACE_NEIGHBOR_H
 
-#include "features/Surface.h"
+#include "features/Wall/Surface.h"
 #include "features/HalfEdge.h"
 
 using namespace std;
+using namespace TM2IN::Wall;
 
 namespace TM2IN{
     namespace detail{
@@ -23,11 +24,11 @@ namespace TM2IN{
             /**
              * @ingroup imp_details
              */
-            int isNeighbor(Surface *, Surface *);
+            int isNeighbor(Wall::Surface *, Wall::Surface *);
             /**
              * @ingroup imp_details
              */
-            int constructNeighborInfo(Surface* , Surface* , neighbor_info&);
+            int constructNeighborInfo(Wall::Surface* , Wall::Surface* , neighbor_info&);
 
             /**
              * @ingroup imp_details

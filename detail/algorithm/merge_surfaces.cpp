@@ -4,7 +4,7 @@
 
 #include "merge_surfaces.h"
 
-#include "features/Surface.h"
+#include "features/Wall/TriangulatedSurface.h"
 #include <detail/cgal/plane.h>
 #include <cgal/vector_angle.h>
 #include <detail/features/halfedge_string.h>
@@ -16,31 +16,14 @@
 namespace TM2IN {
     namespace detail {
         namespace algorithm {
-            bool merging_invalid_test(vector<HalfEdge *> new_edges, Vector_3 newNormal){
-                Surface* pSurface = new Surface();
-                pSurface->setExteriorBoundary(new_edges);
-                if (!pSurface->easy_validation()) return 1;
-                Plane_3 planeRef = TM2IN::detail::cgal::make_simple_plane(newNormal);
-                vector<Point_2> point2dList = TM2IN::detail::cgal::project_to_plane(pSurface->getVerticesList(), planeRef);
-                Polygon_2 polygon = TM2IN::detail::cgal::make_CGAL_polygon(point2dList);
-                if (!polygon.is_simple() || polygon.orientation() == -1){
-                    return 1;
-                }
-                else{
-                    delete pSurface;
-                }
 
-                return 0;
-            }
+            SurfaceMerger::SurfaceMerger(double t1, double t2) : thres1(t1), thres2(t2){}
 
-            SurfaceMerger::SurfaceMerger(double t1, double t2) : thres1(t1), thres2(t2){
-            }
-
-            bool SurfaceMerger::mergeSurfaces(vector<Surface *> surfaceList, vector<Surface *> &result) {
+            bool SurfaceMerger::mergeSurfaces(vector<Wall::TriangulatedSurface *> surfaceList, vector<Wall::TriangulatedSurface *> &result) {
                 result.clear();
                 //deep copy
                 for (ull i = 0 ; i < surfaceList.size() ; i++){
-                    result.push_back(new Surface(surfaceList[i]));
+                    result.push_back(new TriangulatedSurface(surfaceList[i]));
                 }
 
                 bool hasMerged = false;
@@ -72,7 +55,7 @@ namespace TM2IN {
             }
 
 
-            int SurfaceMerger::merge(Surface *origin, Surface *piece) {
+            int SurfaceMerger::merge(Wall::TriangulatedSurface *origin, Wall::TriangulatedSurface  *piece) {
                 // check Polygon is in near polygon or not
                 if (!TM2IN::detail::cgal::has_bbox_intersect(origin, piece)) return 1;
 
@@ -176,6 +159,24 @@ namespace TM2IN {
                 double angle = TM2IN::cgal::getAngle(big, small);
                 return angle <= thres1;
             }
+
+            bool merging_invalid_test(vector<HalfEdge *> new_edges, Vector_3 newNormal){
+                Wall::TriangulatedSurface * pSurface = new Wall::TriangulatedSurface();
+                pSurface->setExteriorBoundary(new_edges);
+                if (!pSurface->easy_validation()) return 1;
+                Plane_3 planeRef = TM2IN::detail::cgal::make_simple_plane(newNormal);
+                vector<Point_2> point2dList = TM2IN::detail::cgal::project_to_plane(pSurface->getVerticesList(), planeRef);
+                Polygon_2 polygon = TM2IN::detail::cgal::make_CGAL_polygon(point2dList);
+                if (!polygon.is_simple() || polygon.orientation() == -1){
+                    return 1;
+                }
+                else{
+                    delete pSurface;
+                }
+
+                return 0;
+            }
+
 
         } // algorithm
     } // detail

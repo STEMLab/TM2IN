@@ -5,7 +5,7 @@
 #include "detail/io/ColladaReader.h"
 #include "lib/rapidxml/rapidxml.hpp"
 #include "features/Vertex.h"
-#include "features/Triangle.h"
+#include "features/Wall/Triangle.h"
 #include "util.h"
 
 #include <string>
@@ -90,7 +90,7 @@ namespace TM2IN {
                             int b = atoi(triangle_index_string[b_index].c_str());
                             int c = atoi(triangle_index_string[c_index].c_str());
                             vector<Vertex*>& vertices = factory.getVerticesList();
-                            TM2IN::Triangle* triangle = new Triangle(vertices[a], vertices[b], vertices[c]);
+                            TM2IN::Wall::Triangle* triangle = new Wall::Triangle(vertices[a], vertices[b], vertices[c]);
                             factory.pushTriangle(triangle);
                         }
                         vector<Room*> curr_rooms = factory.make();

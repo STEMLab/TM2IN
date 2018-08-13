@@ -8,6 +8,7 @@
 #include "features/IndoorComponent.h"
 
 using namespace std;
+using namespace TM2IN::Wall;
 
 namespace TM2IN{
     namespace detail{
@@ -18,12 +19,12 @@ namespace TM2IN{
             class SurfaceMerger{
             public:
                 SurfaceMerger(double t1, double t2);
-                bool mergeSurfaces(vector<Surface *> surfaceList, vector<Surface*>& result);
+                bool mergeSurfaces(vector<Wall::TriangulatedSurface *> surfaceList, vector<Wall::TriangulatedSurface*>& result);
             private:
                 double thres1;
                 double thres2;
 
-                int merge(Surface *origin, Surface *piece);
+                int merge(Wall::TriangulatedSurface  *origin, Wall::TriangulatedSurface  *piece);
                 bool check_merge_condition(Vector_3 &big, Vector_3 &small);
                 bool is_coplanar(Vector_3 &big, Vector_3 &small);
             };

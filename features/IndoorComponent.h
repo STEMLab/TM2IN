@@ -18,15 +18,17 @@ namespace TM2IN{
         class PolygonMesh;
     }
     class Room;
-
-    class Surface;
-    class Triangle;
+    namespace Wall{
+        class Surface;
+        class Triangle;
+        class TriangulatedSurface;
+        class Polygon;
+    }
     class Vertex;
     class HalfEdge;
-    class Poylgon;
 
     enum class IND_TYPE {
-        IndoorComponent, Room, RoomBoundary, Surface, Triangle, HalfEdge, Vertex
+        IndoorComponent, Room, RoomBoundary, TriangulatedSurface, Triangle, Polygon, HalfEdge, Vertex
     };
 /**
      * @ingroup geo_features

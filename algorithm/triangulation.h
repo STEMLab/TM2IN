@@ -5,8 +5,7 @@
 #ifndef TM2IN_TRIANGULATION_H
 #define TM2IN_TRIANGULATION_H
 
-#include "features/Surface.h"
-#include "features/Triangle.h"
+#include "features/IndoorComponent.h"
 #include "detail/cgal_config.h"
 #include "detail/cgal/plane.h"
 #include "detail/cgal/polygon.h"
@@ -17,7 +16,7 @@ namespace TM2IN {
          * @brief Triangulate one TM2IN::Surface to multiple TM2IN::Triangle objects.
          * @ingroup public_api
          */
-        int triangulate(TM2IN::Surface *pSurface, std::vector<TM2IN::Triangle*>& result);
+        int triangulate(TM2IN::Wall::Surface *pSurface, std::vector<TM2IN::Wall::Triangle*>& result);
     }
 }
 

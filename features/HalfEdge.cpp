@@ -15,11 +15,11 @@ namespace TM2IN {
         return false;
     }
 
-    Surface *HalfEdge::getParent() const {
+    Wall::Surface *HalfEdge::getParent() const {
         return parent;
     }
 
-    void HalfEdge::setParent(Surface *pSurface) {
+    void HalfEdge::setParent(Wall::Surface *pSurface) {
         HalfEdge::parent = pSurface;
     }
 

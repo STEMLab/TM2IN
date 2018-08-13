@@ -13,7 +13,7 @@ using namespace std;
 
 namespace TM2IN{
     namespace unused{
-        void removeStraight(Surface*& pSurface){
+        void removeStraight(Wall::Surface*& pSurface){
             if (pSurface->getVerticesSize() < 3) return;
             int removed_count = 0;
 
@@ -41,7 +41,7 @@ namespace TM2IN{
         }
 
 
-        std::vector<Segment_2> makeSegment2List(Surface *&pSurface, Plane_3 plane3) {
+        std::vector<Segment_2> makeSegment2List(Wall::Surface *&pSurface, Plane_3 plane3) {
             vector<Point_2> pointsList = TM2IN::detail::cgal::project_to_plane(pSurface->getVerticesList(), plane3);
             vector<Segment_2> segmentsList;
             for (int i = 0 ; i < pointsList.size() - 1 ; i++){

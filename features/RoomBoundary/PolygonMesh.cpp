@@ -4,7 +4,7 @@
 
 #include "PolygonMesh.h"
 
-#include "features/Surface.h"
+#include "features/Wall/Polygon.h"
 #include "TriangleMesh.h"
 #include "util.h"
 

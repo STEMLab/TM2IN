@@ -8,7 +8,7 @@
 #include <detail/features/RoomFactory.h>
 #include "features/Room.h"
 #include "features/Vertex.h"
-#include "features/Triangle.h"
+#include "features/Wall/Triangle.h"
 
 namespace TM2IN {
     namespace detail {
@@ -151,7 +151,7 @@ namespace TM2IN {
                                 Vertex* va = factory.getVerticesList()[a];
                                 Vertex* vb = factory.getVerticesList()[b];
                                 Vertex* vc = factory.getVerticesList()[c];
-                                Triangle* tri = new Triangle(va, vb, vc);
+                                Wall::Triangle* tri = new Wall::Triangle(va, vb, vc);
                                 factory.pushTriangle(tri);
                             }
                             break;

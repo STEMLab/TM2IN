@@ -65,7 +65,7 @@ RoomBoundary::TriangulatedSurfaceMesh *Converter::make_tri_surface_mesh(RoomBoun
 
 int Converter::validate_tsm() {
     for (ull it = 0 ; it < this->rooms.size() ; it++) {
-        Room *room = this->rooms[it];
+        TM2IN::Room *room = this->rooms[it];
         RoomBoundary::TriangulatedSurfaceMesh* tsm = room->getTsm_boundary();
         if (!tsm->isClosed()){
             throw std::runtime_error("space " + room->name + " is not closed");

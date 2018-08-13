@@ -5,9 +5,10 @@
 #ifndef TM2IN_SIMPLIFY_SHARE_EDGES_H
 #define TM2IN_SIMPLIFY_SHARE_EDGES_H
 
-#include "features/Surface.h"
+#include "features/Wall/Surface.h"
 #include <vector>
 
+using namespace TM2IN::Wall;
 using namespace std;
 
 namespace TM2IN{
@@ -16,7 +17,7 @@ namespace TM2IN{
             /**
              * @ingroup imp_details
              */
-            int simplify_share_edges(Surface* sf1, Surface* sf2);
+            int simplify_share_edges(Wall::TriangulatedSurface* sf1, Wall::TriangulatedSurface* sf2);
         }
     }
 }

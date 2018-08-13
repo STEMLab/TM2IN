@@ -1,8 +1,10 @@
 #ifndef TM2IN_UNUSED_H
 #define TM2IN_UNUSED_H
 
-#include "features/Surface.h"
+#include "features/Wall/Surface.h"
 #include "detail/cgal_config.h"
+
+using namespace TM2IN::Wall;
 
 namespace TM2IN {
     namespace unused {

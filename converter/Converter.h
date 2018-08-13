@@ -8,7 +8,6 @@
 
 using namespace TM2IN;
 
-
 class Converter
 {
 protected:

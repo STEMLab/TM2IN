@@ -5,7 +5,7 @@
 #ifndef TM2IN_GEOMETRY_H
 #define TM2IN_GEOMETRY_H
 
-#include "features/Surface.h"
+#include "features/IndoorComponent.h"
 
 namespace TM2IN {
     namespace detail {

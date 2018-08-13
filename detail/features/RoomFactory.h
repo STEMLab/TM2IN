@@ -19,12 +19,12 @@ namespace TM2IN {
         class RoomFactory {
         private:
             std::vector<Vertex*> raw_vertices;
-            std::vector<Triangle*> raw_triangles;
+            std::vector<Wall::Triangle*> raw_triangles;
             std::string room_name;
         public:
             RoomFactory();
             void pushVertex(Vertex* vt);
-            void pushTriangle(Triangle *tri);
+            void pushTriangle(Wall::Triangle *tri);
             std::vector<Room*> make();
 
             bool keep_vertices = false;

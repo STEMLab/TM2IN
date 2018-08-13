@@ -2,13 +2,14 @@
 // Created by dongmin on 18. 7. 24.
 //
 
+#include "features/Wall/Surface.h"
 #include "mbb.h"
 
 using namespace std;
 
 namespace TM2IN{
     namespace algorithm{
-        CGAL::Bbox_3 getMBB(vector<Surface *> &surfacesList){
+        CGAL::Bbox_3 getMBB(std::vector<Wall::Surface *> &surfacesList){
             vector<vector<double>> v_minmax;
             v_minmax.assign(2, vector<double>());
 
@@ -19,7 +20,7 @@ namespace TM2IN{
             }
 
             for (ull i = 0 ; i < surfacesList.size() ; i++){
-                Surface* cp = surfacesList[i];
+                Wall::Surface* cp = surfacesList[i];
                 cp->updateMBB();
                 for (int j = 0 ; j < 3 ; j++){
                     v_minmax[1][j] = max(v_minmax[1][j], cp->getMBB()->max(j));

@@ -2,13 +2,12 @@
 // Created by dongmin on 18. 1. 17.
 //
 
-#ifndef POLYGON_MESH_PROCESSING_H
-#define POLYGON_MESH_PROCESSING_H
+#ifndef POLYHEDRON_H
+#define POLYHEDRON_H
 
 #include <iostream>
 #include <vector>
-#include "features/Vertex.h"
-#include "features/Surface.h"
+#include "features/IndoorComponent.h"
 
 using namespace std;
 using namespace TM2IN;
@@ -19,9 +18,9 @@ namespace TM2IN{
          * @brief Fills hole in surfaces
          * @ingroup unused
          */
-        vector<Vertex *> fillHole(vector<Vertex*>& vertices, vector<Surface *>& surfaces);
+        vector<Vertex *> fillHole(vector<Vertex*>& vertices, vector<Wall::Triangle *>& triangles);
     }
 };
 
 
-#endif //POLYGON_MESH_PROCESSING_H
+#endif //POLYHEDRON_H

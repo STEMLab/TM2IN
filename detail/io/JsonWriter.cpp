@@ -4,13 +4,14 @@
 
 #include "JsonWriter.h"
 
-#include "features/Surface.h"
+#include "features/Wall/TriangulatedSurface.h"
 #include "features/Room.h"
 #include "features/RoomBoundary/PolygonMesh.h"
 #include "features/RoomBoundary/TriangleMesh.h"
 #include "features/RoomBoundary/TriangulatedSurfaceMesh.h"
 #include "features/Vertex.h"
-#include "features/Triangle.h"
+#include "features/Wall/Triangle.h"
+#include "features/Wall/Polygon.h"
 
 namespace TM2IN {
     namespace detail {
@@ -38,7 +39,7 @@ namespace TM2IN {
                 if (boundary_mode == 0) // PM
                 {
                     RoomBoundary::PolygonMesh* pm = room.getPm_boundary();
-                    vector<Surface*>& polygons = pm->polygons;
+                    vector<Wall::Polygon*>& polygons = pm->polygons;
                     for (unsigned int id = 0; id < polygons.size(); id++) {
                             result += surface_to_json(*(polygons[id]));
 
@@ -52,7 +53,7 @@ namespace TM2IN {
                 else if (boundary_mode == 1) // TM
                 {
                     RoomBoundary::TriangleMesh* tm = room.getTm_boundary();
-                    vector<Triangle*> triangles = tm->getTriangleList();
+                    vector<Wall::Triangle*> triangles = tm->getTriangleList();
                     for (unsigned int id = 0; id < triangles.size(); id++) {
                         result += surface_to_json(*(triangles[id]));
 
@@ -91,7 +92,7 @@ namespace TM2IN {
                 return result;
             }
 
-            string surface_to_json_with_triangles(Surface& pSurface) {
+            string surface_to_json_with_triangles(Wall::TriangulatedSurface& pSurface) {
                 assert(pSurface.triangles.size() > 0);
 
                 string ret;
@@ -111,7 +112,7 @@ namespace TM2IN {
                 return ret;
             }
 
-            string surface_to_json(Surface& sf){
+            string surface_to_json(Wall::Surface& sf){
                 if (sf.getVerticesSize() == 0){
                     throw std::runtime_error("string to_json(Surface) : Vertex size is 0");
                 }

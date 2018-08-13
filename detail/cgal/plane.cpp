@@ -3,7 +3,7 @@
 //
 
 #include "plane.h"
-#include "features/Surface.h"
+#include "features/Vertex.h"
 #include "cgal/vector_angle.h"
 
 namespace TM2IN {

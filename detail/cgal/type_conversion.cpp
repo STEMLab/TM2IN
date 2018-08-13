@@ -6,7 +6,7 @@
 
 #include "features/HalfEdge.h"
 #include "features/Vertex.h"
-#include "features/Triangle.h"
+#include "features/Wall/Triangle.h"
 
 namespace TM2IN {
     namespace detail {
@@ -15,7 +15,7 @@ namespace TM2IN {
                 return Point_3(v.x(),v.y(),v.z());;
             }
 
-            Kernel::Triangle_3 to_CGAL_Triangle_3(Triangle &tri) {
+            Kernel::Triangle_3 to_CGAL_Triangle_3(Wall::Triangle &tri) {
                 Point_3 p1 = tri.vertex(0)->CGAL_point();
                 Point_3 p2 = tri.vertex(1)->CGAL_point();
                 Point_3 p3 = tri.vertex(2)->CGAL_point();

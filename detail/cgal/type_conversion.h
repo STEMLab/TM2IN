@@ -18,7 +18,7 @@ namespace TM2IN{
             /**
              * @ingroup imp_details
              */
-            Kernel::Triangle_3 to_CGAL_Triangle_3(Triangle& tri);
+            Kernel::Triangle_3 to_CGAL_Triangle_3(Wall::Triangle& tri);
             /**
              * @ingroup imp_details
              */

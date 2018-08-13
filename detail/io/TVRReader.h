@@ -23,7 +23,7 @@ namespace TM2IN{
             private:
                 std::ifstream& ifs;
 
-                Triangle* makeTriangle(string& input, vector<Vertex*>& vertex);
+                Wall::Triangle* makeTriangle(string& input, vector<Vertex*>& vertex);
                 string getGroupName(string& input);
                 Vertex * makeVertex(int id, string &input);
             };

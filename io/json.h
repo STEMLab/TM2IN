@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-#include "features/Surface.h"
+#include "features/IndoorComponent.h"
 
 using namespace std;
 

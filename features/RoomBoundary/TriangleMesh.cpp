@@ -4,8 +4,8 @@
 
 #include <queue>
 #include "util.h"
-#include "features/Triangle.h"
 #include "features/HalfEdge.h"
+#include "features/Wall/Triangle.h"
 #include "TriangleMesh.h"
 
 namespace TM2IN{
@@ -55,17 +55,17 @@ namespace TM2IN{
             return connectedComponent;
         }
 
-        TriangleMesh *TriangleMesh::bfs(Triangle *&pTriangle, std::map<Triangle *, bool> &checked) {
+        TriangleMesh *TriangleMesh::bfs(Wall::Triangle *&pTriangle, std::map<Wall::Triangle *, bool> &checked) {
             std::vector<Triangle*> _triangles;
             std::queue<Triangle*> wait_queue;
             wait_queue.push(pTriangle);
             while (wait_queue.size() > 0) {
-                Triangle* curr = wait_queue.front();
+                Wall::Triangle* curr = wait_queue.front();
                 wait_queue.pop();
                 _triangles.push_back(curr);
 
                 for (unsigned int nb = 0; nb < curr->getVerticesSize(); nb++) {
-                    Triangle * next_surface = (Triangle*)(curr->exterior_boundary_edge(nb)->getOppositeEdge()->parent);
+                    Wall::Triangle * next_surface = (Wall::Triangle*)(curr->exterior_boundary_edge(nb)->getOppositeEdge()->parent);
                     if (next_surface == NULL) throw std::runtime_error("bfs wrong in tm");
                     if (checked[next_surface]) continue;
                     else {

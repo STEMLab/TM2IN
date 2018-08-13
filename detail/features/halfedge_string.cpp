@@ -3,16 +3,15 @@
 //
 
 #include <detail/cgal/geometry.h>
-#include "features/Triangle.h"
+#include "features/Wall/Triangle.h"
 #include "features/HalfEdge.h"
-
 
 #include "halfedge_string.h"
 
 namespace TM2IN {
     namespace detail {
         namespace HalfEdgeString {
-            void connectOppositeHalfEdges(std::vector <Triangle *>& triangleList) {
+            void connectOppositeHalfEdges(std::vector <Wall::Triangle *>& triangleList) {
                 for (int i = 0 ; i < triangleList.size() - 1 ; i++){
                     if (i % 10 == 0) printProcess(i, triangleList.size(), "connect Edges");
                     for (int j = i + 1; j < triangleList.size() ; j++){
@@ -22,7 +21,7 @@ namespace TM2IN {
                 }
             }
 
-            void setParent(std::vector<HalfEdge *> edges, Surface *pSurface) {
+            void setParent(std::vector<HalfEdge *> edges, Wall::Surface *pSurface) {
                 for (HalfEdge* edge : edges){
                     edge->setParent(pSurface);
                 }

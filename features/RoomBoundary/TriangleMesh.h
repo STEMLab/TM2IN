@@ -7,6 +7,8 @@
 
 #include <features/IndoorComponent.h>
 
+using namespace TM2IN::Wall;
+
 namespace TM2IN{
     namespace RoomBoundary{
         /**
@@ -24,7 +26,7 @@ namespace TM2IN{
             /**
              * @brief Constructor with a Triangle vector.
              */
-            TriangleMesh(std::vector<Triangle *> _triangles);
+            TriangleMesh(std::vector<Wall::Triangle *> _triangles);
             /**
              * @brief Makes Graph
              * @todo be removed

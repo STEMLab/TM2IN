@@ -16,7 +16,7 @@ namespace TM2IN {
 
     public:
         std::vector<Vertex *> vertices;
-        Surface *parent = NULL;
+        Wall::Surface *parent = NULL;
         HalfEdge *oppositeEdge = NULL;
 
         /**
@@ -27,7 +27,7 @@ namespace TM2IN {
         /**
          * @brief HalfEdge constructor
          */
-        HalfEdge(Vertex *pa, Vertex *pb, Surface *pSurface){
+        HalfEdge(Vertex *pa, Vertex *pb, Wall::Surface *pSurface){
             type = TM2IN::IND_TYPE::HalfEdge;
             vertices.push_back(pa);
             vertices.push_back(pb);
@@ -37,12 +37,12 @@ namespace TM2IN {
         /**
          * @brief Returns parent Surface
          */
-        Surface *getParent() const;
+        Wall::Surface *getParent() const;
 
         /**
          * @brief Sets parent Surface
          */
-        void setParent(Surface *pSurface);
+        void setParent(Wall::Surface *pSurface);
 
         /**
          * @brief Returns opposite HalfEdge

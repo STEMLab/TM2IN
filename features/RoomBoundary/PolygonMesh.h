@@ -5,10 +5,10 @@
 #ifndef TM2IN_POLYGONMESH_H
 #define TM2IN_POLYGONMESH_H
 
-
 #include <features/IndoorComponent.h>
 
 using namespace std;
+using namespace TM2IN::Wall;
 
 namespace TM2IN {
     namespace RoomBoundary {
@@ -21,12 +21,12 @@ namespace TM2IN {
             /**
              * @todo encapsulation
              */
-            vector<Surface*> polygons;
+            vector<Wall::Polygon*> polygons;
 
             /**
              * @brief Constructor with a Surface vector
              */
-            PolygonMesh(vector<Surface*> _polygons) : polygons(_polygons) {
+            PolygonMesh(vector<Wall::Polygon*> _polygons) : polygons(_polygons) {
                 this->type=IND_TYPE ::RoomBoundary;
             };
 

@@ -3,12 +3,12 @@
 //
 
 #include "surface_neighbor.h"
-
+#include "features/Wall/TriangulatedSurface.h"
 
 namespace TM2IN{
     namespace detail{
         namespace algorithm{
-            int isNeighbor(Surface *origin, Surface *piece) {
+            int isNeighbor(Wall::Surface  *origin, Wall::Surface *piece) {
                 int share_count = 0;
                 for (HalfEdge* he : origin->getExteriorBoundary()){
                     if (he->oppositeEdge != NULL && he->oppositeEdge->parent == piece) share_count++;

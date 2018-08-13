@@ -11,7 +11,7 @@
 
 using namespace std;
 
-enum ARCHITECTURE {ARCH, NON_ARCH, ALL};
+enum ARCHITECTURE {ARCH, NON_ARCH, ALL, MANUAL};
 
 class Options {
 private:

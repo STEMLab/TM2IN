@@ -8,6 +8,8 @@
 #include <features/IndoorComponent.h>
 #include "util.h"
 
+using namespace TM2IN::Wall;
+
 namespace TM2IN {
     namespace RoomBoundary {
         /**
@@ -27,19 +29,19 @@ namespace TM2IN {
              * @brief Gets a list of all Surface.
              *
              */
-            std::vector<Surface *> surface_list();
+            std::vector<TriangulatedSurface *> surface_list();
 
             /**
              * @brief Sets a list of Surface to patches.
              *
              */
-            void setSurfacesList(std::vector<Surface *> vector);
+            void setSurfacesList(std::vector<TriangulatedSurface *> vector);
 
             /**
              * @brief Surface
              *  @todo encapsulate
              */
-            std::vector<Surface *> surfaces;
+            std::vector<TriangulatedSurface *> surfaces;
 
             /**
              * @brief Validate with easy restriction

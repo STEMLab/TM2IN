@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include "features/Vertex.h"
+#include "features/IndoorComponent.h"
 #include "detail/cgal_config.h"
 
 namespace TM2IN {
