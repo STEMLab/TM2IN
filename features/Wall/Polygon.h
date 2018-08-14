@@ -9,6 +9,10 @@
 
 namespace TM2IN {
     namespace Wall {
+        /**
+        * @ingroup geo_features
+        * @brief
+        */
         class Polygon : public Surface{
         public:
             Polygon(Surface* );

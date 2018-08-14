@@ -19,18 +19,16 @@ Converter::Converter(){}
 
 int Converter::start() {
     importData(); // import mesh data
-
     /*
     if (options.generator) generation_writer = new GenerationWriter(options.output_dir); // generation writer
     */
-
-    // if (handleOpenTriangleMesh()) return -1; // mesh validation
     return 0;
 }
 
 int Converter::run() {
     mergeSurfaces();
-    validate_tsm();
+    if (Options::getInstance()->do_validation)
+        validate_tsm();
 
     if (Options::getInstance()->polygonizer_mode > 0) // 1 or 2 or 3
         polygonize();

@@ -2,6 +2,9 @@
 // Created by dongmin on 18. 8. 9.
 //
 
+#define MIN_TRIANGLE_AREA 0.0000001
+
+#include <Options.h>
 #include "Triangle.h"
 
 #include "detail/cgal/type_conversion.h"
@@ -20,8 +23,14 @@ namespace TM2IN {
             this->area = CGAL::to_double(sqrt(_normal.squared_length())) / 2;
             if (this->area != 0.0 && this->area == this->area)
                 this->normal = _normal;
-            else
-                throw std::runtime_error("create Triangle Error!!");
+            else {
+                if (Options::getInstance()->do_validation)
+                    throw std::runtime_error("create Triangle Error!!");
+                else{
+                    this->normal = _normal;
+                    this->area = MIN_TRIANGLE_AREA;
+                }
+            }
             this->updateMBB();
         }
 

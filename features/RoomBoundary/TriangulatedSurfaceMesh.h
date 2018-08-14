@@ -16,7 +16,6 @@ namespace TM2IN {
          * @ingroup geo_features
          * Mesh consists of only TM2IN::TriangulatedSurface.
          */
-        typedef TM2IN::RoomBoundary::TriangulatedSurfaceMesh TSM;
         class TriangulatedSurfaceMesh : public IndoorComponent{
         public:
             /**
@@ -72,6 +71,7 @@ namespace TM2IN {
 
             void updateMBB() override;
         };
+        typedef TM2IN::RoomBoundary::TriangulatedSurfaceMesh TSM;
     }
 }
 

@@ -75,7 +75,10 @@ namespace TM2IN {
                     }
                     break;
                 case MANUAL:
-
+                    i = 0;
+                    while (i < boundaries.size()){
+                        i++;
+                    }
                     break;
                 default:
                     break;
@@ -96,10 +99,7 @@ namespace TM2IN {
             }
 
             this->raw_triangles.clear();
-            if (this->keep_vertices){
-
-            }
-            else{
+            if (!this->keep_vertices){
                 this->raw_vertices.clear();
             }
 

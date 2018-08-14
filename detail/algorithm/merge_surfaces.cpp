@@ -8,6 +8,7 @@
 #include <detail/cgal/plane.h>
 #include <cgal/vector_angle.h>
 #include <detail/features/halfedge_string.h>
+#include <Options.h>
 
 #include "detail/algorithm/surface_neighbor.h"
 #include "detail/cgal/polygon.h"
@@ -143,6 +144,15 @@ namespace TM2IN {
 
             bool SurfaceMerger::check_merge_condition(Vector_3 &big, Vector_3 &small) {
                 Vector_3 added = big + small;
+                if (big.squared_length() == 0 || small.squared_length() == 0){
+                    if (Options::getInstance()->do_validation){
+                        throw std::runtime_error("Cannot check merge condition");
+                    }
+                    else{
+                        return true;
+                    }
+                }
+
                 if (is_coplanar(big, small)){
                     double addedAngle = TM2IN::cgal::getAngle(added, big);
                     return addedAngle <= thres2;

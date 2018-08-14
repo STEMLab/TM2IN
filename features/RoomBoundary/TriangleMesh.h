@@ -12,9 +12,9 @@ using namespace TM2IN::Wall;
 namespace TM2IN{
     namespace RoomBoundary{
         /**
-     * @ingroup geo_features
-         * @brief Mesh consists of only TM2IN::Triangle
-     */
+        * @ingroup geo_features
+        * @brief Mesh consists of only TM2IN::Triangle
+        */
         class TriangleMesh : public IndoorComponent {
         private:
             /**

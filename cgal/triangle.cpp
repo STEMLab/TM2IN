@@ -4,6 +4,7 @@
 
 #include "triangle.h"
 
+#define SCALE 1000
 
 namespace TM2IN {
     namespace cgal {
@@ -29,5 +30,6 @@ namespace TM2IN {
 
             return CGAL::cross_product(vab, vac);
         }
+
     }
 }

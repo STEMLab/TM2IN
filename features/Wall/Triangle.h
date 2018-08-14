@@ -10,6 +10,10 @@
 
 namespace TM2IN {
     namespace Wall {
+        /**
+        * @ingroup geo_features
+        * @brief Mesh consists of only TM2IN::Triangle
+        */
         class Triangle : public Surface{
         public:
             /**

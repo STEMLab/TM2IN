@@ -4,6 +4,7 @@
 
 #include <detail/features/halfedge_string.h>
 #include <algorithm/triangulation.h>
+#include <Options.h>
 #include "features/Wall/Triangle.h"
 #include "cgal/triangle.h"
 #include "TriangulatedSurface.h"
@@ -60,7 +61,9 @@ namespace TM2IN {
                 }
                 this->normal = normal;
             }
-            assert(this->normal != CGAL::NULL_VECTOR);
+            if (Options::getInstance()->do_validation)
+                assert(this->normal != CGAL::NULL_VECTOR);
+
             return true;
         }
 

@@ -49,6 +49,7 @@ public:
     bool generator = false;
 
     int selected = ARCH;
+    int do_validation = 0;
 private:
     bool has_input_dir = false;
     bool has_output_dir = false;

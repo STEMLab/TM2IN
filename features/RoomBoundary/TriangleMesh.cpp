@@ -3,6 +3,7 @@
 //
 
 #include <queue>
+#include <Options.h>
 #include "util.h"
 #include "features/HalfEdge.h"
 #include "features/Wall/Triangle.h"
@@ -65,7 +66,14 @@ namespace TM2IN{
                 _triangles.push_back(curr);
 
                 for (unsigned int nb = 0; nb < curr->getVerticesSize(); nb++) {
-                    Wall::Triangle * next_surface = (Wall::Triangle*)(curr->exterior_boundary_edge(nb)->getOppositeEdge()->parent);
+                    HalfEdge *pEdge = curr->exterior_boundary_edge(nb)->getOppositeEdge();
+                    if (pEdge == NULL){
+                        if (Options::getInstance()->do_validation)
+                            throw std::runtime_error("opposite Edge is NULL in Triangle Mesh bfs");
+                        else
+                            continue;
+                    }
+                    Wall::Triangle * next_surface = (Wall::Triangle*)(pEdge->parent);
                     if (next_surface == NULL) throw std::runtime_error("bfs wrong in tm");
                     if (checked[next_surface]) continue;
                     else {
