@@ -11,7 +11,7 @@ namespace TM2IN {
     namespace Wall {
         /**
         * @ingroup geo_features
-        * @brief Mesh consists of only TM2IN::Triangle
+        * @brief Surface with at least one Triangle
         */
         class TriangulatedSurface : public Surface{
 

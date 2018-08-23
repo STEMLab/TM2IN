@@ -11,7 +11,7 @@ namespace TM2IN {
     namespace Wall {
         /**
         * @ingroup geo_features
-        * @brief
+        * @brief Surface with planar edges and vertices.
         */
         class Polygon : public Surface{
         public:

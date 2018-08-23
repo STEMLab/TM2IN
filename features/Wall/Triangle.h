@@ -12,7 +12,7 @@ namespace TM2IN {
     namespace Wall {
         /**
         * @ingroup geo_features
-        * @brief Mesh consists of only TM2IN::Triangle
+        * @brief Wall with three edges (HalfEdge) and vertices (Vertex)
         */
         class Triangle : public Surface{
         public:
