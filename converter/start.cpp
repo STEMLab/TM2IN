@@ -9,7 +9,7 @@
 #include "io/tvr.h"
 #include "io/collada.h"
 #include "io/max3ds.h"
-#include "features/Triangle.h"
+#include "features/Wall/Triangle.h"
 #include "features/Room.h"
 #include "features/RoomBoundary/TriangleMesh.h"
 
@@ -40,10 +40,10 @@ int Converter::importData() {
  */
 void Converter::print_input_spec() {
     double area_sum = 0.0;
-    vector<Surface*> surfaces;
+    vector<Wall::Surface*> surfaces;
     for (ull it = 0 ; it < this->rooms.size() ; it++){
-        for (Triangle* triangle : this->rooms[it]->getTm_boundary()->getTriangleList()){
-            surfaces.push_back((Surface*)triangle);
+        for (Wall::Triangle* triangle : this->rooms[it]->getTm_boundary()->getTriangleList()){
+            surfaces.push_back((Wall::Surface*)triangle);
             area_sum += triangle->getArea();
         }
     }

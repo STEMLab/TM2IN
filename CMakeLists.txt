@@ -40,11 +40,24 @@ file(GLOB DETAIL_FILES
         "detail/features/*.cpp"
         )
 
-file(GLOB SOURCE_FILES
-        "features/*.h"
-        "features/*.cpp"
+file(GLOB FEATURES_FILES
         "features/RoomBoundary/*.h"
         "features/RoomBoundary/*.cpp"
+        "features/Wall/*.h"
+        "features/Wall/*.cpp"
+        "features/HalfEdge.h"
+        "features/HalfEdge.cpp"
+        "features/IndoorComponent.cpp"
+        "features/IndoorComponent.h"
+        "features/Room.h"
+        "features/Room.cpp"
+        "features/Vertex.h"
+        "features/Vertex.cpp"
+        "features/MinimumBoundingBox.cpp"
+        "features/MinimumBoundingBox.h"
+        )
+
+file(GLOB SOURCE_FILES
         "io/*.h"
         "io/*.cpp"
         "cgal/*.h"
@@ -64,6 +77,7 @@ add_executable(TM2IN
         ${SOURCE_FILES}
         ${DETAIL_FILES}
         ${LIB_FILES}
+        ${FEATURES_FILES}
         Options.h
         Options.cpp
         TM2IN.cpp)

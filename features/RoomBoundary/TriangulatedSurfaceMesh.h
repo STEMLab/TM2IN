@@ -8,31 +8,70 @@
 #include <features/IndoorComponent.h>
 #include "util.h"
 
+using namespace TM2IN::Wall;
+
 namespace TM2IN {
     namespace RoomBoundary {
-        typedef TM2IN::RoomBoundary::TriangulatedSurfaceMesh TSM;
+        /**
+         * @ingroup geo_features
+         * Mesh consists of only TM2IN::TriangulatedSurface.
+         */
         class TriangulatedSurfaceMesh : public IndoorComponent{
         public:
+            /**
+             * @brief Constructor with a TriangleMesh
+             *
+             */
             TriangulatedSurfaceMesh(TriangleMesh* tm);
 
-            std::vector<Surface *> surface_list();
+            /**
+             * @brief Gets a list of all Surface.
+             *
+             */
+            std::vector<TriangulatedSurface *> surface_list();
 
-            void setSurfacesList(std::vector<Surface *> vector);
+            /**
+             * @brief Sets a list of Surface to patches.
+             *
+             */
+            void setSurfacesList(std::vector<TriangulatedSurface *> vector);
 
-            std::vector<Surface *> surfaces;
+            /**
+             * @brief Surface
+             *  @todo encapsulate
+             */
+            std::vector<TriangulatedSurface *> surfaces;
 
+            /**
+             * @brief Validate with easy restriction
+             */
             int surface_easy_validation();
+
+            /**
+             * @brief Validate with strict restriction
+             */
             int surface_strict_validation();
 
+            /**
+             * @brief Updates normal vectors of all patches
+             */
             int update_surfaces_normal();
 
+            /**
+             * @brief Gets the number of patches in the mesh.
+             */
             ull num_of_surfaces();
+
+            /**
+             * @brief Checks this is closed.
+             */
             bool isClosed();
 
             std::string asJsonText() override;
 
             void updateMBB() override;
         };
+        typedef TM2IN::RoomBoundary::TriangulatedSurfaceMesh TSM;
     }
 }
 

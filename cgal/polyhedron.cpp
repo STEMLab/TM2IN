@@ -2,9 +2,10 @@
 // Created by dongmin on 18. 1. 17.
 //
 
-#include "Polygon_mesh_processing.h"
-#include "features/Surface.h"
-#include "features/Triangle.h"
+#include "polyhedron.h"
+#include "features/Wall/Surface.h"
+#include "features/Wall/Triangle.h"
+#include "features/Vertex.h"
 
 #include <algorithm>
 
@@ -27,9 +28,9 @@ namespace TM2IN {
         class polyhedron_builder : public CGAL::Modifier_base<HDS> {
         public:
             vector<Vertex *> &coords;
-            vector<Surface *> &surfaces;
+            vector<Wall::Triangle *> &surfaces;
 
-            polyhedron_builder(vector<Vertex *> &_vertices, vector<Surface *> &_surfaces) : coords(_vertices),
+            polyhedron_builder(vector<Vertex *> &_vertices, vector<Wall::Triangle *> &_surfaces) : coords(_vertices),
                                                                                             surfaces(_surfaces) {}
 
             void operator()(HDS &hds) {
@@ -38,13 +39,9 @@ namespace TM2IN {
 
                 // create a cgal incremental builder
                 CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
-                unsigned int triangleSize = 0;
-                for (int i = 0; i < surfaces.size(); i++) {
-                    triangleSize += surfaces[i]->triangles.size();
-                }
-                B.begin_surface(coords.size(), triangleSize);
+                B.begin_surface(coords.size(), surfaces.size());
 
-                cout << coords.size() << " , " << triangleSize << endl;
+                cout << coords.size() << " , " << surfaces.size() << endl;
 
                 map<Vertex *, int> vertex_index;
                 // add the polyhedron vertices
@@ -56,15 +53,14 @@ namespace TM2IN {
 
                 // add the polyhedron triangles
                 for (int i = 0; i < (int) surfaces.size(); i++) {
-                    // cout << "FACET :  " << i <<  " , " << surfaces[i]->triangles.size() << endl;
-                    for (int tri = 0; tri < (int) surfaces[i]->triangles.size(); tri++) {
-                        B.begin_facet();
-                        for (int vt = 0; vt < 3; vt++) {
-                            size_t index = vertex_index[surfaces[i]->triangles[tri]->vertex(vt)];
-                            B.add_vertex_to_facet(index);
-                        }
-                        B.end_facet();
+                    B.begin_facet();
+                    vector<Vertex*> vt_list = surfaces[i]->getVerticesList();
+                    for (auto vt : vt_list) {
+                        int index = vertex_index[vt];
+                        B.add_vertex_to_facet(index);
                     }
+
+                    B.end_facet();
                 }
 
                 // finish up the surface
@@ -72,9 +68,9 @@ namespace TM2IN {
             }
         };
 
-        vector<Vertex *> fillHole(vector<Vertex *> &vertices, vector<Surface *> &surfaces) {
+        vector<Vertex *> fillHole(vector<Vertex *> &vertices, vector<Wall::Triangle *> &triangles) {
             Polyhedron poly;
-            polyhedron_builder<HalfedgeDS> polybuilder(vertices, surfaces);
+            polyhedron_builder<HalfedgeDS> polybuilder(vertices, triangles);
             poly.delegate(polybuilder);
             // Incrementally fill the holes
             unsigned int nb_holes = 0;
@@ -102,7 +98,7 @@ namespace TM2IN {
             std::cout << std::endl;
             std::cout << nb_holes << " holes have been filled" << std::endl;
 
-            vector<Surface *> newSurface;
+            vector<Wall::Triangle *> new_triangles;
             vector<Vertex *> newVertices;
             for (Vertex_iterator i = poly.vertices_begin(); i != poly.vertices_end(); ++i) {
                 Vertex * vt = new Vertex(i->point().x(), i->point().y(), i->point().z());
@@ -118,13 +114,12 @@ namespace TM2IN {
                     ull vtIndex = std::distance(poly.vertices_begin(), j->vertex());
                     oneSurfaceCoords.push_back(newVertices[vtIndex]);
                 } while (++j != i->facet_begin());
-                Triangle * triangle = new Triangle(oneSurfaceCoords);
-                Surface * sf = new Surface(triangle);
-                newSurface.push_back(sf);
+                Wall::Triangle * triangle = new Wall::Triangle(oneSurfaceCoords);
+                new_triangles.push_back(triangle);
             }
 
-            surfaces.clear();
-            surfaces = newSurface;
+            triangles.clear();
+            triangles = new_triangles;
             return newVertices;
         }
     }

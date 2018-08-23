@@ -13,6 +13,9 @@ using namespace std;
 namespace TM2IN {
     namespace detail {
         namespace io {
+            /**
+             * @ingroup imp_details
+             */
             class Max3DSReader {
                 public:
                     Max3DSReader(FILE* _fp);

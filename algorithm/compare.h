@@ -12,13 +12,14 @@ class IndoorComponent;
 namespace TM2IN {
     namespace algorithm {
         /**
-         * 오름차순
-         * @param a
-         * @param b
-         * @return
+         * @ingroup public_api
+         * @brief Compares two Vertices
          */
         bool greater(Vertex * a, Vertex * b);
-
+        /**
+         * @ingroup public_api
+         * @brief Compares two Indoor Component by calculating area.
+         */
         bool compareArea(IndoorComponent* i, IndoorComponent* j);
     }
 }

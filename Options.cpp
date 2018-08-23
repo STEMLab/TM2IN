@@ -65,6 +65,7 @@ void Options::make(int argc, char **argv) {
             {"output-tri",  0, 0, 'L'},
             {"write-process",0,0, 'G'},
             {"select-arch", 1, 0, 'A'},
+            {"do-validation", 0, 0, 'V'},
             {0, 0, 0, 0}
     };
     int index = 0;
@@ -132,8 +133,13 @@ void Options::make(int argc, char **argv) {
                 generator = true;
                 break;
             case 'A':
+                assert(optarg != NULL);
+                selected = stoi(optarg);
                 break;
             case 'L':
+                break;
+            case 'V':
+                do_validation = 1;
                 break;
         }
     }

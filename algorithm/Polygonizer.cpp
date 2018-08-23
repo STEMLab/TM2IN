@@ -6,8 +6,10 @@
 
 #include <detail/features/halfedge_string.h>
 
-#include "features/Triangle.h"
-#include "features/Surface.h"
+#include "features/Wall/Triangle.h"
+#include "features/Wall/TriangulatedSurface.h"
+#include "features/Wall/Polygon.h"
+#include "features/Vertex.h"
 #include "detail/cgal/plane.h"
 #include "algorithm/merge_surfaces.h"
 #include "features/RoomBoundary/PolygonMesh.h"
@@ -15,18 +17,18 @@
 namespace TM2IN{
     namespace algorithm{
         TM2IN::RoomBoundary::PolygonMesh* TrianglePolygonizer::run(TM2IN::RoomBoundary::TSM *space) {
-            vector<TM2IN::Triangle*> triangleList;
+            vector<TM2IN::Wall::Triangle*> triangleList;
             for (unsigned int sfID = 0 ; sfID < space->surfaces.size(); sfID++) {
-                TM2IN::Surface* pSurface = space->surfaces[sfID];
-                vector<TM2IN::Triangle*> triangulation = pSurface->getTriangulation();
+                TM2IN::Wall::TriangulatedSurface* pSurface = space->surfaces[sfID];
+                vector<TM2IN::Wall::Triangle*> triangulation = pSurface->getTriangulation();
                 triangleList.insert(triangleList.end(),triangulation.begin(),triangulation.end());
             }
 
-            vector<TM2IN::Surface*> newSurfaceList;
-
+            vector<TM2IN::Wall::Polygon*> newSurfaceList;
             for (int i = 0 ; i < triangleList.size() ; i++){
-                newSurfaceList.push_back(triangleList[i]);
+                newSurfaceList.push_back(new Polygon(triangleList[i]));
             }
+
             TM2IN::RoomBoundary::PolygonMesh* pm = new TM2IN::RoomBoundary::PolygonMesh(newSurfaceList);
             return pm;
             //space->surfaces = newSurfaceList;
@@ -35,24 +37,29 @@ namespace TM2IN{
         TM2IN::RoomBoundary::PolygonMesh* DividedPolygonizer::run(TM2IN::RoomBoundary::TSM *space) {
             double thres1 = 1.0;
             double thres2 = 45.0;
-            vector<TM2IN::Surface*> newSurfaceList;
+            vector<TM2IN::Wall::Surface*> newSurfaceList;
             for (int i = 0 ; i < space->surfaces.size() ; i++){
-                TM2IN::Surface* sf = space->surfaces[i];
-                vector<TM2IN::Triangle*> triangulation = sf->getTriangulation();
+                TM2IN::Wall::TriangulatedSurface* sf = space->surfaces[i];
+                vector<TM2IN::Wall::TriangulatedSurface*> newSurfacesInSurface;
+                vector<TM2IN::Wall::Triangle*> triangulation = sf->getTriangulation();
 
                 TM2IN::detail::HalfEdgeString::connectOppositeHalfEdges(triangulation);
-                vector<TM2IN::Surface*> newSurfacesInSurface;
                 TM2IN::algorithm::mergeTriangles(triangulation, thres1, thres2, newSurfacesInSurface);
                 newSurfaceList.insert(newSurfaceList.end(), newSurfacesInSurface.begin(), newSurfacesInSurface.end());
             }
-            cout << "Surfaces : " << space->surfaces.size() << endl;
-            TM2IN::RoomBoundary::PolygonMesh* pm = new TM2IN::RoomBoundary::PolygonMesh(newSurfaceList);
+
+            vector<TM2IN::Wall::Polygon*> newPolygonList;
+            for (int i = 0 ; i < newSurfaceList.size() ; i++){
+                newPolygonList.push_back(new Polygon(newSurfaceList[i]));
+            }
+
+            TM2IN::RoomBoundary::PolygonMesh* pm = new TM2IN::RoomBoundary::PolygonMesh(newPolygonList);
             return pm;
         }
 
 
         TM2IN::RoomBoundary::PolygonMesh* PCAPolygonizer::run(TM2IN::RoomBoundary::TSM *space) {
-            throw std::runtime_error("PCAPolygonizer run not yey");
+            throw std::runtime_error("PCAPolygonizer run not yet");
             /*
             vector<Surface*> newSurfacesList;
             vector<SFCGAL::Polygon> polygons;

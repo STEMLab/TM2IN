@@ -13,6 +13,9 @@ using namespace std;
 namespace TM2IN {
     namespace detail {
         namespace io {
+            /**
+             * @ingroup imp_details
+             */
             class JsonWriter {
             public :
                 JsonWriter(std::ofstream& _fout);
@@ -23,8 +26,8 @@ namespace TM2IN {
             };
 
             string room_to_json(Room &ps, int boundary_mode);
-            string surface_to_json(Surface& sf);
-            string surface_to_json_with_triangles(Surface &pSurface);
+            string surface_to_json(Wall::Surface& sf);
+            string surface_to_json_with_triangles(Wall::TriangulatedSurface &pSurface);
             string vertex_to_json(Vertex& vt, int index = 0);
         }
     }

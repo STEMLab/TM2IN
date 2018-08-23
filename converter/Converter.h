@@ -8,7 +8,6 @@
 
 using namespace TM2IN;
 
-
 class Converter
 {
 protected:
@@ -19,19 +18,18 @@ public:
     virtual ~Converter(){};
 
     /**
-     * starting to convert data. Triangle Mesh data -> TM2IN::TriangleMesh Class Objects
+     * Ready to run projects. Triangle Mesh data -> TM2IN::TriangleMesh Class Objects
      */
     int start();
 
     /**
-     * converting data. TM2IN::TriangleMesh -> TM2IN::TriangulatedSurfaceMesh
-     * @return
+     * Converts data. TM2IN::TriangleMesh -> TM2IN::TriangulatedSurfaceMesh
      */
     int run();
 
     /**
-     * finish and export data. TM2IN::TriangulatedSurfaceMesh -> TM2IN::PolygonMesh
-     * @return
+     * Finish and export data. TM2IN::TriangulatedSurfaceMesh -> TM2IN::PolygonMesh
+     * @return Succeed : 0
      */
     int finish();
 private:

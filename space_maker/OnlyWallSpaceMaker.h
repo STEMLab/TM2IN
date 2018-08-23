@@ -9,7 +9,7 @@ class OnlyWallSpaceMaker{
 public:
     OnlyWallSpaceMaker(){};
 
-    vector<Surface*> makeSimpleSurfaces(vector<Surface*> surfacesList);
+    vector<Wall::Surface*> makeSimpleSurfaces(vector<Wall::Surface*> surfacesList);
 
     static int findNormalType27(Vector_3& nv);
     static int findNormalType18(Vector_3& nv);
@@ -19,7 +19,7 @@ public:
     static Vector_3 normal_list11[11];
 private:
 
-    static Surface* findFirstSurfaceSimilarWithAxis(vector<Surface*>& surfacesList, int axis);
+    static Wall::Surface* findFirstSurfaceSimilarWithAxis(vector<Wall::Surface*>& surfacesList, int axis);
 
     int removeSurfacesNotConnectedFC(vector<Surface*>& surfacesList, SurfaceGraph*);
     int removeOppositeSurfaces(vector<Surface*>& surfacesList);

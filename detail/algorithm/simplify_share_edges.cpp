@@ -6,7 +6,8 @@
 #include <detail/cgal/plane.h>
 #include "simplify_share_edges.h"
 #include "surface_neighbor.h"
-
+#include "features/HalfEdge.h"
+#include "features/Wall/TriangulatedSurface.h"
 
 namespace TM2IN {
     namespace detail {
@@ -17,7 +18,7 @@ namespace TM2IN {
              * @todo re-factoring
              * @return 0 : succeed for simplification, 1 : failure
              */
-            int simplify_share_edges(Surface *origin, Surface *piece) {
+            int simplify_share_edges(Wall::TriangulatedSurface *origin, Wall::TriangulatedSurface *piece) {
                 ll piece_middle = -1, origin_middle = -1;
                 ll piece_size = piece->getVerticesSize();
                 ll origin_size = origin->getVerticesSize();
@@ -85,7 +86,7 @@ namespace TM2IN {
                 newHalfEdgeList_piece.push_back(newEdge_piece);
 
                 // check polygon after simplification
-                Surface* pSurface = new Surface();
+                Wall::TriangulatedSurface* pSurface = new Wall::TriangulatedSurface();
                 pSurface->setExteriorBoundary(newHalfEdgeList_piece);
                 Plane_3 planeRef = TM2IN::detail::cgal::make_simple_plane(piece->normal);
                 vector<Point_2> point2dList = TM2IN::detail::cgal::project_to_plane(pSurface->getVerticesList(), planeRef);

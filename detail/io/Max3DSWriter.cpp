@@ -8,7 +8,7 @@
 #include "features/Room.h"
 #include "features/RoomBoundary/TriangleMesh.h"
 #include "features/Vertex.h"
-#include "features/Triangle.h"
+#include "features/Wall/Triangle.h"
 
 using namespace std;
 
@@ -31,11 +31,11 @@ namespace TM2IN{
                 for (int groupI = 0 ; groupI < rooms.size(); groupI++){
                     Room* room = rooms[groupI];
                     RoomBoundary::TriangleMesh* tm = room->getTm_boundary();
-                    vector<Triangle*> triangles = tm->getTriangleList();
+                    vector<Wall::Triangle*> triangles = tm->getTriangleList();
                     vector<Vertex*> vertices = tm->extractVerticesList();
                     vector<vector<int>> triangleIndicies;
                     for (int triI = 0 ; triI < triangles.size(); triI++){
-                        Triangle* triangle = triangles[triI];
+                        Wall::Triangle* triangle = triangles[triI];
                         vector<int> triangleIndex;
                         for (int vi = 0 ; vi < 3 ; vi++){
                             Vertex* vt = triangle->vertex(vi);

@@ -8,6 +8,9 @@
 #include "features/IndoorComponent.h"
 
 namespace TM2IN {
+    /**
+     * @ingroup geo_features
+     */
     class Room : public IndoorComponent{
     private:
         RoomBoundary::TriangleMesh* tm_boundary;
@@ -15,14 +18,29 @@ namespace TM2IN {
         RoomBoundary::PolygonMesh* pm_boundary;
 
     public:
+        /**
+         * @brief Constructor with TriangleMesh
+         *
+         */
         Room(RoomBoundary::TriangleMesh* tm);
 
         std::string name;
 
+        /**
+         * @brief Returns TriangleMesh boundary
+         */
         RoomBoundary::TriangleMesh *getTm_boundary() const;
         void setTm_boundary(RoomBoundary::TriangleMesh *tm_boundary);
+
+        /**
+         * @brief Returns TriangulatedSurfaceMesh boundary
+         */
         RoomBoundary::TriangulatedSurfaceMesh *getTsm_boundary() const;
         void setTsm_boundary(RoomBoundary::TriangulatedSurfaceMesh *tsm_boundary);
+
+        /**
+         * @brief Returns PolygonMesh boundary
+         */
         RoomBoundary::PolygonMesh *getPm_boundary() const;
         void setPm_boundary(RoomBoundary::PolygonMesh *pm_boundary);
 

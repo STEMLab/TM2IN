@@ -13,6 +13,9 @@ using namespace std;
 namespace TM2IN {
     namespace detail {
         namespace algorithm {
+            /**
+             * @ingroup imp_details
+             */
             bool has_self_intersection(vector<HalfEdge*> edges);
         }
     }

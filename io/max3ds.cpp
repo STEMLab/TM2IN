@@ -15,7 +15,9 @@ namespace TM2IN{
     namespace io{
         std::vector<Room *> import3DS(const char *filePath) {
             FILE *l_file;
-            assert( (l_file=fopen (filePath, "rb") ) != NULL);
+            if ((l_file=fopen (filePath, "rb") ) == NULL){
+                throw std::runtime_error(string(filePath) + " cannot be open in import3DS");
+            }
 
             TM2IN::detail::io::Max3DSReader reader(l_file);
             return reader.read();
@@ -26,8 +28,7 @@ namespace TM2IN{
             FILE* pFile;
             pFile= fopen(filePath, "w");
             if (!pFile) {
-                cerr << "cannot open export3DS";
-                return -1;
+                throw std::runtime_error(string(filePath) + " cannot be open in export3DS");
             }
 
             TM2IN::detail::io::Max3DSWriter writer(pFile);

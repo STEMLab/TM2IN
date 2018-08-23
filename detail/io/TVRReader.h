@@ -13,6 +13,9 @@ using namespace std;
 namespace TM2IN{
     namespace detail{
         namespace io{
+            /**
+             * @ingroup imp_details
+             */
             class TVRReader {
             public:
                 TVRReader(std::ifstream& _ifs);
@@ -20,7 +23,7 @@ namespace TM2IN{
             private:
                 std::ifstream& ifs;
 
-                Triangle* makeTriangle(string& input, vector<Vertex*>& vertex);
+                Wall::Triangle* makeTriangle(string& input, vector<Vertex*>& vertex);
                 string getGroupName(string& input);
                 Vertex * makeVertex(int id, string &input);
             };

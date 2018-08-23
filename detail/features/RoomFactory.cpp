@@ -6,7 +6,7 @@
 #include <cgal/vector_angle.h>
 #include "config.h"
 #include "util.h"
-#include "features/Triangle.h"
+#include "features/Wall/Triangle.h"
 #include "features/RoomBoundary/TriangleMesh.h"
 #include "features/Room.h"
 #include "Options.h"
@@ -31,7 +31,7 @@ namespace TM2IN {
             this->raw_vertices.push_back(vt);
         }
 
-        void RoomFactory::pushTriangle(Triangle *tri) {
+        void RoomFactory::pushTriangle(Wall::Triangle *tri) {
             int neighbor_num = 0;
             for (ull i = 0 ; i < this->raw_triangles.size() ; i++){
                 if (TM2IN::detail::cgal::has_bbox_intersect(raw_triangles[i], tri))
@@ -42,6 +42,10 @@ namespace TM2IN {
             this->raw_triangles.push_back(tri);
         }
 
+        /**
+         * @todo MANUAL
+         * @return
+         */
         std::vector<Room *> RoomFactory::make() {
             RoomBoundary::TriangleMesh* boundary = new RoomBoundary::TriangleMesh(this->raw_triangles);
 
@@ -70,6 +74,12 @@ namespace TM2IN {
                             boundaries.erase(boundaries.begin() + i);
                     }
                     break;
+                case MANUAL:
+                    i = 0;
+                    while (i < boundaries.size()){
+                        i++;
+                    }
+                    break;
                 default:
                     break;
             }
@@ -89,10 +99,7 @@ namespace TM2IN {
             }
 
             this->raw_triangles.clear();
-            if (this->keep_vertices){
-
-            }
-            else{
+            if (!this->keep_vertices){
                 this->raw_vertices.clear();
             }
 
@@ -106,7 +113,7 @@ namespace TM2IN {
 
         bool RoomFactory::is_furniture(TriangleMesh *&tm) {
             vector<Triangle_3> cgal_triangles;
-            vector<Triangle*> triangles = tm->getTriangleList();
+            vector<Wall::Triangle*> triangles = tm->getTriangleList();
             for (int i = 0 ; i < triangles.size() ; i++){
                 cgal_triangles.push_back(triangles[i]->CGAL_triangle());
             }

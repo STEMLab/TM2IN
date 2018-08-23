@@ -7,7 +7,7 @@
 #include "features/Room.h"
 #include "detail/features/RoomFactory.h"
 #include "features/Vertex.h"
-#include "features/Triangle.h"
+#include "features/Wall/Triangle.h"
 
 namespace TM2IN {
     namespace detail {
@@ -62,7 +62,7 @@ namespace TM2IN {
                         case 'f':{
                             assert(v_count != 0);
 
-                            Triangle* tri = this->makeTriangle(inputstr, factory.getVerticesList());
+                            Wall::Triangle* tri = this->makeTriangle(inputstr, factory.getVerticesList());
                             factory.pushTriangle(tri);
 
                             f_count++;
@@ -86,7 +86,7 @@ namespace TM2IN {
                 return x_1;
             }
 
-            Triangle* TVRReader::makeTriangle(string& input, vector<TM2IN::Vertex*>& vertex){
+            Wall::Triangle* TVRReader::makeTriangle(string& input, vector<TM2IN::Vertex*>& vertex){
                 std::vector<std::string> x = split(input, ' ');
 
                 ll a = stol(x[1]);
@@ -96,7 +96,7 @@ namespace TM2IN {
                 Vertex* va = vertex[a];
                 Vertex* vb = vertex[b];
                 Vertex* vc = vertex[c];
-                Triangle* newTriangle = new Triangle(va, vb, vc);
+                Wall::Triangle* newTriangle = new Wall::Triangle(va, vb, vc);
 
                 x.clear();
                 return newTriangle;

@@ -6,7 +6,7 @@
 #include "TriangleMesh.h"
 
 #include "TriangulatedSurfaceMesh.h"
-#include "features/Triangle.h"
+#include "features/Wall/TriangulatedSurface.h"
 #include "features/HalfEdge.h"
 #include <queue>
 #include <vector>
@@ -18,24 +18,24 @@ namespace TM2IN{
             vector<Triangle*> triangles = tm->getTriangleList();
             ull size = triangles.size();
             for (ull i = 0; i < size; i++) {
-                Surface* newcp = new Surface(*triangles[i]);
+                Wall::TriangulatedSurface* newcp = new Wall::TriangulatedSurface(*triangles[i]);
                 surfaces.push_back(newcp);
             }
             this->type=IND_TYPE ::RoomBoundary;
         }
 
-        void TriangulatedSurfaceMesh::setSurfacesList(vector<Surface *> s_list) {
+        void TriangulatedSurfaceMesh::setSurfacesList(vector<Wall::TriangulatedSurface *> s_list) {
             this->surfaces = s_list;
         }
 
-        vector<Surface *> TriangulatedSurfaceMesh::surface_list() {
+        vector<Wall::TriangulatedSurface *> TriangulatedSurfaceMesh::surface_list() {
             return this->surfaces;
         }
 
         int TriangulatedSurfaceMesh::surface_easy_validation() {
             cout << "\n------------- check whether surfaces are valid (easy) --------------\n" << endl;
-            for (vector<Surface *>::size_type i = 0; i < this->surfaces.size();) {
-                Surface * pSurface = this->surfaces[i];
+            for (vector<TriangulatedSurface *>::size_type i = 0; i < this->surfaces.size();) {
+                Wall::TriangulatedSurface * pSurface = this->surfaces[i];
                 pSurface->updateMBB();
 
                 if (pSurface->easy_validation()) {
@@ -51,7 +51,7 @@ namespace TM2IN{
         int TriangulatedSurfaceMesh::update_surfaces_normal() {
             cout << "\n------------updateNormal------------\n" << endl;
             for (ull i = 0; i < (int) this->surfaces.size(); i++) {
-                Surface * surface = this->surfaces[i];
+                Wall::TriangulatedSurface* surface = this->surfaces[i];
                 if (!surface->updateNormal()) {
                     cout << surface->asJsonText() << endl;
                     cout << "Cannot make Normal" << endl;
@@ -67,23 +67,23 @@ namespace TM2IN{
         }
 
         bool TriangulatedSurfaceMesh::isClosed() {
-            map<Surface *, bool> checked;
-            for (Surface *sf : this->surfaces)
+            map<TriangulatedSurface *, bool> checked;
+            for (TriangulatedSurface *sf : this->surfaces)
                 checked[sf] = false;
 
-            std::queue<Surface *> wait_queue;
+            std::queue<TriangulatedSurface *> wait_queue;
             wait_queue.push(this->surfaces[0]);
             checked[this->surfaces[0]] = true;
 
             int surfaceCount = 0;
 
             while (wait_queue.size() > 0) {
-                Surface * current = wait_queue.front();
+                Wall::TriangulatedSurface * current = wait_queue.front();
                 wait_queue.pop();
 
                 surfaceCount += 1;
                 for (unsigned int nb = 0; nb < current->getVerticesSize(); nb++) {
-                    Surface * next_surface = current->exterior_boundary_edge(nb)->getOppositeEdge()->parent;
+                    Wall::TriangulatedSurface* next_surface = (Wall::TriangulatedSurface*)current->exterior_boundary_edge(nb)->getOppositeEdge()->parent;
                     if (checked[next_surface]) continue;
                     else {
                         checked[next_surface] = true;
@@ -100,8 +100,8 @@ namespace TM2IN{
 
         int TriangulatedSurfaceMesh::surface_strict_validation() {
             cout << "\n------------- check whether surfaces are valid --------------\n" << endl;
-            for (vector<Surface *>::size_type i = 0; i < this->surfaces.size();) {
-                Surface * pSurface = this->surfaces[i];
+            for (vector<Wall::TriangulatedSurface *>::size_type i = 0; i < this->surfaces.size();) {
+                Wall::TriangulatedSurface * pSurface = this->surfaces[i];
                 pSurface->updateMBB();
 
                 if (pSurface->strict_validation()) {

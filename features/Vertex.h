@@ -8,44 +8,97 @@
 #include "IndoorComponent.h"
 
 namespace TM2IN {
+    /**
+     * @ingroup geo_features
+     * @brief Vertex imply one coordinate in 3-D indoor space.
+     */
     class Vertex : public IndoorComponent {
     public:
         double coords[3];
 
+        /**
+         * @brief Empty Vertex constructor
+         */
         Vertex() : Vertex(0, 0, 0) {}
 
+        /**
+         * @brief Constructor with three double values
+         */
         Vertex(double px, double py, double pz);
 
+        /**
+         * @brief Copy constructor.
+         */
         Vertex(Vertex &vt);
 
+        /**
+         * @brief Destructor
+         */
         ~Vertex() {}
 
+        /**
+         * @brief Gets x value.
+         */
         double x() { return coords[0]; }
 
+        /**
+         * @brief Gets y value
+         */
         double y() { return coords[1]; }
 
+        /**
+         * @brief Gets z value
+         */
         double z() { return coords[2]; }
 
+        /**
+         * @brief Sets x value
+         *
+         */
         void setX(double value) { coords[0] = value; }
 
+        /**
+         * @brief Sets y value
+         */
         void setY(double value) { coords[1] = value; }
 
+        /**
+         * @brief Sets z value
+         */
         void setZ(double value) { coords[2] = value; }
 
+        /**
+         * @brief Sets coordinate with three float values.
+         */
         void setCoords(double x, double y, double z);
 
+        /**
+         * @brief Operator [] to access each value
+         */
         double operator[](int idx) {
             return coords[idx];
         }
 
+        /**
+         * @brief Translate coordinate values with difference
+         */
         void translate(double diff[]);
 
+        /**
+         * @brief Move Vertex to destination
+         */
         void translateTo(std::vector<double> dest);
 
         std::string asJsonText();
 
+        /**
+         * @brief Operator << : print string
+         */
         friend std::ostream &operator<<(std::ostream &ou, Vertex *pVertex);
 
+        /**
+         * @brief Converts to Kernel::Point_3
+         */
         Kernel::Point_3 CGAL_point();
     };
 

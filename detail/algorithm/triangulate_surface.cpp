@@ -2,13 +2,14 @@
 // Created by dongmin on 18. 7. 20.
 //
 
+#include "features/Wall/Surface.h"
+#include "features/Wall/Triangle.h"
 #include "triangulate_surface.h"
-
 
 namespace TM2IN {
     namespace detail {
         namespace algorithm {
-            int triangulate_surface(Surface *pSurface, vector<Triangle *> &result) {
+            int triangulate_surface(TM2IN::Wall::Surface *pSurface, vector<TM2IN::Wall::Triangle *> &result) {
                 std::vector<Vertex*> vertexList = pSurface->getVerticesList();
                 // convert 3D point to 2D
                 Plane_3 planeRef = TM2IN::detail::cgal::make_simple_plane(pSurface->normal);
@@ -31,7 +32,7 @@ namespace TM2IN {
 
                 vector<Polygon_2> polygonList = TM2IN::detail::cgal::convexPartition(polygon);
 
-                vector<Triangle* > triangles;
+                vector<TM2IN::Wall::Triangle* > triangles;
                 for (int i = 0 ; i < polygonList.size() ; i++){
                     CGAL_assertion(polygonList[i].is_simple() && polygonList[i].is_convex());
 
@@ -62,7 +63,7 @@ namespace TM2IN {
                             }
                             localTemp.push_back(vertexList[k]);
                         }
-                        Triangle* new_tri = new Triangle(localTemp);
+                        TM2IN::Wall::Triangle* new_tri = new TM2IN::Wall::Triangle(localTemp);
                         new_tri->geom_id = pSurface->geom_id + "_" + to_string(triangles.size());
                         triangles.push_back(new_tri);
                     }

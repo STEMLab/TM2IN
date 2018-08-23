@@ -5,10 +5,11 @@
 #ifndef TM2IN_SURFACE_NEIGHBOR_H
 #define TM2IN_SURFACE_NEIGHBOR_H
 
-#include "features/Surface.h"
+#include "features/Wall/Surface.h"
 #include "features/HalfEdge.h"
 
 using namespace std;
+using namespace TM2IN::Wall;
 
 namespace TM2IN{
     namespace detail{
@@ -20,10 +21,22 @@ namespace TM2IN{
                 ll firstVertex_origin = -1;
             };
 
-            int isNeighbor(Surface *, Surface *);
-            int constructNeighborInfo(Surface* , Surface* , neighbor_info&);
+            /**
+             * @ingroup imp_details
+             */
+            int isNeighbor(Wall::Surface *, Wall::Surface *);
+            /**
+             * @ingroup imp_details
+             */
+            int constructNeighborInfo(Wall::Surface* , Wall::Surface* , neighbor_info&);
 
+            /**
+             * @ingroup imp_details
+             */
             int findStartAndEnd(vector<Vertex*>& vi, vector<Vertex*>& vj, ll middle_i, ll middle_j, ll& start_i, ll& end_i, ll& start_j, ll& end_j);
+            /**
+             * @ingroup imp_details
+             */
             bool findShareVertex(vector<Vertex*>& vi, vector<Vertex*>& vj, ll& middle_i, ll& middle_j);
         }
     }

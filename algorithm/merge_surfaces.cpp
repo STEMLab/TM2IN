@@ -7,6 +7,7 @@
 #include <detail/cgal/geometry.h>
 #include "detail/algorithm/merge_surfaces.h"
 #include "detail/algorithm/simplify_share_edges.h"
+#include "features/Wall/TriangulatedSurface.h"
 #include "features/RoomBoundary/TriangulatedSurfaceMesh.h"
 
 using namespace TM2IN::detail::algorithm;
@@ -15,7 +16,7 @@ using namespace TM2IN::RoomBoundary;
 namespace TM2IN{
     namespace algorithm{
         bool mergeSurfaces(TriangulatedSurfaceMesh *tsm, double thres1, double thres2) {
-            vector<Surface*> new_poly_list;
+            vector<Wall::TriangulatedSurface*> new_poly_list;
             SurfaceMerger sm(thres1, thres2);
             bool hasMerged = sm.mergeSurfaces(tsm->surface_list(), new_poly_list);
             tsm->setSurfacesList(new_poly_list);
@@ -32,11 +33,11 @@ namespace TM2IN{
                 assert((int) tsm->surfaces[i]->getVerticesSize() >= 3);
 
             for (ull i = 0 ; i < sizeOfSurfaces - 1; i++){
-                Surface *&surfaceI = tsm->surfaces[i];
+                Wall::TriangulatedSurface *&surfaceI = tsm->surfaces[i];
                 if (!surfaceI->easy_validation()) continue;
                 printProcess(i, sizeOfSurfaces, "");
                 for (ull j = i + 1; j < sizeOfSurfaces ; j++){
-                    Surface *&surfaceJ = tsm->surfaces[j];
+                    Wall::TriangulatedSurface *&surfaceJ = tsm->surfaces[j];
                     if (!surfaceI->easy_validation()) break;
                     if (!surfaceJ->easy_validation()) continue;
                     if (!TM2IN::detail::cgal::has_bbox_intersect(surfaceI, surfaceJ)) continue;
@@ -66,20 +67,20 @@ namespace TM2IN{
             return hasSimplified;
         }
 
-        bool mergeSurfaces(std::vector<Surface *>& surfaceList, double thres1, double thres2, vector<Surface*>& newSurfaceList) {
+        bool mergeSurfaces(std::vector<Wall::TriangulatedSurface *>& surfaceList, double thres1, double thres2, vector<Wall::TriangulatedSurface*>& newSurfaceList) {
             SurfaceMerger sm(thres1, thres2);
             bool hasMerged = sm.mergeSurfaces(surfaceList, newSurfaceList);
             return hasMerged;
         }
 
-        bool mergeTriangles(vector<Triangle *> &triangleList, double thres1, double thres2,
-                            vector<Surface *> &newSurfaceList) {
-            vector<Surface *> surfaceList;
-            for (Triangle* tri : triangleList)
-                surfaceList.push_back(new Surface(tri));
+        bool mergeTriangles(vector<Wall::Triangle *> &triangleList, double thres1, double thres2,
+                            vector<Wall::TriangulatedSurface *> &newSurfaceList) {
+            vector<Wall::TriangulatedSurface *> surfaceList;
+            for (Wall::Triangle* tri : triangleList)
+                surfaceList.push_back(new Wall::TriangulatedSurface(tri));
             SurfaceMerger sm(thres1, thres2);
             bool hasMerged = sm.mergeSurfaces(surfaceList, newSurfaceList);
-            for(Surface* sf : surfaceList)
+            for(Wall::TriangulatedSurface* sf : surfaceList)
                 delete sf;
             return hasMerged;
         }

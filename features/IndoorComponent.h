@@ -18,17 +18,21 @@ namespace TM2IN{
         class PolygonMesh;
     }
     class Room;
-
-    class Surface;
-    class Triangle;
+    namespace Wall{
+        class Surface;
+        class Triangle;
+        class TriangulatedSurface;
+        class Polygon;
+    }
     class Vertex;
     class HalfEdge;
-    class Poylgon;
 
     enum class IND_TYPE {
-        IndoorComponent, Room, RoomBoundary, Surface, Triangle, HalfEdge, Vertex
+        IndoorComponent, Room, RoomBoundary, TriangulatedSurface, Triangle, Polygon, HalfEdge, Vertex
     };
-
+/**
+     * @ingroup geo_features
+     */
     class IndoorComponent {
     protected:
         MinimumBoundingBox* mbb;
@@ -39,18 +43,41 @@ namespace TM2IN{
 
         IndoorComponent();
 
+        /**
+         * @brief Returns area
+         */
         double getArea(){
             return this->area;
         }
-
+        /**
+         * @brief Sets area
+         */
         void setArea(double _area){
             this->area = _area;
         }
-
+        /**
+         * @brief Returns minimum bounding box
+         */
         MinimumBoundingBox *getMBB();
+        /**
+         * @brief Sets minimum bounding box
+         */
         void setMBB(MinimumBoundingBox* _mbb) ;
+
+        /**
+         * @brief Updates MinimumBoundingBox
+         */
         virtual void updateMBB();
+
+        /**
+         *
+         *  @brief Merges with the other IndoorComponent.
+         */
         virtual void mergeMBB(IndoorComponent* gm);
+
+        /**
+         * @brief Generates json string.
+         */
         virtual std::string asJsonText();
     };
 

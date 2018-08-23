@@ -6,7 +6,7 @@
 
 #include "config.h"
 #include "features/HalfEdge.h"
-#include "features/Triangle.h"
+#include "features/Wall/Triangle.h"
 #include "features/Room.h"
 #include "features/RoomBoundary/TriangleMesh.h"
 #include "features/RoomBoundary/PolygonMesh.h"
@@ -19,18 +19,16 @@ Converter::Converter(){}
 
 int Converter::start() {
     importData(); // import mesh data
-
     /*
     if (options.generator) generation_writer = new GenerationWriter(options.output_dir); // generation writer
     */
-
-    // if (handleOpenTriangleMesh()) return -1; // mesh validation
     return 0;
 }
 
 int Converter::run() {
     mergeSurfaces();
-    validate_tsm();
+    if (Options::getInstance()->do_validation)
+        validate_tsm();
 
     if (Options::getInstance()->polygonizer_mode > 0) // 1 or 2 or 3
         polygonize();
@@ -67,7 +65,7 @@ int Converter::exportRoomBoundary() {
 
 int Converter::convert_pm_to_tm(){
     for (int room_id = 0 ; room_id < this->rooms.size() ; room_id++){
-        Room* room = this->rooms[room_id];
+        TM2IN::Room* room = this->rooms[room_id];
 
         RoomBoundary::TriangleMesh* tm = room->getPm_boundary()->to_triangle_mesh();
         room->setTm_boundary(tm);

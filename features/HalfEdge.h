@@ -8,37 +8,65 @@
 #include "features/IndoorComponent.h"
 
 namespace TM2IN {
+    /**
+     * @ingroup geo_features
+     */
     class HalfEdge : public IndoorComponent {
     private :
 
     public:
         std::vector<Vertex *> vertices;
-        Surface *parent = NULL;
+        Wall::Surface *parent = NULL;
         HalfEdge *oppositeEdge = NULL;
 
-        HalfEdge() {
-        }
+        /**
+         * @brief Empty HalfEdge constructor
+         */
+        HalfEdge() {}
 
-        HalfEdge(Vertex *pa, Vertex *pb, Surface *pSurface){
+        /**
+         * @brief HalfEdge constructor
+         */
+        HalfEdge(Vertex *pa, Vertex *pb, Wall::Surface *pSurface){
             type = TM2IN::IND_TYPE::HalfEdge;
             vertices.push_back(pa);
             vertices.push_back(pb);
             parent = pSurface;
         }
 
-        Surface *getParent() const;
+        /**
+         * @brief Returns parent Surface
+         */
+        Wall::Surface *getParent() const;
 
-        void setParent(Surface *pSurface);
+        /**
+         * @brief Sets parent Surface
+         */
+        void setParent(Wall::Surface *pSurface);
 
+        /**
+         * @brief Returns opposite HalfEdge
+         */
         HalfEdge *getOppositeEdge() const;
 
+        /**
+         * @brief Sets opposite HalfEdge
+         */
         void setOppositeEdge(HalfEdge *oppositeEdge);
 
+        /**
+         * @brief Sets the i-th Vertex
+         */
         void setVertex(int i, Vertex *vt);
 
+        /**
+         * @brief Checks whether it is same edge.
+         */
         bool isSame(HalfEdge *);
-
-        bool hasOppositeTwoVertex(HalfEdge *);
+        /**
+         * @brief Checks whether the other has possible opposite edge.
+         */
+        bool can_be_opposite_edge(HalfEdge *);
 
         Vertex *operator[](int idx) {
             if (idx == 0 || idx == 1) return vertices[idx];
@@ -48,8 +76,15 @@ namespace TM2IN {
             }
         };
 
+        /**
+         *
+         * @brief Converts to Kernel::Segment_3
+         */
         Kernel::Segment_3 to_CGAL_segment();
 
+        /**
+         * @brief Returns json string
+         */
         std::string asJsonText();
     };
 }

@@ -1,9 +1,9 @@
 
-#include "io/json.h"
-
 #include <fstream>
 
 #include "detail/io/JsonWriter.h"
+
+#include "io/json.h"
 
 namespace TM2IN {
     namespace io {
