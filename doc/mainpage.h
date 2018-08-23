@@ -2,9 +2,10 @@
  *
  * @mainpage TM2IN
  *
+ * @section intro_sec Introduction
+ *
  * TM2IN generates appropriate Solid geometry for Indoor Map from Triangle Mesh data such as TVR, COLLADA, 3DS.
  *
- * @section intro_sec Introduction
  *
  * @section dependencies_sec Dependencies
  *
@@ -18,6 +19,36 @@
  *
  * @link geo_features Geometric Indoor Features @endlink
  *
+ * All geometric features in TM2IN are TM2IN::IndoorComponent.
+ *
+ * - TM2IN::IndoorComponent
+ *
+ * Each TM2IN::IndoorComponent objects have TM2IN::MinimumBoundingBox.
+ *
+ * - TM2IN::MinimumBoundingBox
+ *
+ * Basic geometric features are TM2IN::Vertex and TM2IN::HalfEdge.
+ *
+ *  - TM2IN::Vertex
+ *  - TM2IN::HalfEdge
+ *
+ * A list of HalfEdge constructs TM2IN::Wall.
+ *
+ *  - TM2IN::Wall::Surface
+ *  - TM2IN::Wall::Triangle
+ *  - TM2IN::Wall::TriangulatedSurface
+ *  - TM2IN::Wall::Polygon
+ *
+ * A set of TM2IN::Wall constructs TM2IN::RoomBoundary.
+ *
+ *  - TM2IN::RoomBoundary::PolygonMesh
+ *  - TM2IN::RoomBoundary::TriangleMesh
+ *  - TM2IN::RoomBoundary::TriangulatedSurfaceMesh
+ *
+ * A TM2IN::RoomBoundary constructs TM2IN::Room.
+ *
+ *  - TM2IN::Room
+ *
  * @section api_sec API
  *
  * There are several sets of functions separated by user level.
@@ -28,9 +59,9 @@
  *
  * Implementation details are posted in @link imp_details Details @endlink
  *
+ * @section released Released
  *
- * @section example Example
- *
+ * Now released version of TM2IN.cpp and Converter.cpp is 1.0.0
  *
  * @defgroup public_api Public API
  *
