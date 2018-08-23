@@ -1,0 +1,5 @@
+<map id="TM2IN::algorithm::Polygonizer" name="TM2IN::algorithm::Polygonizer">
+<area shape="rect" id="node2" href="$class_t_m2_i_n_1_1algorithm_1_1_divided_polygonizer.html" title="TM2IN::algorithm::Divided\lPolygonizer" alt="" coords="278,5,453,47"/>
+<area shape="rect" id="node3" href="$class_t_m2_i_n_1_1algorithm_1_1_p_c_a_polygonizer.html" title="TM2IN::algorithm::PCAPolygonizer" alt="" coords="252,71,479,98"/>
+<area shape="rect" id="node4" href="$class_t_m2_i_n_1_1algorithm_1_1_triangle_polygonizer.html" title="TM2IN::algorithm::Triangle\lPolygonizer" alt="" coords="277,123,454,164"/>
+</map>

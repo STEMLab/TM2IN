@@ -1,0 +1,6 @@
+<map id="TM2IN::Wall::Surface" name="TM2IN::Wall::Surface">
+<area shape="rect" id="node3" href="$class_t_m2_i_n_1_1_wall_1_1_polygon.html" title="Surface with planar edges and vertices. " alt="" coords="5,162,156,189"/>
+<area shape="rect" id="node4" href="$class_t_m2_i_n_1_1_wall_1_1_triangle.html" title="Wall with three edges (HalfEdge) and vertices (Vertex) " alt="" coords="180,162,331,189"/>
+<area shape="rect" id="node5" href="$class_t_m2_i_n_1_1_wall_1_1_triangulated_surface.html" title="Surface with at least one Triangle. " alt="" coords="355,155,529,196"/>
+<area shape="rect" id="node2" href="$class_t_m2_i_n_1_1_indoor_component.html" title="TM2IN::IndoorComponent" alt="" coords="169,5,342,32"/>
+</map>

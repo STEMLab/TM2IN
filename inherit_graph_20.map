@@ -1,0 +1,13 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$class_t_m2_i_n_1_1_indoor_component.html" title="TM2IN::IndoorComponent" alt="" coords="5,180,179,207"/>
+<area shape="rect" id="node2" href="$class_t_m2_i_n_1_1_half_edge.html" title="TM2IN::HalfEdge" alt="" coords="254,5,378,32"/>
+<area shape="rect" id="node3" href="$class_t_m2_i_n_1_1_room.html" title="TM2IN::Room" alt="" coords="263,56,369,83"/>
+<area shape="rect" id="node4" href="$class_t_m2_i_n_1_1_room_boundary_1_1_polygon_mesh.html" title="Mesh consists of only TM2IN::Polygon. " alt="" coords="236,107,396,149"/>
+<area shape="rect" id="node5" href="$class_t_m2_i_n_1_1_room_boundary_1_1_triangle_mesh.html" title="Mesh consists of only TM2IN::Triangle. " alt="" coords="236,173,396,214"/>
+<area shape="rect" id="node6" href="$class_t_m2_i_n_1_1_room_boundary_1_1_triangulated_surface_mesh.html" title="TM2IN::RoomBoundary\l::TriangulatedSurfaceMesh" alt="" coords="227,238,405,279"/>
+<area shape="rect" id="node7" href="$class_t_m2_i_n_1_1_vertex.html" title="Vertex imply one coordinate in 3&#45;D indoor space. " alt="" coords="262,304,370,331"/>
+<area shape="rect" id="node8" href="$class_t_m2_i_n_1_1_wall_1_1_surface.html" title="TM2IN::Wall::Surface" alt="" coords="241,355,391,381"/>
+<area shape="rect" id="node9" href="$class_t_m2_i_n_1_1_wall_1_1_polygon.html" title="Surface with planar edges and vertices. " alt="" coords="465,304,616,331"/>
+<area shape="rect" id="node10" href="$class_t_m2_i_n_1_1_wall_1_1_triangle.html" title="Wall with three edges (HalfEdge) and vertices (Vertex) " alt="" coords="465,355,616,381"/>
+<area shape="rect" id="node11" href="$class_t_m2_i_n_1_1_wall_1_1_triangulated_surface.html" title="Surface with at least one Triangle. " alt="" coords="453,406,628,447"/>
+</map>

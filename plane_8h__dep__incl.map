@@ -1,0 +1,13 @@
+<map id="/home/dongmin/dev/TriMeshToIndoor/TriangleMeshToClearSolid/detail/cgal/plane.h" name="/home/dongmin/dev/TriMeshToIndoor/TriangleMeshToClearSolid/detail/cgal/plane.h">
+<area shape="rect" id="node2" href="$_polygonizer_8cpp.html" title="/home/dongmin/dev/TriMesh\lToIndoor/TriangleMeshToClearSolid\l/algorithm/Polygonizer.cpp" alt="" coords="5,117,236,173"/>
+<area shape="rect" id="node3" href="$triangulation_8h.html" title="/home/dongmin/dev/TriMesh\lToIndoor/TriangleMeshToClearSolid\l/algorithm/triangulation.h" alt="" coords="260,117,491,173"/>
+<area shape="rect" id="node7" href="$unused_8cpp.html" title="/home/dongmin/dev/TriMesh\lToIndoor/TriangleMeshToClearSolid\l/compute/unused.cpp" alt="" coords="515,117,745,173"/>
+<area shape="rect" id="node8" href="$detail_2algorithm_2merge__surfaces_8cpp.html" title="/home/dongmin/dev/TriMesh\lToIndoor/TriangleMeshToClearSolid\l/detail/algorithm/merge_surfaces.cpp" alt="" coords="769,117,1005,173"/>
+<area shape="rect" id="node9" href="$simplify__share__edges_8cpp.html" title="/home/dongmin/dev/TriMesh\lToIndoor/TriangleMeshToClearSolid\l/detail/algorithm/simplify_share\l_edges.cpp" alt="" coords="1029,109,1260,180"/>
+<area shape="rect" id="node10" href="$triangulate__surface_8h.html" title="/home/dongmin/dev/TriMesh\lToIndoor/TriangleMeshToClearSolid\l/detail/algorithm/triangulate\l_surface.h" alt="" coords="1284,109,1515,180"/>
+<area shape="rect" id="node12" href="$plane_8cpp.html" title="/home/dongmin/dev/TriMesh\lToIndoor/TriangleMeshToClearSolid\l/detail/cgal/plane.cpp" alt="" coords="1539,117,1769,173"/>
+<area shape="rect" id="node4" href="$triangulation_8cpp.html" title="/home/dongmin/dev/TriMesh\lToIndoor/TriangleMeshToClearSolid\l/algorithm/triangulation.cpp" alt="" coords="776,235,1007,291"/>
+<area shape="rect" id="node5" href="$_surface_8cpp.html" title="/home/dongmin/dev/TriMesh\lToIndoor/TriangleMeshToClearSolid\l/features/Wall/Surface.cpp" alt="" coords="128,235,359,291"/>
+<area shape="rect" id="node6" href="$_triangulated_surface_8cpp.html" title="/home/dongmin/dev/TriMesh\lToIndoor/TriangleMeshToClearSolid\l/features/Wall/TriangulatedSurface.cpp" alt="" coords="383,235,631,291"/>
+<area shape="rect" id="node11" href="$triangulate__surface_8cpp.html" title="/home/dongmin/dev/TriMesh\lToIndoor/TriangleMeshToClearSolid\l/detail/algorithm/triangulate\l_surface.cpp" alt="" coords="1284,228,1515,299"/>
+</map>
