@@ -14,6 +14,7 @@ namespace TM2IN{
          * @brief Imports TVR file and returns a vector of Room.
          */
         std::vector<Room*> importTVR(const char *filePath);
+
     }
 }
 

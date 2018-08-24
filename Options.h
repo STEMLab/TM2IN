@@ -45,6 +45,7 @@ public:
 
     bool output_3ds = false;
     bool output_tvr = false;
+    bool output_indoor_gml = false;
 
     bool generator = false;
 

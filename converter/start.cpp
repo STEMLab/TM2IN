@@ -7,7 +7,7 @@
 #include "converter/Converter.h"
 
 #include "io/tvr.h"
-#include "io/collada.h"
+#include "io/xml.h"
 #include "io/max3ds.h"
 #include "features/Wall/Triangle.h"
 #include "features/Room.h"

@@ -50,6 +50,7 @@ private:
     int convert_pm_to_tm();
     int exportRoomBoundary();
 
+    void validate_tm();
 };
 
 #endif // MANAGER_H
