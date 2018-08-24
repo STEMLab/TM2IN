@@ -3,7 +3,6 @@
 //
 
 #include "detail/io/ColladaReader.h"
-#include "lib/rapidxml/rapidxml.hpp"
 #include "features/Vertex.h"
 #include "features/Wall/Triangle.h"
 #include "util.h"
