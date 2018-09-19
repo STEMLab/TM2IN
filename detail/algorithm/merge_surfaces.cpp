@@ -57,6 +57,9 @@ namespace TM2IN {
 
 
             int SurfaceMerger::merge(Wall::TriangulatedSurface *origin, Wall::TriangulatedSurface  *piece) {
+                if (origin->getVerticesSize() == 291 && piece->getVerticesSize() == 3 && piece->geom_id == "sf8695"){
+                    cout << "azamat stupid" << endl;
+                }
                 // check Polygon is in near polygon or not
                 if (!TM2IN::detail::cgal::has_bbox_intersect(origin, piece)) return 1;
 

@@ -15,7 +15,7 @@ namespace TM2IN {
     private:
         RoomBoundary::TriangleMesh* tm_boundary;
         RoomBoundary::TriangulatedSurfaceMesh* tsm_boundary;
-        RoomBoundary::PolygonMesh* pm_boundary;
+        RoomBoundary::PolygonMesh* pm_boundary = NULL;
 
     public:
         /**

@@ -52,7 +52,7 @@ int Converter::exportRoomBoundary() {
     else
         TM2IN::io::exportRoomBoundaryJSON(Options::getInstance()->output_dir + "surfaces.json", this->rooms, 3);
 
-    if (Options::getInstance()->output_indoor_gml){
+    if (Options::getInstance()->polygonizer_mode > 0 && Options::getInstance()->output_indoor_gml){
         TM2IN::io::exportIndoorGML((Options::getInstance()->output_dir + "tm2in.gml").c_str(), this->rooms);
     }
 
@@ -86,7 +86,10 @@ int Converter::convert_pm_to_tm(){
 void Converter::tag_pm_ID() {
     for (ull it = 0 ; it < this->rooms.size() ; it++) {
         Room *room = this->rooms[it];
-        room->getPm_boundary()->tag_ID(room->name);
+        if (room->getPm_boundary() != NULL){
+            room->getPm_boundary()->tag_ID(room->name);
+        }
+
     }
 }
 

@@ -2,6 +2,7 @@
 // Created by dongmin on 18. 8. 9.
 //
 
+#include <detail/cgal/type_conversion.h>
 #include "algorithm/triangulation.h"
 #include "algorithm/compare.h"
 #include "detail/features/halfedge_string.h"
@@ -121,8 +122,9 @@ namespace TM2IN {
                     min_coords[j] = min(min_coords[j], this->vertex(i)->coords[j]);
                 }
             }
-            this->mbb->set_min_coords(min_coords);
-            this->mbb->set_max_coords(max_coords);
+//            this->mbb->set_min_coords(min_coords);
+//            this->mbb->set_max_coords(max_coords);
+            this->mbb = TM2IN::detail::cgal::create_bbox3(min_coords, max_coords);
         }
 
         std::vector<Wall::Triangle*> Surface::getTriangulation(){

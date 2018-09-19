@@ -12,80 +12,54 @@ namespace TM2IN {
     }
 
     MinimumBoundingBox::MinimumBoundingBox(double x1, double y1, double z1, double x2, double y2, double z2) {
-        minx = x1;
-        miny = y1;
-        minz = z1;
-        maxx = x2;
-        maxy = y2;
-        maxz = z2;
-        this->cgal_bbox3 = CGAL::Bbox_3(minx,miny,minz,maxx,maxy,maxz);
+        this->cgal_bbox3 = CGAL::Bbox_3(x1,y1,z1,x2,y2,z2);
     }
 
-
     MinimumBoundingBox::MinimumBoundingBox(MinimumBoundingBox *pBox) {
-        if (pBox->cgal_bbox3 == CGAL::Bbox_3())
-            this->cgal_bbox3 = CGAL::Bbox_3();
-        else
-            this->set(pBox->cgal_bbox3);
+        this->cgal_bbox3 = pBox->cgal_bbox3;
     }
 
     double MinimumBoundingBox::operator[](int index) {
         if (index == 0)
-            return minx;
+            return this->cgal_bbox3.xmin();
         else if (index == 1)
-            return miny;
+            return this->cgal_bbox3.ymin();
         else if (index == 2)
-            return minz;
+            return this->cgal_bbox3.zmin();
         else if (index == 3)
-            return maxx;
+            return this->cgal_bbox3.xmax();
         else if (index == 4)
-            return maxy;
+            return this->cgal_bbox3.ymax();
         else if (index == 5)
-            return maxz;
+            return this->cgal_bbox3.zmax();
         throw std::runtime_error("MinimumBoundingBox::operator[] : out of range");
     }
 
     double MinimumBoundingBox::max(int index) {
         if (index == 0)
-            return maxx;
+            return this->cgal_bbox3.xmax();
         else if (index == 1)
-            return maxy;
+            return this->cgal_bbox3.ymax();
         else if (index == 2)
-            return maxz;
+            return this->cgal_bbox3.zmax();
         throw std::runtime_error("MinimumBoundingBox::max(int index) : out of range");
     }
 
     double MinimumBoundingBox::min(int index) {
         if (index == 0)
-            return minx;
+            return this->cgal_bbox3.xmin();
         else if (index == 1)
-            return miny;
+            return this->cgal_bbox3.ymin();
         else if (index == 2)
-            return minz;
+            return this->cgal_bbox3.zmin();
         throw std::runtime_error("MinimumBoundingBox::max(int index) : out of range");
     }
 
-    void MinimumBoundingBox::set_min_coords(double *pDouble) {
-        minx = pDouble[0];
-        miny = pDouble[1];
-        minz = pDouble[2];
-        this->cgal_bbox3 = CGAL::Bbox_3();
-    }
-
-    void MinimumBoundingBox::set_max_coords(double *pDouble) {
-        maxx = pDouble[0];
-        maxy = pDouble[1];
-        maxz = pDouble[2];
-        this->cgal_bbox3 = CGAL::Bbox_3();
+    void MinimumBoundingBox::set_coords(double pDouble[6]) {
+        this->cgal_bbox3 = CGAL::Bbox_3(pDouble[0], pDouble[1], pDouble[2], pDouble[3], pDouble[4], pDouble[5]);
     }
 
     void MinimumBoundingBox::set(CGAL::Bbox_3 &bbox3) {
-        maxx = bbox3.xmax();
-        maxy = bbox3.ymax();
-        maxz = bbox3.zmax();
-        minx = bbox3.xmin();
-        miny = bbox3.ymin();
-        minz = bbox3.zmin();
         this->cgal_bbox3 = bbox3;
     }
 

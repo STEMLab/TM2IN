@@ -14,9 +14,6 @@ namespace TM2IN {
      */
     class MinimumBoundingBox {
     private:
-        double minx, miny, minz;
-        double maxx, maxy, maxz;
-
         CGAL::Bbox_3 cgal_bbox3;
     public:
         /**
@@ -47,13 +44,9 @@ namespace TM2IN {
         double min(int i);
 
         /**
-         * @brief Sets minimum coordinates
+         * @brief Sets coordinates
          */
-        void set_min_coords(double pDouble[3]);
-        /**
-         * @brief Sets maximum coordinates
-         */
-        void set_max_coords(double pDouble[3]);
+        void set_coords(double pDouble[6]);
 
         /**
          * @brief Sets MBB by CGAL::Bbox_3

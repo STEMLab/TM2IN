@@ -96,8 +96,7 @@ namespace TM2IN{
                 cgal_triangles.push_back(this->triangles[i]->CGAL_triangle());
             }
 
-            CGAL::Bbox_3 bbox_3 = CGAL::bbox_3(cgal_triangles.begin(), cgal_triangles.end());
-            this->mbb->set(bbox_3);
+            this->mbb = CGAL::bbox_3(cgal_triangles.begin(), cgal_triangles.end());
         }
 
         std::string TriangleMesh::asJsonText() {

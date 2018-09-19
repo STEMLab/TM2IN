@@ -5,21 +5,21 @@
 #include "features/IndoorComponent.h"
 
 namespace TM2IN{
-    MinimumBoundingBox *IndoorComponent::getMBB() {
+    CGAL::Bbox_3 IndoorComponent::getMBB() {
         return this->mbb;
     }
 
-    void IndoorComponent::setMBB(MinimumBoundingBox *_mbb) {
+    void IndoorComponent::setMBB(CGAL::Bbox_3 _mbb) {
         this->mbb = _mbb;
     }
 
     IndoorComponent::IndoorComponent() {
         type = TM2IN::IND_TYPE::IndoorComponent;
-        this->mbb = new MinimumBoundingBox();
+        this->mbb = CGAL::Bbox_3();
     }
 
     void IndoorComponent::updateMBB() {
-        mbb = new MinimumBoundingBox();
+        mbb = CGAL::Bbox_3();
     }
 
     std::string IndoorComponent::asJsonText() {
@@ -27,8 +27,8 @@ namespace TM2IN{
     }
 
     void IndoorComponent::mergeMBB(IndoorComponent *gm) {
-        CGAL::Bbox_3 bbox = gm->getMBB()->CGAL_bbox3();
-        mbb->merge(bbox);
+        CGAL::Bbox_3 bbox = gm->getMBB();
+        this->mbb += bbox;
     }
 }
 

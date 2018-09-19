@@ -19,7 +19,8 @@ namespace TM2IN {
             this->exteriorBoundary = pSurface->getExteriorBoundary();
             TM2IN::detail::HalfEdgeString::setParent(this->exteriorBoundary, this);
             this->normal = pSurface->normal;
-            this->mbb = new MinimumBoundingBox(pSurface->getMBB());
+            //this->mbb = new MinimumBoundingBox(pSurface->getMBB());
+            this->mbb = pSurface->getMBB();
             this->area = pSurface->getArea();
             this->triangles = pSurface->triangles;
             this->geom_id = pSurface->geom_id;
@@ -27,13 +28,15 @@ namespace TM2IN {
         }
 
         TriangulatedSurface::TriangulatedSurface(Triangle& pl){
+            this->geom_id = "sf" + pl.geom_id;
             this->exteriorBoundary = pl.getExteriorBoundary();
             TM2IN::detail::HalfEdgeString::setParent(this->exteriorBoundary, this);
 
             area = pl.getArea();
             normal = pl.getNormal();
 
-            this->updateMBB();
+            // this->updateMBB();
+            this->mbb = pl.getMBB();
             this->triangles.push_back(&pl);
             this->type = TM2IN::IND_TYPE::TriangulatedSurface;
         }

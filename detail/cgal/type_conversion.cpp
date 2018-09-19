@@ -34,6 +34,10 @@ namespace TM2IN {
             Bbox_3 to_CGAL_bbox3(MinimumBoundingBox &box) {
                 return Bbox_3(box.min(0), box.min(1), box.min(2), box.max(0), box.max(1), box.max(2));
             }
+
+            Bbox_3 create_bbox3(double min_coords[3], double max_coords[3]) {
+                return Bbox_3(min_coords[0], min_coords[1], min_coords[2], max_coords[0], max_coords[1], max_coords[2]);
+            }
         }
     }
 }
