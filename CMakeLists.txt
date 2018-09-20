@@ -25,7 +25,10 @@ find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 # find_package(SFCGAL REQUIRED )
 
 file(GLOB LIB_FILES
-        "lib/rapidxml/*.hpp"
+        "lib/rapidxml/rapidxml_print.hpp"
+        "lib/rapidxml/rapidxml.hpp"
+        "lib/rapidxml/rapidxml_iterators.hpp"
+        "lib/rapidxml/rapidxml_utils.hpp"
         )
 
 file(GLOB DETAIL_FILES
@@ -87,6 +90,5 @@ TARGET_LINK_LIBRARIES(TM2IN LINK_PUBLIC ${Boost_LIBRARIES} Eigen3::Eigen
         )
 
 include_directories(
-        ../TriangleMeshToClearSolid
-        lib)
+        ../TriangleMeshToClearSolid)
 

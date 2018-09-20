@@ -8,7 +8,7 @@ using namespace std;
 
 namespace TM2IN {
     std::string Vertex::asJsonText() {
-        return TM2IN::detail::io::vertex_to_json(*this);
+        return TM2IN::detail::io::vertex_to_json(*this, this->geom_id);
     }
 
     void Vertex::translate(double diff[]) {
@@ -29,7 +29,6 @@ namespace TM2IN {
         coords[0] = CGAL::to_double(px);
         coords[1] = CGAL::to_double(py);
         coords[2] = CGAL::to_double(pz);
-        mbb = NULL;
         type = TM2IN::IND_TYPE::Vertex;
     }
 

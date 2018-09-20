@@ -10,6 +10,7 @@
 #include "features/RoomBoundary/TriangleMesh.h"
 #include "features/Room.h"
 #include "Options.h"
+#include "features/Vertex.h"
 
 #include "RoomFactory.h"
 
@@ -28,6 +29,7 @@ namespace TM2IN {
         }
 
         void RoomFactory::pushVertex(Vertex *vt) {
+            vt->geom_id = to_string(this->raw_vertices.size());
             this->raw_vertices.push_back(vt);
         }
 
@@ -39,6 +41,7 @@ namespace TM2IN {
                         neighbor_num++;
             }
             assert(neighbor_num <= 3);
+            tri->geom_id = to_string(this->raw_triangles.size());
             this->raw_triangles.push_back(tri);
         }
 

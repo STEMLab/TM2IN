@@ -31,6 +31,8 @@ namespace TM2IN{
              * @brief MinimumBoundingBox to CGAL Bbox_3
              */
             Bbox_3 to_CGAL_bbox3(MinimumBoundingBox& box);
+
+            Bbox_3 create_bbox3(double min_coords[3], double max_coords[3]);
         }
     }
 }

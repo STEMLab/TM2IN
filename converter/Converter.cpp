@@ -1,6 +1,6 @@
 #include <io/tvr.h>
 #include <io/max3ds.h>
-#include <io/collada.h>
+#include <io/xml.h>
 #include <io/json.h>
 #include <algorithm/mbb.h>
 
@@ -19,6 +19,8 @@ Converter::Converter(){}
 
 int Converter::start() {
     importData(); // import mesh data
+    if (Options::getInstance()->do_validation)
+        validate_tm();
     /*
     if (options.generator) generation_writer = new GenerationWriter(options.output_dir); // generation writer
     */
@@ -45,7 +47,14 @@ int Converter::finish() {
 
 int Converter::exportRoomBoundary() {
     //JSON
-    TM2IN::io::exportRoomBoundaryJSON(Options::getInstance()->output_dir + "surfaces.json", this->rooms, false);
+    if (Options::getInstance()->polygonizer_mode > 0)
+        TM2IN::io::exportRoomBoundaryJSON(Options::getInstance()->output_dir + "surfaces.json", this->rooms, 0);
+    else
+        TM2IN::io::exportRoomBoundaryJSON(Options::getInstance()->output_dir + "surfaces.json", this->rooms, 3);
+
+    if (Options::getInstance()->polygonizer_mode > 0 && Options::getInstance()->output_indoor_gml){
+        TM2IN::io::exportIndoorGML((Options::getInstance()->output_dir + "tm2in.gml").c_str(), this->rooms);
+    }
 
     if (Options::getInstance()->output_3ds || Options::getInstance()->output_tvr){
         convert_pm_to_tm();
@@ -77,7 +86,10 @@ int Converter::convert_pm_to_tm(){
 void Converter::tag_pm_ID() {
     for (ull it = 0 ; it < this->rooms.size() ; it++) {
         Room *room = this->rooms[it];
-        room->getPm_boundary()->tag_ID(room->name);
+        if (room->getPm_boundary() != NULL){
+            room->getPm_boundary()->tag_ID(room->name);
+        }
+
     }
 }
 
@@ -88,4 +100,8 @@ void Converter::tag_pm_ID() {
 int Converter::handleOpenTriangleMesh() {
     throw std::runtime_error("TODO : handleOpenTriangleMesh");
     // printf("\n\n%d meshes have been removed because it is open.\n", count);
+}
+
+void Converter::validate_tm() {
+
 }

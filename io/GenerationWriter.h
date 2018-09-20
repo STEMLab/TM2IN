@@ -8,25 +8,34 @@
 using namespace std;
 using namespace TM2IN;
 
-/**
- * @ingroup unused
- * @todo
- */
-class GenerationWriter{
-public:
-    string process_path;
-    Room* space;
+namespace TM2IN {
+    namespace io {
+        class GenerationWriter{
+        private:
+            GenerationWriter() {}
 
-    GenerationWriter(string pp){
-        process_path = pp;
+            static GenerationWriter *instance;
+
+            int mode = 0; // 0 : wait, 1 : running
+            string directory_path;
+            string room_name;
+        public:
+            static GenerationWriter *getInstance() {
+                if (!instance) {
+                    instance = new GenerationWriter();
+                }
+                return instance;
+            }
+
+            void start(Room* room);
+
+            void write(RoomBoundary::TriangulatedSurfaceMesh* tsm);
+            void write(vector<Wall::TriangulatedSurface*>& ts_list);
+
+            void close();
+        };
     }
+}
 
-    void start(Room* _space);
-    void write();
-private:
-
-    void writeJSON();
-    void writeStat();
-};
 
 #endif // GenerationWriter_H_INCLUDED

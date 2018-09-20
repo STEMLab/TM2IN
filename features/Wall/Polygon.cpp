@@ -15,7 +15,8 @@ namespace TM2IN {
         Polygon::Polygon(Surface * pSurface) {
             this->exteriorBoundary = pSurface->getExteriorBoundary();
             this->normal = pSurface->normal;
-            this->mbb = new MinimumBoundingBox(pSurface->getMBB());
+            // this->mbb = new MinimumBoundingBox(pSurface->getMBB());
+            this->mbb = pSurface->getMBB();
             this->area = pSurface->getArea();
             this->geom_id = pSurface->geom_id;
             this->type = TM2IN::IND_TYPE::Polygon;

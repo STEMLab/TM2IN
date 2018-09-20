@@ -41,12 +41,14 @@ public:
     double threshold_2 = 10.0;
 
     int input_type = 0;
-    int polygonizer_mode = 0;
+    int polygonizer_mode = 0; // 1 : PCA Polygonize, 2 : Triangle Polygonize, 3 : Divided Polygonize
 
     bool output_3ds = false;
     bool output_tvr = false;
+    bool output_indoor_gml = false;
 
     bool generator = false;
+    int generation = 0;
 
     int selected = ARCH;
     int do_validation = 0;

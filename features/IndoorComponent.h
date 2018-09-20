@@ -35,7 +35,8 @@ namespace TM2IN{
      */
     class IndoorComponent {
     protected:
-        MinimumBoundingBox* mbb;
+        // MinimumBoundingBox* mbb;
+        CGAL::Bbox_3 mbb;
         TM2IN::IND_TYPE type;
         double area = 0.0;
     public:
@@ -58,11 +59,12 @@ namespace TM2IN{
         /**
          * @brief Returns minimum bounding box
          */
-        MinimumBoundingBox *getMBB();
+        CGAL::Bbox_3 getMBB();
+
         /**
          * @brief Sets minimum bounding box
          */
-        void setMBB(MinimumBoundingBox* _mbb) ;
+        void setMBB(CGAL::Bbox_3 _mbb) ;
 
         /**
          * @brief Updates MinimumBoundingBox

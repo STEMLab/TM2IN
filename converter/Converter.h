@@ -40,7 +40,7 @@ private:
 
     // run
     int mergeSurfaces();
-    RoomBoundary::TriangulatedSurfaceMesh *make_tri_surface_mesh(RoomBoundary::TriangleMesh *tm);
+    void make_tri_surface_mesh(Room*);
     int validate_tsm();
     int polygonize();
     TM2IN::algorithm::Polygonizer *create_polygonizer();
@@ -50,6 +50,7 @@ private:
     int convert_pm_to_tm();
     int exportRoomBoundary();
 
+    void validate_tm();
 };
 
 #endif // MANAGER_H

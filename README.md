@@ -2,7 +2,24 @@
 TM2IN(Triangle Mesh to Indoor data) is a project which converts indoor spatial standard data from raw indoor geometry data, like triangle mesh or point cloud. 
 TM2IN not only constructs indoor spatial standard data but also refines geometry data by removing unnecessary elements and reducing the number of surfaces.
 
-![](doc/img/pipeline.png)
+![](doc/img/180920-tm2in-process.gif)
+
+## Examples
+
+Raw Triangle Mesh
+![Input Triangle](doc/img/whole_tm.png?raw=true)
+
+Triangle Mesh of Architectural Elements
+![](doc/img/indoor_viewer.png)
+
+Triangle Mesh of Non-architectural Elements
+![](doc/img/non_arch_tm.png)
+
+Solid geometry of Architectural Elements
+![](doc/img/arch_solid.png)
+
+IndoorGML Document on [InViewer](http://github.com/STEMLab/InViewer)
+![](doc/img/indoor_viewer.png)
 
 ## Author
 Dongmin Kim(dongmin.kim@pnu.edu), Pusan National University

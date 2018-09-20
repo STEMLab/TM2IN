@@ -7,13 +7,14 @@
 #include "converter/Converter.h"
 
 #include "io/tvr.h"
-#include "io/collada.h"
+#include "io/xml.h"
 #include "io/max3ds.h"
 #include "features/Wall/Triangle.h"
 #include "features/Room.h"
 #include "features/RoomBoundary/TriangleMesh.h"
 
 int Converter::importData() {
+    clock_t begin = clock();
     switch(Options::getInstance()->input_type){
         case 1:
             this->rooms = TM2IN::io::importTVR((Options::getInstance()->input_dir + Options::getInstance()->input_file).c_str());
@@ -30,6 +31,8 @@ int Converter::importData() {
     if (this->rooms.size() == 0){
         throw std::runtime_error("\n\nImport Mesh has some problem\n\n");
     }
+    clock_t end = clock();
+    cout << "Importing time : " << double(end - begin) / CLOCKS_PER_SEC << "s" << endl;
     print_input_spec();
     return 0;
 }
