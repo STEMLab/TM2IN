@@ -17,7 +17,7 @@ TM2IN -I /home/input/something/ -O output_folder/ --no-merge input.3ds
 기울어진 글꼴은 flag option 입니다.
 
 | option | description |
-| :---
+|----------|-------------------------|
 | input-dir(I) | input root directory (required) |
 | output-dir(O) | output root directory (required) |
 | version(v) | output version name (default : "no-version") |
