@@ -48,6 +48,7 @@ public:
     bool output_indoor_gml = false;
 
     bool generator = false;
+    int generation = 0;
 
     int selected = ARCH;
     int do_validation = 0;

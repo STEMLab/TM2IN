@@ -41,8 +41,6 @@ file(GLOB DETAIL_FILES
         "detail/algorithm/*.cpp"
         "detail/features/*.h"
         "detail/features/*.cpp"
-
-
         )
 
 file(GLOB FEATURES_FILES

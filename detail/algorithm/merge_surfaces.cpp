@@ -9,6 +9,7 @@
 #include <cgal/vector_angle.h>
 #include <detail/features/halfedge_string.h>
 #include <Options.h>
+#include <io/GenerationWriter.h>
 
 #include "detail/algorithm/surface_neighbor.h"
 #include "detail/cgal/polygon.h"
@@ -44,6 +45,10 @@ namespace TM2IN {
                                 isMerged = true;
                                 hasMerged = true;
                                 result.erase(result.begin() + j);
+                                if (Options::getInstance()->generator && combined_count != 0 && combined_count % 500 == 0){
+                                    Options::getInstance()->generation++;
+                                    TM2IN::io::GenerationWriter::getInstance()->write(result);
+                                }
                             } else
                                 j++;
                         }
@@ -57,9 +62,6 @@ namespace TM2IN {
 
 
             int SurfaceMerger::merge(Wall::TriangulatedSurface *origin, Wall::TriangulatedSurface  *piece) {
-                if (origin->getVerticesSize() == 291 && piece->getVerticesSize() == 3 && piece->geom_id == "sf8695"){
-                    cout << "azamat stupid" << endl;
-                }
                 // check Polygon is in near polygon or not
                 if (!TM2IN::detail::cgal::has_bbox_intersect(origin, piece)) return 1;
 

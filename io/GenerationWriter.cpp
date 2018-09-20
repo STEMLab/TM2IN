@@ -2,6 +2,84 @@
 #include "io/json.h"
 
 #include <boost/filesystem.hpp>
+#include <Options.h>
+#include <detail/io/JsonWriter.h>
+#include "features/RoomBoundary/TriangulatedSurfaceMesh.h"
+#include "features/Wall/TriangulatedSurface.h"
+
+
+
+namespace TM2IN {
+    namespace io {
+        GenerationWriter* GenerationWriter::instance = NULL;
+        void GenerationWriter::start(Room* room){
+            assert(this->mode == 0);
+            this->room_name = room->name;
+            this->directory_path = Options::getInstance()->output_dir + "process/" + room->name;
+            if (boost::filesystem::exists(directory_path)) {
+                boost::filesystem::remove_all(directory_path);
+            }
+            boost::filesystem::create_directories(directory_path);
+
+            this->mode = 1;
+        }
+
+        void GenerationWriter::write(RoomBoundary::TriangulatedSurfaceMesh* tsm){
+            string output_path = this->directory_path + "/" + std::to_string(Options::getInstance()->generation) + ".json";
+            ofstream fout(output_path);
+            fout << "{ \n";
+            fout << " \"spaces\" : [ \n";
+            string result;
+            result = "{\n";
+            result += " \"name\" : \"" + this->room_name + "\", \n";
+            result += " \"Surfaces\" : [ \n";
+            for (unsigned int id = 0; id < tsm->surfaces.size(); id++) {
+                result += TM2IN::detail::io::surface_to_json(*(tsm->surfaces[id]));
+                if (id != tsm->surfaces.size() - 1) {
+                    result += ", \n";
+                } else {
+                    result += " \n";
+                }
+            }
+            result += "] \n";
+            result += "}";
+            fout << result << endl;
+            fout << "]" << endl;
+            fout << "}" << endl;
+            fout.close();
+        }
+
+        void GenerationWriter::write(vector<Wall::TriangulatedSurface*>& ts_list){
+            string output_path = this->directory_path + "/" + std::to_string(Options::getInstance()->generation) +
+                                 ".json";
+            ofstream fout(output_path);
+            fout << "{ \n";
+            fout << " \"spaces\" : [ \n";
+            string result;
+            result = "{\n";
+            result += " \"name\" : \"" + this->room_name + "\", \n";
+            result += " \"Surfaces\" : [ \n";
+            for (unsigned int id = 0; id < ts_list.size(); id++) {
+                result += TM2IN::detail::io::surface_to_json(*(ts_list[id]));
+                if (id != ts_list.size() - 1) {
+                    result += ", \n";
+                } else {
+                    result += " \n";
+                }
+            }
+            result += "] \n";
+            result += "}";
+            fout << result << endl;
+            fout << "]" << endl;
+            fout << "}" << endl;
+            fout.close();
+        }
+
+        void GenerationWriter::close(){
+            this->mode = 0;
+        }
+    }
+}
 
 /*
 void GenerationWriter::start(Room* p_space){

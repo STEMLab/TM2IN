@@ -4,34 +4,42 @@
 #include "converter/Converter.h"
 
 #include <algorithm/merge_surfaces.h>
+#include "io/GenerationWriter.h"
 #include "features/Room.h"
 #include "features/RoomBoundary/TriangulatedSurfaceMesh.h"
 
 
 int Converter::mergeSurfaces() {
+    TM2IN::io::GenerationWriter* gw = TM2IN::io::GenerationWriter::getInstance();
     clock_t begin = clock();
     for (ull it = 0 ; it < this->rooms.size(); it++)
     {
         Room* room = this->rooms[it];
-
-        RoomBoundary::TriangulatedSurfaceMesh* tsm = make_tri_surface_mesh(room->getTm_boundary());
-        room->setTsm_boundary(tsm);
+        if (Options::getInstance()->generator)
+            gw->start(room);
+        make_tri_surface_mesh(room);
+        if (Options::getInstance()->generator)
+            gw->close();
     }
     clock_t end = clock();
     cout << "merge Surfaces time : " << double(end - begin) / CLOCKS_PER_SEC << "s" << endl;
     return 0;
 }
 
-RoomBoundary::TriangulatedSurfaceMesh *Converter::make_tri_surface_mesh(RoomBoundary::TriangleMesh *tm) {
+void Converter::make_tri_surface_mesh(Room* room) {
+    RoomBoundary::TriangleMesh *tm = room->getTm_boundary();
     RoomBoundary::TriangulatedSurfaceMesh* tsm = new RoomBoundary::TriangulatedSurfaceMesh(tm);
+    room->setTsm_boundary(tsm);
+
     ll p_size = (ull)tsm->num_of_surfaces();
     double thres1 = Options::getInstance()->threshold_1;
     double thres2 = Options::getInstance()->threshold_2;
-    int generation = 0;
 
     while (true){
+        if (Options::getInstance()->generator)
+            TM2IN::io::GenerationWriter::getInstance()->write(tsm);
         assert(p_size > 0);
-        cout << "generation " << generation << ": " << tsm->num_of_surfaces()<< endl;
+        cout << "generation " << Options::getInstance()->generation << ": " << tsm->num_of_surfaces()<< endl;
         cout << "degree  : " << thres1 << endl;
         bool hasMerged = TM2IN::algorithm::mergeSurfaces(tsm, thres1, thres2);
 
@@ -51,16 +59,15 @@ RoomBoundary::TriangulatedSurfaceMesh *Converter::make_tri_surface_mesh(RoomBoun
             p_size = (int)tsm->num_of_surfaces();
         }
         else{
-            cout << "generation " << generation << " done..\n\n\n"<< endl;
+            cout << "generation " << Options::getInstance()->generation << " done..\n\n\n"<< endl;
             break;
         }
         if (thres1 < 40) thres1 += 2.0;
 
-        generation++;
+        Options::getInstance()->generation = Options::getInstance()->generation + 1;
         tsm->update_surfaces_normal();
     }
 
-    return tsm;
 }
 
 int Converter::validate_tsm() {

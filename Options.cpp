@@ -145,6 +145,7 @@ void Options::make(int argc, char **argv) {
             case 'I':
                 output_indoor_gml = true;
                 break;
+
         }
     }
 
