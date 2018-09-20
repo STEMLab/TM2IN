@@ -4,22 +4,9 @@ TM2IN not only constructs indoor spatial standard data but also refines geometry
 
 ![](doc/img/180920-tm2in-process.gif)
 
-## Examples
+## Pipeline
 
-Raw Triangle Mesh
-![Input Triangle](doc/img/whole_tm.png?raw=true)
-
-Triangle Mesh of Architectural Elements
-![](doc/img/indoor_viewer.png)
-
-Triangle Mesh of Non-architectural Elements
-![](doc/img/non_arch_tm.png)
-
-Solid geometry of Architectural Elements
-![](doc/img/arch_solid.png)
-
-IndoorGML Document on [InViewer](http://github.com/STEMLab/InViewer)
-![](doc/img/indoor_viewer.png)
+![](doc/img/pipeline.png?raw=true)
 
 ## Author
 Dongmin Kim(dongmin.kim@pnu.edu), Pusan National University
