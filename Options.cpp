@@ -111,6 +111,7 @@ void Options::make(int argc, char **argv) {
                 break;
             case 'v':
                 version = optarg;
+                break;
             case 't':
                 has_no_merge = true;
                 break;

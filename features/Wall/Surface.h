@@ -27,6 +27,8 @@ namespace TM2IN{
             std::vector<HalfEdge* > exteriorBoundary;
 
             std::vector<Triangle *> triangulation;
+
+            int neighbors = 0;
         public:
             Vector_3 normal = CGAL::NULL_VECTOR;
 
@@ -139,6 +141,10 @@ namespace TM2IN{
              * @brief
              */
             std::string asJsonText();
+
+            int getNeighborNumber(){
+                return neighbors;
+            }
         };
     }
 }

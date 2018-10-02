@@ -36,7 +36,8 @@ namespace TM2IN {
         void RoomFactory::pushTriangle(Wall::Triangle *tri) {
             int neighbor_num = 0;
             for (ull i = 0 ; i < this->raw_triangles.size() ; i++){
-                if (TM2IN::detail::cgal::has_bbox_intersect(raw_triangles[i], tri))
+                // if (TM2IN::detail::cgal::has_bbox_intersect(raw_triangles[i], tri))
+                if (raw_triangles[i]->getNeighborNumber() < 3)
                     if (raw_triangles[i]->setNeighbor(tri))
                         neighbor_num++;
             }

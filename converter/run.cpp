@@ -34,6 +34,10 @@ void Converter::make_tri_surface_mesh(Room* room) {
     ll p_size = (ull)tsm->num_of_surfaces();
     double thres1 = Options::getInstance()->threshold_1;
     double thres2 = Options::getInstance()->threshold_2;
+    Options::getInstance()->generation = 0;
+
+    if (Options::getInstance()->has_no_merge)
+        return;
 
     while (true){
         if (Options::getInstance()->generator)

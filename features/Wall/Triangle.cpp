@@ -45,6 +45,8 @@ namespace TM2IN {
                         assert(tri->exteriorBoundary[v2]->getOppositeEdge() == NULL);
                         this->exteriorBoundary[v1]->setOppositeEdge(tri->exteriorBoundary[v2]);
                         tri->exteriorBoundary[v2]->setOppositeEdge(this->exteriorBoundary[v1]);
+                        this->neighbors++;
+                        tri->neighbors++;
                     }
                 }
             }

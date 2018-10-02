@@ -29,6 +29,9 @@ int Converter::start() {
 
 int Converter::run() {
     mergeSurfaces();
+    if (Options::getInstance()->has_no_merge)
+        return 0;
+
     if (Options::getInstance()->do_validation)
         validate_tsm();
 

@@ -7,8 +7,6 @@
 #include "features/RoomBoundary/TriangulatedSurfaceMesh.h"
 #include "features/Wall/TriangulatedSurface.h"
 
-
-
 namespace TM2IN {
     namespace io {
         GenerationWriter* GenerationWriter::instance = NULL;
@@ -50,8 +48,7 @@ namespace TM2IN {
         }
 
         void GenerationWriter::write(vector<Wall::TriangulatedSurface*>& ts_list){
-            string output_path = this->directory_path + "/" + std::to_string(Options::getInstance()->generation) +
-                                 ".json";
+            string output_path = this->directory_path + "/" + std::to_string(Options::getInstance()->generation) + ".json";
             ofstream fout(output_path);
             fout << "{ \n";
             fout << " \"spaces\" : [ \n";
