@@ -145,6 +145,7 @@ namespace TM2IN{
             int getNeighborNumber(){
                 return neighbors;
             }
+
         };
     }
 }

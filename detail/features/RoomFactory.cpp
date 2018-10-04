@@ -4,6 +4,7 @@
 
 #include <detail/cgal/geometry.h>
 #include <cgal/vector_angle.h>
+#include <algorithm/compare.h>
 #include "config.h"
 #include "util.h"
 #include "features/Wall/Triangle.h"
@@ -29,6 +30,15 @@ namespace TM2IN {
         }
 
         void RoomFactory::pushVertex(Vertex *vt) {
+            // check duplicate
+            for (ull i = 0 ; i < this->raw_vertices.size() ; i++){
+                if (TM2IN::algorithm::is_same_vertex(vt, this->raw_vertices[i])){
+                    cout << "Duplicate Vertex" << endl;
+                    this->raw_vertices.push_back(this->raw_vertices[i]);
+                    return;
+                }
+            }
+
             vt->geom_id = to_string(this->raw_vertices.size());
             this->raw_vertices.push_back(vt);
         }

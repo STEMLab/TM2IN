@@ -21,6 +21,8 @@ namespace TM2IN {
          * @brief Compares two Indoor Component by calculating area.
          */
         bool compareArea(IndoorComponent* i, IndoorComponent* j);
+
+        bool is_same_vertex(Vertex * a, Vertex * b);
     }
 }
 

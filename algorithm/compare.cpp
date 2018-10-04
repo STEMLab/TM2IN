@@ -49,5 +49,17 @@ namespace TM2IN{
         bool compareArea(IndoorComponent *i, IndoorComponent *j) {
             return (i->getArea() > j->getArea());
         }
+
+        bool is_same_vertex(Vertex *a, Vertex *b) {
+            int multiple = (int)pow(10, DECIMAL);
+            int ax = (int)(a->x() * multiple);
+            int bx = (int)(b->x() * multiple);
+            int ay = (int)(a->y() * multiple);
+            int by = (int)(b->y() * multiple);
+            int az = (int)(a->z() * multiple);
+            int bz = (int)(b->z() * multiple);
+
+            return ax == bx && ay == by && az == bz;
+        }
     }
 }
