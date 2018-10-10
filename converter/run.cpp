@@ -69,7 +69,7 @@ void Converter::make_tri_surface_mesh(Room* room) {
         if (thres1 < 40) thres1 += 2.0;
 
         Options::getInstance()->generation = Options::getInstance()->generation + 1;
-        tsm->update_surfaces_normal();
+        // tsm->update_surfaces_normal();
     }
 
 }

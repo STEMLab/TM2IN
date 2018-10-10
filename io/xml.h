@@ -5,8 +5,9 @@
 #ifndef TM2IN_IO_XML_H
 #define TM2IN_IO_XML_H
 
-#include <lib/rapidxml/rapidxml.hpp>
+#include <rapidxml/rapidxml.hpp>
 #include "features/Room.h"
+
 
 namespace TM2IN{
     namespace io{
@@ -21,6 +22,12 @@ namespace TM2IN{
          * @brief export Data to IndoorGML model
          */
         int exportIndoorGML(const char *filePath, std::vector<Room*> rooms);
+
+        /**
+         * @ingroup public_api
+         * @brief export Data to IndoorGML model
+         */
+        int createInFactory(std::vector<Room*> rooms);
     }
 }
 

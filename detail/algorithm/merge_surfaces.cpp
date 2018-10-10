@@ -51,6 +51,9 @@ namespace TM2IN {
                             if (removed_map[neighbors[j]->geom_id]) continue;
                             if (merge(result[i], neighbors[j]) == 0){
                                 combined_count++;
+                                if (combined_count != 0 && combined_count % 500 == 0){
+                                    printProcess(combined_count, surfaceList.size(), "mergeSurface");
+                                }
                                 isMerged = true;
                                 hasMerged = true;
                                 removed_map[neighbors[j]->geom_id] = true;

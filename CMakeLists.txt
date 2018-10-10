@@ -24,12 +24,12 @@ INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 # find_package(SFCGAL REQUIRED )
 
-file(GLOB LIB_FILES
-        "lib/rapidxml/rapidxml_print.hpp"
-        "lib/rapidxml/rapidxml.hpp"
-        "lib/rapidxml/rapidxml_iterators.hpp"
-        "lib/rapidxml/rapidxml_utils.hpp"
-        )
+#file(GLOB LIB_FILES
+#        "lib/rapidxml/rapidxml_print.hpp"
+#        "lib/rapidxml/rapidxml.hpp"
+#        "lib/rapidxml/rapidxml_iterators.hpp"
+#        "lib/rapidxml/rapidxml_utils.hpp"
+#        )
 
 file(GLOB DETAIL_FILES
         "detail/io/*.h"

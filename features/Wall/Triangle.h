@@ -33,7 +33,7 @@ namespace TM2IN {
              * @brief Sets neighbor relationship if Triangle has opposite HalfEdge
              *
              */
-            bool setNeighbor(Triangle *&tri);
+            bool setNeighbor(Triangle *&tri, int i = -1, int j = -1);
 
             /**
              * @brief Converts to Kernel::Triangle_3

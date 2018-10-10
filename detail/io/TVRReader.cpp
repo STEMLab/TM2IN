@@ -39,7 +39,7 @@ namespace TM2IN {
                             break;
                         }
                         case 'v':{
-                            Vertex* pt_v = this->makeVertex(v_count, inputstr);
+                            Vertex* pt_v = this->makeVertex(inputstr);
                             factory.pushVertex(pt_v);
 
                             v_count++;
@@ -49,6 +49,8 @@ namespace TM2IN {
                         }
                         case 'g':{
                             if (f_count != 0){
+                                cout << "Building Triangle Adjacency relation" << f_count << endl;
+                                factory.buildStrTriangle();
                                 vector<Room*> curr_rooms = factory.make();
                                 if (curr_rooms.size() != 0)
                                     rooms.insert(rooms.end(), curr_rooms.begin(), curr_rooms.end());
@@ -63,7 +65,8 @@ namespace TM2IN {
                             assert(v_count != 0);
 
                             Wall::Triangle* tri = this->makeTriangle(inputstr, factory.getVerticesList());
-                            factory.pushTriangle(tri);
+                            //factory.pushTriangle(tri);
+                            factory.pushTriangle(inputstr);
 
                             f_count++;
                             if (f_count % 5000 == 0) cout << "Loaded faces : " << f_count << endl;
@@ -72,6 +75,8 @@ namespace TM2IN {
                         }
                     }
                 }
+                cout << "Building Triangle Adjacency relation... " << f_count << endl;
+                factory.buildStrTriangle();
                 vector<Room*> curr_rooms = factory.make();
                 if (curr_rooms.size() != 0)
                     rooms.insert(rooms.end(), curr_rooms.begin(), curr_rooms.end());
@@ -102,7 +107,7 @@ namespace TM2IN {
                 return newTriangle;
             }
 
-            Vertex* TVRReader::makeVertex(int id, string &input){
+            Vertex * TVRReader::makeVertex(string &input) {
                 std::stringstream ss;
                 ss.str(input);
 

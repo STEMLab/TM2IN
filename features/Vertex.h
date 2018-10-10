@@ -24,12 +24,17 @@ namespace TM2IN {
         /**
          * @brief Constructor with three double values
          */
-        Vertex(double px, double py, double pz);
+        Vertex(double px, double py, double pz) {
+            coords[0] = CGAL::to_double(px);
+            coords[1] = CGAL::to_double(py);
+            coords[2] = CGAL::to_double(pz);
+            type = TM2IN::IND_TYPE::Vertex;
+        }
 
         /**
          * @brief Copy constructor.
          */
-        Vertex(Vertex &vt);
+        Vertex(Vertex &vt) : Vertex(vt.x(), vt.y(), vt.z()) {  }
 
         /**
          * @brief Destructor

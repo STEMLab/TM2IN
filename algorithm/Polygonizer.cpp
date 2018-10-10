@@ -17,6 +17,7 @@
 namespace TM2IN{
     namespace algorithm{
         TM2IN::RoomBoundary::PolygonMesh* TrianglePolygonizer::run(TM2IN::RoomBoundary::TSM *space) {
+            cout << "===== Run Triangle Polygonizer =====" << endl;
             vector<TM2IN::Wall::Triangle*> triangleList;
             for (unsigned int sfID = 0 ; sfID < space->surfaces.size(); sfID++) {
                 TM2IN::Wall::TriangulatedSurface* pSurface = space->surfaces[sfID];
@@ -35,6 +36,7 @@ namespace TM2IN{
         }
 
         TM2IN::RoomBoundary::PolygonMesh* DividedPolygonizer::run(TM2IN::RoomBoundary::TSM *space) {
+            cout << "===== Run Divided Polygonizer =====" << endl;
             double thres1 = 1.0;
             double thres2 = 45.0;
             vector<TM2IN::Wall::Surface*> newSurfaceList;

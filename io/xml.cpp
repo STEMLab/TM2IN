@@ -5,7 +5,7 @@
 #include "xml.h"
 
 #include <vector>
-#include <lib/rapidxml/rapidxml.hpp>
+#include <rapidxml/rapidxml.hpp>
 #include <fstream>
 #include <detail/io/ColladaReader.h>
 #include <detail/io/IndoorGMLWriter.h>

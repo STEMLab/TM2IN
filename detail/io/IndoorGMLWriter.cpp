@@ -110,6 +110,7 @@ namespace TM2IN {
 
                     // rapidxml::print(std::back_inserter(xml_as_string), doc);
 
+
                     // Save to file
                     file_stored << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
                     file_stored << doc;
