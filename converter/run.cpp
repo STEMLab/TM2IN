@@ -79,10 +79,10 @@ int Converter::validate_tsm() {
         TM2IN::Room *room = this->rooms[it];
         RoomBoundary::TriangulatedSurfaceMesh* tsm = room->getTsm_boundary();
         if (!tsm->isClosed()){
-            throw std::runtime_error("space " + room->name + " is not closed");
+            throw std::runtime_error("space " + room->geom_id + " is not closed");
         }
         if (tsm->surface_strict_validation()){
-            throw std::runtime_error("space " + room->name + "'s surfaces are not valid");
+            throw std::runtime_error("space " + room->geom_id + "'s surfaces are not valid");
         }
     }
     return 0;

@@ -34,4 +34,8 @@ namespace TM2IN {
         ou << pVertex->asJsonText() << std::endl;
         return ou;
     }
+
+    std::string Vertex::asWKT() {
+        return TM2IN::detail::io::vertex_to_wkt(this);
+    }
 }

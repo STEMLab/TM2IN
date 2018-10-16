@@ -18,7 +18,7 @@ Dongmin Kim(dongmin.kim@pnu.edu), Pusan National University
 - Eigen3 (http://eigen.tuxfamily.org/index.php?title=Main_Page)
 - Boost (http://www.boost.org/)
 - rapidxml (http://rapidxml.sourceforge.net)
-- 
+- restclient-cpp (https://github.com/mrtazz/restclient-cpp)
 
 ## Building
 

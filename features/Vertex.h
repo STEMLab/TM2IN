@@ -95,6 +95,8 @@ namespace TM2IN {
         void translateTo(std::vector<double> dest);
 
         std::string asJsonText();
+        std::string asWKT();
+
 
         /**
          * @brief Operator << : print string

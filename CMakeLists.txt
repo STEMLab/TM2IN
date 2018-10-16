@@ -23,6 +23,7 @@ INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 # find_package(SFCGAL REQUIRED )
+find_package(CURL REQUIRED)
 
 #file(GLOB LIB_FILES
 #        "lib/rapidxml/rapidxml_print.hpp"
@@ -85,7 +86,7 @@ add_executable(TM2IN
         Options.cpp
         TM2IN.cpp)
 
-TARGET_LINK_LIBRARIES(TM2IN LINK_PUBLIC ${Boost_LIBRARIES} Eigen3::Eigen
+TARGET_LINK_LIBRARIES(TM2IN LINK_PUBLIC ${Boost_LIBRARIES} Eigen3::Eigen restclient-cpp ${CURL_LIBRARIES}
         #${SFCGAL_LIBRARIES}
         )
 

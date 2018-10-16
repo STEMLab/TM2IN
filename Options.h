@@ -52,7 +52,6 @@ public:
 
     int selected = ARCH;
     int do_validation = 0;
-    bool do_partition = false;
     bool has_no_merge = false;
 private:
     bool has_input_dir = false;

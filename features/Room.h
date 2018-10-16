@@ -24,8 +24,6 @@ namespace TM2IN {
          */
         Room(RoomBoundary::TriangleMesh* tm);
 
-        std::string name;
-
         /**
          * @brief Returns TriangleMesh boundary
          */

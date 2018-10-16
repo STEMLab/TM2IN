@@ -12,8 +12,8 @@ namespace TM2IN {
         GenerationWriter* GenerationWriter::instance = NULL;
         void GenerationWriter::start(Room* room){
             assert(this->mode == 0);
-            this->room_name = room->name;
-            this->directory_path = Options::getInstance()->output_dir + "process/" + room->name;
+            this->room_name = room->geom_id;
+            this->directory_path = Options::getInstance()->output_dir + "process/" + room->geom_id;
             if (boost::filesystem::exists(directory_path)) {
                 boost::filesystem::remove_all(directory_path);
             }

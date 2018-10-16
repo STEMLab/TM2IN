@@ -57,7 +57,7 @@ namespace TM2IN {
                     for (int i = 0; i < rooms.size(); i++) {
                         TM2IN::Room* pRoom = rooms[i];
                         rapidxml::xml_node<>* cell_space_node = doc.allocate_node(rapidxml::node_element, "CellSpace");
-                        cell_space_node->append_attribute(doc.allocate_attribute("gml:id", pRoom->name.c_str()));
+                        cell_space_node->append_attribute(doc.allocate_attribute("gml:id", pRoom->geom_id.c_str()));
 
                         rapidxml::xml_node<>* boundedBy_node_3 = doc.allocate_node(rapidxml::node_element, "gml:boundedBy");
                         boundedBy_node_3->append_attribute(doc.allocate_attribute("xsi:nil", "true"));
@@ -70,7 +70,7 @@ namespace TM2IN {
                         cell_space_geometry_node->append_node(geometry_3d);
 
                         rapidxml::xml_node<>* solid_node = doc.allocate_node(rapidxml::node_element, "gml:Solid");
-                        char* solid_name = (char*)pRoom->name.c_str();
+                        char* solid_name = (char*)pRoom->geom_id.c_str();
                         strcat(solid_name, "_solid");
                         solid_node->append_attribute(doc.allocate_attribute("gml:id", solid_name));
                         geometry_3d->append_node(solid_node);

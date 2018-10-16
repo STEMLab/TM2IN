@@ -144,8 +144,8 @@ namespace TM2IN {
             RoomBoundary::TriangleMesh* boundary = new RoomBoundary::TriangleMesh(this->raw_triangles);
 
             vector<Room*> rooms;
-            if (Options::getInstance()->do_partition){
-                int selected = Options::getInstance()->selected;
+            int selected = Options::getInstance()->selected;
+            if (selected != 3){
                 if (selected == ARCH || selected == NON_ARCH){
                     if (!boundary->is_closed_triangle_mesh()){
                         throw std::runtime_error("Triangle Mesh is not closed or wrong");
@@ -188,17 +188,17 @@ namespace TM2IN {
                 }
 
                 if (rooms.size() == 1){
-                    rooms[0]->name = room_name;
+                    rooms[0]->geom_id = room_name;
                 }
                 else{
                     for (int ri = 0 ; ri < rooms.size() ; ri++){
-                        rooms[ri]->name = room_name + "_" + to_string(ri);
+                        rooms[ri]->geom_id = room_name + "_" + to_string(ri);
                     }
                 }
             }
             else{
                 rooms.push_back(new Room(boundary));
-                rooms[0]->name = room_name;
+                rooms[0]->geom_id = room_name;
             }
 
             this->raw_triangles.clear();
