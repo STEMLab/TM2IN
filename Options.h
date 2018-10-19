@@ -46,6 +46,7 @@ public:
     bool output_3ds = false;
     bool output_tvr = false;
     bool output_indoor_gml = false;
+    string infactory_url;
 
     bool generator = false;
     int generation = 0;

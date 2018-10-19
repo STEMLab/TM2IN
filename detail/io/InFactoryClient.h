@@ -18,6 +18,7 @@ namespace TM2IN {
             class InFactoryClient {
             public:
                 InFactoryClient(std::vector<Room*>& pRooms) : rooms(pRooms){
+                    base_url = Options::getInstance()->infactory_url;
                     docId = Options::getInstance()->file_name;
                     ifId = "if1";
                     psfId = "psf1";
@@ -28,6 +29,7 @@ namespace TM2IN {
                 std::string docId;
                 std::string ifId;
                 std::string psfId;
+                std::string base_url;
 
                 std::vector<Room*>& rooms;
 

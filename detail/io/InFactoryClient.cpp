@@ -9,8 +9,6 @@
 #include "restclient-cpp/restclient.h"
 #include "JsonWriter.h"
 
-#define INFACTORY_URL "http://localhost:9797"
-
 #define CREATED 201
 #define NOT_FOUND 404
 #define FOUND 302
@@ -29,7 +27,7 @@ namespace TM2IN {
                 /* In windows, this will init the winsock stuff */
                 curl_global_init(CURL_GLOBAL_ALL);
 
-                string doc_url = INFACTORY_URL + string("/documents/") + docId;
+                string doc_url = base_url + string("/documents/") + docId;
                 string if_url = doc_url + "/indoorfeatures/" + ifId;
                 string psf_url = doc_url + "/primalspacefeatures/" + psfId;
 
@@ -67,14 +65,13 @@ namespace TM2IN {
 
             std::string InFactoryClient::getDocumentStr() {
                 curl_global_init(CURL_GLOBAL_ALL);
-                string doc_url = INFACTORY_URL + string("/documents/") + docId;
+                string doc_url = base_url + string("/documents/") + docId;
                 string result = rest_get(doc_url.c_str());
                 curl_global_cleanup();
                 return result;
             }
 
             int InFactoryClient::rest_post(const char *url, const char *json) {
-                cout << json << endl;
                 CURL *curl;
                 CURLcode res;
                 struct curl_slist *headerlist = nullptr;
@@ -153,8 +150,6 @@ namespace TM2IN {
                         throw std::runtime_error("\n\nInFactoryClient get Document problem\n\n");
                     }
                     curl_easy_cleanup(curl);
-
-                    std::cout << readBuffer << std::endl;
                 }
                 return readBuffer;
             }
