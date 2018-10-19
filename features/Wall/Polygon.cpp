@@ -3,7 +3,7 @@
 //
 
 #include "Polygon.h"
-
+#include "features/HalfEdge.h"
 
 namespace TM2IN {
     namespace Wall {
@@ -26,8 +26,21 @@ namespace TM2IN {
         }
 
 
+        /**
+         * @todo impl
+         * @return
+         */
         bool Polygon::is_valid_polygon(){
             return true;
+        }
+
+        Polygon::Polygon(vector<Vertex *> vt_list) {
+            for (ull index = 0 ; index < vt_list.size() - 1 ; index++ ){
+                exteriorBoundary.push_back(new HalfEdge(vt_list[index], vt_list[index + 1], this));
+            }
+            exteriorBoundary.push_back(new HalfEdge(vt_list[vt_list.size() - 1], vt_list[0], this));
+            this->area = 0.0;
+            this->updateMBB();
         }
     }
 }

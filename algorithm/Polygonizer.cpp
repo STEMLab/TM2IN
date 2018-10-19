@@ -61,75 +61,29 @@ namespace TM2IN{
 
 
         TM2IN::RoomBoundary::PolygonMesh* PCAPolygonizer::run(TM2IN::RoomBoundary::TSM *space) {
-            throw std::runtime_error("PCAPolygonizer run not yet");
-            /*
-            vector<Surface*> newSurfacesList;
-            vector<SFCGAL::Polygon> polygons;
-            for (int i = 0 ; i < space->surfacesList.size() ; i++){
-                Surface* sf = space->surfacesList[i];
-
-                vector<Vertex*> triangle_vertices;
-                for (Triangle* tri : sf->triangles){
-                    vector<Vertex*> i_vertices = tri->getVerticesList();
-                    for (Vertex* v : i_vertices){
-                        triangle_vertices.emplace_back(v);
-                    }
-                }
-
-                Plane_3 plane = TM2IN::detail::cgal::make_PCA_plane(triangle_vertices, sf->normal);
+            vector<TM2IN::Wall::Polygon*> newPolygonList;
+            for (unsigned int sfID = 0 ; sfID < space->surfaces.size(); sfID++) {
+                Surface* sf = space->surfaces[sfID];
+                vector<Vertex*> vertices = sf->getVerticesList();
+                Plane_3 plane = TM2IN::detail::cgal::make_PCA_plane(vertices, sf->normal);
 
                 vector<Vertex*> newVertices;
-                for (ull index = 0 ; index < sf->getVerticesSize() ; index++ )
+                for (ull index = 0 ; index < vertices.size() ; index++ )
                 {
-                    Point_3 point = sf->vertex(index)->CGAL_point();
+                    Point_3 point = vertices[index]->CGAL_point();
                     Point_3 projected = plane.projection(point);
-                    Vertex* v = new Vertex(projected.x(), projected.y(), projected.z());
-                    newVertices.push_back(v);
+                    auto vt = new Vertex(projected.x(), projected.y(), projected.z());
+                    vt->geom_id = "0";
+                    newVertices.push_back(vt);
                 }
                 assert(newVertices.size() == sf->getVerticesSize());
-                sf->setVertexList(newVertices);
-                sf->normal = plane.orthogonal_vector();
 
-                newVertices.push_back(newVertices[0]);
-                scale_up(newVertices, 1.2);
-                polygons.push_back(make_sf_polygon(newVertices));
-
-                // assert(!SurfaceIntersection::check_surface_is_simple(sf));
+                TM2IN::Wall::Polygon* new_sf = new TM2IN::Wall::Polygon(newVertices);
+                new_sf->normal = plane.orthogonal_vector();
+                newPolygonList.push_back(new_sf);
             }
-            */
-
-            /*
-            // get intersections
-            vector<SFCGAL::LineString*> intersection_lines;
-            for (int i = 0 ; i < polygons.size() - 1 ; i++){
-                for (int j = i + 1 ; j < polygons.size() ; j++){
-                    std::auto_ptr<SFCGAL::Geometry> pt = SFCGAL::algorithm::intersection3D(polygons[i], polygons[j]);
-                    if (pt.get()->geometryTypeId() == 2){
-                        SFCGAL::LineString* line = dynamic_cast<SFCGAL::LineString*>(pt.release());
-                        intersection_lines.push_back(line);
-                    }
-                    else if(pt.get()->geometryTypeId() != 7){
-                        SFCGAL::MultiLineString* lines = dynamic_cast<SFCGAL::MultiLineString*>(pt.release());
-                        for (int line_i = 0 ; line_i < lines->numGeometries() ; line_i++){
-                            intersection_lines.push_back(&lines->lineStringN(line_i));
-                        }
-                    }
-                    else {
-                        cout << pt.get()->asText(5) << endl;
-                        cout << pt.get()->geometryTypeId() << endl;
-                    }
-
-                }
-            }
-
-            // connect intersections
-            for (int i = 0 ; i < intersection_lines.size() ; i++){
-
-                cout << intersection_lines[i]->asText(5) << endl;
-            }
-
-            //
-        */
+            TM2IN::RoomBoundary::PolygonMesh* pm = new TM2IN::RoomBoundary::PolygonMesh(newPolygonList);
+            return pm;
         }
 
 
