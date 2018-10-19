@@ -70,9 +70,19 @@ namespace TM2IN {
                         case EDIT_OBJECT:
                             cout << "\t\t0x4000 : " << l_chunk_length << endl;
                             if (f_count != 0){
-                                vector<Room*> curr_rooms = factory.make();
-                                if (curr_rooms.size() != 0)
-                                    rooms.insert(rooms.end(), curr_rooms.begin(), curr_rooms.end());
+                                cout << name << endl;
+                                cout << "skip?" << endl;
+                                string ans; //cin >> ans;
+                                ans = "n";
+
+                                if (ans == "y"){
+                                    factory.clear();
+                                }
+                                else{
+                                    vector<Room*> curr_rooms = factory.make();
+                                    if (curr_rooms.size() != 0)
+                                        rooms.insert(rooms.end(), curr_rooms.begin(), curr_rooms.end());
+                                }
                                 f_count = 0;
                             }
                             i=0;
@@ -115,7 +125,7 @@ namespace TM2IN {
 
                             for (i=0; i<l_qty; i++)
                             {
-                                Vertex* vt = new Vertex();
+                                auto vt = new Vertex();
                                 float temp;
                                 fread (&temp, sizeof(float), 1, this->fp);
                                 vt->setX(temp);
@@ -148,11 +158,10 @@ namespace TM2IN {
                                 fread (&b, sizeof (unsigned short), 1, this->fp);
                                 fread (&c, sizeof (unsigned short), 1, this->fp);
                                 fread (&l_face_flags, sizeof (unsigned short), 1, this->fp);
-                                Vertex* va = factory.getVerticesList()[a];
-                                Vertex* vb = factory.getVerticesList()[b];
-                                Vertex* vc = factory.getVerticesList()[c];
-                                Wall::Triangle* tri = new Wall::Triangle(va, vb, vc);
-                                factory.pushTriangle(tri);
+                                auto vt_list = factory.getVerticesList();
+
+                                Wall::Triangle* tri = new Wall::Triangle(vt_list[a], vt_list[b], vt_list[c]);
+                                factory.pushTriangle(a, b, c);
                             }
                             break;
                             /*

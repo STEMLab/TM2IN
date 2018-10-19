@@ -162,6 +162,7 @@ namespace TM2IN {
             }
 
             string surface_to_wkt(Surface &sf) {
+                assert(sf.getVerticesSize() >= 3);
                 string result;
                 result += "((";
                 for (unsigned int i = 0; i < sf.getVerticesSize(); i++) {

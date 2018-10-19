@@ -14,11 +14,12 @@ Dongmin Kim(dongmin.kim@pnu.edu), Pusan National University
 ## Dependencies
 
 - CGAL (http://www.cgal.org/)
-- SFCGAL (http://www.sfcgal.org)
 - Eigen3 (http://eigen.tuxfamily.org/index.php?title=Main_Page)
 - Boost (http://www.boost.org/)
-- rapidxml (http://rapidxml.sourceforge.net)
-- restclient-cpp (https://github.com/mrtazz/restclient-cpp)
+- rapidxml (http://rapidxml.sourceforge.net) : To read COLLADA(*.dae) file
+- restclient-cpp (https://github.com/mrtazz/restclient-cpp) : To generate IndoorGML
+- InFactory (https://github.com/STEMLab/InFactory) : To generate IndoorGML
+
 
 ## Building
 
