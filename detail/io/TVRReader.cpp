@@ -39,7 +39,7 @@ namespace TM2IN {
                             break;
                         }
                         case 'v':{
-                            Vertex* pt_v = this->makeVertex(inputstr);
+                            auto pt_v = this->makeVertex(inputstr);
                             factory.pushVertex(pt_v);
 
                             v_count++;
@@ -64,9 +64,16 @@ namespace TM2IN {
                         case 'f':{
                             assert(v_count != 0);
 
-                            Wall::Triangle* tri = this->makeTriangle(inputstr, factory.getVerticesList());
+                            //Wall::Triangle* tri = this->makeTriangle(inputstr, factory.getVerticesList());
                             //factory.pushTriangle(tri);
-                            factory.pushTriangle(inputstr);
+                            std::vector<std::string> x = split(inputstr, ' ');
+
+                            ll a = stol(x[1]);
+                            ll b = stol(x[2]);
+                            ll c = stol(x[3]);
+                            factory.pushTriangle(a, b, c);
+
+                            x.clear();
 
                             f_count++;
                             if (f_count % 5000 == 0) cout << "Loaded faces : " << f_count << endl;
@@ -98,9 +105,9 @@ namespace TM2IN {
                 ll b = stol(x[2]);
                 ll c = stol(x[3]);
 
-                Vertex* va = vertex[a];
-                Vertex* vb = vertex[b];
-                Vertex* vc = vertex[c];
+                auto va = vertex[a];
+                auto vb = vertex[b];
+                auto vc = vertex[c];
                 Wall::Triangle* newTriangle = new Wall::Triangle(va, vb, vc);
 
                 x.clear();
