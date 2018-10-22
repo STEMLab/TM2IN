@@ -28,7 +28,7 @@ namespace TM2IN {
             RoomFactory();
             void pushVertex(Vertex* vt);
             void pushTriangle(Wall::Triangle *tri);
-            void pushTriangle(std::string tri);
+            void pushTriangle(long long a, long long b, long long c);
             void buildStrTriangle();
 
             std::vector<Room*> make();
@@ -42,6 +42,7 @@ namespace TM2IN {
             std::vector<TriangleMesh *> paritionRoom(TriangleMesh *pMesh);
 
             bool is_furniture(TriangleMesh *&tm);
+            void clear();
         };
     }
 }

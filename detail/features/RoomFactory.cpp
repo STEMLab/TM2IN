@@ -46,16 +46,10 @@ namespace TM2IN {
             this->raw_vertices.push_back(vt);
         }
 
-        void RoomFactory::pushTriangle(std::string input){
-            std::vector<std::string> x = split(input, ' ');
-
-            ll a = stol(x[1]);
-            ll b = stol(x[2]);
-            ll c = stol(x[3]);
-
-            TM2IN::Vertex* va = this->raw_vertices[a];
-            TM2IN::Vertex* vb = this->raw_vertices[b];
-            TM2IN::Vertex* vc = this->raw_vertices[c];
+        void RoomFactory::pushTriangle(ll a, ll b, ll c) {
+            auto va = this->raw_vertices[a];
+            auto vb = this->raw_vertices[b];
+            auto vc = this->raw_vertices[c];
 
             vector<TM2IN::Vertex*> index = {va, vb, vc};
             raw_triangles_with_vertex.push_back(index);
@@ -63,8 +57,6 @@ namespace TM2IN {
             Wall::Triangle* newTriangle = new Wall::Triangle(va, vb, vc);
             newTriangle->geom_id = to_string(this->raw_triangles.size());
             this->raw_triangles.push_back(newTriangle);
-
-            x.clear();
         }
 
         void RoomFactory::buildStrTriangle(){
@@ -200,14 +192,16 @@ namespace TM2IN {
                 rooms.push_back(new Room(boundary));
                 rooms[0]->geom_id = room_name;
             }
+            this->clear();
 
+            return rooms;
+        }
+
+        void RoomFactory::clear(){
             this->raw_triangles.clear();
             if (!this->keep_vertices){
                 this->raw_vertices.clear();
             }
-
-            return rooms;
-
         }
 
         vector<TriangleMesh *> RoomFactory::paritionRoom(TriangleMesh *pMesh) {
