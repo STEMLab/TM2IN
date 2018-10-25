@@ -24,18 +24,6 @@ namespace TM2IN {
         return TM2IN::detail::cgal::to_CGAL_Point_3(*this);
     }
 
-
-    Vertex::Vertex(double px, double py, double pz) {
-        coords[0] = CGAL::to_double(px);
-        coords[1] = CGAL::to_double(py);
-        coords[2] = CGAL::to_double(pz);
-        type = TM2IN::IND_TYPE::Vertex;
-    }
-
-    Vertex::Vertex(Vertex &vt) : Vertex(vt.x(), vt.y(), vt.z()) {
-
-    }
-
     void Vertex::setCoords(double x, double y, double z) {
         coords[0] = x;
         coords[1] = y;
@@ -45,5 +33,9 @@ namespace TM2IN {
     std::ostream &operator<<(std::ostream &ou, Vertex *pVertex) {
         ou << pVertex->asJsonText() << std::endl;
         return ou;
+    }
+
+    std::string Vertex::asWKT() {
+        return TM2IN::detail::io::vertex_to_wkt(this);
     }
 }

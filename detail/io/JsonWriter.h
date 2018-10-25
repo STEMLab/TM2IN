@@ -29,6 +29,10 @@ namespace TM2IN {
             string surface_to_json(Wall::Surface& sf);
             string surface_to_json_with_triangles(Wall::TriangulatedSurface &pSurface);
             string vertex_to_json(Vertex& vt, string index);
+
+            string room_to_wkt(Room &room);
+            string surface_to_wkt(Wall::Surface &sf);
+            string vertex_to_wkt(Vertex* vt);
         }
     }
 }

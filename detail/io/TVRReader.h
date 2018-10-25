@@ -25,7 +25,7 @@ namespace TM2IN{
 
                 Wall::Triangle* makeTriangle(string& input, vector<Vertex*>& vertex);
                 string getGroupName(string& input);
-                Vertex * makeVertex(int id, string &input);
+                Vertex *makeVertex(string &input);
             };
 
         }

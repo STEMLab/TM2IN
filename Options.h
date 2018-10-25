@@ -46,19 +46,20 @@ public:
     bool output_3ds = false;
     bool output_tvr = false;
     bool output_indoor_gml = false;
+    string infactory_url;
 
     bool generator = false;
     int generation = 0;
 
     int selected = ARCH;
     int do_validation = 0;
+    bool has_no_merge = false;
 private:
     bool has_input_dir = false;
     bool has_output_dir = false;
     bool has_version = false;
     bool has_input_type = false;
     bool has_polygonizer = false;
-    bool has_no_merge = false;
 
     void check_options();
 

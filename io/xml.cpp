@@ -5,10 +5,11 @@
 #include "xml.h"
 
 #include <vector>
-#include <lib/rapidxml/rapidxml.hpp>
+#include <rapidxml/rapidxml.hpp>
 #include <fstream>
 #include <detail/io/ColladaReader.h>
 #include <detail/io/IndoorGMLWriter.h>
+#include <detail/io/InFactoryClient.h>
 
 using namespace rapidxml;
 
@@ -19,6 +20,16 @@ namespace TM2IN{
 
             TM2IN::detail::io::ColladaReader cr(pFile);
             return cr.read();
+        }
+
+        int exportIndoorGML_infactory(const char *filePath, std::vector<Room *> rooms) {
+            ofstream pFile(filePath);
+            TM2IN::detail::io::InFactoryClient ic(rooms);
+            ic.make();
+            std::string xml_string = ic.getDocumentStr();
+            pFile << xml_string;
+            pFile.close();
+            return 0;
         }
 
         int exportIndoorGML(const char *filePath, std::vector<Room *> rooms) {

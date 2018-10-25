@@ -5,6 +5,7 @@
 #include <detail/features/halfedge_string.h>
 #include <algorithm/triangulation.h>
 #include <Options.h>
+#include <features/HalfEdge.h>
 #include "features/Wall/Triangle.h"
 #include "cgal/triangle.h"
 #include "TriangulatedSurface.h"
@@ -70,6 +71,13 @@ namespace TM2IN {
             return true;
         }
 
-
+        std::vector<Wall::TriangulatedSurface *> TriangulatedSurface::getNeighborList() {
+            std::vector<Wall::TriangulatedSurface *> neighbors;
+            for (HalfEdge* he : this->exteriorBoundary){
+                if (he->oppositeEdge != NULL && he->oppositeEdge->parent != NULL)
+                    neighbors.push_back((Wall::TriangulatedSurface *)he->oppositeEdge->parent);
+            }
+            return neighbors;
+        }
     }
 }

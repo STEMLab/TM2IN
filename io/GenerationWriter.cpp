@@ -7,15 +7,13 @@
 #include "features/RoomBoundary/TriangulatedSurfaceMesh.h"
 #include "features/Wall/TriangulatedSurface.h"
 
-
-
 namespace TM2IN {
     namespace io {
         GenerationWriter* GenerationWriter::instance = NULL;
         void GenerationWriter::start(Room* room){
             assert(this->mode == 0);
-            this->room_name = room->name;
-            this->directory_path = Options::getInstance()->output_dir + "process/" + room->name;
+            this->room_name = room->geom_id;
+            this->directory_path = Options::getInstance()->output_dir + "process/" + room->geom_id;
             if (boost::filesystem::exists(directory_path)) {
                 boost::filesystem::remove_all(directory_path);
             }
@@ -50,8 +48,7 @@ namespace TM2IN {
         }
 
         void GenerationWriter::write(vector<Wall::TriangulatedSurface*>& ts_list){
-            string output_path = this->directory_path + "/" + std::to_string(Options::getInstance()->generation) +
-                                 ".json";
+            string output_path = this->directory_path + "/" + std::to_string(Options::getInstance()->generation) + ".json";
             ofstream fout(output_path);
             fout << "{ \n";
             fout << " \"spaces\" : [ \n";

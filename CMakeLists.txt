@@ -22,14 +22,7 @@ FIND_PACKAGE( Boost 1.40 REQUIRED COMPONENTS filesystem REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
-# find_package(SFCGAL REQUIRED )
-
-file(GLOB LIB_FILES
-        "lib/rapidxml/rapidxml_print.hpp"
-        "lib/rapidxml/rapidxml.hpp"
-        "lib/rapidxml/rapidxml_iterators.hpp"
-        "lib/rapidxml/rapidxml_utils.hpp"
-        )
+find_package(CURL REQUIRED)
 
 file(GLOB DETAIL_FILES
         "detail/io/*.h"
@@ -79,14 +72,12 @@ file(GLOB SOURCE_FILES
 add_executable(TM2IN
         ${SOURCE_FILES}
         ${DETAIL_FILES}
-        ${LIB_FILES}
         ${FEATURES_FILES}
         Options.h
         Options.cpp
         TM2IN.cpp)
 
-TARGET_LINK_LIBRARIES(TM2IN LINK_PUBLIC ${Boost_LIBRARIES} Eigen3::Eigen
-        #${SFCGAL_LIBRARIES}
+TARGET_LINK_LIBRARIES(TM2IN LINK_PUBLIC ${Boost_LIBRARIES} Eigen3::Eigen restclient-cpp ${CURL_LIBRARIES}
         )
 
 include_directories(

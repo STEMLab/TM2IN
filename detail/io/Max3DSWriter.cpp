@@ -61,7 +61,7 @@ namespace TM2IN{
 
                     chunk_id = EDIT_OBJECT;
                     chunk_length = sizeof(unsigned short) + sizeof(unsigned int) +
-                                   (unsigned short)room->name.size() + 1 +
+                                   (unsigned short)room->geom_id.size() + 1 +
                                    // Triangle Mesh : chunk_id and chunk_length
                                    TRIANGULAR_MESH_LENGTH;
                     wholeLength += chunk_length;
@@ -69,7 +69,7 @@ namespace TM2IN{
                     fwrite(&chunk_id, 2, 1, pFile);
                     fwrite(&chunk_length, 4, 1, pFile);
 
-                    const char* name = room->name.c_str();
+                    const char* name = room->geom_id.c_str();
                     for (int i = 0 ; name[i] != 0 ; i++){
                         fwrite(&name[i], sizeof(char), 1, pFile);
                     }

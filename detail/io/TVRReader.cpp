@@ -17,19 +17,33 @@ namespace TM2IN {
             }
 
             std::vector<Room*> TVRReader::read() {
+                int version = 0;
                 string inputstr;
                 getline(this->ifs, inputstr);
-                if (inputstr.find("TVR0") == string::npos){
-                     std::runtime_error("different version : " + inputstr);
+                if (inputstr.find("TVR0") != string::npos){
+                    version = 0;
                 }
+                else if (inputstr.find("TVR1") != string::npos){
+                    version = 1;
+                }
+                else{
+                    std::runtime_error("different version : " + inputstr);
+                }
+                cout << "TVR Version  : " << version << endl;
 
-                string group_name;
                 int v_count = 0;
                 int f_count = 0;
 
                 vector<Room*> rooms;
                 RoomFactory factory;
-                factory.keep_vertices = true;
+
+                if (version == 0)
+                    factory.keep_vertices = true;
+                else
+                    factory.keep_vertices = false;
+
+                bool is_one_room = (version == 1) && true;
+                ull pre_vertex = 0;
 
                 while(!this->ifs.eof()){
                     getline(this->ifs, inputstr);
@@ -39,7 +53,7 @@ namespace TM2IN {
                             break;
                         }
                         case 'v':{
-                            Vertex* pt_v = this->makeVertex(v_count, inputstr);
+                            auto pt_v = this->makeVertex(inputstr);
                             factory.pushVertex(pt_v);
 
                             v_count++;
@@ -48,22 +62,46 @@ namespace TM2IN {
                             break;
                         }
                         case 'g':{
-                            if (f_count != 0){
-                                vector<Room*> curr_rooms = factory.make();
-                                if (curr_rooms.size() != 0)
-                                    rooms.insert(rooms.end(), curr_rooms.begin(), curr_rooms.end());
-                                f_count = 0;
+                            if (is_one_room){
+                                if (f_count != 0){
+                                    pre_vertex += v_count;
+                                }
+                                else{
+                                    string group_name = this->getGroupName(inputstr);
+                                    if (group_name.find('\r') != string::npos) group_name.erase(group_name.find('\r'));
+                                    factory.setRoomName(group_name);
+                                }
                             }
-                            group_name = this->getGroupName(inputstr);
-                            if (group_name.find('\r') != string::npos) group_name.erase(group_name.find('\r'));
-                            factory.setRoomName(group_name);
+                            else{
+                                if (f_count != 0){
+                                    cout << "Building Triangle Adjacency relation" << f_count << endl;
+                                    factory.buildStrTriangle();
+                                    vector<Room*> curr_rooms = factory.make();
+                                    if (curr_rooms.size() != 0)
+                                        rooms.insert(rooms.end(), curr_rooms.begin(), curr_rooms.end());
+                                    pre_vertex += v_count;
+                                    f_count = 0;
+                                }
+                                string group_name = this->getGroupName(inputstr);
+                                if (group_name.find('\r') != string::npos) group_name.erase(group_name.find('\r'));
+                                factory.setRoomName(group_name);
+                            }
                             break;
                         }
                         case 'f':{
                             assert(v_count != 0);
 
-                            Wall::Triangle* tri = this->makeTriangle(inputstr, factory.getVerticesList());
-                            factory.pushTriangle(tri);
+                            //Wall::Triangle* tri = this->makeTriangle(inputstr, factory.getVerticesList());
+                            //factory.pushTriangle(tri);
+
+                            std::vector<std::string> x = split(inputstr, ' ');
+
+                            ll a = stol(x[1]) + pre_vertex;
+                            ll b = stol(x[2]) + pre_vertex;
+                            ll c = stol(x[3]) + pre_vertex;
+                            factory.pushTriangle(a, b, c);
+
+                            x.clear();
 
                             f_count++;
                             if (f_count % 5000 == 0) cout << "Loaded faces : " << f_count << endl;
@@ -72,12 +110,14 @@ namespace TM2IN {
                         }
                     }
                 }
+                cout << "Building Triangle Adjacency relation... " << f_count << endl;
+                factory.buildStrTriangle();
+
                 vector<Room*> curr_rooms = factory.make();
                 if (curr_rooms.size() != 0)
                     rooms.insert(rooms.end(), curr_rooms.begin(), curr_rooms.end());
                 return rooms;
             }
-
 
             string TVRReader::getGroupName(string& input){
                 std::vector<std::string> x = split(input, ' ');
@@ -93,16 +133,16 @@ namespace TM2IN {
                 ll b = stol(x[2]);
                 ll c = stol(x[3]);
 
-                Vertex* va = vertex[a];
-                Vertex* vb = vertex[b];
-                Vertex* vc = vertex[c];
+                auto va = vertex[a];
+                auto vb = vertex[b];
+                auto vc = vertex[c];
                 Wall::Triangle* newTriangle = new Wall::Triangle(va, vb, vc);
 
                 x.clear();
                 return newTriangle;
             }
 
-            Vertex* TVRReader::makeVertex(int id, string &input){
+            Vertex * TVRReader::makeVertex(string &input) {
                 std::stringstream ss;
                 ss.str(input);
 
@@ -110,7 +150,7 @@ namespace TM2IN {
                 getline(ss, line, '\t');
                 std::vector<std::string> strings = split(line, ' ');
 
-                Vertex* vt = new Vertex(stod(strings[1]), stod(strings[2]), stod(strings[3]));
+                auto vt = new Vertex(stod(strings[1]), stod(strings[2]), stod(strings[3]));
                 strings.clear();
 
                 return vt;

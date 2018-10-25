@@ -34,6 +34,10 @@ void Converter::make_tri_surface_mesh(Room* room) {
     ll p_size = (ull)tsm->num_of_surfaces();
     double thres1 = Options::getInstance()->threshold_1;
     double thres2 = Options::getInstance()->threshold_2;
+    Options::getInstance()->generation = 0;
+
+    if (Options::getInstance()->has_no_merge)
+        return;
 
     while (true){
         if (Options::getInstance()->generator)
@@ -65,7 +69,7 @@ void Converter::make_tri_surface_mesh(Room* room) {
         if (thres1 < 40) thres1 += 2.0;
 
         Options::getInstance()->generation = Options::getInstance()->generation + 1;
-        tsm->update_surfaces_normal();
+        // tsm->update_surfaces_normal();
     }
 
 }
@@ -75,10 +79,10 @@ int Converter::validate_tsm() {
         TM2IN::Room *room = this->rooms[it];
         RoomBoundary::TriangulatedSurfaceMesh* tsm = room->getTsm_boundary();
         if (!tsm->isClosed()){
-            throw std::runtime_error("space " + room->name + " is not closed");
+            throw std::runtime_error("space " + room->geom_id + " is not closed");
         }
         if (tsm->surface_strict_validation()){
-            throw std::runtime_error("space " + room->name + "'s surfaces are not valid");
+            throw std::runtime_error("space " + room->geom_id + "'s surfaces are not valid");
         }
     }
     return 0;

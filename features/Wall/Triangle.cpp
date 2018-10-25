@@ -35,7 +35,20 @@ namespace TM2IN {
         }
 
 
-        bool Triangle::setNeighbor(Triangle *&tri) {
+        bool Triangle::setNeighbor(Triangle *&tri, int i, int j) {
+            if (i != -1 && j !=-1){
+                if (this->exteriorBoundary[i]->can_be_opposite_edge(tri->exteriorBoundary[j])) {
+                    assert(this->exteriorBoundary[i]->getOppositeEdge() == NULL);
+                    assert(tri->exteriorBoundary[j]->getOppositeEdge() == NULL);
+                    this->exteriorBoundary[i]->setOppositeEdge(tri->exteriorBoundary[j]);
+                    tri->exteriorBoundary[j]->setOppositeEdge(this->exteriorBoundary[i]);
+                    this->neighbors++;
+                    tri->neighbors++;
+                    return true;
+                }
+                return false;
+            }
+
             bool isAdjacent = false;
             for (int v1 = 0; v1 < 3; v1++) {
                 for (int v2 = 0; v2 < 3; v2++) {
@@ -45,6 +58,8 @@ namespace TM2IN {
                         assert(tri->exteriorBoundary[v2]->getOppositeEdge() == NULL);
                         this->exteriorBoundary[v1]->setOppositeEdge(tri->exteriorBoundary[v2]);
                         tri->exteriorBoundary[v2]->setOppositeEdge(this->exteriorBoundary[v1]);
+                        this->neighbors++;
+                        tri->neighbors++;
                     }
                 }
             }

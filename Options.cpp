@@ -63,7 +63,7 @@ void Options::make(int argc, char **argv) {
             {"output-tvr",  0, 0, 'T'},
             {"output-3ds",  0, 0, 'D'},
             {"output-tri",  0, 0, 'L'},
-            {"indoorGML" , 0, 0, 'I'},
+            {"indoorGML" , 1, 0, 'I'},
             {"write-process",0,0, 'G'},
             {"select-arch", 1, 0, 'A'},
             {"do-validation", 0, 0, 'V'},
@@ -111,6 +111,7 @@ void Options::make(int argc, char **argv) {
                 break;
             case 'v':
                 version = optarg;
+                break;
             case 't':
                 has_no_merge = true;
                 break;
@@ -144,8 +145,8 @@ void Options::make(int argc, char **argv) {
                 break;
             case 'I':
                 output_indoor_gml = true;
+                infactory_url = optarg;
                 break;
-
         }
     }
 

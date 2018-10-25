@@ -5,7 +5,7 @@
 #ifndef TM2IN_COLLADAREADER_H
 #define TM2IN_COLLADAREADER_H
 
-#include <lib/rapidxml/rapidxml.hpp>
+#include <rapidxml/rapidxml.hpp>
 #include "features/IndoorComponent.h"
 
 #include <fstream>

@@ -5,9 +5,9 @@
 #ifndef TM2IN_INDOORGMLWRITER_H
 #define TM2IN_INDOORGMLWRITER_H
 
-#include "lib/rapidxml/rapidxml.hpp"
-#include "lib/rapidxml/rapidxml_print.hpp"
-#include "lib/rapidxml/rapidxml_utils.hpp"
+#include "rapidxml/rapidxml.hpp"
+#include "rapidxml/rapidxml_print.hpp"
+#include "rapidxml/rapidxml_utils.hpp"
 #include "features/IndoorComponent.h"
 
 #include <fstream>

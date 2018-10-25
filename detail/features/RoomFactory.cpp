@@ -2,8 +2,11 @@
 // Created by dongmin on 18. 7. 25.
 //
 
+#include <algorithm>
+
 #include <detail/cgal/geometry.h>
 #include <cgal/vector_angle.h>
+#include <algorithm/compare.h>
 #include "config.h"
 #include "util.h"
 #include "features/Wall/Triangle.h"
@@ -29,16 +32,95 @@ namespace TM2IN {
         }
 
         void RoomFactory::pushVertex(Vertex *vt) {
+            // check duplicate
+
+            for (ull i = 0 ; i < this->raw_vertices.size() ; i++){
+                if (TM2IN::algorithm::is_same_vertex(vt, this->raw_vertices[i])){
+                    cout << "Duplicate Vertex" << endl;
+                    this->raw_vertices.push_back(this->raw_vertices[i]);
+                    return;
+                }
+            }
+
             vt->geom_id = to_string(this->raw_vertices.size());
             this->raw_vertices.push_back(vt);
+        }
+
+        void RoomFactory::pushTriangle(ll a, ll b, ll c) {
+            auto va = this->raw_vertices[a];
+            auto vb = this->raw_vertices[b];
+            auto vc = this->raw_vertices[c];
+
+            vector<TM2IN::Vertex*> index = {va, vb, vc};
+            raw_triangles_with_vertex.push_back(index);
+
+            Wall::Triangle* newTriangle = new Wall::Triangle(va, vb, vc);
+            newTriangle->geom_id = to_string(this->raw_triangles.size());
+            this->raw_triangles.push_back(newTriangle);
+        }
+
+        void RoomFactory::buildStrTriangle(){
+            std::map<TM2IN::Vertex*, std::vector<ll>> triangle_map;
+            for (int i = 0 ; i < this->raw_vertices.size() ; i++){
+                auto it = triangle_map.find(this->raw_vertices[i]);
+                if (it == triangle_map.end())
+                    triangle_map[this->raw_vertices[i]] = vector<ll>();
+            }
+
+            for (int i = 0 ; i < this->raw_triangles_with_vertex.size() ; i++){
+                for (int j = 0 ; j < 3 ; j ++){
+                    triangle_map[this->raw_triangles_with_vertex[i][j]].push_back(i);
+                }
+            }
+
+            for (int i = 0 ; i < this->raw_triangles_with_vertex.size() ; i++){
+                if (i % 10000 == 0) cout << i << endl;
+                if (raw_triangles[i]->getNeighborNumber() < 3){
+                    vector<ll>& a_triangle = triangle_map[raw_triangles_with_vertex[i][0]];
+                    vector<ll>& b_triangle = triangle_map[raw_triangles_with_vertex[i][1]];
+                    vector<ll>& c_triangle = triangle_map[raw_triangles_with_vertex[i][2]];
+
+                    findAndSetNeighbor(a_triangle, b_triangle, i, 0, 1);
+                    findAndSetNeighbor(b_triangle, c_triangle, i, 1, 2);
+                    findAndSetNeighbor(c_triangle, a_triangle, i, 2, 0);
+                }
+            }
+
+            this->raw_triangles_with_vertex.clear();
+        }
+
+        void RoomFactory::findAndSetNeighbor(vector<ll>& a_triangle, vector<ll>& b_triangle, int i, int a_i, int b_i){
+            vector<ll> result(this->raw_triangles.size());
+            auto itr = std::set_intersection(a_triangle.begin(), a_triangle.end(), b_triangle.begin(), b_triangle.end(), result.begin());
+            result.erase(itr, result.end());
+
+            assert(result.size() <= 2);
+            if (result.size() == 2){
+                ll neighbor;
+                if (result[0] == i){
+                    neighbor = result[1];
+                }
+                else
+                    neighbor = result[0];
+                if (neighbor > i){
+                    int vi;
+                    for (vi = 0 ; vi < 3 ; vi++){
+                        if (raw_triangles_with_vertex[neighbor][vi] == raw_triangles_with_vertex[i][b_i]){
+                            break;
+                        }
+                    }
+                    raw_triangles[i]->setNeighbor(raw_triangles[neighbor], a_i, vi);
+                }
+            }
         }
 
         void RoomFactory::pushTriangle(Wall::Triangle *tri) {
             int neighbor_num = 0;
             for (ull i = 0 ; i < this->raw_triangles.size() ; i++){
-                if (TM2IN::detail::cgal::has_bbox_intersect(raw_triangles[i], tri))
-                    if (raw_triangles[i]->setNeighbor(tri))
-                        neighbor_num++;
+                if (raw_triangles[i]->getNeighborNumber() < 3)
+                    if (TM2IN::detail::cgal::has_bbox_intersect(raw_triangles[i], tri))
+                        if (raw_triangles[i]->setNeighbor(tri))
+                            neighbor_num++;
             }
             assert(neighbor_num <= 3);
             tri->geom_id = to_string(this->raw_triangles.size());
@@ -50,63 +132,76 @@ namespace TM2IN {
          * @return
          */
         std::vector<Room *> RoomFactory::make() {
+            assert(this->raw_triangles.size() > 0);
             RoomBoundary::TriangleMesh* boundary = new RoomBoundary::TriangleMesh(this->raw_triangles);
 
-            if (!boundary->is_closed_triangle_mesh()){
-                throw std::runtime_error("Triangle Mesh is not closed or wrong");
-            }
-
-            std::vector<RoomBoundary::TriangleMesh*> boundaries = paritionRoom(boundary);
-            int i;
-            switch(Options::getInstance()->selected){
-                case ARCH:
-                    i = 0;
-                    while (i < boundaries.size()){
-                        if (is_furniture(boundaries[i]))
-                            boundaries.erase(boundaries.begin() + i);
-                        else
-                            i++;
-                    }
-                    break;
-                case NON_ARCH:
-                    i = 0;
-                    while (i < boundaries.size()){
-                        if (is_furniture(boundaries[i]))
-                            i++;
-                        else
-                            boundaries.erase(boundaries.begin() + i);
-                    }
-                    break;
-                case MANUAL:
-                    i = 0;
-                    while (i < boundaries.size()){
-                        i++;
-                    }
-                    break;
-                default:
-                    break;
-            }
-
             vector<Room*> rooms;
-            for (RoomBoundary::TriangleMesh* tm : boundaries){
-                rooms.push_back(new Room(tm));
-            }
+            int selected = Options::getInstance()->selected;
+            if (selected != 3){
+                if (selected == ARCH || selected == NON_ARCH){
+                    if (!boundary->is_closed_triangle_mesh()){
+                        throw std::runtime_error("Triangle Mesh is not closed or wrong");
+                    }
+                }
 
-            if (rooms.size() == 1){
-                rooms[0]->name = room_name;
-            }
-            else{
-                for (int ri = 0 ; ri < rooms.size() ; ri++){
-                    rooms[ri]->name = room_name + "_" + to_string(ri);
+                std::vector<RoomBoundary::TriangleMesh*> boundaries = paritionRoom(boundary);
+                int i;
+                switch(selected){
+                    case ARCH:
+                        i = 0;
+                        while (i < boundaries.size()){
+                            if (is_furniture(boundaries[i]))
+                                boundaries.erase(boundaries.begin() + i);
+                            else
+                                i++;
+                        }
+                        break;
+                    case NON_ARCH:
+                        i = 0;
+                        while (i < boundaries.size()){
+                            if (is_furniture(boundaries[i]))
+                                i++;
+                            else
+                                boundaries.erase(boundaries.begin() + i);
+                        }
+                        break;
+                    case MANUAL:
+                        i = 0;
+                        while (i < boundaries.size()){
+                            i++;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+                for (RoomBoundary::TriangleMesh* tm : boundaries){
+                    rooms.push_back(new Room(tm));
+                }
+
+                if (rooms.size() == 1){
+                    rooms[0]->geom_id = room_name;
+                }
+                else{
+                    for (int ri = 0 ; ri < rooms.size() ; ri++){
+                        rooms[ri]->geom_id = room_name + "_" + to_string(ri);
+                    }
                 }
             }
+            else{
+                rooms.push_back(new Room(boundary));
+                rooms[0]->geom_id = room_name;
+            }
+            this->clear();
 
+            return rooms;
+        }
+
+        void RoomFactory::clear(){
             this->raw_triangles.clear();
             if (!this->keep_vertices){
                 this->raw_vertices.clear();
             }
-
-            return rooms;
         }
 
         vector<TriangleMesh *> RoomFactory::paritionRoom(TriangleMesh *pMesh) {

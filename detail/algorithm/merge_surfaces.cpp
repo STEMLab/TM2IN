@@ -23,6 +23,7 @@ namespace TM2IN {
 
             bool SurfaceMerger::mergeSurfaces(vector<Wall::TriangulatedSurface *> surfaceList, vector<Wall::TriangulatedSurface *> &result) {
                 result.clear();
+
                 //deep copy
                 for (ull i = 0 ; i < surfaceList.size() ; i++){
                     result.push_back(new TriangulatedSurface(surfaceList[i]));
@@ -31,6 +32,62 @@ namespace TM2IN {
                 bool hasMerged = false;
                 bool isMerged = true;
                 ull combined_count = 0;
+                while (isMerged){
+                    if (result.size() == 1) break;
+                    sort(result.begin(), result.end(), Surface::compareLength);
+
+                    map<string, bool> removed_map;
+                    for (ull i = 0 ; i < result.size() ; i++){
+                        removed_map.emplace(result[i]->geom_id, false);
+                    }
+
+                    for (ull i = 0 ; i < result.size() - 1 ; i++){
+                        if (removed_map[result[i]->geom_id]) continue;
+                        isMerged = false;
+
+                        vector<TriangulatedSurface*> neighbors = result[i]->getNeighborList();
+
+                        for (int j = 0 ; j < neighbors.size() ; j++){
+                            if (removed_map[neighbors[j]->geom_id]) continue;
+                            if (merge(result[i], neighbors[j]) == 0){
+                                combined_count++;
+                                if (combined_count != 0 && combined_count % 500 == 0){
+                                    printProcess(combined_count, surfaceList.size(), "mergeSurface");
+                                }
+                                isMerged = true;
+                                hasMerged = true;
+                                removed_map[neighbors[j]->geom_id] = true;
+                                if (Options::getInstance()->generator && combined_count != 0 && combined_count % 500 == 0){
+                                    Options::getInstance()->generation++;
+                                    vector<TriangulatedSurface*> temp;
+                                    for (ull ti = result.size() - 1 ; ti >= 0 ; ti--) {
+                                        if (!removed_map[result[ti]->geom_id]){
+                                            temp.push_back(result[ti]);
+                                        }
+                                    }
+                                    TM2IN::io::GenerationWriter::getInstance()->write(temp);
+                                    temp.clear();
+                                }
+                            }
+                        }
+
+                        if (isMerged) i -= 1;
+                        printProcess(combined_count, surfaceList.size(), "mergeSurface");
+                    }
+
+                    ull i = 0;
+                    while (i < result.size()){
+                        if (removed_map[result[i]->geom_id]){
+                            result.erase(result.begin() + i);
+                        } else
+                            i++;
+                    }
+                    assert(result.size() >= 1);
+                    removed_map.clear();
+                }
+
+                /*
+                 *
                 while (isMerged){
                     sort(result.begin(), result.end(), Surface::compareLength);
                     if (result.size() == 1) break;
@@ -56,7 +113,7 @@ namespace TM2IN {
                         printProcess(combined_count, surfaceList.size(), "mergeSurface");
                     }
                 }
-
+                 */
                 return hasMerged;
             }
 

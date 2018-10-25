@@ -17,6 +17,8 @@ namespace TM2IN {
         public:
             Polygon(Surface* );
 
+            Polygon(vector<Vertex *> vt_list);
+
             /**
              * @brief Checks this polygon is valid.
              * @todo imp

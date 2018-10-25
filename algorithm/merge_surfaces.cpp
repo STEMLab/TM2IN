@@ -5,6 +5,7 @@
 #include "algorithm/merge_surfaces.h"
 
 #include <detail/cgal/geometry.h>
+#include <detail/features/halfedge_string.h>
 #include "detail/algorithm/merge_surfaces.h"
 #include "detail/algorithm/simplify_share_edges.h"
 #include "features/Wall/TriangulatedSurface.h"
@@ -55,7 +56,8 @@ namespace TM2IN{
                 }
                 else{
                     hasRemoved = true;
-                    cout << "remove" << endl;
+                    cerr << "remove" << endl;
+                    TM2IN::detail::HalfEdgeString::setParent(tsm->surfaces[i]->getExteriorBoundary(), NULL);
                     delete tsm->surfaces[i];
                     tsm->surfaces.erase(tsm->surfaces.begin() + i);
                 }
