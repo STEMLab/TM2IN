@@ -19,7 +19,7 @@ Dongmin Kim(dongmin.kim@pnu.edu), Pusan National University
 - Eigen3 (http://eigen.tuxfamily.org/index.php?title=Main_Page)
 - Boost (http://www.boost.org/)
 - rapidxml (http://rapidxml.sourceforge.net) : To read COLLADA(*.dae) file
-- restclient-cpp (https://github.com/mrtazz/restclient-cpp) : To generate IndoorGML
+- libcurl (https://curl.haxx.se/libcurl/c/libcurl.html)
 - InFactory (https://github.com/STEMLab/InFactory) : To generate IndoorGML
 
 
