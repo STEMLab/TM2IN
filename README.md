@@ -22,6 +22,8 @@ Dongmin Kim(dongmin.kim@pnu.edu), Pusan National University
 - libcurl (https://curl.haxx.se/libcurl/c/libcurl.html)
 - InFactory (https://github.com/STEMLab/InFactory) : To generate IndoorGML
 
+## Supported Platform
+- Linux
 
 ## Building
 
