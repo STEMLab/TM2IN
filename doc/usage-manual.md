@@ -17,7 +17,7 @@ TM2IN --input-dir=.input/ --output-dir=.output/ input.tvr
 | version | output version name (default : "no-version") |
 | input-type | the type of input file. (tvr, 3ds, dae) |
 | *no-merge* | Surface Merging 작업을 하지 않습니다. (Input triangles 그대로 출력) |
-| polygonizer | select Polygonizer. 1 : PCA Polygonize, 2 : Triangle Polygonize, 3 : Divided Polygonize |
+| polygonizer | select Polygonizer. 0 : do nothing, 1 : PCA Polygonize, 2 : Triangle Polygonize, 3 : Divided Polygonize |
 | thres1 | Threshold value 1 for merging algorithm |
 | thres2 | Threshold value 2 for merging algorithm |
 | *output-tvr* | print TVR file |

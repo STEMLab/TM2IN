@@ -70,6 +70,13 @@ namespace TM2IN {
             std::string asJsonText() override;
 
             void updateMBB() override;
+
+            /**
+             * @brief classify Surfaces with SURFACE_TYPE
+             */
+            void classify_sf_type();
+        private:
+
         };
         typedef TM2IN::RoomBoundary::TriangulatedSurfaceMesh TSM;
     }

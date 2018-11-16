@@ -36,7 +36,6 @@ private:
     // start
     int importData();
     void print_input_spec();
-    int handleOpenTriangleMesh();
 
     // run
     int mergeSurfaces();
@@ -44,6 +43,7 @@ private:
     int validate_tsm();
     int polygonize();
     TM2IN::algorithm::Polygonizer *create_polygonizer();
+    int classify_sf_type();
 
     // finish
     void tag_pm_ID();

@@ -34,6 +34,7 @@ int Converter::importData() {
     clock_t end = clock();
     cout << "Importing time : " << double(end - begin) / CLOCKS_PER_SEC << "s" << endl;
     print_input_spec();
+
     return 0;
 }
 

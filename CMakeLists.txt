@@ -81,5 +81,5 @@ TARGET_LINK_LIBRARIES(TM2IN LINK_PUBLIC ${Boost_LIBRARIES} Eigen3::Eigen restcli
         )
 
 include_directories(
-        ../TriangleMeshToClearSolid)
+        .)
 

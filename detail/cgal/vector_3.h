@@ -15,6 +15,13 @@ namespace TM2IN {
              * @brief Returns cosine value
              */
             double getCosineValue(Vector_3& nv1,Vector_3& nv2);
+
+            /**
+             * @ingroup imp_details
+             * @brief Return closest vector from nv among vector_list
+             *
+             */
+            int find_closest_vector(Vector_3& nv, std::vector<Vector_3>& vector_list);
         }
     }
 }

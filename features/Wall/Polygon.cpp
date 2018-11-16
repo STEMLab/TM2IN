@@ -20,6 +20,7 @@ namespace TM2IN {
             this->area = pSurface->getArea();
             this->geom_id = pSurface->geom_id;
             this->type = TM2IN::IND_TYPE::Polygon;
+            this->surface_type = pSurface->surface_type;
             if (!is_valid_polygon()){
                 throw std::runtime_error("This Surface cannot be polygon..");
             }

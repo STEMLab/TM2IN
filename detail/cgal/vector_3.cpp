@@ -2,6 +2,7 @@
 // Created by dongmin on 18. 7. 23.
 //
 
+#include <cgal/vector_angle.h>
 #include "vector_3.h"
 
 namespace TM2IN {
@@ -20,6 +21,19 @@ namespace TM2IN {
                 if (cos > 0.99999) cos = 1;
                 else if (cos < -0.99999) cos = -1;
                 return cos;
+            }
+
+            int find_closest_vector(Vector_3 &nv, std::vector<Vector_3> &vector_list) {
+                int type = 0;
+                double diff = 90.0;
+                for (int i = 0 ; i < vector_list.size() ; i++){
+                    double temp_diff = TM2IN::cgal::getAngle(vector_list[i], nv);
+                    if (temp_diff < diff){
+                        diff = temp_diff;
+                        type = i;
+                    }
+                }
+                return type;
             }
         }
     }

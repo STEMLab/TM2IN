@@ -35,6 +35,9 @@ int Converter::run() {
     if (Options::getInstance()->do_validation)
         validate_tsm();
 
+    if (Options::getInstance()->do_classification)
+        classify_sf_type();
+
     if (Options::getInstance()->polygonizer_mode > 0) // 1 or 2 or 3
         polygonize();
 
@@ -78,7 +81,7 @@ int Converter::exportRoomBoundary() {
 
 int Converter::convert_pm_to_tm(){
     for (int room_id = 0 ; room_id < this->rooms.size() ; room_id++){
-        TM2IN::Room* room = this->rooms[room_id];
+        auto room = this->rooms[room_id];
 
         RoomBoundary::TriangleMesh* tm = room->getPm_boundary()->to_triangle_mesh();
         room->setTm_boundary(tm);
@@ -89,21 +92,12 @@ int Converter::convert_pm_to_tm(){
 
 void Converter::tag_pm_ID() {
     for (ull it = 0 ; it < this->rooms.size() ; it++) {
-        Room *room = this->rooms[it];
+        auto room = this->rooms[it];
         if (room->getPm_boundary() != NULL){
             room->getPm_boundary()->tag_ID(room->geom_id);
         }
 
     }
-}
-
-/**
- * @todo Implementation
- * @return
- */
-int Converter::handleOpenTriangleMesh() {
-    throw std::runtime_error("TODO : handleOpenTriangleMesh");
-    // printf("\n\n%d meshes have been removed because it is open.\n", count);
 }
 
 void Converter::validate_tm() {

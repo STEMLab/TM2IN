@@ -11,8 +11,9 @@
 namespace TM2IN {
     namespace RoomBoundary {
         void PolygonMesh::tag_ID(string name) {
+            string type[5] = {"ws" , "fs", "cs", "is", "uk"};
             for (ull i = 0; i < (ull) polygons.size(); i++) {
-                polygons[i]->geom_id = name + "_" + to_string(i);
+                polygons[i]->geom_id = type[polygons[i]->surface_type] + "_" + to_string(i);
             }
         }
 

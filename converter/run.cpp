@@ -76,7 +76,7 @@ void Converter::make_tri_surface_mesh(Room* room) {
 
 int Converter::validate_tsm() {
     for (ull it = 0 ; it < this->rooms.size() ; it++) {
-        TM2IN::Room *room = this->rooms[it];
+        auto room = this->rooms[it];
         RoomBoundary::TriangulatedSurfaceMesh* tsm = room->getTsm_boundary();
         if (!tsm->isClosed()){
             throw std::runtime_error("space " + room->geom_id + " is not closed");
@@ -88,12 +88,19 @@ int Converter::validate_tsm() {
     return 0;
 }
 
-
+int Converter::classify_sf_type(){
+    for (ull it = 0 ; it < this->rooms.size() ; it++) {
+        auto room = this->rooms[it];
+        RoomBoundary::TriangulatedSurfaceMesh* tsm = room->getTsm_boundary();
+        tsm->classify_sf_type();
+    }
+    return 0;
+}
 
 int Converter::polygonize() {
     TM2IN::algorithm::Polygonizer* polygonizer = create_polygonizer();
     for (ull it = 0 ; it < this->rooms.size() ; it++) {
-        Room* room = this->rooms[it];
+        auto room = this->rooms[it];
         RoomBoundary::PolygonMesh* pm = polygonizer->run(room->getTsm_boundary());
         room->setPm_boundary(pm);
     }

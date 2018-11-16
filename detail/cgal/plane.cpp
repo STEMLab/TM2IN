@@ -5,6 +5,7 @@
 #include "plane.h"
 #include "features/Vertex.h"
 #include "cgal/vector_angle.h"
+#include "vector_3.h"
 
 namespace TM2IN {
     namespace detail {
@@ -27,8 +28,17 @@ namespace TM2IN {
             }
 
             Plane_3 make_simple_plane(Vector_3 pNormal) {
-                int type = TM2IN::cgal::findNormalType6(pNormal);
-                Vector_3 normal = TM2IN::cgal::simple_normal_vector_list6[type];
+                std::vector<Vector_3> simple_normal_vector_list6 = {
+                        Vector_3(1,0,0), //0, 3
+                        Vector_3(0,1,0),
+                        Vector_3(0,0,1),
+                        Vector_3(-1,0,0),
+                        Vector_3(0,-1,0),
+                        Vector_3(0,0,-1)
+                };
+
+                int type = TM2IN::detail::cgal::find_closest_vector(pNormal, simple_normal_vector_list6);
+                Vector_3 normal = simple_normal_vector_list6[type];
                 Point_3 origin(0,0,0);
                 Plane_3 plane3(origin, normal);
                 return plane3;

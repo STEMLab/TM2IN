@@ -40,6 +40,7 @@ namespace TM2IN {
             this->mbb = pl.getMBB();
             this->triangles.push_back(&pl);
             this->type = TM2IN::IND_TYPE::TriangulatedSurface;
+            this->surface_type = pl.surface_type;
         }
 
         bool TriangulatedSurface::strict_validation(){

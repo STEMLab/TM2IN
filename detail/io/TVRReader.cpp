@@ -42,7 +42,7 @@ namespace TM2IN {
                 else
                     factory.keep_vertices = false;
 
-                bool is_one_room = (version == 1) && true;
+                bool is_one_room = (version == 1);
                 ull pre_vertex = 0;
 
                 while(!this->ifs.eof()){
