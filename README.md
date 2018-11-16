@@ -2,6 +2,8 @@
 TM2IN(Triangle Mesh to Indoor data) is a project which converts indoor spatial standard data from raw indoor geometry data, like triangle mesh or point cloud. 
 TM2IN not only constructs indoor spatial standard data but also refines geometry data by removing unnecessary elements and reducing the number of surfaces.
 
+The following image is available from [TM2IN-Viewer](https://github.com/cocoslime/TM2IN-Viewer).
+
 ![](doc/img/180920-tm2in-process.gif)
 
 ## Pipeline
@@ -17,7 +19,7 @@ Dongmin Kim(dongmin.kim@pnu.edu), Pusan National University
 - Eigen3 (http://eigen.tuxfamily.org/index.php?title=Main_Page)
 - Boost (http://www.boost.org/)
 - rapidxml (http://rapidxml.sourceforge.net) : To read COLLADA(*.dae) file
-- restclient-cpp (https://github.com/mrtazz/restclient-cpp) : To generate IndoorGML
+- libcurl (https://curl.haxx.se/libcurl/c/libcurl.html)
 - InFactory (https://github.com/STEMLab/InFactory) : To generate IndoorGML
 
 
