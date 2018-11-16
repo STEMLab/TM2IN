@@ -22,6 +22,9 @@ namespace TM2IN{
             for (unsigned int sfID = 0 ; sfID < space->surfaces.size(); sfID++) {
                 TM2IN::Wall::TriangulatedSurface* pSurface = space->surfaces[sfID];
                 vector<TM2IN::Wall::Triangle*> triangulation = pSurface->getTriangulation();
+                for (auto tri : triangulation){
+                    tri->surface_type = pSurface->surface_type;
+                }
                 triangleList.insert(triangleList.end(),triangulation.begin(),triangulation.end());
             }
 
@@ -44,6 +47,9 @@ namespace TM2IN{
                 TM2IN::Wall::TriangulatedSurface* sf = space->surfaces[i];
                 vector<TM2IN::Wall::TriangulatedSurface*> newSurfacesInSurface;
                 vector<TM2IN::Wall::Triangle*> triangulation = sf->getTriangulation();
+                for (auto tri : triangulation){
+                    tri->surface_type = sf->surface_type;
+                }
 
                 TM2IN::detail::HalfEdgeString::connectOppositeHalfEdges(triangulation);
                 TM2IN::algorithm::mergeTriangles(triangulation, thres1, thres2, newSurfacesInSurface);
@@ -79,6 +85,7 @@ namespace TM2IN{
                 assert(newVertices.size() == sf->getVerticesSize());
 
                 TM2IN::Wall::Polygon* new_sf = new TM2IN::Wall::Polygon(newVertices);
+                new_sf->surface_type = sf->surface_type;
                 new_sf->normal = plane.orthogonal_vector();
                 newPolygonList.push_back(new_sf);
             }

@@ -48,6 +48,7 @@ namespace TM2IN {
             bool updateNormal() override;
 
             std::vector<Wall::TriangulatedSurface *> getNeighborList();
+
         };
     }
 }

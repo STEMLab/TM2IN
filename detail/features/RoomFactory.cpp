@@ -137,6 +137,7 @@ namespace TM2IN {
 
             vector<Room*> rooms;
             int selected = Options::getInstance()->selected;
+            cout << "selected : " << selected << endl;
             if (selected != 3){
                 if (selected == ARCH || selected == NON_ARCH){
                     if (!boundary->is_closed_triangle_mesh()){

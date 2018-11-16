@@ -12,6 +12,8 @@ using namespace std;
 
 namespace TM2IN{
     namespace Wall{
+        enum SURFACE_TYPE {WS, FS, CS, IS, UNKNOWN};
+
         /**
         * @ingroup geo_features
         */
@@ -31,6 +33,8 @@ namespace TM2IN{
             int neighbors = 0;
         public:
             Vector_3 normal = CGAL::NULL_VECTOR;
+
+            int surface_type = SURFACE_TYPE::UNKNOWN;
 
             /**
              * @brief Gets the size of Vertex list

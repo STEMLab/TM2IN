@@ -10,6 +10,8 @@
 #include "features/HalfEdge.h"
 #include <queue>
 #include <vector>
+#include <detail/cgal/vector_3.h>
+
 using namespace std;
 
 namespace TM2IN{
@@ -121,6 +123,39 @@ namespace TM2IN{
         void TriangulatedSurfaceMesh::updateMBB() {
             throw std::runtime_error("TriangulatedSurfaceMesh::updateMBB not implemented");
         }
+
+        void TriangulatedSurfaceMesh::classify_sf_type() {
+            vector<Vector_3> normal_list = {
+                    Vector_3(0,0,-1), // cs
+                    Vector_3(0,0,1), // fs
+                    Vector_3(1,0,0), // ws
+                    Vector_3(0,1,0),
+                    Vector_3(-1,0,0),
+                    Vector_3(0,-1,0),
+                    Vector_3(1,1,0),
+                    Vector_3(1,-1,0),
+                    Vector_3(-1,-1,0),
+                    Vector_3(-1,1,0)
+            };
+
+            for (vector<Wall::TriangulatedSurface *>::size_type i = 0; i < this->surfaces.size();) {
+                Wall::TriangulatedSurface * pSurface = this->surfaces[i];
+                Vector_3 nv = pSurface->normal;
+                int type = TM2IN::detail::cgal::find_closest_vector(nv, normal_list);
+                if (type == 0){
+                    pSurface->surface_type = SURFACE_TYPE::CS;
+                }
+                else if (type == 1){
+                    pSurface->surface_type = SURFACE_TYPE::FS;
+                }
+                else{
+                    pSurface->surface_type = SURFACE_TYPE::WS;
+                }
+
+            }
+        }
+
+
     }
 }
 
