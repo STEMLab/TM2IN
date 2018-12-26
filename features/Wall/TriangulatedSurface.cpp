@@ -26,6 +26,7 @@ namespace TM2IN {
             this->triangles = pSurface->triangles;
             this->geom_id = pSurface->geom_id;
             this->type = TM2IN::IND_TYPE::TriangulatedSurface;
+            this->surface_type = pSurface->surface_type;
         }
 
         TriangulatedSurface::TriangulatedSurface(Triangle& pl){
