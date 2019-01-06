@@ -89,6 +89,7 @@ int Converter::validate_tsm() {
 }
 
 int Converter::classify_sf_type(){
+    cout << "classify_sf_type" << endl;
     for (ull it = 0 ; it < this->rooms.size() ; it++) {
         auto room = this->rooms[it];
         RoomBoundary::TriangulatedSurfaceMesh* tsm = room->getTsm_boundary();

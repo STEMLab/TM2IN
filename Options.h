@@ -54,7 +54,7 @@ public:
     int selected = ARCH;
     int do_validation = 0;
     bool has_no_merge = false;
-    bool do_classification = true;
+    bool do_classification = false;
 
 private:
     bool has_input_dir = false;

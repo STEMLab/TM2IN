@@ -138,7 +138,7 @@ namespace TM2IN{
                     Vector_3(-1,1,0)
             };
 
-            for (vector<Wall::TriangulatedSurface *>::size_type i = 0; i < this->surfaces.size();) {
+            for (vector<Wall::TriangulatedSurface *>::size_type i = 0; i < this->surfaces.size(); i++) {
                 Wall::TriangulatedSurface * pSurface = this->surfaces[i];
                 Vector_3 nv = pSurface->normal;
                 int type = TM2IN::detail::cgal::find_closest_vector(nv, normal_list);

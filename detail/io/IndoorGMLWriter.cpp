@@ -55,7 +55,7 @@ namespace TM2IN {
                     primalSpaceFeatures_node2->append_node(cellSpaceMember_node);
 
                     for (int i = 0; i < rooms.size(); i++) {
-                        TM2IN::Room* pRoom = rooms[i];
+                        auto pRoom = rooms[i];
                         rapidxml::xml_node<>* cell_space_node = doc.allocate_node(rapidxml::node_element, "CellSpace");
                         cell_space_node->append_attribute(doc.allocate_attribute("gml:id", pRoom->geom_id.c_str()));
 

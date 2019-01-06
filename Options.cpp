@@ -50,7 +50,7 @@ void Options::check_options() {
 }
 
 void Options::make(int argc, char **argv) {
-    const char *short_opts = "I:E:r:t";
+    const char *short_opts = "i:O:v:r:tp:a:b:TDLI:GA:VC";
     const option long_opts[] = {
             {"input-dir",   1, 0, 'i'},
             {"output-dir",  1, 0, 'O'},
@@ -67,6 +67,7 @@ void Options::make(int argc, char **argv) {
             {"write-process",0,0, 'G'},
             {"select-arch", 1, 0, 'A'},
             {"do-validation", 0, 0, 'V'},
+            {"do-classification", 0, 0, 'C'},
             {0, 0, 0, 0}
     };
     int index = 0;
@@ -146,6 +147,9 @@ void Options::make(int argc, char **argv) {
             case 'I':
                 output_indoor_gml = true;
                 infactory_url = optarg;
+                break;
+            case 'C':
+                do_classification = true;
                 break;
         }
     }
